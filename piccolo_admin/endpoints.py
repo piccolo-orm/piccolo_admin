@@ -33,7 +33,7 @@ class AdminRouter(Router):
 
         routes: t.List[BaseRoute] = [
             Mount(
-                path='/',
+                path='/admin',
                 app=StaticFiles(directory=ASSET_PATH, html=True),
             ),
             Route(
