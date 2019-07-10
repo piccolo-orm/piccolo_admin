@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
 The backend is just vanilla Python.
 
-The front end is built using Vue.js. To make modifications, clone the repo, and cd into the admin_ui directory.
+The front end is built using Vue.js. To make modifications, clone the repo, and cd into the `admin_ui` directory.
 
 Install the npm dependencies:
 

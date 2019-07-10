@@ -1,5 +1,5 @@
 starlette>=0.12.2
-piccolo>=0.3.2
-piccolo_api>=0.1.0
+piccolo>=0.3.5
+piccolo_api>=0.1.1
 uvicorn>=0.8.3
 aiofiles==0.4.0
