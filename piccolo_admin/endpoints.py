@@ -1,16 +1,24 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
+import os
 import typing as t
 
 from piccolo.table import Table
 from piccolo.extensions.user import User
 from piccolo_api.endpoints.crud import PiccoloCRUD
-from piccolo_api.endpoints.auth import JWTLogin
+# from piccolo_api.endpoints.auth import JWTLogin
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.requests import Request
+from starlette.staticfiles import StaticFiles
+
+
+ASSET_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'dist'
+)
 
 
 class AdminRouter(Router):
@@ -24,10 +32,9 @@ class AdminRouter(Router):
         self.auth_table = auth_table
 
         routes: t.List[BaseRoute] = [
-            Route(
+            Mount(
                 path='/',
-                endpoint=self.get_root,
-                methods=['GET']
+                app=StaticFiles(directory=ASSET_PATH, html=True),
             ),
             Route(
                 path='/tables/',
@@ -51,9 +58,6 @@ class AdminRouter(Router):
         super().__init__(routes)
 
     ###########################################################################
-
-    def get_root(self, request: Request) -> HTMLResponse:
-        return HTMLResponse('<h1>Hello world</p>', status_code=200, headers={})
 
     async def login(self, request: Request) -> Response:
         """
