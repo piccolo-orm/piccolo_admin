@@ -7,3 +7,4 @@ node_modules/
 **/dist/**/*.css
 **/dist/**/*.js
 **/dist/**/*.map
+*.sqlite

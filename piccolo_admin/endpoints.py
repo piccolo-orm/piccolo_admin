@@ -5,7 +5,7 @@ import os
 import typing as t
 
 from piccolo.table import Table
-from piccolo.extensions.user import User
+from piccolo.extensions.user import BaseUser
 from piccolo_api.endpoints.crud import PiccoloCRUD
 # from piccolo_api.endpoints.auth import JWTLogin
 from starlette.middleware.cors import CORSMiddleware
@@ -26,9 +26,9 @@ class AdminRouter(Router):
     The root returns a single page app. The other URLs are REST endpoints.
     """
     table: t.List[Table] = []
-    auth_table: User = None
+    auth_table: BaseUser = None
 
-    def __init__(self, *tables: Table, auth_table: User) -> None:
+    def __init__(self, *tables: Table, auth_table: BaseUser) -> None:
         self.auth_table = auth_table
 
         routes: t.List[BaseRoute] = [
@@ -91,7 +91,7 @@ class AdminRouter(Router):
         ])
 
 
-def create_admin(tables: t.Sequence[Table], auth_table: User):
+def create_admin(tables: t.Sequence[Table], auth_table: BaseUser):
     return CORSMiddleware(
         AdminRouter(*tables, auth_table=auth_table),
         allow_origins=['*'],

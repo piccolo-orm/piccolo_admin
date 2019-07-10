@@ -27,11 +27,15 @@ class Movie(Table):
     name = Varchar(length=300)
     rating = Integer()
 
+    class Meta():
+        db = DB
+
 
 def main():
     # Recreate the database
     path = os.path.join(os.path.dirname(__file__), DB_PATH)
-    os.unlink(path)
+    if os.path.exists(path):
+        os.unlink(path)
     Movie.create.run_sync()
     User.create.run_sync()
 
