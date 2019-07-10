@@ -12,7 +12,7 @@ from piccolo.extensions.user import BaseUser
 from piccolo.table import Table
 from piccolo.columns import Varchar, Integer
 
-from piccolo_admin.endpoints import AdminRouter
+from piccolo_admin.endpoints import create_admin
 
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'example.sqlite')
@@ -40,7 +40,7 @@ def main():
     User.create.run_sync()
 
     # Run the admin
-    app = AdminRouter(Movie, auth_table=User)
+    app = create_admin([Movie], auth_table=User)
     uvicorn.run(app)
 
 

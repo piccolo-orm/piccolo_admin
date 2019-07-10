@@ -72,3 +72,9 @@ npm run serve
 ```
 
 It will auto refresh the UI as you make changes to the source files.
+
+The UI needs an API to interact with - the easiest way to do this is to use the demo app.
+
+```bash
+admin_demo
+```
