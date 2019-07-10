@@ -27,7 +27,7 @@ class AdminRouter(Router):
             Route(
                 path='/',
                 endpoint=self.get_root,
-                methods=['GET', 'POST', 'DELETE']
+                methods=['GET']
             ),
             Route(
                 path='/tables/',
