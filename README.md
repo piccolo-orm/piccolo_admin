@@ -6,7 +6,7 @@ piccolo_admin provides a simple admin interface on top of Piccolo models.
 
 ## Demo
 
-To run a demo:
+To run a demo, using Python 3.7 or above:
 
 ```bash
 pip install piccolo_admin
