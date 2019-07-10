@@ -1,3 +1,4 @@
+*.pyc
 .vscode/
 .mypy_cache/
 .DS_Store

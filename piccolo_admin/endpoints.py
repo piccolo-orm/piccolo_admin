@@ -23,7 +23,7 @@ ASSET_PATH = os.path.join(
 
 class AdminRouter(Router):
     """
-    The root should return a single page app.
+    The root returns a single page app. The other URLs are REST endpoints.
     """
     table: t.List[Table] = []
     auth_table: User = None
