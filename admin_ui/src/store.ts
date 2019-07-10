@@ -5,6 +5,8 @@ import * as i from './interfaces';
 
 Vue.use(Vuex);
 
+const BASE_URL = process.env.VUE_APP_BASE_URI
+
 
 export default new Vuex.Store({
     state: {
@@ -37,13 +39,13 @@ export default new Vuex.Store({
     },
     actions: {
         async fetchTableNames(context) {
-            const response = await axios.get('http://localhost:8000/admin/tables/')
+            const response = await axios.get(`${BASE_URL}tables/`)
             this.commit('updateTableNames', response.data)
         },
         async fetchRows(context, config: i.FetchRowsConfig) {
             try {
                 const response = await axios.get(
-                    `http://localhost:8000/admin/tables/${config.tableName}/`,
+                    `${BASE_URL}tables/${config.tableName}/`,
                     {
                         params: config.params
                     }
@@ -63,28 +65,28 @@ export default new Vuex.Store({
         },
         async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
             const response = await axios.get(
-                `http://localhost:8000/admin/tables/${config.tableName}/${config.rowID}`
+                `${BASE_URL}tables/${config.tableName}/${config.rowID}`
             )
             context.commit('updateSelectedRow', response.data)
             return response
         },
         async fetchSchema(context, tableName: string) {
             const response =  await axios.get(
-                `http://localhost:8000/admin/tables/${tableName}/schema/`
+                `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit('updateSchema', response.data)
             return response
         },
         async createRow(context, config: i.CreateRow) {
             const response =  await axios.post(
-                `http://localhost:8000/admin/tables/${config.tableName}/`,
+                `${BASE_URL}tables/${config.tableName}/`,
                 config.data
             )
             return response
         },
         async deleteRow(context, config: i.DeleteRow) {
             const response =  await axios.delete(
-                `http://localhost:8000/admin/tables/${config.tableName}/${config.rowID}/`
+                `${BASE_URL}tables/${config.tableName}/${config.rowID}/`
             )
             return response
         },

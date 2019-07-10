@@ -27,14 +27,31 @@ class AdminRouter(Router):
     """
     table: t.List[Table] = []
     auth_table: BaseUser = None
+    template: str = ''
 
     def __init__(self, *tables: Table, auth_table: BaseUser) -> None:
         self.auth_table = auth_table
 
+        with open(os.path.join(ASSET_PATH, 'index.html')) as f:
+            self.template = f.read()
+
         routes: t.List[BaseRoute] = [
+            Route(
+                path='/',
+                endpoint=self.get_root,
+                methods=['GET']
+            ),
             Mount(
-                path='/admin',
-                app=StaticFiles(directory=ASSET_PATH, html=True),
+                path='/css',
+                app=StaticFiles(
+                    directory=os.path.join(ASSET_PATH, 'css')
+                ),
+            ),
+            Mount(
+                path='/js',
+                app=StaticFiles(
+                    directory=os.path.join(ASSET_PATH, 'js')
+                ),
             ),
             Route(
                 path='/tables/',
@@ -56,6 +73,9 @@ class AdminRouter(Router):
 
         self.tables = tables
         super().__init__(routes)
+
+    async def get_root(self, request: Request) -> HTMLResponse:
+        return HTMLResponse(self.template)
 
     ###########################################################################
 
