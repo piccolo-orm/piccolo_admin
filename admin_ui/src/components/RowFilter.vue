@@ -24,8 +24,8 @@
                     v-if="field.type == 'string'" />
                 <input
                     type="checkbox"
-                    v-bind:name="property.title.toLowerCase()"
-                    v-if="property.type == 'boolean'" />
+                    v-bind:name="field.title.toLowerCase()"
+                    v-if="field.type == 'boolean'" />
             </div>
             <button>Apply</button>
             <button>Clear filters</button>
