@@ -1,5 +1,72 @@
-# piccolo_admin
+# Piccolo Admin
 
-Provides an admin interface on top of Piccolo models.
+piccolo_admin provides a simple admin interface on top of Piccolo models.
 
-The front end is built using Vue.JS, and the backend is written in Python.
+## Demo
+
+To run a demo:
+
+```bash
+pip install piccolo_admin
+admin_demo
+```
+
+And then just launch `localhost:8000` in your browser.
+
+To see what happens behind the scenes, see `piccolo_admin/example.py`.
+
+In a few lines of code we are able to:
+
+ * Define our models
+ * Setup a database
+ * Create a REST API
+ * Setup a web server and admin interface
+
+## ASGI
+
+Since the admin is an ASGI app, you can either run it standalone like in the demo, or integrate it with a larger ASGI app.
+
+For example, using Starlette routes:
+
+```python
+from piccolo_admin.endpoints import AdminRouter
+from starlette.routing import Router, Route
+import uvicorn
+
+from my_project.tables import Movie, User
+from my_project.endpoints import Hello
+
+
+admin = AdminRouter(Movie, auth_table=User)
+
+
+router = Router([
+    Route(path="/", endpoint=Hello),
+    Mount(path="/admin/", app=admin),
+])
+
+
+if __name__ == '__main__':
+    uvicorn.run(router)
+
+```
+
+## Contributing
+
+The backend is just vanilla Python.
+
+The front end is built using Vue.js. To make modifications, clone the repo, and cd into the admin_ui directory.
+
+Install the npm dependencies:
+
+```bash
+npm install
+```
+
+And then you can launch the admin as follows:
+
+```bash
+npm run serve
+```
+
+It will auto refresh the UI as you make changes to the source files.
