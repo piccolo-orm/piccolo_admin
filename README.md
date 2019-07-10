@@ -2,7 +2,7 @@
 
 piccolo_admin provides a simple admin interface on top of Piccolo models.
 
-![Screenshot](docs/images/screenshot.png?raw=true "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
 
 ## Demo
 
