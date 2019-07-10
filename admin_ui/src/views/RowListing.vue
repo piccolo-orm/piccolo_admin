@@ -84,7 +84,7 @@ export default Vue.extend({
     props: [
         'tableName'
     ],
-    data: function() {
+    data() {
         return {
             showFilter: false
         }
@@ -95,23 +95,23 @@ export default Vue.extend({
         TableNav
     },
     computed: {
-        cellNames: function() {
-            var keys = []
+        cellNames() {
+            const keys = []
             for (var key in this.rows[0]) {
                 keys.push(key)
             }
             return keys
         },
-        rows: function() {
+        rows() {
             return this.$store.state.rows;
         },
-        schema: function() {
+        schema() {
             return this.$store.state.schema;
         },
     },
     methods: {
-        submitForm: async function(event) {
-            console.log("I was pressed")
+        async submitForm(event) {
+            console.log('I was pressed')
             var form = new FormData(event.target)
 
             var json = {}
@@ -127,7 +127,7 @@ export default Vue.extend({
             )
             await this.fetchRows()
         },
-        deleteRow: async function(rowID) {
+        async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
                 console.log("Deleting!")
                 await this.$store.dispatch(
@@ -140,7 +140,7 @@ export default Vue.extend({
                 await this.fetchRows()
             }
         },
-        fetchRows: async function() {
+        async fetchRows() {
             await this.$store.dispatch(
                 'fetchRows',
                 {
@@ -149,7 +149,7 @@ export default Vue.extend({
                 }
             )
         },
-        fetchSchema: async function() {
+        async fetchSchema() {
             await this.$store.dispatch(
                 'fetchSchema',
                 this.tableName
@@ -166,7 +166,7 @@ export default Vue.extend({
             ])
         }
     },
-    mounted: async function() {
+    async mounted() {
         this.$store.commit('updateCurrentTablename', this.tableName)
         await Promise.all([
             this.fetchRows(),

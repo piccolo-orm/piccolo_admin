@@ -36,21 +36,23 @@
 
 
 <script lang="ts">
-export default {
+import Vue from 'vue'
+
+export default Vue.extend({
     computed: {
-        schema: function() {
+        schema() {
             return this.$store.state.schema
         },
-        tableName: function() {
+        tableName() {
             return this.$store.state.currentTableName
         }
     },
     methods: {
-        submitForm: async function(event) {
-            var form = new FormData(event.target)
+        async submitForm(event: any) {
+            const form = new FormData(event.target)
 
-            var json = {}
-            for (var i of form.entries()) {
+            const json = {}
+            for (const i of form.entries()) {
                 json[i[0]] = i[1]
             }
             await this.$store.dispatch(
@@ -63,7 +65,7 @@ export default {
             this.$emit('close')
         }
     }
-}
+})
 </script>
 
 

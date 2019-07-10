@@ -15,7 +15,7 @@ export interface FetchRowsConfig {
 
 
 export interface FetchSingleRowConfig {
-    tablename: string
+    tableName: string
     rowID: number
 }
 

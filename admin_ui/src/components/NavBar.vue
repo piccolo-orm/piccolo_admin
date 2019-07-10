@@ -15,18 +15,21 @@
 
 
 <script lang="ts">
-export default {
+import Vue from 'vue'
+
+
+export default Vue.extend({
     computed: {
-        tableName: function() {
+        tableName() {
             return this.$store.state.currentTableName
         }
     },
     methods: {
-        logout: function() {
-            window.confirm("Are you sure you want to logout?")
+        logout() {
+            window.confirm('Are you sure you want to logout?')
         }
     }
-}
+})
 </script>
 
 

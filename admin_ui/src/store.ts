@@ -13,10 +13,10 @@ export default new Vuex.Store({
         rows: [],
         schema: {},
         selectedRow: undefined,
-        apiResponseMessage: <i.APIResponseMessage|null> null
+        apiResponseMessage: null as i.APIResponseMessage|null
     },
     mutations: {
-        updateTableNames: function(state, value) {
+        updateTableNames(state, value) {
             state.tableNames = value
         },
         updateCurrentTablename(state, value) {
@@ -36,11 +36,11 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        fetchTableNames: async function(context) {
+        async fetchTableNames(context) {
             const response = await axios.get('http://localhost:8000/admin/tables/')
             this.commit('updateTableNames', response.data)
         },
-        fetchRows: async function(context, config: i.FetchRowsConfig) {
+        async fetchRows(context, config: i.FetchRowsConfig) {
             try {
                 const response = await axios.get(
                     `http://localhost:8000/admin/tables/${config.tableName}/`,
@@ -61,28 +61,28 @@ export default new Vuex.Store({
                 )
             }
         },
-        fetchSingleRow: async function(context, config: i.FetchSingleRowConfig) {
-            let response = await axios.get(
+        async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
+            const response = await axios.get(
                 `http://localhost:8000/admin/tables/${config.tableName}/${config.rowID}`
             )
             context.commit('updateSelectedRow', response.data)
             return response
         },
-        fetchSchema: async function(context, tableName: string) {
+        async fetchSchema(context, tableName: string) {
             const response =  await axios.get(
                 `http://localhost:8000/admin/tables/${tableName}/schema/`
             )
             context.commit('updateSchema', response.data)
             return response
         },
-        createRow: async function(context, config: i.CreateRow) {
+        async createRow(context, config: i.CreateRow) {
             const response =  await axios.post(
                 `http://localhost:8000/admin/tables/${config.tableName}/`,
                 config.data
             )
             return response
         },
-        deleteRow: async function(context, config: i.DeleteRow) {
+        async deleteRow(context, config: i.DeleteRow) {
             const response =  await axios.delete(
                 `http://localhost:8000/admin/tables/${config.tableName}/${config.rowID}/`
             )

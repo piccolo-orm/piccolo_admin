@@ -15,23 +15,23 @@ import Vue from 'vue';
 
 export default Vue.extend({
     computed: {
-        tableNames: function() {
+        tableNames() {
             return this.$store.state.tableNames
         },
-        currentTableName: function() {
+        currentTableName() {
             return this.$store.state.currentTableName
         }
     },
     methods: {
-        showListing: function(tableName: string) {
+        showListing(tableName: string) {
             this.$store.commit('updateCurrentTablename', tableName)
-            this.$router.push({name: 'rowListing', params: {tableName: tableName}})
+            this.$router.push({name: 'rowListing', params: {tableName}})
         },
-        isActive: function(tableName: string): boolean {
-            return this.currentTableName == tableName
+        isActive(tableName: string): boolean {
+            return this.currentTableName === tableName
         }
     },
-    mounted: async function() {
+    async mounted() {
         await this.$store.dispatch('fetchTableNames')
     }
 })

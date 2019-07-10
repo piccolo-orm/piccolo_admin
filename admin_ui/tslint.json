@@ -1,5 +1,5 @@
 {
-  "defaultSeverity": "warning",
+  "defaultSeverity": "error",
   "extends": [
     "tslint:recommended"
   ],
@@ -10,13 +10,15 @@
   },
   "rules": {
     "quotemark": [true, "single"],
-    "indent": [true, "spaces", 2],
+    "indent": [true, "spaces", 4],
     "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "no-consecutive-blank-lines": false,
     "semicolon": false,
     "trailing-comma": false,
-    "no-debugger": false
+    "no-debugger": false,
+    "no-console": false,
+    "object-literal-shorthand": true
   }
 }

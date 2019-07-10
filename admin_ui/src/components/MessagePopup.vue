@@ -11,27 +11,25 @@ import Vue from 'vue'
 import * as i from '../interfaces'
 
 export default Vue.extend({
-    data: function() {
+    data() {
         return {
             visible: false
         }
     },
     computed: {
-        message: function(): string {
+        message(): string {
             return this.apiResponseMessage ? this.apiResponseMessage.contents : '-'
         },
-        apiResponseMessage: function(): i.APIResponseMessage {
+        apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
         }
     },
     watch: {
-        apiResponseMessage: function() {
+        apiResponseMessage() {
             this.visible = true
-            let app = this
+            const app = this
             setTimeout(
-                function() {
-                    app.visible = false
-                },
+                () => app.visible = false,
                 3000
             )
         }

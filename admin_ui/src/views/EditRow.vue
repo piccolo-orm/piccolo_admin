@@ -4,7 +4,7 @@
     <div class="edit_wrapper">
         <p>
             <router-link
-                v-bind:to="{name: 'rowListing', params: {tableName: tableName}}">Back</router-link>
+                v-bind:to="{name: 'rowListing', params: {tableName}}">Back</router-link>
         </p>
 
         <h1>Edit</h1>
@@ -35,20 +35,20 @@ export default Vue.extend({
         NavBar,
     },
     computed: {
-        schema: function() {
+        schema() {
             return this.$store.state.schema
         },
-        selectedRow: function() {
+        selectedRow() {
             // The form should be reusable???
             return this.$store.state.selectedRow
         }
     },
     methods: {
-        getValue: function(value) {
+        getValue(value) {
             return this.selectedRow ? this.selectedRow[value.toLowerCase()] : ''
         }
     },
-    mounted: async function() {
+    async mounted() {
         this.$store.commit('updateCurrentTablename', this.tableName)
         await Promise.all([
             this.$store.dispatch(
