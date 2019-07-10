@@ -32,9 +32,7 @@ setup(
     packages=find_packages(exclude=('tests',)),
     install_requires=REQUIREMENTS,
     license='MIT',
-    package_data={
-        'piccolo_admin': ['*.css', '*.js', '*.js.map', '*.html'],
-    },
+    include_package_data=True,
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
