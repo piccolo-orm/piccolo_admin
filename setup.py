@@ -4,7 +4,7 @@
 import os
 from setuptools import find_packages, setup
 
-from piccolo_api import __VERSION__ as VERSION
+from piccolo_admin import __VERSION__ as VERSION
 
 
 directory = os.path.abspath(os.path.dirname(__file__))
