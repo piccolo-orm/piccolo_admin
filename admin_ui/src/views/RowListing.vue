@@ -97,7 +97,7 @@ export default Vue.extend({
     computed: {
         cellNames() {
             const keys = []
-            for (var key in this.rows[0]) {
+            for (const key in this.rows[0]) {
                 keys.push(key)
             }
             return keys
@@ -112,10 +112,10 @@ export default Vue.extend({
     methods: {
         async submitForm(event) {
             console.log('I was pressed')
-            var form = new FormData(event.target)
+            const form = new FormData(event.target)
 
-            var json = {}
-            for (var i of form.entries()) {
+            const json = {}
+            for (const i of form.entries()) {
                 json[i[0]] = i[1]
             }
             const response = await this.$store.dispatch(
@@ -129,12 +129,12 @@ export default Vue.extend({
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
-                console.log("Deleting!")
+                console.log('Deleting!')
                 await this.$store.dispatch(
                     'deleteRow',
                     {
                         tableName: this.tableName,
-                        rowID: rowID
+                        rowID
                     }
                 )
                 await this.fetchRows()
@@ -157,7 +157,7 @@ export default Vue.extend({
         }
     },
     watch: {
-        '$route.params.tableName': async function (id) {
+        '$route.params.tableName': async function(id) {
             this.$store.commit('updateCurrentTablename', this.tableName)
             this.$store.commit('updateRows', [])
             await Promise.all([
