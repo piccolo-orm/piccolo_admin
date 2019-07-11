@@ -13,6 +13,7 @@ from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
+from starlette.exceptions import ExceptionMiddleware
 
 
 ASSET_PATH = os.path.join(
@@ -112,9 +113,11 @@ class AdminRouter(Router):
 
 
 def create_admin(tables: t.Sequence[Table], auth_table: BaseUser):
-    return CORSMiddleware(
-        AdminRouter(*tables, auth_table=auth_table),
-        allow_origins=['*'],
-        allow_methods=['*'],
-        allow_headers=['*']
+    return ExceptionMiddleware(
+        CORSMiddleware(
+            AdminRouter(*tables, auth_table=auth_table),
+            allow_origins=['*'],
+            allow_methods=['*'],
+            allow_headers=['*']
+        )
     )
