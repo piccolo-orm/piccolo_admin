@@ -77,4 +77,7 @@ The UI needs an API to interact with - the easiest way to do this is to use the 
 
 ```bash
 admin_demo
+
+# Or alternatively
+python -m piccolo_admin.example
 ```
