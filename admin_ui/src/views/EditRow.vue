@@ -3,8 +3,7 @@
     <NavBar />
     <div class="edit_wrapper">
         <p>
-            <router-link
-                v-bind:to="{name: 'rowListing', params: {tableName}}">Back</router-link>
+            <a href='#' v-on:click.prevent="$router.go(-1)">Back</a>
         </p>
 
         <h1>Edit</h1>
