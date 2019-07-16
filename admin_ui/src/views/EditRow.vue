@@ -11,10 +11,19 @@
         <form v-on:submit.prevent="submitForm($event)">
             <div v-for="property in schema.properties" v-bind:key="property.title">
                 <label>{{ property.title }}</label>
-                <input
-                    type="text"
-                    v-bind:name="property.title.toLowerCase()"
-                    v-bind:value="getValue(property.title)">
+
+                <template v-if="property.foreign_key">
+                    <KeySelect
+                        v-bind:tableName="property.to"
+                        v-bind:fieldName="property.title.toLowerCase()" />
+                </template>
+                <template v-else>
+                    <input
+                        type="text"
+                        v-bind:name="property.title.toLowerCase()"
+                        v-bind:value="getValue(property.title)">
+                </template>
+
             </div>
             <button>Save</button>
         </form>
@@ -26,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import NavBar from '../components/NavBar.vue'
+import KeySelect from '../components/KeySelect.vue'
 import {UpdateRow} from '../interfaces'
 
 
@@ -36,6 +46,7 @@ export default Vue.extend({
     ],
     components: {
         NavBar,
+        KeySelect
     },
     computed: {
         schema() {

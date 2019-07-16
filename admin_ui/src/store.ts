@@ -63,6 +63,12 @@ export default new Vuex.Store({
                 )
             }
         },
+        async fetchIds(context, tableName: string) {
+            const response = await axios.get(
+                `${BASE_URL}tables/${tableName}/ids/`
+            )
+            return response
+        },
         async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
             const response = await axios.get(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}`
