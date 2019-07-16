@@ -15,6 +15,7 @@
                 <template v-if="property.foreign_key">
                     <KeySelect
                         v-bind:tableName="property.to"
+                        v-bind:value="getValue(property.title)"
                         v-bind:fieldName="property.title.toLowerCase()" />
                 </template>
                 <template v-else>

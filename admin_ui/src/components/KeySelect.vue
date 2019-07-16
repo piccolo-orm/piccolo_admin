@@ -1,9 +1,10 @@
 <template>
 <select v-bind:name="fieldName">
     <option
-        v-for="value in ids"
-        v-bind:key="value"
-        v-bind:value="value">{{ value }}</option>
+        v-for="_value in ids"
+        v-bind:key="_value"
+        v-bind:value="_value"
+        v-bind:selected="value === _value">{{ _value }}</option>
 </select>
 </template>
 
@@ -12,7 +13,8 @@
 export default {
     props: {
         fieldName: String,
-        tableName: String
+        tableName: String,
+        value: Number
     },
     data() {
         return {
