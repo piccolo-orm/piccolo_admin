@@ -3,3 +3,4 @@ piccolo>=0.3.6
 piccolo_api>=0.1.1
 uvicorn>=0.8.3
 aiofiles==0.4.0
+Hypercorn==0.7.0

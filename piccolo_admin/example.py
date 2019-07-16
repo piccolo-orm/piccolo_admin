@@ -6,13 +6,15 @@ or `admin_demo`.
 """
 import os
 
-import uvicorn
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.extensions.user import BaseUser
 from piccolo.table import Table
 from piccolo.columns import Varchar, Integer, ForeignKey
 
 from piccolo_admin.endpoints import create_admin
+
+
+USE_HYPERCORN = True
 
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'example.sqlite')
@@ -25,7 +27,7 @@ class User(BaseUser):
 
 
 class Director(Table):
-    name = Varchar(length=300)
+    name = Varchar(length=300, null=False)
 
     class Meta():
         db = DB
@@ -38,6 +40,9 @@ class Movie(Table):
 
     class Meta():
         db = DB
+
+
+APP = create_admin([Director, Movie], auth_table=User)
 
 
 def main():
@@ -57,9 +62,24 @@ def main():
         director=director.id
     ).save.run_sync()
 
-    # Run the admin
-    app = create_admin([Director, Movie], auth_table=User)
-    uvicorn.run(app)
+    # Server
+    if USE_HYPERCORN:
+        import asyncio
+        from hypercorn.asyncio import serve
+        from hypercorn.config import Config
+
+        class CustomConfig(Config):
+            use_reloader = True
+
+        asyncio.run(
+            serve(APP, CustomConfig())
+        )
+    else:
+        # Uvicorn (v0.8) doesn't support breakpoints when using auto reload,
+        # which is why Hypercorn is used by default.
+        import uvicorn
+
+        uvicorn.run('piccolo_admin.example:APP', reload=True)
 
 
 if __name__ == "__main__":
