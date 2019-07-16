@@ -33,7 +33,12 @@
                 </tr>
 
                 <tr v-for="row in rows" v-bind:key="row.id">
-                    <td v-for="cell in row" v-bind:key="cell">{{ cell }}</td>
+                    <td v-for="(cell, name) in row" v-bind:key="cell">
+                        <span v-if="isForeignKey(name)">
+                            <router-link :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row.id }}">{{ cell }}</router-link>
+                        </span>
+                        <span v-else>{{ cell }}</span>
+                    </td>
 
                     <td class="snug">
                         <ul>
@@ -110,6 +115,14 @@ export default Vue.extend({
         },
     },
     methods: {
+        isForeignKey(name: string) {
+            let property = this.schema.properties[name]
+            return property != undefined ? property.foreign_key : false
+        },
+        getTableName(name: string) {
+            // Find the table name a foreign key refers to:
+            return this.schema.properties[name].to
+        },
         async submitForm(event) {
             console.log('I was pressed')
             const form = new FormData(event.target)
