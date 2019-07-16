@@ -8,6 +8,12 @@ export interface DeleteRow {
     rowID: number
 }
 
+export interface UpdateRow {
+    tableName: string
+    rowID: number
+    data: object
+}
+
 export interface FetchRowsConfig {
     tableName: string
     params: object

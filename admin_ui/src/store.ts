@@ -90,5 +90,12 @@ export default new Vuex.Store({
             )
             return response
         },
+        async updateRow(context, config: i.UpdateRow) {
+            const response = await axios.put(
+                `${BASE_URL}tables/${config.tableName}/${config.rowID}/`,
+                config.data
+            )
+            return response
+        }
     },
 });

@@ -8,7 +8,7 @@
 
         <h1>Edit</h1>
 
-        <form>
+        <form v-on:submit.prevent="submitForm($event)">
             <div v-for="property in schema.properties" v-bind:key="property.title">
                 <label>{{ property.title }}</label>
                 <input type="text" v-bind:value="getValue(property.title)">
@@ -20,9 +20,10 @@
 </template>
 
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
 import NavBar from '../components/NavBar.vue'
+import {UpdateRow} from '../interfaces'
 
 
 export default Vue.extend({
@@ -38,13 +39,29 @@ export default Vue.extend({
             return this.$store.state.schema
         },
         selectedRow() {
-            // The form should be reusable???
             return this.$store.state.selectedRow
         }
     },
     methods: {
         getValue(value) {
             return this.selectedRow ? this.selectedRow[value.toLowerCase()] : ''
+        },
+        async submitForm(event) {
+            console.log("Submitting...")
+
+            const form = new FormData(event.target)
+
+            const json = {}
+            for (const i of form.entries()) {
+                json[i[0]] = i[1]
+            }
+
+            let config: UpdateRow = {
+                tableName: this.tableName,
+                rowID: this.rowID,
+                data: json
+            }
+            this.$store.dispatch('updateRow', config)
         }
     },
     async mounted() {
