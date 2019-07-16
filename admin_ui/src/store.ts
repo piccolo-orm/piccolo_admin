@@ -95,6 +95,15 @@ export default new Vuex.Store({
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`,
                 config.data
             )
+
+            context.commit(
+                'updateApiResponseMessage',
+                {
+                    contents: 'Successfully saved row',
+                    type: 'success'
+                }
+            )
+
             return response
         }
     },

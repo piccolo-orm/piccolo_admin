@@ -13,7 +13,8 @@ import * as i from '../interfaces'
 export default Vue.extend({
     data() {
         return {
-            visible: false
+            visible: false,
+            timeLastAppeared: 0
         }
     },
     computed: {
@@ -24,12 +25,27 @@ export default Vue.extend({
             return this.$store.state.apiResponseMessage
         }
     },
+    methods: {
+        getTime(): number {
+            return new Date().getTime()
+        }
+    },
     watch: {
+        visible() {
+            this.timeLastAppeared = this.getTime()
+        },
         apiResponseMessage() {
             this.visible = true
             const app = this
+
             setTimeout(
-                () => app.visible = false,
+                () => {
+                    const now = this.getTime()
+                    // Only hide if it if it wasn't subsequently opened again.
+                    if (now - app.timeLastAppeared >= 3000) {
+                        app.visible = false
+                    }
+                },
                 3000
             )
         }

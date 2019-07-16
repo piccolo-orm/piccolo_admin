@@ -11,7 +11,10 @@
         <form v-on:submit.prevent="submitForm($event)">
             <div v-for="property in schema.properties" v-bind:key="property.title">
                 <label>{{ property.title }}</label>
-                <input type="text" v-bind:name="property.title.toLowerCase()" v-bind:value="getValue(property.title)">
+                <input
+                    type="text"
+                    v-bind:name="property.title.toLowerCase()"
+                    v-bind:value="getValue(property.title)">
             </div>
             <button>Save</button>
         </form>
