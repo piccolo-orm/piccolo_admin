@@ -35,7 +35,7 @@
                 <tr v-for="row in rows" v-bind:key="row.id">
                     <td v-for="(cell, name) in row" v-bind:key="cell">
                         <span v-if="isForeignKey(name)">
-                            <router-link :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row.id }}">{{ cell }}</router-link>
+                            <router-link :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: cell }}">{{ cell }}</router-link>
                         </span>
                         <span v-else>{{ cell }}</span>
                     </td>
