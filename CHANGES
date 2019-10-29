@@ -1,3 +1,7 @@
+v0.2.0
+======
+Updated to work with Piccolo API code layout changes.
+
 v0.1.4
 ======
 Making edit row work.
