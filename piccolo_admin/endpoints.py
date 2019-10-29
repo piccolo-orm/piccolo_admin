@@ -6,8 +6,8 @@ import typing as t
 
 from piccolo.table import Table
 from piccolo.extensions.user import BaseUser
-from piccolo_api.endpoints.crud import PiccoloCRUD
-# from piccolo_api.endpoints.auth import JWTLogin
+from piccolo_api.crud.endpoints import PiccoloCRUD
+# from piccolo_api.jwt_auth.endpoints import JWTLogin
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.responses import HTMLResponse, JSONResponse, Response
