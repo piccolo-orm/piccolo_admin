@@ -21,25 +21,18 @@ DB_PATH = os.path.join(os.path.dirname(__file__), 'example.sqlite')
 DB = SQLiteEngine(path=DB_PATH)
 
 
-class User(BaseUser):
-    class Meta():
-        db = DB
+class User(BaseUser, db=DB):
+    pass
 
 
-class Director(Table):
+class Director(Table, db=DB):
     name = Varchar(length=300, null=False)
 
-    class Meta():
-        db = DB
 
-
-class Movie(Table):
+class Movie(Table, db=DB):
     name = Varchar(length=300)
     rating = Integer()
     director = ForeignKey(references=Director)
-
-    class Meta():
-        db = DB
 
 
 APP = create_admin([Director, Movie], auth_table=User)
@@ -49,18 +42,18 @@ def main():
     # Recreate the database
     if os.path.exists(DB_PATH):
         os.unlink(DB_PATH)
-    Director.create.run_sync()
-    Movie.create.run_sync()
-    User.create.run_sync()
+    Director.create().run_sync()
+    Movie.create().run_sync()
+    User.create().run_sync()
 
     # Add some rows
     director = Director(name='George Lucas')
-    director.save.run_sync()
+    director.save().run_sync()
     Movie(
         name="Star Wars",
         rating=100,
         director=director.id
-    ).save.run_sync()
+    ).save().run_sync()
 
     # Server
     if USE_HYPERCORN:
