@@ -1,51 +1,56 @@
 <template>
-<div>
-    <NavBar />
-    <div class="edit_wrapper">
-        <p>
-            <a href='#' v-on:click.prevent="$router.go(-1)">Back</a>
-        </p>
+    <div>
+        <NavBar />
+        <div class="edit_wrapper">
+            <p>
+                <a
+                    href="#"
+                    v-on:click.prevent="$router.go(-1)"
+                >Back</a>
+            </p>
 
-        <h1>Edit</h1>
+            <h1>Edit</h1>
 
-        <form v-on:submit.prevent="submitForm($event)">
-            <div v-for="property in schema.properties" v-bind:key="property.title">
-                <label>{{ property.title }}</label>
-
-                <template v-if="property.foreign_key">
-                    <KeySelect
-                        v-bind:tableName="property.to"
-                        v-bind:value="getValue(property.title)"
-                        v-bind:fieldName="property.title.toLowerCase()" />
-                </template>
-                <template v-else>
-                    <input
-                        type="text"
-                        v-bind:name="property.title.toLowerCase()"
-                        v-bind:value="getValue(property.title)">
-                </template>
-
-            </div>
-            <button>Save</button>
-        </form>
+            <form v-on:submit.prevent="submitForm($event)">
+                <div
+                    v-bind:key="property.title"
+                    v-for="property in schema.properties"
+                >
+                    <template v-if="property.foreign_key">
+                        <label>{{ property.title }}</label>
+                        <KeySelect
+                            v-bind:fieldName="property.title.toLowerCase()"
+                            v-bind:tableName="property.to"
+                            v-bind:value="getValue(property.title)"
+                        />
+                    </template>
+                    <template v-else>
+                        <InputField
+                            v-bind:key="property.title"
+                            v-bind:title="property.title"
+                            v-bind:type="property.type"
+                            v-bind:value="getValue(property.title)"
+                        />
+                    </template>
+                </div>
+                <button>Save</button>
+            </form>
+        </div>
     </div>
-</div>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue'
-import NavBar from '../components/NavBar.vue'
-import KeySelect from '../components/KeySelect.vue'
-import {UpdateRow} from '../interfaces'
-
+import Vue from "vue"
+import InputField from "../components/InputField.vue"
+import NavBar from "../components/NavBar.vue"
+import KeySelect from "../components/KeySelect.vue"
+import { UpdateRow } from "../interfaces"
 
 export default Vue.extend({
-    props: [
-        'tableName',
-        'rowID'
-    ],
+    props: ["tableName", "rowID"],
     components: {
+        InputField,
         NavBar,
         KeySelect
     },
@@ -59,7 +64,7 @@ export default Vue.extend({
     },
     methods: {
         getValue(value) {
-            return this.selectedRow ? this.selectedRow[value.toLowerCase()] : ''
+            return this.selectedRow ? this.selectedRow[value.toLowerCase()] : ""
         },
         async submitForm(event) {
             console.log("Submitting...")
@@ -76,20 +81,17 @@ export default Vue.extend({
                 rowID: this.rowID,
                 data: json
             }
-            this.$store.dispatch('updateRow', config)
+            this.$store.dispatch("updateRow", config)
         }
     },
     async mounted() {
-        this.$store.commit('updateCurrentTablename', this.tableName)
+        this.$store.commit("updateCurrentTablename", this.tableName)
         await Promise.all([
-            this.$store.dispatch(
-                'fetchSingleRow',
-                {
-                    tableName: this.tableName,
-                    rowID: this.rowID
-                }
-            ),
-            this.$store.dispatch('fetchSchema', this.tableName)
+            this.$store.dispatch("fetchSingleRow", {
+                tableName: this.tableName,
+                rowID: this.rowID
+            }),
+            this.$store.dispatch("fetchSchema", this.tableName)
         ])
     }
 })

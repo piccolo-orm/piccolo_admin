@@ -9,7 +9,7 @@ import os
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.extensions.user import BaseUser
 from piccolo.table import Table
-from piccolo.columns import Varchar, Integer, ForeignKey
+from piccolo.columns import Varchar, Integer, ForeignKey, Boolean
 
 from piccolo_admin.endpoints import create_admin
 
@@ -33,6 +33,7 @@ class Movie(Table, db=DB):
     name = Varchar(length=300)
     rating = Integer()
     director = ForeignKey(references=Director)
+    won_oscar = Boolean()
 
 
 APP = create_admin([Director, Movie], auth_table=User)

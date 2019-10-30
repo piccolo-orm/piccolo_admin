@@ -1,100 +1,131 @@
 <template>
-<div>
-    <NavBar />
-    <div class="wrapper">
-        <div class="sidebar">
-            <p><router-link to="/"><font-awesome-icon icon="home" /> Home</router-link></p>
-            <p><font-awesome-icon icon="table" /> Tables</p>
-            <TableNav />
-        </div>
-
-        <div class="left_column">
-            <div class="title_bar">
-                <h1>{{ tableName }}</h1>
-                <ul>
-                    <li>
-                        <a href="#" v-on:click.prevent="showFilter = true"><font-awesome-icon icon="filter" /> Filter</a>
-                    </li>
-                    <li>
-                        <a href="#"><font-awesome-icon icon="plus" /> Add Row</a>
-                    </li>
-                </ul>
+    <div>
+        <NavBar />
+        <div class="wrapper">
+            <div class="sidebar">
+                <p>
+                    <router-link to="/">
+                        <font-awesome-icon icon="home" />Home
+                    </router-link>
+                </p>
+                <p>
+                    <font-awesome-icon icon="table" />Tables
+                </p>
+                <TableNav />
             </div>
 
-            <RowFilter
-                v-if="showFilter"
-                v-on:close="showFilter = false" />
-
-            <p v-if="rows.length == 0">No results found</p>
-            <table v-else>
-                <tr>
-                    <th v-for="name in cellNames" v-bind:key="name">{{ name }}</th>
-                    <th>Actions</th>
-                </tr>
-
-                <tr v-for="row in rows" v-bind:key="row.id">
-                    <td v-for="(cell, name) in row" v-bind:key="cell">
-                        <span v-if="isForeignKey(name)">
-                            <router-link :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: cell }}">{{ cell }}</router-link>
-                        </span>
-                        <span v-else>{{ cell }}</span>
-                    </td>
-
-                    <td class="snug">
-                        <ul>
-                            <li>
-                                <router-link :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}" title="Edit Row">
-                                    <font-awesome-icon icon="edit" />
-                                </router-link>
-                            </li>
-                            <li>
-                                <a href="#" class="delete" v-on:click.prevent="deleteRow(row.id)" title="Delete Row">
-                                    <font-awesome-icon icon="trash-alt" />
-                                </a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="right_column">
-            <h2>Add</h2>
-            <form v-on:submit.prevent="submitForm($event)">
-                <div v-for="property in schema.properties" v-bind:key="property.title">
-                    <label>{{ property.title }}</label>
-
-                    <input v-if="property.type == 'integer'" type="number" v-bind:name="property.title.toLowerCase()" />
-
-                    <input v-if="property.type == 'string'" type="text" v-bind:name="property.title.toLowerCase()" />
-
-                    <input v-if="property.type == 'boolean'" type="checkbox" v-bind:name="property.title.toLowerCase()" />
+            <div class="left_column">
+                <div class="title_bar">
+                    <h1>{{ tableName }}</h1>
+                    <ul>
+                        <li>
+                            <a
+                                href="#"
+                                v-on:click.prevent="showFilter = true"
+                            >
+                                <font-awesome-icon icon="filter" />Filter
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <font-awesome-icon icon="plus" />Add Row
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <button>Create</button>
-            </form>
+
+                <RowFilter
+                    v-if="showFilter"
+                    v-on:close="showFilter = false"
+                />
+
+                <p v-if="rows.length == 0">No results found</p>
+                <table v-else>
+                    <tr>
+                        <th
+                            v-bind:key="name"
+                            v-for="name in cellNames"
+                        >{{ name }}</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    <tr
+                        v-bind:key="row.id"
+                        v-for="row in rows"
+                    >
+                        <td
+                            v-bind:key="cell"
+                            v-for="(cell, name) in row"
+                        >
+                            <span v-if="isForeignKey(name)">
+                                <router-link
+                                    :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: cell }}"
+                                >{{ cell }}</router-link>
+                            </span>
+                            <span v-else>{{ cell }}</span>
+                        </td>
+
+                        <td class="snug">
+                            <ul>
+                                <li>
+                                    <router-link
+                                        :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
+                                        title="Edit Row"
+                                    >
+                                        <font-awesome-icon icon="edit" />
+                                    </router-link>
+                                </li>
+                                <li>
+                                    <a
+                                        class="delete"
+                                        href="#"
+                                        title="Delete Row"
+                                        v-on:click.prevent="deleteRow(row.id)"
+                                    >
+                                        <font-awesome-icon icon="trash-alt" />
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="right_column">
+                <h2>Add</h2>
+                <form v-on:submit.prevent="submitForm($event)">
+                    <InputField
+                        v-bind:key="property.title"
+                        v-bind:title="property.title"
+                        v-bind:type="property.type"
+                        v-bind:value="undefined"
+                        v-for="property in schema.properties"
+                    />
+                    <button>Create</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue'
-import axios from 'axios'
-import RowFilter from '../components/RowFilter.vue'
-import NavBar from '../components/NavBar.vue'
-import TableNav from '../components/TableNav.vue'
+import Vue from "vue"
+import axios from "axios"
+import RowFilter from "../components/RowFilter.vue"
+import NavBar from "../components/NavBar.vue"
+import TableNav from "../components/TableNav.vue"
+import InputField from "../components/InputField.vue"
 
 export default Vue.extend({
-    props: [
-        'tableName'
-    ],
+    props: ["tableName"],
     data() {
         return {
             showFilter: false
         }
     },
     components: {
+        InputField,
         RowFilter,
         NavBar,
         TableNav
@@ -108,11 +139,11 @@ export default Vue.extend({
             return keys
         },
         rows() {
-            return this.$store.state.rows;
+            return this.$store.state.rows
         },
         schema() {
-            return this.$store.state.schema;
-        },
+            return this.$store.state.schema
+        }
     },
     methods: {
         isForeignKey(name: string) {
@@ -124,74 +155,56 @@ export default Vue.extend({
             return this.schema.properties[name].to
         },
         async submitForm(event) {
-            console.log('I was pressed')
+            console.log("I was pressed")
             const form = new FormData(event.target)
 
             const json = {}
             for (const i of form.entries()) {
                 json[i[0]] = i[1]
             }
-            const response = await this.$store.dispatch(
-                'createRow',
-                {
-                    tableName: this.tableName,
-                    data: json
-                }
-            )
+            const response = await this.$store.dispatch("createRow", {
+                tableName: this.tableName,
+                data: json
+            })
             await this.fetchRows()
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
-                console.log('Deleting!')
-                await this.$store.dispatch(
-                    'deleteRow',
-                    {
-                        tableName: this.tableName,
-                        rowID
-                    }
-                )
+                console.log("Deleting!")
+                await this.$store.dispatch("deleteRow", {
+                    tableName: this.tableName,
+                    rowID
+                })
                 await this.fetchRows()
             }
         },
         async fetchRows() {
-            await this.$store.dispatch(
-                'fetchRows',
-                {
-                    tableName: this.tableName,
-                    params: {}
-                }
-            )
+            await this.$store.dispatch("fetchRows", {
+                tableName: this.tableName,
+                params: {}
+            })
         },
         async fetchSchema() {
-            await this.$store.dispatch(
-                'fetchSchema',
-                this.tableName
-            )
+            await this.$store.dispatch("fetchSchema", this.tableName)
         }
     },
     watch: {
-        '$route.params.tableName': async function(id) {
-            this.$store.commit('updateCurrentTablename', this.tableName)
-            this.$store.commit('updateRows', [])
-            await Promise.all([
-                this.fetchRows(),
-                this.fetchSchema()
-            ])
+        "$route.params.tableName": async function(id) {
+            this.$store.commit("updateCurrentTablename", this.tableName)
+            this.$store.commit("updateRows", [])
+            await Promise.all([this.fetchRows(), this.fetchSchema()])
         }
     },
     async mounted() {
-        this.$store.commit('updateCurrentTablename', this.tableName)
-        await Promise.all([
-            this.fetchRows(),
-            this.fetchSchema()
-        ])
+        this.$store.commit("updateCurrentTablename", this.tableName)
+        await Promise.all([this.fetchRows(), this.fetchSchema()])
     }
 })
 </script>
 
 
 <style lang="less">
-@border_color: rgba(255,255,255,0.2);
+@border_color: rgba(255, 255, 255, 0.2);
 @light_blue: #009dff;
 
 div.title_bar {
@@ -242,13 +255,13 @@ div.wrapper {
 
             li {
                 a {
-                    background-color: rgba(0,0,0,0.2);
+                    background-color: rgba(0, 0, 0, 0.2);
                     display: block;
                     padding: 0.5rem;
                     text-decoration: none;
 
                     &:hover {
-                        background-color: rgba(0,0,0,0.4);
+                        background-color: rgba(0, 0, 0, 0.4);
                     }
 
                     &.active {
@@ -259,7 +272,8 @@ div.wrapper {
         }
     }
 
-    div.left_column, div.right_column {
+    div.left_column,
+    div.right_column {
         overflow: scroll;
         padding: 0.5rem;
     }
@@ -283,7 +297,8 @@ div.wrapper {
                     text-align: right;
                 }
             }
-            td, th {
+            td,
+            th {
                 padding: 0.5rem;
             }
             td {
