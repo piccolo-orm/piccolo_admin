@@ -68,7 +68,7 @@ class AdminRouter(Router):
 
         for table in tables:
             routes.append(Mount(
-                path=f'/tables/{table.__name__.lower()}/',
+                path=f'/tables/{table._meta.tablename}/',
                 app=PiccoloCRUD(table, read_only=False)
             ))
 
@@ -108,7 +108,7 @@ class AdminRouter(Router):
 
     def get_table_list(self, request: Request) -> JSONResponse:
         return JSONResponse([
-            i.__name__.lower() for i in self.tables
+            i._meta.tablename for i in self.tables
         ])
 
 
