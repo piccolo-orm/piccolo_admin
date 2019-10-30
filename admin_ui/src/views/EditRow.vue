@@ -67,11 +67,12 @@ export default Vue.extend({
     },
     methods: {
         getValue(propertyTitle) {
-            return this.selectedRow
+            let value = this.selectedRow
                 ? this.selectedRow[
                       propertyTitle.toLowerCase().replace(" ", "_")
                   ]
                 : ""
+            return value
         },
         async submitForm(event) {
             console.log("Submitting...")
@@ -80,7 +81,7 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0]] = i[1]
+                json[i[0].replace(" ", "_")] = i[1]
             }
 
             let config: UpdateRow = {

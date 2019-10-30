@@ -1,8 +1,10 @@
 <template>
     <div id="nav">
-        <h1>
-            <font-awesome-icon icon="tools" />Piccolo Admin
-        </h1>
+        <router-link to="/">
+            <h1>
+                <font-awesome-icon icon="tools" />Piccolo Admin
+            </h1>
+        </router-link>
         <p>
             <a
                 href="#"
@@ -88,10 +90,6 @@ export default Vue.extend({
     a {
         font-weight: bold;
         text-decoration: none;
-
-        &.router-link-exact-active {
-            color: #42b983;
-        }
     }
 }
 </style>

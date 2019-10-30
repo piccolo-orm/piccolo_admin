@@ -52,7 +52,9 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0]] = i[1]
+                if (i[1]) {
+                    json[i[0].replace(" ", "_")] = i[1]
+                }
             }
             await this.$store.dispatch("fetchRows", {
                 tableName: this.tableName,

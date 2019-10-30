@@ -3,6 +3,7 @@
         <label>{{ title }}</label>
 
         <input
+            step="1"
             type="number"
             v-bind:name="title.toLowerCase()"
             v-bind:value="value"
@@ -16,14 +17,16 @@
             v-if="type == 'string'"
         />
 
-        <input
-            type="checkbox"
-            v-bind:checked="value"
-            v-bind:name="title.toLowerCase()"
-            v-bind:value="value"
-            v-if="type == 'boolean'"
-            v-on:change="valueChanged($event)"
-        />
+        <div class="checkbox_wrapper">
+            <input
+                type="checkbox"
+                v-bind:checked="value"
+                v-bind:name="title.toLowerCase()"
+                v-bind:value="value"
+                v-if="type == 'boolean'"
+                v-on:change="valueChanged($event)"
+            />
+        </div>
 
         <input
             type="text"
@@ -49,5 +52,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang='less'>
+div.checkbox_wrapper {
+    input {
+        width: 1rem !important;
+    }
+}
 </style>
