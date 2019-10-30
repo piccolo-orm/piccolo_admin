@@ -34,7 +34,18 @@
                             v-bind:key="name"
                             v-for="(cell, name) in row"
                         >
-                            <span v-if="isForeignKey(name)">
+                            <span
+                                class="link"
+                                v-if="name == 'id'"
+                            >
+                                <router-link
+                                    :to="{name: 'editRow', params: {tableName: tableName, rowID: cell }}"
+                                >{{ cell }}</router-link>
+                            </span>
+                            <span
+                                class="link"
+                                v-else-if="isForeignKey(name)"
+                            >
                                 <router-link
                                     :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: cell }}"
                                 >{{ cell }}</router-link>
@@ -229,6 +240,12 @@ div.wrapper {
                 &.last-child {
                     text-align: right;
                     width: auto;
+                }
+
+                span.link {
+                    a {
+                        color: @light_blue;
+                    }
                 }
 
                 a {
