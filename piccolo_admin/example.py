@@ -47,6 +47,7 @@ def main():
     User.create().run_sync()
 
     # Add some rows
+    Director(name='Peter Jackson').save().run_sync()
     director = Director(name='George Lucas')
     director.save().run_sync()
     Movie(
