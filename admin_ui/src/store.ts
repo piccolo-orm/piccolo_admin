@@ -49,7 +49,7 @@ export default new Vuex.Store({
                         params: config.params
                     }
                 )
-                context.commit('updateRows', response.data)
+                context.commit('updateRows', response.data.rows)
                 return response
             } catch (error) {
                 console.log(error)

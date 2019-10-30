@@ -1,7 +1,10 @@
 <template>
     <div>
         <NavBar />
-        <div class="edit_wrapper">
+        <div
+            class="edit_wrapper"
+            v-if="schema"
+        >
             <p>
                 <a
                     href="#"
@@ -63,8 +66,12 @@ export default Vue.extend({
         }
     },
     methods: {
-        getValue(value) {
-            return this.selectedRow ? this.selectedRow[value.toLowerCase()] : ""
+        getValue(propertyTitle) {
+            return this.selectedRow
+                ? this.selectedRow[
+                      propertyTitle.toLowerCase().replace(" ", "_")
+                  ]
+                : ""
         },
         async submitForm(event) {
             console.log("Submitting...")

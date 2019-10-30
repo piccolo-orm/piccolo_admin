@@ -24,6 +24,13 @@
             v-if="type == 'boolean'"
             v-on:change="valueChanged($event)"
         />
+
+        <input
+            type="text"
+            v-bind:name="title.toLowerCase()"
+            v-bind:value="value"
+            v-if="type == 'date-time'"
+        />
     </div>
 </template>
 
