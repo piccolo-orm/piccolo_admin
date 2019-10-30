@@ -1,21 +1,20 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import axios from 'axios';
-import * as i from './interfaces';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios'
+import * as i from './interfaces'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
-
 
 export default new Vuex.Store({
     state: {
         tableNames: [],
         currentTableName: undefined,
         rows: [],
-        schema: {},
+        schema: undefined,
         selectedRow: undefined,
-        apiResponseMessage: null as i.APIResponseMessage|null
+        apiResponseMessage: null as i.APIResponseMessage | null
     },
     mutations: {
         updateTableNames(state, value) {
@@ -54,13 +53,10 @@ export default new Vuex.Store({
                 return response
             } catch (error) {
                 console.log(error)
-                context.commit(
-                    'updateApiResponseMessage',
-                    {
-                        contents: `Problem fetching ${config.tableName} rows.`,
-                        type: 'error'
-                    }
-                )
+                context.commit('updateApiResponseMessage', {
+                    contents: `Problem fetching ${config.tableName} rows.`,
+                    type: 'error'
+                })
             }
         },
         async fetchIds(context, tableName: string) {
@@ -77,21 +73,21 @@ export default new Vuex.Store({
             return response
         },
         async fetchSchema(context, tableName: string) {
-            const response =  await axios.get(
+            const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit('updateSchema', response.data)
             return response
         },
         async createRow(context, config: i.CreateRow) {
-            const response =  await axios.post(
+            const response = await axios.post(
                 `${BASE_URL}tables/${config.tableName}/`,
                 config.data
             )
             return response
         },
         async deleteRow(context, config: i.DeleteRow) {
-            const response =  await axios.delete(
+            const response = await axios.delete(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`
             )
             return response
@@ -102,15 +98,12 @@ export default new Vuex.Store({
                 config.data
             )
 
-            context.commit(
-                'updateApiResponseMessage',
-                {
-                    contents: 'Successfully saved row',
-                    type: 'success'
-                }
-            )
+            context.commit('updateApiResponseMessage', {
+                contents: 'Successfully saved row',
+                type: 'success'
+            })
 
             return response
         }
-    },
-});
+    }
+})

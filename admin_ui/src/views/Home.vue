@@ -1,17 +1,27 @@
 <template>
-<div class="home">
-    <Admin />
-</div>
+    <BaseView>
+        <div class="welcome">
+            <h1>Welcome to Piccolo Admin</h1>
+            <p>Select one of the tables in the sidebar to get started.</p>
+        </div>
+    </BaseView>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import Admin from '@/components/Admin.vue';
+import BaseView from "./BaseView.vue"
 
-@Component({
+export default {
     components: {
-        Admin,
+        BaseView
     },
-})
-export default class Home extends Vue {}
+    mounted() {
+        this.$store.commit("updateCurrentTablename", "")
+    }
+}
 </script>
+
+<style scoped lang="less">
+div.welcome {
+    padding: 0 1rem;
+}
+</style>

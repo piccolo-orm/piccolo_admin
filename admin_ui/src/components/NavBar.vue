@@ -1,22 +1,30 @@
 <template>
-<div id="nav">
-    <h1><font-awesome-icon icon="tools" /> Piccolo Admin</h1>
-    <p>
-        <a href="#" v-on:click.prevent="logout" style="padding-right: 1rem;">
-            <font-awesome-icon icon="user" /> admin <font-awesome-icon icon="angle-down" />
-        </a>
+    <div id="nav">
+        <h1>
+            <font-awesome-icon icon="tools" />Piccolo Admin
+        </h1>
+        <p>
+            <a
+                href="#"
+                style="padding-right: 1rem;"
+            >
+                <font-awesome-icon icon="user" />admin
+            </a>
 
-        <a href="#" v-on:click.prevent="logout">
-            Log out <font-awesome-icon icon="sign-out-alt" />
-        </a>
-    </p>
-</div>
+            <a
+                href="#"
+                v-on:click.prevent="logout"
+            >
+                Log out
+                <font-awesome-icon icon="sign-out-alt" />
+            </a>
+        </p>
+    </div>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue'
-
+import Vue from "vue"
 
 export default Vue.extend({
     computed: {
@@ -26,7 +34,7 @@ export default Vue.extend({
     },
     methods: {
         logout() {
-            window.confirm('Are you sure you want to logout?')
+            window.confirm("Are you sure you want to logout?")
         }
     }
 })

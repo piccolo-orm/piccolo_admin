@@ -1,14 +1,13 @@
 <template>
-<div id="app">
-    <router-view/>
-    <MessagePopup />
-</div>
+    <div id="app">
+        <router-view />
+        <MessagePopup />
+    </div>
 </template>
 
 
 <script>
-import MessagePopup from './components/MessagePopup.vue'
-
+import MessagePopup from "./components/MessagePopup.vue"
 
 export default {
     components: {
@@ -30,10 +29,10 @@ body {
 }
 
 #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
 
     label {
         display: block;
@@ -42,14 +41,15 @@ body {
     }
 
     input {
-        border: 1px solid rgba(255,255,255,0.2);
-        background-color: rgba(0,0,0,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
         padding: 0.5rem;
         color: white;
     }
 
-    input, button {
+    input,
+    button {
         width: 100%;
     }
 
@@ -67,9 +67,13 @@ body {
             background-color: lighten(@light_blue, 10%);
         }
     }
+
+    svg {
+        padding-right: 0.3rem;
+    }
 }
 
 a {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
 }
 </style>

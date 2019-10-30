@@ -1,42 +1,41 @@
 <template>
-<div id="filter_overlay">
-    <div class="modal">
-        <p class="close">
-            <a
-                href="#"
-                v-on:click.prevent="$emit('close')">Close</a>
-        </p>
+    <div>
         <h1>Filter</h1>
 
-        <form v-on:submit.prevent="submitForm($event)">
+        <form
+            ref="form"
+            v-on:submit.prevent="submitForm($event)"
+        >
             <div
+                v-bind:key="field.title"
                 v-for="field in schema.properties"
-                v-bind:key="field.title">
-
+            >
                 <label>{{ field.title }}</label>
                 <input
                     type="number"
                     v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'integer'" />
+                    v-if="field.type == 'integer'"
+                />
                 <input
                     type="text"
                     v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'string'" />
+                    v-if="field.type == 'string'"
+                />
                 <input
                     type="checkbox"
                     v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'boolean'" />
+                    v-if="field.type == 'boolean'"
+                />
             </div>
             <button>Apply</button>
-            <button>Clear filters</button>
         </form>
+        <button v-on:click.prevent="clearFilters">Clear filters</button>
     </div>
-</div>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue"
 
 export default Vue.extend({
     computed: {
@@ -55,14 +54,19 @@ export default Vue.extend({
             for (const i of form.entries()) {
                 json[i[0]] = i[1]
             }
-            await this.$store.dispatch(
-                'fetchRows',
-                {
-                    tableName: this.tableName,
-                    params: json
-                }
-            )
-            this.$emit('close')
+            await this.$store.dispatch("fetchRows", {
+                tableName: this.tableName,
+                params: json
+            })
+        },
+        async clearFilters() {
+            console.log("Clearing ...")
+            let form: HTMLFormElement = this.$refs.form
+            form.reset()
+            await this.$store.dispatch("fetchRows", {
+                tableName: this.tableName,
+                params: {}
+            })
         }
     }
 })
@@ -70,30 +74,4 @@ export default Vue.extend({
 
 
 <style scoped lang="less">
-div#filter_overlay {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0,0,0,0.7);
-
-    div.modal {
-        background-color: #2d2d2d;
-        width: 30rem;
-        margin: 1rem auto;
-        box-sizing: border-box;
-        padding: 1rem;
-        border-radius: 0.5rem;
-
-        label, input {
-            width: 100%;
-            display: block;
-        }
-
-        p.close {
-            text-align: right;
-        }
-    }
-}
 </style>

@@ -1,19 +1,6 @@
 <template>
-    <div>
-        <NavBar />
-        <div class="wrapper">
-            <div class="sidebar">
-                <p>
-                    <router-link to="/">
-                        <font-awesome-icon icon="home" />Home
-                    </router-link>
-                </p>
-                <p>
-                    <font-awesome-icon icon="table" />Tables
-                </p>
-                <TableNav />
-            </div>
-
+    <BaseView>
+        <template v-if="schema != undefined">
             <div class="left_column">
                 <div class="title_bar">
                     <h1>{{ tableName }}</h1>
@@ -21,23 +8,13 @@
                         <li>
                             <a
                                 href="#"
-                                v-on:click.prevent="showFilter = true"
+                                v-on:click.prevent="showAddRow = true"
                             >
-                                <font-awesome-icon icon="filter" />Filter
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
                                 <font-awesome-icon icon="plus" />Add Row
                             </a>
                         </li>
                     </ul>
                 </div>
-
-                <RowFilter
-                    v-if="showFilter"
-                    v-on:close="showFilter = false"
-                />
 
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
@@ -54,7 +31,7 @@
                         v-for="row in rows"
                     >
                         <td
-                            v-bind:key="cell"
+                            v-bind:key="name"
                             v-for="(cell, name) in row"
                         >
                             <span v-if="isForeignKey(name)">
@@ -92,28 +69,27 @@
             </div>
 
             <div class="right_column">
-                <h2>Add</h2>
-                <form v-on:submit.prevent="submitForm($event)">
-                    <InputField
-                        v-bind:key="property.title"
-                        v-bind:title="property.title"
-                        v-bind:type="property.type"
-                        v-bind:value="undefined"
-                        v-for="property in schema.properties"
-                    />
-                    <button>Create</button>
-                </form>
+                <RowFilter />
             </div>
-        </div>
-    </div>
+
+            <AddRow
+                v-bind:schema="schema"
+                v-bind:tableName="tableName"
+                v-if="showAddRow"
+                v-on:addedRow="fetchRows"
+                v-on:close="showAddRow = false"
+            />
+        </template>
+    </BaseView>
 </template>
 
 
 <script lang="ts">
 import Vue from "vue"
 import axios from "axios"
+import AddRow from "../components/AddRow.vue"
+import BaseView from "./BaseView.vue"
 import RowFilter from "../components/RowFilter.vue"
-import NavBar from "../components/NavBar.vue"
 import TableNav from "../components/TableNav.vue"
 import InputField from "../components/InputField.vue"
 
@@ -121,13 +97,14 @@ export default Vue.extend({
     props: ["tableName"],
     data() {
         return {
-            showFilter: false
+            showAddRow: false
         }
     },
     components: {
+        AddRow,
+        BaseView,
         InputField,
         RowFilter,
-        NavBar,
         TableNav
     },
     computed: {
@@ -153,20 +130,6 @@ export default Vue.extend({
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
             return this.schema.properties[name].to
-        },
-        async submitForm(event) {
-            console.log("I was pressed")
-            const form = new FormData(event.target)
-
-            const json = {}
-            for (const i of form.entries()) {
-                json[i[0]] = i[1]
-            }
-            const response = await this.$store.dispatch("createRow", {
-                tableName: this.tableName,
-                data: json
-            })
-            await this.fetchRows()
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
@@ -204,69 +167,30 @@ export default Vue.extend({
 
 
 <style lang="less">
-@border_color: rgba(255, 255, 255, 0.2);
-@light_blue: #009dff;
+@import "../vars.less";
 
-div.title_bar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    h1 {
-        text-transform: capitalize;
-        flex-grow: 1;
-    }
-
-    p {
-        flex-grow: 0;
-    }
-
-    ul {
-        li {
-            display: inline-block;
-            padding-left: 1rem;
-
-            a {
-                text-decoration: none;
-            }
-        }
-    }
-}
 div.wrapper {
-    border-top: 1px solid @border_color;
-    display: flex;
-    height: 100%;
+    div.title_bar {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-    div.sidebar {
-        border-right: 1px solid @border_color;
-        width: 15rem;
+        h1 {
+            text-transform: capitalize;
+            flex-grow: 1;
+        }
 
         p {
-            padding: 0.5rem;
-            margin: 0;
-
-            a {
-                text-decoration: none;
-            }
+            flex-grow: 0;
         }
 
         ul {
-            margin: 0;
-
             li {
+                display: inline-block;
+                padding-left: 1rem;
+
                 a {
-                    background-color: rgba(0, 0, 0, 0.2);
-                    display: block;
-                    padding: 0.5rem;
                     text-decoration: none;
-
-                    &:hover {
-                        background-color: rgba(0, 0, 0, 0.4);
-                    }
-
-                    &.active {
-                        border-right: 3px solid @light_blue;
-                    }
                 }
             }
         }
