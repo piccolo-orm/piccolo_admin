@@ -260,6 +260,7 @@ div.wrapper {
     }
 
     div.left_column, div.right_column {
+        overflow: scroll;
         padding: 0.5rem;
     }
 
