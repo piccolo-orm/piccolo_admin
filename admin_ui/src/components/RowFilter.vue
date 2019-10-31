@@ -6,27 +6,14 @@
             ref="form"
             v-on:submit.prevent="submitForm($event)"
         >
-            <div
-                v-bind:key="field.title"
-                v-for="field in schema.properties"
-            >
-                <label>{{ field.title }}</label>
-                <input
-                    type="number"
-                    v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'integer'"
-                />
-                <input
-                    type="text"
-                    v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'string'"
-                />
-                <input
-                    type="checkbox"
-                    v-bind:name="field.title.toLowerCase()"
-                    v-if="field.type == 'boolean'"
-                />
-            </div>
+            <InputField
+                v-bind:format="property.format"
+                v-bind:key="property.title"
+                v-bind:title="property.title"
+                v-bind:type="property.type"
+                v-bind:value="undefined"
+                v-for="property in schema.properties"
+            />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -36,8 +23,12 @@
 
 <script lang="ts">
 import Vue from "vue"
+import InputField from "./InputField.vue"
 
 export default Vue.extend({
+    components: {
+        InputField
+    },
     computed: {
         schema() {
             return this.$store.state.schema

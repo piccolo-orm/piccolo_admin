@@ -26,14 +26,13 @@ body {
     background-color: @dark_grey;
     height: 100%;
     margin: 0;
-}
-
-#app {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: rgba(255, 255, 255, 0.8);
+}
 
+#app {
     label {
         display: block;
         padding-bottom: 0.2rem;

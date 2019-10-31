@@ -10,12 +10,22 @@
             v-if="type == 'integer'"
         />
 
-        <input
-            type="text"
-            v-bind:name="title.toLowerCase()"
-            v-bind:value="value"
-            v-if="type == 'string'"
-        />
+        <template v-if="type == 'string'">
+            <input
+                autocomplete="off"
+                class="datetime"
+                type="text"
+                v-bind:name="title.toLowerCase()"
+                v-bind:value="value"
+                v-if="format == 'date-time'"
+            />
+            <input
+                type="text"
+                v-bind:name="title.toLowerCase()"
+                v-bind:value="value"
+                v-else
+            />
+        </template>
 
         <div class="checkbox_wrapper">
             <input
@@ -27,13 +37,6 @@
                 v-on:change="valueChanged($event)"
             />
         </div>
-
-        <input
-            type="text"
-            v-bind:name="title.toLowerCase()"
-            v-bind:value="value"
-            v-if="type == 'date-time'"
-        />
     </div>
 </template>
 
@@ -42,12 +45,16 @@ export default {
     props: {
         title: String,
         type: String,
-        value: undefined
+        value: undefined,
+        format: String
     },
     methods: {
         valueChanged(event) {
             event.target.value = event.target.checked
         }
+    },
+    mounted() {
+        flatpickr(".datetime", { enableTime: true })
     }
 }
 </script>

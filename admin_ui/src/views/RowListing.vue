@@ -102,7 +102,6 @@ import AddRow from "../components/AddRow.vue"
 import BaseView from "./BaseView.vue"
 import RowFilter from "../components/RowFilter.vue"
 import TableNav from "../components/TableNav.vue"
-import InputField from "../components/InputField.vue"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -114,7 +113,6 @@ export default Vue.extend({
     components: {
         AddRow,
         BaseView,
-        InputField,
         RowFilter,
         TableNav
     },
