@@ -7,10 +7,11 @@ import typing as t
 from piccolo.table import Table
 from piccolo.extensions.user import BaseUser
 from piccolo_api.crud.endpoints import PiccoloCRUD
-# from piccolo_api.jwt_auth.endpoints import JWTLogin
+from piccolo_api.session_auth.endpoints import session_login, session_logout
+from piccolo_api.session_auth.tables import SessionsBase
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Router, Route, BaseRoute, Mount
-from starlette.responses import HTMLResponse, JSONResponse, Response
+from starlette.responses import HTMLResponse, JSONResponse
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.exceptions import ExceptionMiddleware
@@ -61,8 +62,13 @@ class AdminRouter(Router):
             ),
             Route(
                 path='/login/',
-                endpoint=self.login,
-                methods=['GET', 'POST']
+                endpoint=session_login(),
+                methods=['POST']
+            ),
+            Route(
+                path='/logout/',
+                endpoint=session_logout(),
+                methods=['POST']
             )
         ]
 
@@ -79,32 +85,6 @@ class AdminRouter(Router):
         return HTMLResponse(self.template)
 
     ###########################################################################
-
-    async def login(self, request: Request) -> Response:
-        """
-        One issue is ... not everyone should be able to login to the admin.
-
-        Need an admin field as part of the User, or a more generic
-        permissions system, which accepts any arbitrary list of strings ...
-        """
-        # TODO - use JWT login endpoint instead
-        if request.method == 'GET':
-            # request.headers['cookie']
-            return HTMLResponse(
-                content='<p>Login</p>',
-                headers={'Set-Cookie': 'foo=bar; HttpOnly'}
-            )
-        elif request.method == 'POST':
-            # TODO - only if they are admins ...
-            user_id = await self.auth_table.login('dan', '123')
-            # If login is successful, we need their token.
-            print(user_id)
-            return JSONResponse({
-                'user_id': 123,
-                'token': 'abc123'
-            })
-        else:
-            return HTMLResponse()
 
     def get_table_list(self, request: Request) -> JSONResponse:
         return JSONResponse([
