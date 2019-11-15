@@ -8,7 +8,7 @@ import datetime
 import os
 
 from piccolo.engine.sqlite import SQLiteEngine
-from piccolo.extensions.user import BaseUser
+from piccolo.extensions.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
     Varchar,
