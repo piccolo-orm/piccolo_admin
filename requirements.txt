@@ -1,4 +1,4 @@
-starlette>=0.12.2
+starlette>=0.12.13
 piccolo>=0.6.1
 piccolo_api>=0.3.0
 uvicorn>=0.8.3

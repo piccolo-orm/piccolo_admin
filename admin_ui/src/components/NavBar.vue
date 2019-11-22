@@ -27,6 +27,8 @@
 
 <script lang="ts">
 import Vue from "vue"
+import axios from "axios"
+
 
 export default Vue.extend({
     computed: {
@@ -35,8 +37,17 @@ export default Vue.extend({
         }
     },
     methods: {
-        logout() {
-            window.confirm("Are you sure you want to logout?")
+        async logout() {
+            if (window.confirm("Are you sure you want to logout?")) {
+                console.log("Logging out")
+                try {
+                    await axios.post('./logout/')
+                } catch(error) {
+                    console.log('Logout failed')
+                    console.log(error.response)
+                }
+
+            }
         }
     }
 })

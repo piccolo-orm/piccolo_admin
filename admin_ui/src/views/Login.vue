@@ -3,10 +3,10 @@
     <h1>Login</h1>
     <form v-on:submit.prevent="login">
         <label>Username</label>
-        <input type="text" v-model="username">
+        <input type="text" v-model="username" />
 
         <label>Password</label>
-        <input type="password" v-model="password">
+        <input type="password" v-model="password" />
 
         <button>Login</button>
     </form>
@@ -17,7 +17,6 @@
 <script>
 import axios from 'axios'
 
-const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default {
     data: function() {
@@ -29,7 +28,13 @@ export default {
     methods: {
         async login() {
             console.log("Logging in")
-            let response = await axios.post(`${BASE_URL}login/`, {username: this.username, password: this.password})
+            try {
+                let response = await axios.post(`./login/`, {username: this.username, password: this.password})
+            } catch (error) {
+                console.log('Request failed')
+                console.log(error.response)
+                return
+            }
             this.$router.push({name: 'home'})
         }
     }

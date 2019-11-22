@@ -1,19 +1,25 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
+from functools import partial
 import os
 import typing as t
 
 from piccolo.table import Table
 from piccolo.extensions.user.tables import BaseUser
+
+from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.session_auth.endpoints import session_login, session_logout
-from starlette.middleware.cors import CORSMiddleware
+from piccolo_api.session_auth.tables import SessionsBase
+from piccolo_api.session_auth.middleware import SessionsAuthBackend
+
 from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.exceptions import ExceptionMiddleware
+from starlette.middleware.authentication import AuthenticationMiddleware
 
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
@@ -29,12 +35,37 @@ class AdminRouter(Router):
     template: str = ""
 
     def __init__(
-        self, *tables: t.Type[Table], auth_table: t.Type[BaseUser] = BaseUser
+        self,
+        *tables: t.Type[Table],
+        auth_table: t.Type[BaseUser] = BaseUser,
+        session_table: t.Type[SessionsBase] = SessionsBase,
     ) -> None:
         self.auth_table = auth_table
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             self.template = f.read()
+
+        auth_middleware = partial(
+            AuthenticationMiddleware,
+            backend=SessionsAuthBackend(
+                auth_table=auth_table,
+                session_table=session_table
+            )
+        )
+
+        table_routes = [
+            Mount(
+                path=f"/{table._meta.tablename}/",
+                app=auth_middleware(PiccoloCRUD(table, read_only=False)),
+            ) for table in tables
+        ]
+        table_routes += [
+            Route(
+                path='/',
+                endpoint=self.get_table_list,
+                methods=["GET", "POST", "DELETE"]
+            )
+        ]
 
         routes: t.List[BaseRoute] = [
             Route(path="/", endpoint=self.get_root, methods=["GET"]),
@@ -46,24 +77,23 @@ class AdminRouter(Router):
                 path="/js",
                 app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
             ),
-            Route(
+            Mount(
                 path="/tables/",
-                endpoint=self.get_table_list,
-                methods=["GET", "POST", "DELETE"],
+                app=auth_middleware(Router(table_routes))
             ),
-            Route(path="/login/", endpoint=session_login(), methods=["POST"]),
             Route(
-                path="/logout/", endpoint=session_logout(), methods=["POST"]
+                path="/login/",
+                endpoint=session_login(
+                    auth_table=self.auth_table, session_table=session_table
+                ),
+                methods=["POST"],
+            ),
+            Route(
+                path="/logout/",
+                endpoint=session_logout(session_table=session_table),
+                methods=["POST"],
             ),
         ]
-
-        for table in tables:
-            routes.append(
-                Mount(
-                    path=f"/tables/{table._meta.tablename}/",
-                    app=PiccoloCRUD(table, read_only=False),
-                )
-            )
 
         self.tables = tables
         super().__init__(routes)
@@ -77,12 +107,15 @@ class AdminRouter(Router):
         return JSONResponse([i._meta.tablename for i in self.tables])
 
 
-def create_admin(tables: t.Sequence[Table], auth_table: BaseUser):
+def create_admin(
+    tables: t.Sequence[Table],
+    auth_table: BaseUser = BaseUser,
+    session_table: t.Type[SessionsBase] = SessionsBase,
+):
     return ExceptionMiddleware(
-        CORSMiddleware(
-            AdminRouter(*tables, auth_table=auth_table),
-            allow_origins=["*"],
-            allow_methods=["*"],
-            allow_headers=["*"],
+        CSRFMiddleware(
+            AdminRouter(
+                *tables, auth_table=auth_table, session_table=session_table
+            ),
         )
     )

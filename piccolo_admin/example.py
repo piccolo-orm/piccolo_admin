@@ -7,6 +7,7 @@ or `admin_demo`.
 import datetime
 import os
 
+from piccolo_api.session_auth.tables import SessionsBase
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.extensions.user.tables import BaseUser
 from piccolo.table import Table
@@ -29,6 +30,10 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "example.sqlite")
 DB = SQLiteEngine(path=DB_PATH)
 
 
+class Sessions(SessionsBase, db=DB):
+    pass
+
+
 class User(BaseUser, db=DB):
     pass
 
@@ -46,7 +51,7 @@ class Movie(Table, db=DB):
     release_date = Timestamp()
 
 
-APP = create_admin([Director, Movie], auth_table=User)
+APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
 def main():
@@ -56,6 +61,7 @@ def main():
     Director.create().run_sync()
     Movie.create().run_sync()
     User.create().run_sync()
+    Sessions.create().run_sync()
 
     # Add some rows
     Director(name="Peter Jackson").save().run_sync()
@@ -69,6 +75,15 @@ def main():
         release_date=datetime.datetime(year=1977, month=12, day=27),
     )
     movie.save().run_sync()
+
+    # Create a user for testing login
+    user = User(
+        username="piccolo",
+        password="piccolo123",
+        admin=True,
+        email="admin@test.com",
+    )
+    user.save().run_sync()
 
     # Server
     if USE_HYPERCORN:
