@@ -7,11 +7,23 @@
 
 
 <script>
+import axios from 'axios'
 import MessagePopup from "./components/MessagePopup.vue"
 
 export default {
     components: {
         MessagePopup
+    },
+    async beforeCreate() {
+        try {
+            const response = await axios.get('./user/')
+            this.$store.commit('updateUser', response.data)
+        } catch (error) {
+            if (error.response.status == 401) {
+                console.log('Login required')
+                this.$router.push({'name': 'login'})
+            }
+        }
     }
 }
 </script>

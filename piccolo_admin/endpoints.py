@@ -25,6 +25,10 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 
+def handle_auth_exception(request: Request, exc: Exception):
+    return JSONResponse({"error": "Auth failed"}, status_code=401)
+
+
 class AdminRouter(Router):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -48,22 +52,23 @@ class AdminRouter(Router):
         auth_middleware = partial(
             AuthenticationMiddleware,
             backend=SessionsAuthBackend(
-                auth_table=auth_table,
-                session_table=session_table
-            )
+                auth_table=auth_table, session_table=session_table,
+            ),
+            on_error=handle_auth_exception,
         )
 
         table_routes = [
             Mount(
                 path=f"/{table._meta.tablename}/",
                 app=auth_middleware(PiccoloCRUD(table, read_only=False)),
-            ) for table in tables
+            )
+            for table in tables
         ]
         table_routes += [
             Route(
-                path='/',
+                path="/",
                 endpoint=self.get_table_list,
-                methods=["GET", "POST", "DELETE"]
+                methods=["GET", "POST", "DELETE"],
             )
         ]
 
@@ -77,10 +82,7 @@ class AdminRouter(Router):
                 path="/js",
                 app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
             ),
-            Mount(
-                path="/tables/",
-                app=auth_middleware(Router(table_routes))
-            ),
+            Mount(path="/tables/", app=auth_middleware(Router(table_routes))),
             Route(
                 path="/login/",
                 endpoint=session_login(
@@ -93,6 +95,12 @@ class AdminRouter(Router):
                 endpoint=session_logout(session_table=session_table),
                 methods=["POST"],
             ),
+            Mount(
+                path="/user/",
+                app=auth_middleware(
+                    Router([Route(path="/", endpoint=self.get_user)])
+                ),
+            ),
         ]
 
         self.tables = tables
@@ -100,6 +108,16 @@ class AdminRouter(Router):
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
+
+    ###########################################################################
+
+    def get_user(self, request: Request) -> JSONResponse:
+        return JSONResponse(
+            {
+                "username": request.user.display_name,
+                "user_id": request.user.user_id,
+            }
+        )
 
     ###########################################################################
 

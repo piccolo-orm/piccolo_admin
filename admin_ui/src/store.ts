@@ -14,7 +14,8 @@ export default new Vuex.Store({
         rows: [],
         schema: undefined,
         selectedRow: undefined,
-        apiResponseMessage: null as i.APIResponseMessage | null
+        apiResponseMessage: null as i.APIResponseMessage | null,
+        user: undefined
     },
     mutations: {
         updateTableNames(state, value) {
@@ -34,6 +35,9 @@ export default new Vuex.Store({
         },
         updateApiResponseMessage(state, message: i.APIResponseMessage) {
             state.apiResponseMessage = message
+        },
+        updateUser(state, user) {
+            state.user = user
         }
     },
     actions: {
@@ -52,7 +56,7 @@ export default new Vuex.Store({
                 context.commit('updateRows', response.data.rows)
                 return response
             } catch (error) {
-                console.log(error)
+                console.log(error.response)
                 context.commit('updateApiResponseMessage', {
                     contents: `Problem fetching ${config.tableName} rows.`,
                     type: 'error'
@@ -104,6 +108,6 @@ export default new Vuex.Store({
             })
 
             return response
-        }
+        },
     }
 })

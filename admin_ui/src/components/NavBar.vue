@@ -10,7 +10,7 @@
                 href="#"
                 style="padding-right: 1rem;"
             >
-                <font-awesome-icon icon="user" />admin
+                <font-awesome-icon icon="user" />{{ username }}
             </a>
 
             <a
@@ -34,6 +34,10 @@ export default Vue.extend({
     computed: {
         tableName() {
             return this.$store.state.currentTableName
+        },
+        username() {
+            let user = this.$store.state.user
+            return user ? user.username : 'Unknown'
         }
     },
     methods: {
@@ -42,11 +46,11 @@ export default Vue.extend({
                 console.log("Logging out")
                 try {
                     await axios.post('./logout/')
+                    this.$router.push({'name': 'login'})
                 } catch(error) {
                     console.log('Logout failed')
-                    console.log(error.response)
+                    console.log(error)
                 }
-
             }
         }
     }

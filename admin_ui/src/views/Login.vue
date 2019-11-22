@@ -35,6 +35,8 @@ export default {
                 console.log(error.response)
                 return
             }
+            let response = await axios.get('./user/')
+            this.$store.commit('updateUser', response.data)
             this.$router.push({name: 'home'})
         }
     }
