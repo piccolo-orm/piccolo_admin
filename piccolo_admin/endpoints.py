@@ -82,23 +82,38 @@ class AdminRouter(Router):
                 path="/js",
                 app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
             ),
-            Mount(path="/tables/", app=auth_middleware(Router(table_routes))),
-            Route(
-                path="/login/",
-                endpoint=session_login(
-                    auth_table=self.auth_table, session_table=session_table
-                ),
-                methods=["POST"],
-            ),
-            Route(
-                path="/logout/",
-                endpoint=session_logout(session_table=session_table),
-                methods=["POST"],
-            ),
             Mount(
-                path="/user/",
-                app=auth_middleware(
-                    Router([Route(path="/", endpoint=self.get_user)])
+                path="/api",
+                app=Router(
+                    [
+                        Mount(
+                            path="/tables/",
+                            app=auth_middleware(Router(table_routes)),
+                        ),
+                        Route(
+                            path="/login/",
+                            endpoint=session_login(
+                                auth_table=self.auth_table,
+                                session_table=session_table,
+                            ),
+                            methods=["POST"],
+                        ),
+                        Route(
+                            path="/logout/",
+                            endpoint=session_logout(
+                                session_table=session_table
+                            ),
+                            methods=["POST"],
+                        ),
+                        Mount(
+                            path="/user/",
+                            app=auth_middleware(
+                                Router(
+                                    [Route(path="/", endpoint=self.get_user)]
+                                )
+                            ),
+                        ),
+                    ]
                 ),
             ),
         ]

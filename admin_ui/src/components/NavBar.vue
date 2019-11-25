@@ -45,7 +45,7 @@ export default Vue.extend({
             if (window.confirm("Are you sure you want to logout?")) {
                 console.log("Logging out")
                 try {
-                    await axios.post('./logout/')
+                    await axios.post('./api/logout/')
                     this.$router.push({'name': 'login'})
                 } catch(error) {
                     console.log('Logout failed')

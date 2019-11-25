@@ -16,7 +16,7 @@ export default {
     },
     async beforeCreate() {
         try {
-            const response = await axios.get('./user/')
+            const response = await axios.get('./api/user/')
             this.$store.commit('updateUser', response.data)
         } catch (error) {
             if (error.response.status == 401) {

@@ -13,6 +13,14 @@
                                 <font-awesome-icon icon="plus" />Add Row
                             </a>
                         </li>
+                        <li>
+                            <a
+                                href="#"
+                                v-on:click.prevent="showFilter = !showFilter"
+                            >
+                                <font-awesome-icon icon="filter" />{{ showFilter ? "Hide" : "Show" }} Filters
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -79,7 +87,7 @@
                 </table>
             </div>
 
-            <div class="right_column">
+            <div class="right_column" v-if="showFilter">
                 <RowFilter />
             </div>
 
@@ -107,7 +115,8 @@ export default Vue.extend({
     props: ["tableName"],
     data() {
         return {
-            showAddRow: false
+            showAddRow: false,
+            showFilter: false
         }
     },
     components: {

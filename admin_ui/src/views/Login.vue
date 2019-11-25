@@ -29,13 +29,14 @@ export default {
         async login() {
             console.log("Logging in")
             try {
-                let response = await axios.post(`./login/`, {username: this.username, password: this.password})
+                let response = await axios.post(`./api/login/`, {username: this.username, password: this.password})
             } catch (error) {
                 console.log('Request failed')
                 console.log(error.response)
+                this.$store.commit('updateApiResponseMessage', {'contents': 'Problem logging in', 'type': 'error'})
                 return
             }
-            let response = await axios.get('./user/')
+            let response = await axios.get('./api/user/')
             this.$store.commit('updateUser', response.data)
             this.$router.push({name: 'home'})
         }
