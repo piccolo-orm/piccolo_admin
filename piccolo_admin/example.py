@@ -58,10 +58,10 @@ def main():
     # Recreate the database
     if os.path.exists(DB_PATH):
         os.unlink(DB_PATH)
-    Director.create().run_sync()
-    Movie.create().run_sync()
-    User.create().run_sync()
-    Sessions.create().run_sync()
+    Director.create_table().run_sync()
+    Movie.create_table().run_sync()
+    User.create_table().run_sync()
+    Sessions.create_table().run_sync()
 
     # Add some rows
     Director(name="Peter Jackson").save().run_sync()
