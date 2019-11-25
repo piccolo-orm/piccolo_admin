@@ -14,9 +14,9 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 
-from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.requests import Request
+from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.staticfiles import StaticFiles
 from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -35,7 +35,7 @@ class AdminRouter(Router):
     """
 
     table: t.List[Table] = []
-    auth_table: t.Type[BaseUser] = None
+    auth_table: t.Type[BaseUser] = BaseUser
     template: str = ""
 
     def __init__(
@@ -57,7 +57,7 @@ class AdminRouter(Router):
             on_error=handle_auth_exception,
         )
 
-        table_routes = [
+        table_routes: t.List[BaseRoute] = [
             Mount(
                 path=f"/{table._meta.tablename}/",
                 app=auth_middleware(PiccoloCRUD(table, read_only=False)),
