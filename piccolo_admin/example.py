@@ -6,6 +6,7 @@ or `admin_demo`.
 """
 import datetime
 import os
+import sys
 
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo.engine.sqlite import SQLiteEngine
@@ -19,6 +20,7 @@ from piccolo.columns import (
     Text,
     Timestamp,
 )
+from piccolo.columns.readable import Readable
 
 from piccolo_admin.endpoints import create_admin
 
@@ -41,6 +43,10 @@ class User(BaseUser, db=DB):
 class Director(Table, db=DB):
     name = Varchar(length=300, null=False)
 
+    @classmethod
+    def get_readable(cls):
+        return Readable(template="%s", columns=[cls.name])
+
 
 class Movie(Table, db=DB):
     name = Varchar(length=300)
@@ -54,36 +60,41 @@ class Movie(Table, db=DB):
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
-def main():
-    # Recreate the database
-    if os.path.exists(DB_PATH):
-        os.unlink(DB_PATH)
-    Director.create_table().run_sync()
-    Movie.create_table().run_sync()
-    User.create_table().run_sync()
-    Sessions.create_table().run_sync()
+def main(persist=False):
+    """
+    If persist is set to True, we don't rebuild all of the data each time.
+    """
 
-    # Add some rows
-    Director(name="Peter Jackson").save().run_sync()
-    director = Director(name="George Lucas")
-    director.save().run_sync()
-    movie = Movie(
-        name="Star Wars",
-        rating=100,
-        director=director.id,
-        description="A story from a galaxy far, far away.",
-        release_date=datetime.datetime(year=1977, month=12, day=27),
-    )
-    movie.save().run_sync()
+    if not persist:
+        # Recreate the database
+        if os.path.exists(DB_PATH):
+            os.unlink(DB_PATH)
+        Director.create_table().run_sync()
+        Movie.create_table().run_sync()
+        User.create_table().run_sync()
+        Sessions.create_table().run_sync()
 
-    # Create a user for testing login
-    user = User(
-        username="piccolo",
-        password="piccolo123",
-        admin=True,
-        email="admin@test.com",
-    )
-    user.save().run_sync()
+        # Add some rows
+        Director(name="Peter Jackson").save().run_sync()
+        director = Director(name="George Lucas")
+        director.save().run_sync()
+        movie = Movie(
+            name="Star Wars",
+            rating=100,
+            director=director.id,
+            description="A story from a galaxy far, far away.",
+            release_date=datetime.datetime(year=1977, month=12, day=27),
+        )
+        movie.save().run_sync()
+
+        # Create a user for testing login
+        user = User(
+            username="piccolo",
+            password="piccolo123",
+            admin=True,
+            email="admin@test.com",
+        )
+        user.save().run_sync()
 
     # Server
     if USE_HYPERCORN:
@@ -104,4 +115,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    args = sys.argv
+    persist = (len(args) > 0) and (args[1] == '--persist')
+    main(persist)
