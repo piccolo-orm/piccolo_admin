@@ -18,7 +18,8 @@
                                 href="#"
                                 v-on:click.prevent="showFilter = !showFilter"
                             >
-                                <font-awesome-icon icon="filter" />{{ showFilter ? "Hide" : "Show" }} Filters
+                                <font-awesome-icon icon="filter" />
+                                {{ showFilter ? "Hide" : "Show" }} Filters
                             </a>
                         </li>
                     </ul>
@@ -30,7 +31,7 @@
                         <th
                             v-bind:key="name"
                             v-for="name in cellNames"
-                        >{{ name }}</th>
+                        >{{ schema.properties[name] ? schema.properties[name].title : name }}</th>
                         <th>Actions</th>
                     </tr>
 
@@ -40,25 +41,25 @@
                     >
                         <td
                             v-bind:key="name"
-                            v-for="(cell, name) in row"
+                            v-for="name in cellNames"
                         >
                             <span
                                 class="link"
                                 v-if="name == 'id'"
                             >
                                 <router-link
-                                    :to="{name: 'editRow', params: {tableName: tableName, rowID: cell }}"
-                                >{{ cell }}</router-link>
+                                    :to="{name: 'editRow', params: {tableName: tableName, rowID: row[name] }}"
+                                >{{ row[name] }}</router-link>
                             </span>
                             <span
                                 class="link"
                                 v-else-if="isForeignKey(name)"
                             >
                                 <router-link
-                                    :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: cell }}"
-                                >{{ cell }}</router-link>
+                                    :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
+                                >{{ row[name + '_readable'] }}</router-link>
                             </span>
-                            <span v-else>{{ cell }}</span>
+                            <span v-else>{{ row[name] }}</span>
                         </td>
 
                         <td class="snug">
@@ -87,7 +88,10 @@
                 </table>
             </div>
 
-            <div class="right_column" v-if="showFilter">
+            <div
+                class="right_column"
+                v-if="showFilter"
+            >
                 <RowFilter />
             </div>
 
@@ -129,7 +133,9 @@ export default Vue.extend({
         cellNames() {
             const keys = []
             for (const key in this.rows[0]) {
-                keys.push(key)
+                if (!key.endsWith("_readable")) {
+                    keys.push(key)
+                }
             }
             return keys
         },

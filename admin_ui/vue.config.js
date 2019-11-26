@@ -6,6 +6,7 @@ module.exports = {
     devServer: {
         host: 'piccolo_admin',
         public: 'piccolo_admin',
-        disableHostCheck: true
-    },
+        disableHostCheck: true,
+        port: 8080
+    }
 }

@@ -48,7 +48,7 @@ export default new Vuex.Store({
         async fetchRows(context, config: i.FetchRowsConfig) {
             try {
                 const response = await axios.get(
-                    `${BASE_URL}tables/${config.tableName}/`,
+                    `${BASE_URL}tables/${config.tableName}/?readable=true`,
                     {
                         params: config.params
                     }
@@ -108,6 +108,6 @@ export default new Vuex.Store({
             })
 
             return response
-        },
+        }
     }
 })

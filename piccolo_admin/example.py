@@ -116,5 +116,5 @@ def main(persist=False):
 
 if __name__ == "__main__":
     args = sys.argv
-    persist = (len(args) > 0) and (args[1] == '--persist')
+    persist = (len(args) > 1) and (args[1] == '--persist')
     main(persist)
