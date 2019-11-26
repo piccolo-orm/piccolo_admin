@@ -3,14 +3,7 @@
         <h1>Add</h1>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <InputField
-                v-bind:format="property.format"
-                v-bind:key="property.title"
-                v-bind:title="property.title"
-                v-bind:type="property.type"
-                v-bind:value="undefined"
-                v-for="property in schema.properties"
-            />
+            <RowForm v-bind:schema="schema"/>
             <button>Create</button>
         </form>
     </Modal>
@@ -18,7 +11,7 @@
 
 <script>
 import Modal from "./Modal.vue"
-import InputField from "./InputField.vue"
+import RowForm from "./RowForm.vue"
 
 export default {
     props: {
@@ -26,8 +19,8 @@ export default {
         schema: Object
     },
     components: {
-        InputField,
-        Modal
+        Modal,
+        RowForm
     },
     methods: {
         async submitForm(event) {

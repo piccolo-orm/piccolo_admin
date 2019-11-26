@@ -15,28 +15,7 @@
             <h1>Edit</h1>
 
             <form v-on:submit.prevent="submitForm($event)">
-                <div
-                    v-bind:key="property.title"
-                    v-for="property in schema.properties"
-                >
-                    <template v-if="property.foreign_key">
-                        <label>{{ property.title }}</label>
-                        <KeySelect
-                            v-bind:fieldName="property.title.toLowerCase()"
-                            v-bind:tableName="property.to"
-                            v-bind:value="getValue(property.title)"
-                        />
-                    </template>
-                    <template v-else>
-                        <InputField
-                            v-bind:format="property.format"
-                            v-bind:key="property.title"
-                            v-bind:title="property.title"
-                            v-bind:type="property.type"
-                            v-bind:value="getValue(property.title)"
-                        />
-                    </template>
-                </div>
+                <RowForm v-bind:schema="schema" v-bind:row="selectedRow" />
                 <button>Save</button>
             </form>
         </div>
@@ -46,17 +25,15 @@
 
 <script lang="ts">
 import Vue from "vue"
-import InputField from "../components/InputField.vue"
 import NavBar from "../components/NavBar.vue"
-import KeySelect from "../components/KeySelect.vue"
+import RowForm from "../components/RowForm.vue"
 import { UpdateRow } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
     components: {
-        InputField,
+        RowForm,
         NavBar,
-        KeySelect
     },
     computed: {
         schema() {
@@ -67,14 +44,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        getValue(propertyTitle) {
-            let value = this.selectedRow
-                ? this.selectedRow[
-                      propertyTitle.toLowerCase().replace(" ", "_")
-                  ]
-                : ""
-            return value
-        },
         async submitForm(event) {
             console.log("Submitting...")
 

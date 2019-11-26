@@ -6,14 +6,7 @@
             ref="form"
             v-on:submit.prevent="submitForm($event)"
         >
-            <InputField
-                v-bind:format="property.format"
-                v-bind:key="property.title"
-                v-bind:title="property.title"
-                v-bind:type="property.type"
-                v-bind:value="undefined"
-                v-for="property in schema.properties"
-            />
+            <RowForm v-bind:schema="schema" />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -23,11 +16,11 @@
 
 <script lang="ts">
 import Vue from "vue"
-import InputField from "./InputField.vue"
+import RowForm from "./RowForm.vue"
 
 export default Vue.extend({
     components: {
-        InputField
+        RowForm
     },
     computed: {
         schema() {
