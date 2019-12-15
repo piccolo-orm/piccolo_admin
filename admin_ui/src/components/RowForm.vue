@@ -14,7 +14,7 @@
                 v-bind:format="property.format"
                 v-bind:key="property.title"
                 v-bind:title="property.title"
-                v-bind:type="property.type"
+                v-bind:type="property.type || property.anyOf[0].type"
                 v-bind:value="getValue(property.title)"
             />
         </template>
@@ -29,7 +29,7 @@ import InputField from "./InputField.vue"
 export default {
     props: {
         row: Object,
-        schema: Object
+        schema: Object,
     },
     components: {
         InputField,
