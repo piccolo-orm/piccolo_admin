@@ -1,3 +1,8 @@
+v0.3.1
+======
+Improved auth error handling, and adding defaults automatically when adding
+a new row.
+
 v0.3.0
 ======
 Login is working, and various UI improvements.
