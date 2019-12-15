@@ -15,15 +15,23 @@ export default {
         MessagePopup
     },
     async beforeCreate() {
-        try {
-            const response = await axios.get('./api/user/')
-            this.$store.commit('updateUser', response.data)
-        } catch (error) {
-            if (error.response.status == 401) {
-                console.log('Login required')
-                this.$router.push({'name': 'login'})
+        let app = this
+
+        axios.interceptors.response.use(
+            function(response) {
+                return response
+            },
+            function (error) {
+                if (error.response.status == 401) {
+                    console.log('Login required')
+                    app.$router.push({'name': 'login'})
+                }
+                return Promise.reject(error)
             }
-        }
+        )
+
+        const response = await axios.get('./api/user/')
+        this.$store.commit('updateUser', response.data)
     }
 }
 </script>
