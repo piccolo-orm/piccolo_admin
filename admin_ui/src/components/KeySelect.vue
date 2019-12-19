@@ -1,6 +1,6 @@
 <template>
 <select v-bind:name="fieldName">
-    <option value="">----</option>
+    <option value="null">----</option>
     <option
         v-for="(readable, id) in ids"
         v-bind:key="id"
