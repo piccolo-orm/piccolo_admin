@@ -25,7 +25,7 @@ from piccolo.columns.readable import Readable
 from piccolo_admin.endpoints import create_admin
 
 
-USE_HYPERCORN = True
+USE_HYPERCORN = False
 
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "example.sqlite")
@@ -111,7 +111,7 @@ def main(persist=False):
         # which is why Hypercorn is used by default.
         import uvicorn
 
-        uvicorn.run("piccolo_admin.example:APP", reload=True)
+        uvicorn.run("piccolo_admin.example:APP", reload=True, debug=True)
 
 
 if __name__ == "__main__":

@@ -53,13 +53,13 @@
                             </span>
                             <span
                                 class="link"
-                                v-else-if="isForeignKey(name)"
+                                v-else-if="isForeignKey(name) & row[name] !== null"
                             >
                                 <router-link
                                     :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
                                 >{{ row[name + '_readable'] }}</router-link>
                             </span>
-                            <span v-else>{{ row[name] }}</span>
+                            <span v-else>{{ row[name] !== null ? row[name] : 'null' }}</span>
                         </td>
 
                         <td class="snug">

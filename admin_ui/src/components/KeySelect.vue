@@ -1,6 +1,7 @@
 <template>
 <select v-bind:name="fieldName">
-    <option value="null">----</option>
+    <option value="all" v-if="isFilter">All</option>
+    <option value="null" v-if="isNullable">Null</option>
     <option
         v-for="(readable, id) in ids"
         v-bind:key="id"
@@ -12,11 +13,19 @@
 
 <script>
 export default {
-    props: [
-        'fieldName',
-        'tableName',
-        'value'
-    ],
+    props: {
+        'fieldName': String,
+        'tableName': String,
+        'value': undefined,
+        'isFilter': {
+            type: Boolean,
+            default: false
+        },
+        'isNullable': {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             ids: []

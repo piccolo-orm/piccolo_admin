@@ -14,6 +14,8 @@
 
             <h1>Edit</h1>
 
+            <pre>{{ errors }}</pre>
+
             <form v-on:submit.prevent="submitForm($event)">
                 <RowForm v-bind:schema="schema" v-bind:row="selectedRow" />
                 <button>Save</button>
@@ -34,6 +36,11 @@ export default Vue.extend({
     components: {
         RowForm,
         NavBar,
+    },
+    data: function() {
+        return {
+            errors: ''
+        }
     },
     computed: {
         schema() {
@@ -59,7 +66,13 @@ export default Vue.extend({
                 rowID: this.rowID,
                 data: json
             }
-            this.$store.dispatch("updateRow", config)
+            try {
+                await this.$store.dispatch("updateRow", config)
+            } catch(error) {
+                this.errors = error.response.data
+                return
+            }
+            this.errors = ''
         }
     },
     async mounted() {
