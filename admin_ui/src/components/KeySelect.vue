@@ -1,27 +1,34 @@
 <template>
-<select v-bind:name="fieldName">
-    <option value="all" v-if="isFilter">All</option>
-    <option value="null" v-if="isNullable">Null</option>
-    <option
-        v-for="(readable, id) in ids"
-        v-bind:key="id"
-        v-bind:value="id"
-        v-bind:selected="value == id">{{ readable }}</option>
-</select>
+    <select v-bind:name="fieldName">
+        <option
+            v-if="isFilter"
+            value="all"
+        >All</option>
+        <option
+            v-if="isNullable"
+            value="null"
+        >Null</option>
+        <option
+            :key="id"
+            :selected="value == id"
+            :value="id"
+            v-for="(readable, id) in ids"
+        >{{ readable }}</option>
+    </select>
 </template>
 
 
 <script>
 export default {
     props: {
-        'fieldName': String,
-        'tableName': String,
-        'value': undefined,
-        'isFilter': {
+        fieldName: String,
+        tableName: String,
+        value: undefined,
+        isFilter: {
             type: Boolean,
             default: false
         },
-        'isNullable': {
+        isNullable: {
             type: Boolean,
             default: false
         }
@@ -32,7 +39,7 @@ export default {
         }
     },
     async mounted() {
-        const response = await this.$store.dispatch('fetchIds', this.tableName)
+        const response = await this.$store.dispatch("fetchIds", this.tableName)
         this.ids = response.data
     }
 }
@@ -40,5 +47,4 @@ export default {
 
 
 <style>
-
 </style>

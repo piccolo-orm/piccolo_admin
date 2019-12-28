@@ -67,7 +67,7 @@ body {
     label {
         display: block;
         padding-bottom: 0.2rem;
-        padding-top: 0.8rem;
+        padding-top: 0.5rem;
     }
 
     input,
@@ -77,6 +77,7 @@ body {
         box-sizing: border-box;
         padding: 0.5rem;
         color: white;
+        margin-bottom: 0.5rem;
     }
 
     input,
