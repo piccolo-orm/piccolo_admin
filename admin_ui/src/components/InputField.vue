@@ -3,7 +3,10 @@
         <label>{{ title }}</label>
 
         <template v-if="type == 'integer'">
-            <OperatorField :fieldName="getFieldName(title)" />
+            <OperatorField
+                :fieldName="getFieldName(title)"
+                v-if="isFilter"
+            />
             <input
                 step="1"
                 type="number"
@@ -15,7 +18,10 @@
 
         <template v-if="type == 'string'">
             <template v-if="format == 'date-time'">
-                <OperatorField :fieldName="title.toLowerCase()" />
+                <OperatorField
+                    :fieldName="title.toLowerCase()"
+                    v-if="isFilter"
+                />
                 <input
                     autocomplete="off"
                     class="datetime"
