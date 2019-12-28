@@ -6,7 +6,10 @@
             ref="form"
             v-on:submit.prevent="submitForm($event)"
         >
-            <RowForm v-bind:schema="schema" v-bind:isFilter="true" />
+            <RowForm
+                v-bind:isFilter="true"
+                v-bind:schema="schema"
+            />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -17,7 +20,7 @@
 <script lang="ts">
 import Vue from "vue"
 import RowForm from "./RowForm.vue"
-import {APIResponseMessage} from "../interfaces"
+import { APIResponseMessage } from "../interfaces"
 
 export default Vue.extend({
     components: {
@@ -35,18 +38,17 @@ export default Vue.extend({
         showSuccess(contents: string) {
             var message: APIResponseMessage = {
                 contents: contents,
-                type: 'success'
+                type: "success"
             }
-            this.$store.commit('updateApiResponseMessage', message)
+            this.$store.commit("updateApiResponseMessage", message)
         },
         async submitForm(event: any) {
             const form = new FormData(event.target)
 
             const json = {}
             for (const i of form.entries()) {
-
-                if (i[1] && i[1] != 'all') {
-                    json[i[0].replace(" ", "_")] = i[1]
+                if (i[1] && i[1] != "all") {
+                    json[i[0].split(" ").join("_")] = i[1]
                 }
             }
             try {
@@ -54,10 +56,10 @@ export default Vue.extend({
                     tableName: this.tableName,
                     params: json
                 })
-            } catch(error) {
+            } catch (error) {
                 return
             }
-            this.showSuccess('Successfully applied filter')
+            this.showSuccess("Successfully applied filter")
         },
         async clearFilters() {
             console.log("Clearing ...")
@@ -68,10 +70,10 @@ export default Vue.extend({
                     tableName: this.tableName,
                     params: {}
                 })
-            } catch(error) {
+            } catch (error) {
                 return
             }
-            this.showSuccess('Successfully cleared filters')
+            this.showSuccess("Successfully cleared filters")
         }
     }
 })

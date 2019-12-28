@@ -17,7 +17,10 @@
             <pre>{{ errors }}</pre>
 
             <form v-on:submit.prevent="submitForm($event)">
-                <RowForm v-bind:schema="schema" v-bind:row="selectedRow" />
+                <RowForm
+                    v-bind:row="selectedRow"
+                    v-bind:schema="schema"
+                />
                 <button>Save</button>
             </form>
         </div>
@@ -35,11 +38,11 @@ export default Vue.extend({
     props: ["tableName", "rowID"],
     components: {
         RowForm,
-        NavBar,
+        NavBar
     },
     data: function() {
         return {
-            errors: ''
+            errors: ""
         }
     },
     computed: {
@@ -58,7 +61,7 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0].replace(" ", "_")] = i[1]
+                json[i[0].split(" ").join("_")] = i[1]
             }
 
             let config: UpdateRow = {
@@ -68,11 +71,11 @@ export default Vue.extend({
             }
             try {
                 await this.$store.dispatch("updateRow", config)
-            } catch(error) {
+            } catch (error) {
                 this.errors = error.response.data
                 return
             }
-            this.errors = ''
+            this.errors = ""
         }
     },
     async mounted() {

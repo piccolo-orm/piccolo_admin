@@ -3,11 +3,11 @@
         <label>{{ title }}</label>
 
         <template v-if="type == 'integer'">
-            <OperatorField :fieldName="title.toLowerCase()" />
+            <OperatorField :fieldName="getFieldName(title)" />
             <input
                 step="1"
                 type="number"
-                v-bind:name="title.toLowerCase()"
+                v-bind:name="getFieldName(title)"
                 v-bind:placeholder="placeholder"
                 v-bind:value="value"
             />
@@ -89,7 +89,10 @@ export default {
     },
     methods: {
         getFieldName(name: string) {
-            return name.toLowerCase().replace(" ", "_")
+            return name
+                .toLowerCase()
+                .split(" ")
+                .join("_")
         }
     },
     mounted() {

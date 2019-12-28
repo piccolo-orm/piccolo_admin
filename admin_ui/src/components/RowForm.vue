@@ -75,7 +75,12 @@ export default {
     methods: {
         getValue(propertyTitle) {
             let value = this.row
-                ? this.row[propertyTitle.toLowerCase().replace(" ", "_")]
+                ? this.row[
+                      propertyTitle
+                          .toLowerCase()
+                          .split(" ")
+                          .join("_")
+                  ]
                 : undefined
             return value
         },
