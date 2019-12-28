@@ -86,6 +86,7 @@
                         </td>
                     </tr>
                 </table>
+                <p id="result_count">Showing {{ rows.length }} result(s)</p>
             </div>
 
             <div
@@ -298,6 +299,12 @@ div.wrapper {
                     }
                 }
             }
+        }
+
+        p#result_count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.6em;
+            text-transform: uppercase;
         }
     }
 
