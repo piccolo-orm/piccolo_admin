@@ -3,7 +3,7 @@
         <template v-if="schema != undefined">
             <div class="left_column">
                 <div class="title_bar">
-                    <h1>{{ tableName }}</h1>
+                    <h1>{{ tableName | readable }}</h1>
                     <ul>
                         <li>
                             <a
@@ -59,7 +59,7 @@
                                     :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
                                 >{{ row[name + '_readable'] }}</router-link>
                             </span>
-                            <span v-else>{{ row[name] | readable }}</span>
+                            <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
                         <td class="snug">
@@ -148,7 +148,7 @@ export default Vue.extend({
         }
     },
     filters: {
-        readable(value) {
+        abbreviate(value) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
             if (value === null) {
@@ -159,6 +159,9 @@ export default Vue.extend({
                 return string.substring(0, 80) + "..."
             }
             return string
+        },
+        readable(value) {
+            return value.split("_").join(" ")
         }
     },
     methods: {

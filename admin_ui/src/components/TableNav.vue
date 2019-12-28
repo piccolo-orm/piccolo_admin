@@ -1,17 +1,21 @@
 <template>
-<ul>
-    <li v-for="tableName in tableNames" v-bind:key="tableName">
-        <a
-            href="#"
-            v-on:click.prevent="showListing(tableName)"
-            v-bind:class="{active: isActive(tableName)}">{{ tableName }}</a>
-    </li>
-</ul>
+    <ul>
+        <li
+            v-bind:key="tableName"
+            v-for="tableName in tableNames"
+        >
+            <a
+                href="#"
+                v-bind:class="{active: isActive(tableName)}"
+                v-on:click.prevent="showListing(tableName)"
+            >{{ tableName | readable }}</a>
+        </li>
+    </ul>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from "vue"
 
 export default Vue.extend({
     computed: {
@@ -24,15 +28,20 @@ export default Vue.extend({
     },
     methods: {
         showListing(tableName: string) {
-            this.$store.commit('updateCurrentTablename', tableName)
-            this.$router.push({name: 'rowListing', params: {tableName}})
+            this.$store.commit("updateCurrentTablename", tableName)
+            this.$router.push({ name: "rowListing", params: { tableName } })
         },
         isActive(tableName: string): boolean {
             return this.currentTableName === tableName
         }
     },
+    filters: {
+        readable(value) {
+            return value.split("_").join(" ")
+        }
+    },
     async mounted() {
-        await this.$store.dispatch('fetchTableNames')
+        await this.$store.dispatch("fetchTableNames")
     }
 })
 </script>
