@@ -59,7 +59,7 @@
                                     :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
                                 >{{ row[name + '_readable'] }}</router-link>
                             </span>
-                            <span v-else>{{ row[name] !== null ? row[name] : 'null' }}</span>
+                            <span v-else>{{ row[name] | readable }}</span>
                         </td>
 
                         <td class="snug">
@@ -144,6 +144,20 @@ export default Vue.extend({
         },
         schema() {
             return this.$store.state.schema
+        }
+    },
+    filters: {
+        readable(value) {
+            // We need to handle null values, and make sure text strings aren't
+            // too long.
+            if (value === null) {
+                return null
+            }
+            let string = String(value)
+            if (string.length > 100) {
+                return string.substring(0, 80) + "..."
+            }
+            return string
         }
     },
     methods: {
