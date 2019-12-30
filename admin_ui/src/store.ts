@@ -15,7 +15,9 @@ export default new Vuex.Store({
         schema: undefined,
         selectedRow: undefined,
         apiResponseMessage: null as i.APIResponseMessage | null,
-        user: undefined
+        user: undefined,
+        sortBy: null as i.SortByConfig | null,
+        filterParams: {}
     },
     mutations: {
         updateTableNames(state, value) {
@@ -38,7 +40,17 @@ export default new Vuex.Store({
         },
         updateUser(state, user) {
             state.user = user
-        }
+        },
+        updateSortBy(state, config: i.SortByConfig) {
+            state.sortBy = config
+        },
+        reset(state) {
+            state.sortBy = null
+            state.filterParams = {}
+        },
+        updateFilterParams(state, config: object) {
+            state.filterParams = config
+        },
     },
     actions: {
         async fetchTableNames(context) {
@@ -46,11 +58,19 @@ export default new Vuex.Store({
             this.commit('updateTableNames', response.data)
         },
         async fetchRows(context, config: i.FetchRowsConfig) {
+            let params = config.params
+
+            let sortBy = context.state.sortBy
+            if (sortBy) {
+                let prefix = sortBy.ascending ? '' : '-'
+                params['__order'] = prefix + sortBy.property
+            }
+
             try {
                 const response = await axios.get(
-                    `${BASE_URL}tables/${config.tableName}/?readable=true`,
+                    `${BASE_URL}tables/${config.tableName}/?__readable=true`,
                     {
-                        params: config.params
+                        params: params
                     }
                 )
                 context.commit('updateRows', response.data.rows)

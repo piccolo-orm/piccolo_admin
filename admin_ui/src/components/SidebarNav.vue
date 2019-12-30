@@ -26,9 +26,6 @@ export default {
 @import "../vars.less";
 
 div.sidebar {
-    border-right: 1px solid @border_color;
-    width: 15rem;
-
     p {
         padding: 0.5rem;
         margin: 0;

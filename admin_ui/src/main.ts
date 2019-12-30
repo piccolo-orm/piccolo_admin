@@ -18,7 +18,9 @@ import {
   faTable,
   faTools,
   faSignOutAlt,
-  faAngleDown
+  faAngleDown,
+  faSort,
+  faBars
 } from '@fortawesome/free-solid-svg-icons';
 library.add(
   faPlus,
@@ -30,7 +32,9 @@ library.add(
   faTable,
   faTools,
   faSignOutAlt,
-  faAngleDown
+  faAngleDown,
+  faSort,
+  faBars
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

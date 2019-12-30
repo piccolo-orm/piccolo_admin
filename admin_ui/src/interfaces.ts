@@ -16,7 +16,7 @@ export interface UpdateRow {
 
 export interface FetchRowsConfig {
     tableName: string
-    params: object
+    params: object,
 }
 
 
@@ -28,4 +28,9 @@ export interface FetchSingleRowConfig {
 export interface APIResponseMessage {
     contents: string
     type: string
+}
+
+export interface SortByConfig {
+    property: string
+    ascending: boolean
 }

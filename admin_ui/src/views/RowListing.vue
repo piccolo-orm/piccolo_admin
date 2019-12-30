@@ -16,6 +16,14 @@
                         <li>
                             <a
                                 href="#"
+                                v-on:click.prevent="showSort = !showSort"
+                            >
+                                <font-awesome-icon icon="sort" />Sort
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#"
                                 v-on:click.prevent="showFilter = !showFilter"
                             >
                                 <font-awesome-icon icon="filter" />
@@ -97,11 +105,18 @@
             </div>
 
             <AddRow
-                v-bind:schema="schema"
-                v-bind:tableName="tableName"
+                :schema="schema"
+                :tableName="tableName"
                 v-if="showAddRow"
                 v-on:addedRow="fetchRows"
                 v-on:close="showAddRow = false"
+            />
+
+            <RowSort
+                :schema="schema"
+                :tableName="tableName"
+                v-if="showSort"
+                v-on:close="showSort = false"
             />
         </template>
     </BaseView>
@@ -114,6 +129,7 @@ import axios from "axios"
 import AddRow from "../components/AddRow.vue"
 import BaseView from "./BaseView.vue"
 import RowFilter from "../components/RowFilter.vue"
+import RowSort from "../components/RowSort.vue"
 import TableNav from "../components/TableNav.vue"
 
 export default Vue.extend({
@@ -121,13 +137,15 @@ export default Vue.extend({
     data() {
         return {
             showAddRow: false,
-            showFilter: false
+            showFilter: false,
+            showSort: false
         }
     },
     components: {
         AddRow,
         BaseView,
         RowFilter,
+        RowSort,
         TableNav
     },
     computed: {
@@ -195,6 +213,7 @@ export default Vue.extend({
     },
     watch: {
         "$route.params.tableName": async function(id) {
+            this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             this.$store.commit("updateRows", [])
             await Promise.all([this.fetchRows(), this.fetchSchema()])
@@ -217,8 +236,14 @@ div.wrapper {
         flex-direction: row;
         align-items: center;
 
+        @media (max-width: @mobile_width) {
+            align-items: initial;
+            flex-direction: column;
+        }
+
         h1 {
             text-transform: capitalize;
+            margin: 0.5rem;
             flex-grow: 1;
         }
 
@@ -227,9 +252,16 @@ div.wrapper {
         }
 
         ul {
+            margin: 0;
+            padding: 0.5rem;
+
             li {
                 display: inline-block;
                 padding-left: 1rem;
+
+                &:first-child {
+                    padding-left: 0;
+                }
 
                 a {
                     text-decoration: none;
@@ -247,6 +279,10 @@ div.wrapper {
     div.left_column {
         width: 80%;
 
+        @media (max-width: @mobile_width) {
+            width: 100%;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -255,8 +291,11 @@ div.wrapper {
                 border-bottom: 1px solid @border_color;
                 text-align: left;
             }
+            td {
+                font-size: 0.9em;
+            }
             th {
-                font-size: 0.8em;
+                font-size: 0.7em;
                 text-transform: uppercase;
 
                 &:last-child {

@@ -1,8 +1,10 @@
 <template>
-    <div>
+    <div style="height: 100%;">
         <NavBar />
         <div class="wrapper">
-            <SidebarNav />
+            <div class="sidebar_wrapper">
+                <SidebarNav />
+            </div>
             <slot></slot>
         </div>
     </div>
@@ -31,5 +33,14 @@ div.wrapper {
     border-top: 1px solid @border_color;
     display: flex;
     height: 100%;
+
+    div.sidebar_wrapper {
+        border-right: 1px solid @border_color;
+        width: 15rem;
+
+        @media (max-width: @mobile_width) {
+            display: none;
+        }
+    }
 }
 </style>

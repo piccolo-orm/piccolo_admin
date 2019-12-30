@@ -49,9 +49,11 @@ export default {
 
 
 <style lang="less">
-@purple: #4d0d58;
-@dark_grey: #2d2d2d;
-@light_blue: #009dff;
+@import "./vars.less";
+
+html {
+    height: 100%;
+}
 
 body {
     background-color: @dark_grey;
@@ -64,6 +66,8 @@ body {
 }
 
 #app {
+    height: 100%;
+
     label {
         display: block;
         padding-bottom: 0.2rem;

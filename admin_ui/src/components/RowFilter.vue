@@ -51,6 +51,9 @@ export default Vue.extend({
                     json[i[0].split(" ").join("_")] = i[1]
                 }
             }
+
+            this.$store.commit("updateFilterParams", json)
+
             try {
                 await this.$store.dispatch("fetchRows", {
                     tableName: this.tableName,
