@@ -4,7 +4,6 @@ An example of how to configure and run the admin.
 Can be run from the command line using `python -m piccolo_admin.example`,
 or `admin_demo`.
 """
-import datetime
 import os
 import sys
 
@@ -23,6 +22,7 @@ from piccolo.columns import (
 from piccolo.columns.readable import Readable
 
 from piccolo_admin.endpoints import create_admin
+from piccolo_admin.example_data import DIRECTORS, MOVIES
 
 
 USE_HYPERCORN = False
@@ -75,17 +75,8 @@ def main(persist=False):
         Sessions.create_table().run_sync()
 
         # Add some rows
-        Director(name="Peter Jackson").save().run_sync()
-        director = Director(name="George Lucas")
-        director.save().run_sync()
-        movie = Movie(
-            name="Star Wars",
-            rating=100,
-            director=director.id,
-            description="A story from a galaxy far, far away.",
-            release_date=datetime.datetime(year=1977, month=12, day=27),
-        )
-        movie.save().run_sync()
+        Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
+        Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
 
         # Create a user for testing login
         user = User(
@@ -116,5 +107,5 @@ def main(persist=False):
 
 if __name__ == "__main__":
     args = sys.argv
-    persist = (len(args) > 1) and (args[1] == '--persist')
+    persist = (len(args) > 1) and (args[1] == "--persist")
     main(persist)

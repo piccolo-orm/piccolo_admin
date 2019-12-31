@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 
 DIRECTORS = [
@@ -48,7 +48,7 @@ MOVIES = [
     },
     {
         "name": "Star Wars: Episode I – The Phantom Menace",
-        "rating": 100,
+        "rating": 53,
         "director": 2,
         "description": (
             "Two Jedi Knights set out to search for someone who can "
@@ -169,5 +169,39 @@ MOVIES = [
             "they follow Gollum unaware of the path he is leading them to."
         ),
         "release_date": datetime.datetime(year=2003, month=12, day=17),
+    },
+    {
+        "name": "The Hobbit: An Unexpected Journey",
+        "rating": 64,
+        "director": 1,
+        "description": (
+            "Bilbo Baggins, a hobbit, is persuaded into accompanying a wizard "
+            "and a group of dwarves on a journey to reclaim the city of "
+            "Erebor and all its riches from the dragon Smaug."
+        ),
+        "release_date": datetime.datetime(year=2012, month=12, day=12),
+    },
+    {
+        "name": "The Hobbit: The Desolation of Smaug",
+        "rating": 74,
+        "director": 1,
+        "description": (
+            "Bilbo Baggins, a hobbit, and his companions face great dangers "
+            "on their journey to Laketown. Soon, they reach the Lonely "
+            "Mountain, where Bilbo comes face-to-face with the fearsome "
+            "dragon Smaug."
+        ),
+        "release_date": datetime.datetime(year=2013, month=12, day=13),
+    },
+    {
+        "name": "The Hobbit: The Battle of the Five Armies",
+        "rating": 59,
+        "director": 1,
+        "description": (
+            "Bilbo fights against a number of enemies to save the life of his "
+            "Dwarf friends and protects the Lonely Mountain after a conflict "
+            "arises."
+        ),
+        "release_date": datetime.datetime(year=2014, month=12, day=1),
     },
 ]
