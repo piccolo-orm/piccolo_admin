@@ -43,6 +43,7 @@ class AdminRouter(Router):
         *tables: t.Type[Table],
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
+        page_size: int = 15,
     ) -> None:
         self.auth_table = auth_table
 
@@ -60,7 +61,9 @@ class AdminRouter(Router):
         table_routes: t.List[BaseRoute] = [
             Mount(
                 path=f"/{table._meta.tablename}/",
-                app=auth_middleware(PiccoloCRUD(table, read_only=False)),
+                app=auth_middleware(
+                    PiccoloCRUD(table, read_only=False, page_size=page_size)
+                ),
             )
             for table in tables
         ]
@@ -144,7 +147,11 @@ def create_admin(
     tables: t.Sequence[Table],
     auth_table: BaseUser = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
+    page_size: int = 15,
 ):
+    """
+    :param page_size: The number of results shown on each page.
+    """
     return ExceptionMiddleware(
         CSRFMiddleware(
             AdminRouter(

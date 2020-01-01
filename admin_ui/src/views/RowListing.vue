@@ -95,6 +95,8 @@
                     </tr>
                 </table>
                 <p id="result_count">Showing {{ rows.length }} result(s)</p>
+
+                <Pagination :tableName="tableName" />
             </div>
 
             <div
@@ -128,6 +130,7 @@ import Vue from "vue"
 import axios from "axios"
 import AddRow from "../components/AddRow.vue"
 import BaseView from "./BaseView.vue"
+import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSort from "../components/RowSort.vue"
 import TableNav from "../components/TableNav.vue"
@@ -144,6 +147,7 @@ export default Vue.extend({
     components: {
         AddRow,
         BaseView,
+        Pagination,
         RowFilter,
         RowSort,
         TableNav
@@ -209,6 +213,9 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
+        },
+        async fetchRowCount() {
+            this.$store.dispatch("fetchRowCount", this.tableName)
         }
     },
     watch: {
@@ -216,12 +223,20 @@ export default Vue.extend({
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             this.$store.commit("updateRows", [])
-            await Promise.all([this.fetchRows(), this.fetchSchema()])
+            await Promise.all([
+                this.fetchRows(),
+                this.fetchSchema(),
+                this.fetchRowCount()
+            ])
         }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
-        await Promise.all([this.fetchRows(), this.fetchSchema()])
+        await Promise.all([
+            this.fetchRows(),
+            this.fetchSchema(),
+            this.fetchRowCount()
+        ])
     }
 })
 </script>

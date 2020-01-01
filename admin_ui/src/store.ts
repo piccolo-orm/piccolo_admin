@@ -17,7 +17,10 @@ export default new Vuex.Store({
         apiResponseMessage: null as i.APIResponseMessage | null,
         user: undefined,
         sortBy: null as i.SortByConfig | null,
-        filterParams: {}
+        filterParams: {},
+        rowCount: 0,
+        pageSize: 1,
+        currentPageNumber: 1
     },
     mutations: {
         updateTableNames(state, value) {
@@ -47,10 +50,20 @@ export default new Vuex.Store({
         reset(state) {
             state.sortBy = null
             state.filterParams = {}
+            state.currentPageNumber = 1
         },
         updateFilterParams(state, config: object) {
             state.filterParams = config
         },
+        updateRowCount(state, rowCount: number) {
+            state.rowCount = rowCount
+        },
+        updatePageSize(state, pageSize: number) {
+            state.pageSize = pageSize
+        },
+        updateCurrentPageNumber(state, pageNumber: number) {
+            state.currentPageNumber = pageNumber
+        }
     },
     actions: {
         async fetchTableNames(context) {
@@ -65,6 +78,8 @@ export default new Vuex.Store({
                 let prefix = sortBy.ascending ? '' : '-'
                 params['__order'] = prefix + sortBy.property
             }
+
+            params['__page'] = context.state.currentPageNumber
 
             try {
                 const response = await axios.get(
@@ -82,6 +97,18 @@ export default new Vuex.Store({
                     type: 'error'
                 })
             }
+        },
+        async fetchRowCount(context, tableName: string) {
+            const params = context.state.filterParams
+            const response = await axios.get(
+                `${BASE_URL}tables/${tableName}/count/`,
+                {
+                    params
+                }
+            )
+            const data = response.data as i.RowCountAPIResponse
+            context.commit('updateRowCount', data.count)
+            context.commit('updatePageSize', data.page_size)
         },
         async fetchIds(context, tableName: string) {
             const response = await axios.get(

@@ -34,3 +34,8 @@ export interface SortByConfig {
     property: string
     ascending: boolean
 }
+
+export interface RowCountAPIResponse {
+    count: number
+    page_size: number
+}
