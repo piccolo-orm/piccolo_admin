@@ -63,13 +63,7 @@ export default {
             }
             this.$store.commit("updateSortBy", config)
 
-            let filterParams = this.$store.state.filterParams
-
-            let fetchRowsConfig: i.FetchRowsConfig = {
-                tableName: this.tableName,
-                params: filterParams
-            }
-            await this.$store.dispatch("fetchRows", fetchRowsConfig)
+            await this.$store.dispatch("fetchRows")
 
             this.$emit("close")
         }

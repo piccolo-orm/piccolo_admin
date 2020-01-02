@@ -13,9 +13,7 @@
     </ul>
 </template>
 
-<script lang="ts">
-import * as i from "../interfaces"
-
+<script>
 export default {
     props: {
         tableName: String
@@ -46,11 +44,7 @@ export default {
             console.log("Navigating to " + pageNumber)
             this.$store.commit("updateCurrentPageNumber", pageNumber)
 
-            const config: i.FetchRowsConfig = {
-                tableName: this.currentTableName,
-                params: this.filterParams
-            }
-            await this.$store.dispatch("fetchRows", config)
+            await this.$store.dispatch("fetchRows")
         }
     }
 }

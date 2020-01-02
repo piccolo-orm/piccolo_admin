@@ -206,37 +206,22 @@ export default Vue.extend({
             }
         },
         async fetchRows() {
-            await this.$store.dispatch("fetchRows", {
-                tableName: this.tableName,
-                params: {}
-            })
+            await this.$store.dispatch("fetchRows")
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
-        },
-        async fetchRowCount() {
-            this.$store.dispatch("fetchRowCount", this.tableName)
         }
     },
     watch: {
         "$route.params.tableName": async function(id) {
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
-            this.$store.commit("updateRows", [])
-            await Promise.all([
-                this.fetchRows(),
-                this.fetchSchema(),
-                this.fetchRowCount()
-            ])
+            await Promise.all([this.fetchRows(), this.fetchSchema()])
         }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
-        await Promise.all([
-            this.fetchRows(),
-            this.fetchSchema(),
-            this.fetchRowCount()
-        ])
+        await Promise.all([this.fetchRows(), this.fetchSchema()])
     }
 })
 </script>

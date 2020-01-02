@@ -51,6 +51,7 @@ export default new Vuex.Store({
             state.sortBy = null
             state.filterParams = {}
             state.currentPageNumber = 1
+            state.rows = []
         },
         updateFilterParams(state, config: object) {
             state.filterParams = config
@@ -70,36 +71,17 @@ export default new Vuex.Store({
             const response = await axios.get(`${BASE_URL}tables/`)
             this.commit('updateTableNames', response.data)
         },
-        async fetchRows(context, config: i.FetchRowsConfig) {
-            let params = config.params
+        async fetchRows(context) {
+            const params = context.state.filterParams
+            const tableName = context.state.currentTableName
 
-            let sortBy = context.state.sortBy
+            const sortBy = context.state.sortBy
             if (sortBy) {
                 let prefix = sortBy.ascending ? '' : '-'
                 params['__order'] = prefix + sortBy.property
             }
 
-            params['__page'] = context.state.currentPageNumber
-
-            try {
-                const response = await axios.get(
-                    `${BASE_URL}tables/${config.tableName}/?__readable=true`,
-                    {
-                        params: params
-                    }
-                )
-                context.commit('updateRows', response.data.rows)
-                return response
-            } catch (error) {
-                console.log(error.response)
-                context.commit('updateApiResponseMessage', {
-                    contents: `Problem fetching ${config.tableName} rows.`,
-                    type: 'error'
-                })
-            }
-        },
-        async fetchRowCount(context, tableName: string) {
-            const params = context.state.filterParams
+            // Get the row counts:
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/count/`,
                 {
@@ -109,6 +91,27 @@ export default new Vuex.Store({
             const data = response.data as i.RowCountAPIResponse
             context.commit('updateRowCount', data.count)
             context.commit('updatePageSize', data.page_size)
+            if (data.count < data.page_size) {
+                context.commit('updateCurrentPageNumber', 1)
+            }
+
+            params['__page'] = context.state.currentPageNumber
+
+            try {
+                const response = await axios.get(
+                    `${BASE_URL}tables/${tableName}/?__readable=true`,
+                    {
+                        params: params
+                    }
+                )
+                context.commit('updateRows', response.data.rows)
+            } catch (error) {
+                console.log(error.response)
+                context.commit('updateApiResponseMessage', {
+                    contents: `Problem fetching ${tableName} rows.`,
+                    type: 'error'
+                })
+            }
         },
         async fetchIds(context, tableName: string) {
             const response = await axios.get(

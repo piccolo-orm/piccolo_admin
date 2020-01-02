@@ -55,10 +55,7 @@ export default Vue.extend({
             this.$store.commit("updateFilterParams", json)
 
             try {
-                await this.$store.dispatch("fetchRows", {
-                    tableName: this.tableName,
-                    params: json
-                })
+                await this.$store.dispatch("fetchRows")
             } catch (error) {
                 return
             }
@@ -68,11 +65,9 @@ export default Vue.extend({
             console.log("Clearing ...")
             let form: HTMLFormElement = this.$refs.form
             form.reset()
+            this.$store.commit("updateFilterParams", {})
             try {
-                await this.$store.dispatch("fetchRows", {
-                    tableName: this.tableName,
-                    params: {}
-                })
+                await this.$store.dispatch("fetchRows")
             } catch (error) {
                 return
             }
