@@ -95,6 +95,7 @@ export default new Vuex.Store({
                 context.commit('updateCurrentPageNumber', 1)
             }
 
+            // Now get the rows:
             params['__page'] = context.state.currentPageNumber
 
             try {
