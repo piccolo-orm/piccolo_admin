@@ -53,7 +53,7 @@
                             v-on:click.prevent="clickedReference(reference)"
                         >
                             <span class="table">{{ reference.tableName }}</span>
-                            ({{ reference.columnName }})
+                            ({{ reference.columnName }} column)
                             <font-awesome-icon icon="external-link-alt" />
                         </a>
                     </li>
@@ -185,6 +185,7 @@ div.edit_wrapper {
     ul.related_tables {
         li {
             span.table {
+                font-weight: bold;
                 text-transform: capitalize;
             }
         }
