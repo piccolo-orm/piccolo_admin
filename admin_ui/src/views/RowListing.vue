@@ -213,14 +213,27 @@ export default Vue.extend({
         }
     },
     watch: {
-        "$route.params.tableName": async function(id) {
+        "$route.params.tableName": async function() {
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             await Promise.all([this.fetchRows(), this.fetchSchema()])
+        },
+        "$route.query": async function() {
+            this.$store.commit(
+                "updateFilterParams",
+                this.$router.currentRoute.query
+            )
+            await this.fetchRows()
         }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
+
+        this.$store.commit(
+            "updateFilterParams",
+            this.$router.currentRoute.query
+        )
+
         await Promise.all([this.fetchRows(), this.fetchSchema()])
     }
 })

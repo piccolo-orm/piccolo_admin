@@ -39,3 +39,14 @@ export interface RowCountAPIResponse {
     count: number
     page_size: number
 }
+
+
+export interface TableReference {
+    tableName: string
+    columnName: string
+}
+
+
+export interface TableReferencesAPIResponse {
+    references: TableReference[]
+}

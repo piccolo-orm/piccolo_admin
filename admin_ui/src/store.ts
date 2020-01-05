@@ -114,6 +114,12 @@ export default new Vuex.Store({
                 })
             }
         },
+        async fetchTableReferences(context, tableName: string) {
+            const response = await axios.get(
+                `${BASE_URL}tables/${tableName}/references/`
+            )
+            return response
+        },
         async fetchIds(context, tableName: string) {
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/ids/`

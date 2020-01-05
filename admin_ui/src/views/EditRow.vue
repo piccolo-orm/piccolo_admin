@@ -9,7 +9,9 @@
                 <a
                     href="#"
                     v-on:click.prevent="$router.go(-1)"
-                >Back</a>
+                >
+                    <font-awesome-icon icon="angle-left" />Back
+                </a>
             </p>
 
             <h1>Edit</h1>
@@ -23,6 +25,40 @@
                 />
                 <button>Save</button>
             </form>
+
+            <div v-if="references.length > 0">
+                <p class="referencing_title">
+                    <a
+                        href="#"
+                        v-on:click.prevent="showReferencing = !showReferencing"
+                    >
+                        <span v-if="showReferencing">
+                            <font-awesome-icon icon="angle-down" />Hide
+                        </span>
+                        <span v-else>
+                            <font-awesome-icon icon="angle-right" />Show
+                        </span> Referencing Tables
+                    </a>
+                </p>
+                <ul
+                    class="related_tables"
+                    v-if="showReferencing"
+                >
+                    <li
+                        v-bind:key="reference.tableName + reference.columnName"
+                        v-for="reference in references"
+                    >
+                        <a
+                            href="#"
+                            v-on:click.prevent="clickedReference(reference)"
+                        >
+                            <span class="table">{{ reference.tableName }}</span>
+                            ({{ reference.columnName }})
+                            <font-awesome-icon icon="external-link-alt" />
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -30,9 +66,14 @@
 
 <script lang="ts">
 import Vue from "vue"
+import { Location } from "vue-router"
 import NavBar from "../components/NavBar.vue"
 import RowForm from "../components/RowForm.vue"
-import { UpdateRow } from "../interfaces"
+import {
+    UpdateRow,
+    TableReferencesAPIResponse,
+    TableReference
+} from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
@@ -42,7 +83,9 @@ export default Vue.extend({
     },
     data: function() {
         return {
-            errors: ""
+            errors: "",
+            references: [] as TableReference[],
+            showReferencing: false
         }
     },
     computed: {
@@ -76,6 +119,26 @@ export default Vue.extend({
                 return
             }
             this.errors = ""
+        },
+        async fetchTableReferences() {
+            const response = await this.$store.dispatch(
+                "fetchTableReferences",
+                this.tableName
+            )
+            this.references = (response.data as TableReferencesAPIResponse).references
+        },
+        clickedReference(reference: TableReference) {
+            let columnName = reference.columnName
+            let query = {}
+            query[columnName] = this.rowID
+
+            let location: Location = {
+                name: "rowListing",
+                params: { tableName: reference.tableName },
+                query
+            }
+            let url = this.$router.resolve(location).href
+            window.open(`${document.location.origin}/${url}`, "_blank")
         }
     },
     async mounted() {
@@ -85,21 +148,43 @@ export default Vue.extend({
                 tableName: this.tableName,
                 rowID: this.rowID
             }),
-            this.$store.dispatch("fetchSchema", this.tableName)
+            this.$store.dispatch("fetchSchema", this.tableName),
+            this.fetchTableReferences()
         ])
     }
 })
 </script>
 
 
-<style lang="less">
+<style scoped lang="less">
+@import "../vars.less";
+
 div.edit_wrapper {
     margin: 0 auto;
     max-width: 40rem;
     padding: 0 0.5rem;
 
+    a {
+        text-decoration: none;
+    }
+
     h1 {
         margin: 0;
+    }
+
+    p.referencing_title {
+        color: @border_color;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    ul.related_tables {
+        li {
+            span.table {
+                text-transform: capitalize;
+            }
+        }
     }
 }
 </style>
