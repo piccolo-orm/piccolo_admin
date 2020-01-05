@@ -137,8 +137,11 @@ export default Vue.extend({
                 params: { tableName: reference.tableName },
                 query
             }
-            let url = this.$router.resolve(location).href
-            window.open(`${document.location.origin}/${url}`, "_blank")
+            let vueUrl = this.$router.resolve(location).href
+            window.open(
+                `${document.location.origin}${document.location.pathname}${vueUrl}`,
+                "_blank"
+            )
         }
     },
     async mounted() {
