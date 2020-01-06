@@ -14,23 +14,27 @@
                 </router-link>
             </h1>
 
-            <p>
-                <a
-                    href="#"
-                    id="user"
-                >
-                    <font-awesome-icon icon="user" />
-                    {{ username }}
-                </a>
-
-                <a
-                    href="#"
-                    v-on:click.prevent="logout"
-                >
-                    Log out
-                    <font-awesome-icon icon="sign-out-alt" />
-                </a>
-            </p>
+            <ul>
+                <li>
+                    <a
+                        href="#"
+                        id="user"
+                        v-on:click.prevent="showDropdown = !showDropdown"
+                    >
+                        <font-awesome-icon icon="user" />
+                        {{ username }}
+                        <font-awesome-icon
+                            icon="angle-up"
+                            v-if="showDropdown"
+                        />
+                        <font-awesome-icon
+                            icon="angle-down"
+                            v-if="!showDropdown"
+                        />
+                        <DropDownMenu v-if="showDropdown" />
+                    </a>
+                </li>
+            </ul>
         </div>
 
         <SidebarOverlay v-if="showSidebar" />
@@ -40,13 +44,14 @@
 
 <script lang="ts">
 import Vue from "vue"
-import axios from "axios"
+import DropDownMenu from "./DropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 
 export default Vue.extend({
     data() {
         return {
-            showSidebar: false
+            showSidebar: false,
+            showDropdown: false
         }
     },
     computed: {
@@ -59,21 +64,8 @@ export default Vue.extend({
         }
     },
     components: {
-        SidebarOverlay
-    },
-    methods: {
-        async logout() {
-            if (window.confirm("Are you sure you want to logout?")) {
-                console.log("Logging out")
-                try {
-                    await axios.post("./api/logout/")
-                    this.$router.push({ name: "login" })
-                } catch (error) {
-                    console.log("Logout failed")
-                    console.log(error)
-                }
-            }
-        }
+        SidebarOverlay,
+        DropDownMenu
     }
 })
 </script>
@@ -108,40 +100,17 @@ export default Vue.extend({
 
     ul {
         padding: 0;
+        flex-grow: 0;
+        text-align: right;
 
         li {
             display: inline-block;
-            text-transform: uppercase;
-            font-size: 0.8em;
-
-            &:not(:first-child) {
-                &:before {
-                    content: ">";
-                    padding: 0 0.5rem;
-                }
-            }
-
-            a {
-                text-decoration: none;
-
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
+            position: relative;
         }
-    }
-
-    p {
-        flex-grow: 0;
-        text-align: right;
     }
 
     a#user {
         padding-right: 1rem;
-
-        @media (max-width: @mobile_width) {
-            display: none;
-        }
     }
 
     a {

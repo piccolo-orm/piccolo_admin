@@ -1,11 +1,13 @@
 <template>
     <div id="overlay">
-        <div class="modal">
+        <div class="modal opaque">
             <p class="close">
                 <a
                     href="#"
                     v-on:click.prevent="$emit('close')"
-                >Close</a>
+                >
+                    <font-awesome-icon icon="times" />
+                </a>
             </p>
 
             <slot></slot>
@@ -27,7 +29,6 @@ div#overlay {
     background-color: rgba(0, 0, 0, 0.7);
 
     div.modal {
-        background-color: #2d2d2d;
         width: 30rem;
         margin: 1rem auto;
         box-sizing: border-box;

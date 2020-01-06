@@ -301,7 +301,6 @@ div.wrapper {
             width: 100%;
 
             tr {
-                border-bottom: 1px solid @border_color;
                 text-align: left;
             }
             td {

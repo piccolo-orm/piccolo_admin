@@ -20,7 +20,8 @@ export default new Vuex.Store({
         filterParams: {},
         rowCount: 0,
         pageSize: 1,
-        currentPageNumber: 1
+        currentPageNumber: 1,
+        darkMode: true
     },
     mutations: {
         updateTableNames(state, value) {
@@ -64,7 +65,10 @@ export default new Vuex.Store({
         },
         updateCurrentPageNumber(state, pageNumber: number) {
             state.currentPageNumber = pageNumber
-        }
+        },
+        updateDarkMode(state, enabled: boolean) {
+            state.darkMode = enabled
+        },
     },
     actions: {
         async fetchTableNames(context) {

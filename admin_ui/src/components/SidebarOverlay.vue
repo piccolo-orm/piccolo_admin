@@ -1,5 +1,8 @@
 <template>
-    <div id="sidebar_overlay">
+    <div
+        class="opaque"
+        id="sidebar_overlay"
+    >
         <SidebarNav />
     </div>
 </template>
@@ -18,7 +21,6 @@ export default {
 @import "../vars.less";
 
 div#sidebar_overlay {
-    background-color: @dark_grey;
     position: absolute;
     top: 3.6rem;
     left: 0;

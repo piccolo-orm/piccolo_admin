@@ -1,5 +1,8 @@
 <template>
-    <div id="app">
+    <div
+        :class="{dark_mode: darkMode, light_mode: !darkMode}"
+        id="app"
+    >
         <router-view />
         <MessagePopup />
     </div>
@@ -13,6 +16,11 @@ import MessagePopup from "./components/MessagePopup.vue"
 export default {
     components: {
         MessagePopup
+    },
+    computed: {
+        darkMode() {
+            return this.$store.state.darkMode
+        }
     },
     async beforeCreate() {
         let app = this
@@ -56,13 +64,57 @@ html {
 }
 
 body {
-    background-color: @dark_grey;
     height: 100%;
     margin: 0;
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.light_mode {
+    background-color: white;
+    color: rgba(0, 0, 0, 0.9);
+
+    a {
+        color: rgba(0, 0, 0, 0.9);
+    }
+
+    input,
+    select {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    tr {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .opaque {
+        background-color: white;
+    }
+}
+
+.dark_mode {
+    background-color: @dark_grey;
     color: rgba(255, 255, 255, 0.8);
+
+    a {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    tr {
+        border-bottom: 1px solid @border_color;
+    }
+
+    input,
+    select {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .opaque {
+        background-color: @dark_grey;
+    }
 }
 
 #app {
@@ -76,11 +128,9 @@ body {
 
     input,
     select {
-        border: 1px solid rgba(255, 255, 255, 0.2);
         background-color: rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
         padding: 0.5rem;
-        color: white;
         margin-bottom: 0.5rem;
     }
 
@@ -117,9 +167,5 @@ body {
     svg {
         padding-right: 0.3rem;
     }
-}
-
-a {
-    color: rgba(255, 255, 255, 0.8);
 }
 </style>
