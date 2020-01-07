@@ -1,14 +1,25 @@
 <template>
-<div id="message_popup" v-if="visible">
-    <p class="message">{{ message }}</p>
-    <p class="close"><a href="#" v-on:click.prevent="visible = false">Close</a></p>
-</div>
+    <div
+        id="message_popup"
+        v-if="visible"
+    >
+        <p class="message">{{ message }}</p>
+        <p class="close">
+            <a
+                class="subtle"
+                href="#"
+                v-on:click.prevent="visible = false"
+            >
+                <font-awesome-icon icon="times" />
+            </a>
+        </p>
+    </div>
 </template>
 
 
 <script lang="ts">
-import Vue from 'vue'
-import * as i from '../interfaces'
+import Vue from "vue"
+import * as i from "../interfaces"
 
 export default Vue.extend({
     data() {
@@ -19,7 +30,9 @@ export default Vue.extend({
     },
     computed: {
         message(): string {
-            return this.apiResponseMessage ? this.apiResponseMessage.contents : '-'
+            return this.apiResponseMessage
+                ? this.apiResponseMessage.contents
+                : "-"
         },
         apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
@@ -38,16 +51,13 @@ export default Vue.extend({
             this.visible = true
             const app = this
 
-            setTimeout(
-                () => {
-                    const now = this.getTime()
-                    // Only hide if it if it wasn't subsequently opened again.
-                    if (now - app.timeLastAppeared >= 3000) {
-                        app.visible = false
-                    }
-                },
-                3000
-            )
+            setTimeout(() => {
+                const now = this.getTime()
+                // Only hide if it if it wasn't subsequently opened again.
+                if (now - app.timeLastAppeared >= 3000) {
+                    app.visible = false
+                }
+            }, 3000)
         }
     }
 })
@@ -55,6 +65,8 @@ export default Vue.extend({
 
 
 <style lang="less">
+@import "../vars.less";
+
 div#message_popup {
     display: flex;
     position: fixed;
@@ -63,6 +75,11 @@ div#message_popup {
     padding: 0.5rem 1rem;
     box-sizing: border-box;
     background-color: green;
+
+    p,
+    a {
+        color: @off_white !important;
+    }
 
     p.message {
         flex-grow: 1;
