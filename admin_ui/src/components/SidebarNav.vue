@@ -1,7 +1,10 @@
 <template>
     <div class="sidebar">
         <p class="opaque">
-            <router-link to="/">
+            <router-link
+                class="subtle"
+                to="/"
+            >
                 <font-awesome-icon icon="home" />Home
             </router-link>
         </p>

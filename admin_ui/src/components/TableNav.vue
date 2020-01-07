@@ -5,6 +5,7 @@
             v-for="tableName in tableNames"
         >
             <a
+                class="subtle"
                 href="#"
                 v-bind:class="{active: isActive(tableName)}"
                 v-on:click.prevent="showListing(tableName)"

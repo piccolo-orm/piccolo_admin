@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%;">
+    <div class="base_view">
         <NavBar />
         <div class="wrapper">
             <div class="sidebar_wrapper">
@@ -29,17 +29,23 @@ export default Vue.extend({
 <style lang="less">
 @import "../vars.less";
 
-div.wrapper {
-    border-top: 1px solid @border_color;
+div.base_view {
+    flex-grow: 1;
     display: flex;
-    height: 100%;
+    flex-direction: column;
 
-    div.sidebar_wrapper {
-        border-right: 1px solid @border_color;
-        width: 15rem;
+    div.wrapper {
+        border-top: 1px solid @border_color;
+        display: flex;
+        flex-grow: 1;
 
-        @media (max-width: @mobile_width) {
-            display: none;
+        div.sidebar_wrapper {
+            border-right: 1px solid @border_color;
+            width: 15rem;
+
+            @media (max-width: @mobile_width) {
+                display: none;
+            }
         }
     }
 }

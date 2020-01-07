@@ -79,12 +79,28 @@ body {
         border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
 
+    .right_column {
+        border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
     ul#drop_down_menu {
-        background-color: @purple;
+        background-color: @dark_blue;
     }
 
     a {
-        color: rgba(0, 0, 0, 0.9);
+        color: @dark_blue;
+
+        &:hover {
+            color: lighten(@dark_blue, 10%);
+        }
+
+        &.subtle {
+            color: @dark_grey;
+
+            &:hover {
+                color: @dark_grey;
+            }
+        }
     }
 
     input,
@@ -102,16 +118,36 @@ body {
     }
 
     #nav {
-        background-color: @purple;
+        background-color: @dark_blue;
+    }
+
+    button {
+        background-color: @dark_blue;
+
+        &:hover {
+            background-color: lighten(@dark_blue, 10%);
+        }
     }
 }
 
 .dark_mode {
     background-color: @dark_grey;
-    color: rgba(255, 255, 255, 0.8);
+    color: @off_white;
 
     a {
-        color: rgba(255, 255, 255, 0.8);
+        color: @light_blue;
+
+        &:hover {
+            color: lighten(@light_blue, 10%);
+        }
+
+        &.subtle {
+            color: @off_white;
+
+            &:hover {
+                color: white;
+            }
+        }
     }
 
     tr {
@@ -121,7 +157,7 @@ body {
     input,
     select {
         border: 1px solid rgba(0, 0, 0, 0.2);
-        color: white;
+        color: @off_white;
     }
 
     .opaque {
@@ -131,9 +167,19 @@ body {
     #nav {
         background-color: darken(@dark_grey, 5%);
     }
+
+    button {
+        background-color: @light_blue;
+
+        &:hover {
+            background-color: lighten(@light_blue, 10%);
+        }
+    }
 }
 
 #app {
+    display: flex;
+    flex-direction: column;
     min-height: 100%;
 
     label {
@@ -166,7 +212,6 @@ body {
     }
 
     button {
-        background-color: @light_blue;
         color: white;
         border: none;
         padding: 1rem 1.5rem;
@@ -174,9 +219,18 @@ body {
         font-size: 0.8rem;
         font-weight: bolder;
         margin-top: 1rem;
+        transition: background-color 0.5s;
 
         &:hover {
-            background-color: lighten(@light_blue, 10%);
+            transition: background-color 0.5s;
+        }
+    }
+
+    a {
+        transition: color 0.5s;
+
+        &:hover {
+            transition: color 0.5s;
         }
     }
 

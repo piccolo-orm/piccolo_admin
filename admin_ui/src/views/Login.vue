@@ -1,21 +1,23 @@
 <template>
     <div id="login">
-        <h1>Login</h1>
-        <form v-on:submit.prevent="login">
-            <label>Username</label>
-            <input
-                type="text"
-                v-model="username"
-            />
+        <div class="inner">
+            <h1>Login</h1>
+            <form v-on:submit.prevent="login">
+                <label>Username</label>
+                <input
+                    type="text"
+                    v-model="username"
+                />
 
-            <label>Password</label>
-            <input
-                type="password"
-                v-model="password"
-            />
+                <label>Password</label>
+                <input
+                    type="password"
+                    v-model="password"
+                />
 
-            <button>Login</button>
-        </form>
+                <button>Login</button>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -64,13 +66,15 @@ export default {
 
 <style lang="less">
 div#login {
-    margin: 0 auto;
-    max-width: 40rem;
-    padding: 0 0.5rem;
+    div.inner {
+        margin: 0 auto;
+        max-width: 40rem;
+        padding: 0 0.5rem;
 
-    h1 {
-        margin-top: 0;
-        padding-top: 2rem;
+        h1 {
+            margin-top: 0;
+            padding-top: 2rem;
+        }
     }
 }
 </style>

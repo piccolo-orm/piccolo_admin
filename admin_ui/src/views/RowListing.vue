@@ -7,6 +7,7 @@
                     <ul>
                         <li>
                             <a
+                                class="subtle"
                                 href="#"
                                 v-on:click.prevent="showAddRow = true"
                             >
@@ -15,6 +16,7 @@
                         </li>
                         <li>
                             <a
+                                class="subtle"
                                 href="#"
                                 v-on:click.prevent="showSort = !showSort"
                             >
@@ -23,6 +25,7 @@
                         </li>
                         <li>
                             <a
+                                class="subtle"
                                 href="#"
                                 v-on:click.prevent="showFilter = !showFilter"
                             >
@@ -75,6 +78,7 @@
                                 <li>
                                     <router-link
                                         :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
+                                        class="subtle"
                                         title="Edit Row"
                                     >
                                         <font-awesome-icon icon="edit" />
@@ -82,7 +86,7 @@
                                 </li>
                                 <li>
                                     <a
-                                        class="delete"
+                                        class="subtle"
                                         href="#"
                                         title="Delete Row"
                                         v-on:click.prevent="deleteRow(row.id)"
@@ -324,22 +328,11 @@ div.wrapper {
                     width: auto;
                 }
 
-                span.link {
-                    a {
-                        color: @light_blue;
-                    }
-                }
-
                 a {
-                    // color: rgba(255,255,255,0.6);
                     text-decoration: none;
 
                     &.delete:hover {
                         color: #ff6161;
-                    }
-
-                    &:hover {
-                        color: @light_blue;
                     }
                 }
 

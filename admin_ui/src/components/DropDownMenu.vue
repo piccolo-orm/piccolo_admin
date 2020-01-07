@@ -73,11 +73,9 @@ ul {
     li {
         text-align: center;
         width: 100%;
-        transition: 1s background-color;
 
         &:hover {
             background-color: rgba(0, 0, 0, 0.2);
-            transition: 1s background-color;
         }
 
         a {

@@ -5,6 +5,7 @@
             v-for="n in pageCount"
         >
             <a
+                class="subtle"
                 href="#"
                 v-bind:class="{active: n === currentPageNumber}"
                 v-on:click.prevent="changePage(n)"
