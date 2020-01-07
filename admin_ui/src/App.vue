@@ -73,7 +73,7 @@ body {
 
 .light_mode {
     background-color: white;
-    color: rgba(0, 0, 0, 0.9);
+    color: @dark_grey;
 
     .sidebar_wrapper {
         border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -106,7 +106,7 @@ body {
     input,
     select {
         border: 1px solid rgba(255, 255, 255, 0.2);
-        color: rgba(0, 0, 0, 0.8);
+        color: @dark_grey;
     }
 
     tr {
