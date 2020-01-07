@@ -349,7 +349,7 @@ div.wrapper {
         }
 
         p#result_count {
-            color: rgba(255, 255, 255, 0.5);
+            opacity: 0.8;
             font-size: 0.6em;
             text-transform: uppercase;
         }
