@@ -75,7 +75,6 @@ export default Vue.extend({
 @import "../vars.less";
 
 #nav {
-    background-color: darken(@dark_grey, 5%);
     display: flex;
     flex-direction: row;
     align-items: center;

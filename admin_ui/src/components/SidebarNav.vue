@@ -1,12 +1,15 @@
 <template>
     <div class="sidebar">
-        <p>
+        <p class="opaque">
             <router-link to="/">
                 <font-awesome-icon icon="home" />Home
             </router-link>
         </p>
-        <p>
+        <p class="opaque">
             <font-awesome-icon icon="table" />Tables
+            <span style="float: right;">
+                <font-awesome-icon icon="angle-down" />
+            </span>
         </p>
         <TableNav />
     </div>
@@ -27,6 +30,9 @@ export default Vue.extend({
 @import "../vars.less";
 
 div.sidebar {
+    background-color: rgba(0, 0, 0, 0.1);
+    height: 100%;
+
     p {
         padding: 0.5rem;
         margin: 0;
@@ -41,7 +47,6 @@ div.sidebar {
 
         li {
             a {
-                background-color: rgba(0, 0, 0, 0.1);
                 display: block;
                 padding: 0.5rem;
                 text-decoration: none;

@@ -1,5 +1,5 @@
 <template>
-    <ul>
+    <ul id="pagination">
         <li
             :key="n"
             v-for="n in pageCount"
@@ -51,7 +51,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@activeColor: rgba(255, 255, 255, 0.1);
+@activeColor: rgba(0, 0, 0, 0.2);
 
 ul {
     list-style: none;

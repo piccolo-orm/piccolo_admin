@@ -75,6 +75,14 @@ body {
     background-color: white;
     color: rgba(0, 0, 0, 0.9);
 
+    .sidebar_wrapper {
+        border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    ul#drop_down_menu {
+        background-color: @purple;
+    }
+
     a {
         color: rgba(0, 0, 0, 0.9);
     }
@@ -91,6 +99,10 @@ body {
 
     .opaque {
         background-color: white;
+    }
+
+    #nav {
+        background-color: @purple;
     }
 }
 
@@ -115,10 +127,14 @@ body {
     .opaque {
         background-color: @dark_grey;
     }
+
+    #nav {
+        background-color: darken(@dark_grey, 5%);
+    }
 }
 
 #app {
-    height: 100%;
+    min-height: 100%;
 
     label {
         display: block;

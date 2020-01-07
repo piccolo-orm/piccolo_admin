@@ -67,5 +67,10 @@ div#login {
     margin: 0 auto;
     max-width: 40rem;
     padding: 0 0.5rem;
+
+    h1 {
+        margin-top: 0;
+        padding-top: 2rem;
+    }
 }
 </style>
