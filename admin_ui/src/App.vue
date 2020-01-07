@@ -214,9 +214,9 @@ body {
     button {
         color: white;
         border: none;
-        padding: 1rem 1.5rem;
+        padding: 0.8rem 1.2rem;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: bolder;
         margin-top: 1rem;
         transition: background-color 0.5s;

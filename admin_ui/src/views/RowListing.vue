@@ -86,7 +86,7 @@
                                 </li>
                                 <li>
                                     <a
-                                        class="subtle"
+                                        class="subtle delete"
                                         href="#"
                                         title="Delete Row"
                                         v-on:click.prevent="deleteRow(row.id)"
