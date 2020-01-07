@@ -1,5 +1,5 @@
 <template>
-    <ul class="opaque">
+    <ul>
         <li v-if="darkMode">
             <a
                 href="#"
@@ -61,6 +61,7 @@ export default Vue.extend({
 @import "../vars.less";
 
 ul {
+    background-color: darken(@dark_grey, 5%);
     box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.5);
     padding: 0;
     position: absolute;

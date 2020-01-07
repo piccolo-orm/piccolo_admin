@@ -41,13 +41,13 @@ div.sidebar {
 
         li {
             a {
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: rgba(0, 0, 0, 0.1);
                 display: block;
                 padding: 0.5rem;
                 text-decoration: none;
 
                 &:hover {
-                    background-color: rgba(0, 0, 0, 0.4);
+                    background-color: rgba(0, 0, 0, 0.2);
                 }
 
                 &.active {

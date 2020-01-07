@@ -75,7 +75,7 @@ export default Vue.extend({
 @import "../vars.less";
 
 #nav {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: darken(@dark_grey, 5%);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -88,6 +88,7 @@ export default Vue.extend({
     }
 
     h1 {
+        color: white;
         flex-grow: 1;
         padding: 1rem 0;
         margin: 0;
@@ -114,6 +115,7 @@ export default Vue.extend({
     }
 
     a {
+        color: white;
         font-weight: bold;
         text-decoration: none;
     }
