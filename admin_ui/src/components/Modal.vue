@@ -3,6 +3,7 @@
         <div class="modal opaque">
             <p class="close">
                 <a
+                    class="subtle"
                     href="#"
                     v-on:click.prevent="$emit('close')"
                 >
