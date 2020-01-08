@@ -1,11 +1,13 @@
 <template>
     <div>
         <div id="nav">
-            <span
-                id="burger_menu"
-                v-on:click.prevent="showSidebar = showSidebar ? false : true"
-            >
-                <font-awesome-icon icon="bars" />
+            <span id="burger_menu">
+                <a
+                    href="#"
+                    v-on:click.prevent="showSidebar = showSidebar ? false : true"
+                >
+                    <font-awesome-icon icon="bars" />
+                </a>
             </span>
 
             <h1>

@@ -349,7 +349,6 @@ div.wrapper {
         }
 
         p#result_count {
-            opacity: 0.8;
             font-size: 0.6em;
             text-transform: uppercase;
         }
