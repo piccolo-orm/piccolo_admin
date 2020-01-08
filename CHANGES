@@ -1,3 +1,8 @@
+v0.3.3
+======
+UI improvements, including light mode. Support for pagination, and operators
+in filters.
+
 v0.3.2
 ======
 Fixed typo - missing trailing slash.
