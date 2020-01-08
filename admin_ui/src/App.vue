@@ -12,8 +12,9 @@
 <script>
 import axios from "axios"
 import MessagePopup from "./components/MessagePopup.vue"
+import Vue from "vue"
 
-export default {
+export default Vue.extend({
     components: {
         MessagePopup
     },
@@ -21,6 +22,15 @@ export default {
         darkMode() {
             return this.$store.state.darkMode
         }
+    },
+    created() {
+        let darkMode = JSON.parse(localStorage.getItem("darkMode"))
+
+        if (darkMode === null) {
+            darkMode = true
+        }
+
+        this.$store.commit("updateDarkMode", darkMode)
     },
     async beforeCreate() {
         let app = this
@@ -52,7 +62,7 @@ export default {
         const response = await axios.get("./api/user/")
         this.$store.commit("updateUser", response.data)
     }
-}
+})
 </script>
 
 

@@ -68,6 +68,7 @@ export default new Vuex.Store({
         },
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
+            localStorage.setItem('darkMode', String(enabled))
         },
     },
     actions: {
