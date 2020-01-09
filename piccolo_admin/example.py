@@ -60,10 +60,18 @@ class Movie(Table, db=DB):
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
-def main(persist=False):
+def main(persist=False, read_only=False):
     """
     If persist is set to True, we don't rebuild all of the data each time.
+
+    If read_only is set to True, the database will be opened in read_only
+    mode.
     """
+
+    if read_only:
+        DB.connection_kwargs.update(
+            {"uri": True, "database": "file:example.sqlite?mode=ro"}
+        )
 
     if not persist:
         # Recreate the database
