@@ -61,9 +61,7 @@ class AdminRouter(Router):
         table_routes: t.List[BaseRoute] = [
             Mount(
                 path=f"/{table._meta.tablename}/",
-                app=auth_middleware(
-                    PiccoloCRUD(table, read_only=False, page_size=page_size)
-                ),
+                app=PiccoloCRUD(table, read_only=False, page_size=page_size),
             )
             for table in tables
         ]
