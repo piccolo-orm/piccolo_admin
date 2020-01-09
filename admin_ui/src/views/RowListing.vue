@@ -320,7 +320,7 @@ div.wrapper {
             }
             td,
             th {
-                padding: 0.5rem;
+                padding: 0.2rem 0.5rem;
             }
             td {
                 &.last-child {
