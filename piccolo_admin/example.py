@@ -57,6 +57,29 @@ class Movie(Table, db=DB):
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
+def populate_data():
+    # Recreate the database
+    if os.path.exists(DB_PATH):
+        os.unlink(DB_PATH)
+    Director.create_table().run_sync()
+    Movie.create_table().run_sync()
+    User.create_table().run_sync()
+    Sessions.create_table().run_sync()
+
+    # Add some rows
+    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
+    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
+
+    # Create a user for testing login
+    user = User(
+        username="piccolo",
+        password="piccolo123",
+        admin=True,
+        email="admin@test.com",
+    )
+    user.save().run_sync()
+
+
 def main(persist=False, read_only_db=False, use_hypercorn=False):
     """
     If persist is set to True, we don't rebuild all of the data each time.
@@ -65,26 +88,7 @@ def main(persist=False, read_only_db=False, use_hypercorn=False):
     mode. Make sure use_hypercorn is also True.
     """
     if not persist:
-        # Recreate the database
-        if os.path.exists(DB_PATH):
-            os.unlink(DB_PATH)
-        Director.create_table().run_sync()
-        Movie.create_table().run_sync()
-        User.create_table().run_sync()
-        Sessions.create_table().run_sync()
-
-        # Add some rows
-        Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
-        Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
-
-        # Create a user for testing login
-        user = User(
-            username="piccolo",
-            password="piccolo123",
-            admin=True,
-            email="admin@test.com",
-        )
-        user.save().run_sync()
+        populate_data()
 
     if read_only_db:
         DB.connection_kwargs.update(
