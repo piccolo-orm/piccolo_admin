@@ -2,7 +2,6 @@
 Runs the admin in read only mode - useful for letting people evaluate the admin
 online without risk of abuse.
 """
-
 import uvicorn
 from piccolo_admin.example import Director, Movie, Sessions, User, create_admin
 
@@ -13,7 +12,7 @@ APP = create_admin(
 
 
 def main():
-    uvicorn.run("piccolo_admin.sandbox:APP", reload=True, debug=True)
+    uvicorn.run(APP)
 
 
 if __name__ == "__main__":
