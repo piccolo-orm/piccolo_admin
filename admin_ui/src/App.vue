@@ -9,10 +9,11 @@
 </template>
 
 
-<script>
+<script lang="ts">
 import axios from "axios"
 import MessagePopup from "./components/MessagePopup.vue"
 import Vue from "vue"
+import * as i from "./interfaces"
 
 export default Vue.extend({
     components: {
@@ -35,6 +36,7 @@ export default Vue.extend({
     async beforeCreate() {
         let app = this
 
+        // Handle auth errors - redirect to login.
         axios.interceptors.response.use(
             function(response) {
                 return response
@@ -54,6 +56,26 @@ export default Vue.extend({
                                 0
                         })
                     }
+                }
+                return Promise.reject(error)
+            }
+        )
+
+        // Handle 405 errors - we get these when running the admin in
+        // read only mode. Just show a message to the user.
+        axios.interceptors.response.use(
+            function(response) {
+                return response
+            },
+            function(error) {
+                if (error.response && error.response.status == 405) {
+                    console.log("Method not allowed")
+                    let message: i.APIResponseMessage = {
+                        contents:
+                            "Method not supported - running in read only mode.",
+                        type: "error"
+                    }
+                    app.$store.commit("updateApiResponseMessage", message)
                 }
                 return Promise.reject(error)
             }

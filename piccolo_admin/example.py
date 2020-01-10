@@ -57,12 +57,12 @@ class Movie(Table, db=DB):
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
-def main(persist=False, read_only=False, use_hypercorn=False):
+def main(persist=False, read_only_db=False, use_hypercorn=False):
     """
     If persist is set to True, we don't rebuild all of the data each time.
 
     If read_only is set to True, the database will be opened in read_only
-    mode.
+    mode. Make sure use_hypercorn is also True.
     """
     if not persist:
         # Recreate the database
@@ -86,7 +86,7 @@ def main(persist=False, read_only=False, use_hypercorn=False):
         )
         user.save().run_sync()
 
-    if read_only:
+    if read_only_db:
         DB.connection_kwargs.update(
             {"uri": True, "database": f"file:{DB_PATH}?mode=ro"}
         )
@@ -111,6 +111,6 @@ def main(persist=False, read_only=False, use_hypercorn=False):
 if __name__ == "__main__":
     args = sys.argv
     persist = "--persist" in args
-    read_only = "--readonly" in args
-    use_hypercorn = '--hypercorn' in args
-    main(persist=persist, read_only=read_only)
+    read_only_db = "--read-only-db" in args
+    use_hypercorn = "--hypercorn" in args
+    main(persist=persist, read_only_db=read_only_db)

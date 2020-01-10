@@ -44,6 +44,7 @@ class AdminRouter(Router):
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
         page_size: int = 15,
+        read_only: bool = False,
     ) -> None:
         self.auth_table = auth_table
 
@@ -61,16 +62,14 @@ class AdminRouter(Router):
         table_routes: t.List[BaseRoute] = [
             Mount(
                 path=f"/{table._meta.tablename}/",
-                app=PiccoloCRUD(table, read_only=False, page_size=page_size),
+                app=PiccoloCRUD(
+                    table, read_only=read_only, page_size=page_size
+                ),
             )
             for table in tables
         ]
         table_routes += [
-            Route(
-                path="/",
-                endpoint=self.get_table_list,
-                methods=["GET", "POST", "DELETE"],
-            )
+            Route(path="/", endpoint=self.get_table_list, methods=["GET"],)
         ]
 
         routes: t.List[BaseRoute] = [
@@ -146,14 +145,19 @@ def create_admin(
     auth_table: BaseUser = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
     page_size: int = 15,
+    read_only: bool = False,
 ):
     """
     :param page_size: The number of results shown on each page.
+    :param read_only: All non auth endpoints only respond to GET requests.
     """
     return ExceptionMiddleware(
         CSRFMiddleware(
             AdminRouter(
-                *tables, auth_table=auth_table, session_table=session_table
+                *tables,
+                auth_table=auth_table,
+                session_table=session_table,
+                read_only=read_only,
             ),
         )
     )
