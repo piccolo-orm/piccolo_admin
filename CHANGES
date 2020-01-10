@@ -1,3 +1,7 @@
+0.3.4
+=====
+Added sandbox, for deploying demo version online.
+
 v0.3.3
 ======
 UI improvements, including light mode. Support for pagination, and operators
