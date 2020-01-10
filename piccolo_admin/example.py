@@ -25,9 +25,6 @@ from piccolo_admin.endpoints import create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIES
 
 
-USE_HYPERCORN = False
-
-
 DB_PATH = os.path.join(os.path.dirname(__file__), "example.sqlite")
 DB = SQLiteEngine(path=DB_PATH)
 
@@ -60,19 +57,13 @@ class Movie(Table, db=DB):
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
-def main(persist=False, read_only=False):
+def main(persist=False, read_only=False, use_hypercorn=False):
     """
     If persist is set to True, we don't rebuild all of the data each time.
 
     If read_only is set to True, the database will be opened in read_only
     mode.
     """
-
-    if read_only:
-        DB.connection_kwargs.update(
-            {"uri": True, "database": "file:example.sqlite?mode=ro"}
-        )
-
     if not persist:
         # Recreate the database
         if os.path.exists(DB_PATH):
@@ -95,8 +86,13 @@ def main(persist=False, read_only=False):
         )
         user.save().run_sync()
 
+    if read_only:
+        DB.connection_kwargs.update(
+            {"uri": True, "database": f"file:{DB_PATH}?mode=ro"}
+        )
+
     # Server
-    if USE_HYPERCORN:
+    if use_hypercorn:
         import asyncio
         from hypercorn.asyncio import serve
         from hypercorn.config import Config
@@ -106,8 +102,7 @@ def main(persist=False, read_only=False):
 
         asyncio.run(serve(APP, CustomConfig()))
     else:
-        # Uvicorn (v0.8) doesn't support breakpoints when using auto reload,
-        # which is why Hypercorn is used by default.
+        # Uvicorn (v0.8) doesn't support breakpoints when using auto reload.
         import uvicorn
 
         uvicorn.run("piccolo_admin.example:APP", reload=True, debug=True)
@@ -115,5 +110,7 @@ def main(persist=False, read_only=False):
 
 if __name__ == "__main__":
     args = sys.argv
-    persist = (len(args) > 1) and (args[1] == "--persist")
-    main(persist)
+    persist = "--persist" in args
+    read_only = "--readonly" in args
+    use_hypercorn = '--hypercorn' in args
+    main(persist=persist, read_only=read_only)
