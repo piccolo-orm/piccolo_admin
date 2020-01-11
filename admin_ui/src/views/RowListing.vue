@@ -110,7 +110,7 @@
                 <RowFilter />
             </div>
 
-            <AddRow
+            <AddRowModal
                 :schema="schema"
                 :tableName="tableName"
                 v-if="showAddRow"
@@ -118,7 +118,7 @@
                 v-on:close="showAddRow = false"
             />
 
-            <RowSort
+            <RowSortModal
                 :schema="schema"
                 :tableName="tableName"
                 v-if="showSort"
@@ -132,11 +132,11 @@
 <script lang="ts">
 import Vue from "vue"
 import axios from "axios"
-import AddRow from "../components/AddRow.vue"
+import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
-import RowSort from "../components/RowSort.vue"
+import RowSortModal from "../components/RowSortModal.vue"
 import TableNav from "../components/TableNav.vue"
 
 export default Vue.extend({
@@ -149,11 +149,11 @@ export default Vue.extend({
         }
     },
     components: {
-        AddRow,
+        AddRowModal,
         BaseView,
         Pagination,
         RowFilter,
-        RowSort,
+        RowSortModal,
         TableNav
     },
     computed: {

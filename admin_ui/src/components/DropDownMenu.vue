@@ -1,5 +1,13 @@
 <template>
     <ul id="drop_down_menu">
+        <li>
+            <a
+                href="#"
+                v-on:click.prevent="logout"
+            >
+                <font-awesome-icon icon="sign-out-alt" />Log out
+            </a>
+        </li>
         <li v-if="darkMode">
             <a
                 href="#"
@@ -19,9 +27,9 @@
         <li>
             <a
                 href="#"
-                v-on:click.prevent="logout"
+                v-on:click.prevent="showAboutModal"
             >
-                <font-awesome-icon icon="sign-out-alt" />Log out
+                <font-awesome-icon icon="info-circle" />About
             </a>
         </li>
     </ul>
@@ -40,6 +48,9 @@ export default Vue.extend({
     methods: {
         updateDarkMode(enabled: boolean) {
             this.$store.commit("updateDarkMode", enabled)
+        },
+        showAboutModal() {
+            this.$store.commit("updateShowAboutModal", true)
         },
         async logout() {
             if (window.confirm("Are you sure you want to logout?")) {

@@ -5,23 +5,30 @@
     >
         <router-view />
         <MessagePopup />
+        <AboutModal v-if="showAboutModal" />
     </div>
 </template>
 
 
 <script lang="ts">
 import axios from "axios"
-import MessagePopup from "./components/MessagePopup.vue"
 import Vue from "vue"
 import * as i from "./interfaces"
 
+import AboutModal from "./components/AboutModal.vue"
+import MessagePopup from "./components/MessagePopup.vue"
+
 export default Vue.extend({
     components: {
+        AboutModal,
         MessagePopup
     },
     computed: {
         darkMode() {
             return this.$store.state.darkMode
+        },
+        showAboutModal() {
+            return this.$store.state.aboutModal.showAboutModal
         }
     },
     created() {

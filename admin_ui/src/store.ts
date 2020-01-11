@@ -3,25 +3,30 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import * as i from './interfaces'
 
+import aboutModal from './modules/aboutModal'
+
 Vue.use(Vuex)
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default new Vuex.Store({
+    modules: {
+        aboutModal
+    },
     state: {
-        tableNames: [],
+        apiResponseMessage: null as i.APIResponseMessage | null,
+        currentPageNumber: 1,
         currentTableName: undefined,
+        darkMode: true,
+        filterParams: {},
+        pageSize: 1,
+        rowCount: 0,
         rows: [],
         schema: undefined,
         selectedRow: undefined,
-        apiResponseMessage: null as i.APIResponseMessage | null,
-        user: undefined,
         sortBy: null as i.SortByConfig | null,
-        filterParams: {},
-        rowCount: 0,
-        pageSize: 1,
-        currentPageNumber: 1,
-        darkMode: true
+        tableNames: [],
+        user: undefined,
     },
     mutations: {
         updateTableNames(state, value) {
@@ -74,7 +79,7 @@ export default new Vuex.Store({
     actions: {
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
-            this.commit('updateTableNames', response.data)
+            context.commit('updateTableNames', response.data)
         },
         async fetchRows(context) {
             const params = context.state.filterParams

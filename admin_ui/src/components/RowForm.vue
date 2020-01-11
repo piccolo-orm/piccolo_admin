@@ -37,7 +37,7 @@
             </template>
         </div>
 
-        <AddRow
+        <AddRowModal
             v-bind:schema="keySchema"
             v-bind:tableName="keyTableName"
             v-if="showAddRow"
@@ -49,7 +49,7 @@
 <script>
 import KeySelect from "./KeySelect.vue"
 import InputField from "./InputField.vue"
-import AddRow from "./AddRow.vue"
+import AddRowModal from "./AddRowModal.vue"
 
 export default {
     props: {
@@ -70,7 +70,7 @@ export default {
     components: {
         InputField,
         KeySelect,
-        AddRow
+        AddRowModal
     },
     methods: {
         getValue(propertyTitle) {
