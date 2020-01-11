@@ -24,7 +24,11 @@ export default {
         }
     },
     async created() {
-        await this.$store.dispatch("fetchMeta")
+        try {
+            await this.$store.dispatch("fetchMeta")
+        } catch {
+            this.hideAboutModal()
+        }
     }
 }
 </script>
