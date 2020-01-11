@@ -6,7 +6,7 @@ piccolo_admin provides a simple admin interface on top of Piccolo models.
 
 ## Try it
 
-[Try it online](https://demo1.piccolo-orm.com/#/movie) (username: piccolo, password: piccolo123).
+[Try it online](https://demo1.piccolo-orm.com/) (username: piccolo, password: piccolo123).
 
 ## Local Demo
 
