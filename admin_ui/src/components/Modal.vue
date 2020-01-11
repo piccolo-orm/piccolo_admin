@@ -30,11 +30,12 @@ div#overlay {
     background-color: rgba(0, 0, 0, 0.7);
 
     div.modal {
-        width: 30rem;
-        margin: 1rem auto;
-        box-sizing: border-box;
-        padding: 1rem;
         border-radius: 0.5rem;
+        box-sizing: border-box;
+        margin: 1rem auto;
+        max-width: 100%;
+        padding: 1rem;
+        width: 30rem;
 
         label,
         input {
