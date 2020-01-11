@@ -8,6 +8,7 @@ import typing as t
 from piccolo.table import Table
 from piccolo.extensions.user.tables import BaseUser
 
+from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.session_auth.endpoints import session_login, session_logout
@@ -113,6 +114,14 @@ class AdminRouter(Router):
                                 )
                             ),
                         ),
+                        Mount(
+                            path="/meta/",
+                            app=auth_middleware(
+                                Router(
+                                    [Route(path="/", endpoint=self.get_meta)]
+                                )
+                            ),
+                        ),
                     ]
                 ),
             ),
@@ -133,6 +142,11 @@ class AdminRouter(Router):
                 "user_id": request.user.user_id,
             }
         )
+
+    ###########################################################################
+
+    def get_meta(self, request: Request) -> JSONResponse:
+        return JSONResponse({"piccolo_admin_version": piccolo_admin_version})
 
     ###########################################################################
 
