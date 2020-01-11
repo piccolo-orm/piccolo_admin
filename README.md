@@ -4,9 +4,13 @@ piccolo_admin provides a simple admin interface on top of Piccolo models.
 
 ![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
 
-## Demo
+## Try it
 
-To run a demo, using Python 3.7 or above:
+[Try it online](https://demo1.piccolo-orm.com/#/movie) (username: piccolo, password: piccolo123).
+
+## Local Demo
+
+To run a demo locally, using Python 3.7 or above:
 
 ```bash
 pip install piccolo_admin
