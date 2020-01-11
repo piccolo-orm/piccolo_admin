@@ -1,6 +1,6 @@
 # Piccolo Admin
 
-piccolo_admin provides a simple admin interface on top of Piccolo models.
+piccolo_admin provides a simple yet powerful admin interface on top of Piccolo models - allowing you to easily add / edit / filter your data.
 
 ![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
 
@@ -39,11 +39,11 @@ from piccolo_admin.endpoints import AdminRouter
 from starlette.routing import Router, Route
 import uvicorn
 
-from my_project.tables import Movie, User
-from my_project.endpoints import Hello
+from my_project.tables import Director, Movie
+from my_project.endpoints import create_admin
 
 
-admin = AdminRouter(Movie, auth_table=User)
+admin = create_admin([Director, Movie])
 
 
 router = Router([
@@ -85,3 +85,5 @@ admin_demo
 # Or alternatively
 python -m piccolo_admin.example
 ```
+
+You will need to configure a local webserver as a proxy - see extra/piccolo_admin.
