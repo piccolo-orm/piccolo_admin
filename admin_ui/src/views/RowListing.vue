@@ -289,7 +289,7 @@ div.wrapper {
 
     div.left_column,
     div.right_column {
-        overflow: scroll;
+        overflow: auto;
         padding: 0.5rem;
     }
 
@@ -339,6 +339,7 @@ div.wrapper {
                 ul {
                     padding: 0;
                     text-align: right;
+                    width: 4rem;
 
                     li {
                         display: inline-block;

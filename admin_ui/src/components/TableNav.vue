@@ -4,12 +4,14 @@
             v-bind:key="tableName"
             v-for="tableName in tableNames"
         >
-            <a
+            <router-link
+                :to="{ name: 'rowListing', params: { tableName } }"
                 class="subtle"
-                href="#"
                 v-bind:class="{active: isActive(tableName)}"
-                v-on:click.prevent="showListing(tableName)"
-            >{{ tableName | readable }}</a>
+            >
+                <font-awesome-icon icon="level-up-alt" />
+                {{ tableName | readable }}
+            </router-link>
         </li>
     </ul>
 </template>
@@ -53,8 +55,13 @@ ul {
     padding: 0;
 
     li {
-        text-transform: capitalize;
         list-style: none;
+        text-indent: 0.5rem;
+        text-transform: capitalize;
+
+        svg {
+            transform: rotate(90deg);
+        }
     }
 }
 </style>

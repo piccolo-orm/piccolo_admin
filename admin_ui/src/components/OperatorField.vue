@@ -18,23 +18,23 @@ export default {
         return {
             operators: [
                 {
-                    label: "<",
+                    label: "Less Than",
                     value: "lt"
                 },
                 {
-                    label: "<=",
+                    label: "Less Than or Equal To",
                     value: "lte"
                 },
                 {
-                    label: "==",
+                    label: "Equals",
                     value: "e"
                 },
                 {
-                    label: ">=",
+                    label: "Greater Than or Equal To",
                     value: "gte"
                 },
                 {
-                    label: ">",
+                    label: "Greater Than",
                     value: "gt"
                 }
             ]

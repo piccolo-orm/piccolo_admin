@@ -114,7 +114,8 @@ body {
     background-color: white;
     color: @dark_grey;
 
-    .sidebar_wrapper {
+    .sidebar_wrapper,
+    #sidebar_overlay {
         border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
 
@@ -144,6 +145,7 @@ body {
 
     input,
     select {
+        background-color: darken(white, 5%);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: @dark_grey;
     }
@@ -195,6 +197,7 @@ body {
 
     input,
     select {
+        background-color: darken(@dark_grey, 4%);
         border: 1px solid rgba(0, 0, 0, 0.2);
         color: @off_white;
     }
@@ -229,7 +232,6 @@ body {
 
     input,
     select {
-        background-color: rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
         padding: 0.5rem;
         margin-bottom: 0.5rem;
