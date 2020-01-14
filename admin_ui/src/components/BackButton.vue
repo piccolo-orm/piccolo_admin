@@ -23,5 +23,17 @@ export default {
 <style lang="less">
 a {
     text-decoration: none;
+    transform: translateX(0);
+
+    svg {
+        transition: 0.5s transform;
+    }
+
+    &:hover {
+        svg {
+            transform: translateX(-0.2rem);
+            transition: 0.5s transform;
+        }
+    }
 }
 </style>
