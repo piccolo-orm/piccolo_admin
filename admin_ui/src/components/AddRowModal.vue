@@ -1,20 +1,16 @@
 <template>
     <Modal v-on:close="$emit('close')">
-        <h1>Add</h1>
-
-        <pre>{{ errors }}</pre>
-
-        <form v-on:submit.prevent="submitForm($event)" v-if="defaults">
-            <RowForm v-bind:schema="schema" v-bind:row="defaults" />
-            <button>Create</button>
-        </form>
+        <AddRowForm
+            v-bind:schema="schema"
+            v-bind:tableName="tableName"
+            v-on:close="$emit('close')"
+        />
     </Modal>
 </template>
 
 <script lang="ts">
 import Modal from "./Modal.vue"
-import RowForm from "./RowForm.vue"
-import {APIResponseMessage} from "../interfaces"
+import AddRowForm from "./AddRowForm.vue"
 
 export default {
     props: {
@@ -23,46 +19,7 @@ export default {
     },
     components: {
         Modal,
-        RowForm
-    },
-    data: function() {
-        return {
-            defaults: {},
-            errors: ''
-        }
-    },
-    methods: {
-        async submitForm(event) {
-            console.log("I was pressed")
-            const form = new FormData(event.target)
-
-            const json = {}
-            for (const i of form.entries()) {
-                json[i[0]] = i[1]
-            }
-            try {
-                const response = await this.$store.dispatch("createRow", {
-                    tableName: this.tableName,
-                    data: json
-                })
-            } catch(error) {
-                this.errors = error.response.data
-                return
-            }
-
-            var message: APIResponseMessage = {
-                contents: 'Successfully added row',
-                type: 'success'
-            }
-            this.$store.commit('updateApiResponseMessage', message)
-
-            this.$emit("addedRow")
-            this.$emit("close")
-        }
-    },
-    async mounted() {
-        let response = await this.$store.dispatch('getNew', this.tableName)
-        this.defaults = response.data
+        AddRowForm
     }
 }
 </script>

@@ -11,7 +11,6 @@
                         class="add"
                         href="#"
                         v-if="!isFilter"
-                        v-on:click.prevent="add(property.to)"
                     >
                         <font-awesome-icon icon="plus" />
                     </a>
@@ -36,20 +35,12 @@
                 />
             </template>
         </div>
-
-        <AddRowModal
-            v-bind:schema="keySchema"
-            v-bind:tableName="keyTableName"
-            v-if="showAddRow"
-            v-on:close="showAddRow = false"
-        />
     </div>
 </template>
 
 <script>
 import KeySelect from "./KeySelect.vue"
 import InputField from "./InputField.vue"
-import AddRowModal from "./AddRowModal.vue"
 
 export default {
     props: {
@@ -60,17 +51,9 @@ export default {
             default: false
         }
     },
-    data() {
-        return {
-            keySchema: undefined,
-            keyTableName: undefined,
-            showAddRow: false
-        }
-    },
     components: {
         InputField,
-        KeySelect,
-        AddRowModal
+        KeySelect
     },
     methods: {
         getValue(propertyTitle) {
@@ -83,12 +66,6 @@ export default {
                   ]
                 : undefined
             return value
-        },
-        async add(tableName) {
-            let schema = await this.$store.dispatch("fetchSchema", tableName)
-            this.keySchema = schema
-            this.keyTableName = tableName
-            this.showAddRow = true
         }
     }
 }

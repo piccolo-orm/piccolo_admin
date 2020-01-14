@@ -6,13 +6,13 @@
                     <h1>{{ tableName | readable }}</h1>
                     <ul>
                         <li>
-                            <a
+                            <router-link
+                                :to="{name: 'addRow', params: {tablename: tableName}}"
                                 class="subtle"
-                                href="#"
                                 v-on:click.prevent="showAddRow = true"
                             >
                                 <font-awesome-icon icon="plus" />Add Row
-                            </a>
+                            </router-link>
                         </li>
                         <li>
                             <a
@@ -339,7 +339,7 @@ div.wrapper {
                 ul {
                     padding: 0;
                     text-align: right;
-                    width: 4rem;
+                    min-width: 4rem;
 
                     li {
                         display: inline-block;
