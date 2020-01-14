@@ -7,7 +7,7 @@
                     <ul>
                         <li>
                             <router-link
-                                :to="{name: 'addRow', params: {tablename: tableName}}"
+                                :to="{name: 'addRow', params: {tableName: tableName}}"
                                 class="subtle"
                                 v-on:click.prevent="showAddRow = true"
                             >

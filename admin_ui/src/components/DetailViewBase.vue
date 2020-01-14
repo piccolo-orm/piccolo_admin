@@ -3,14 +3,7 @@
         <NavBar />
 
         <div class="edit_wrapper">
-            <p>
-                <a
-                    href="#"
-                    v-on:click.prevent="$router.go(-1)"
-                >
-                    <font-awesome-icon icon="angle-left" />Back
-                </a>
-            </p>
+            <BackButton />
 
             <slot></slot>
         </div>
@@ -20,10 +13,12 @@
 
 <script lang="ts">
 import Vue from "vue"
+import BackButton from "./BackButton.vue"
 import NavBar from "./NavBar.vue"
 
 export default Vue.extend({
     components: {
+        BackButton,
         NavBar
     }
 })
@@ -37,10 +32,6 @@ div.edit_wrapper {
     margin: 0 auto;
     max-width: 40rem;
     padding: 0 0.5rem;
-
-    a {
-        text-decoration: none;
-    }
 
     h1 {
         margin: 0;
