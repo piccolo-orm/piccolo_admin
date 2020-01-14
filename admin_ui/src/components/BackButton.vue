@@ -20,7 +20,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 a {
     text-decoration: none;
     transform: translateX(0);
