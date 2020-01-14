@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Add</h1>
+        <h1>Add {{ tableName }}</h1>
 
         <pre>{{ errors }}</pre>
 
@@ -71,5 +71,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="less">
+h1 {
+    text-transform: capitalize;
+}
 </style>

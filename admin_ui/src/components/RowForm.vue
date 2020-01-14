@@ -7,13 +7,14 @@
             <template v-if="property.foreign_key">
                 <label>
                     {{ property.title }}
-                    <a
+                    <router-link
+                        :to="{name: addRow, params: {tableName: property.to}}"
                         class="add"
-                        href="#"
+                        target="_blank"
                         v-if="!isFilter"
                     >
                         <font-awesome-icon icon="plus" />
-                    </a>
+                    </router-link>
                 </label>
                 <KeySelect
                     v-bind:fieldName="property.title.toLowerCase()"
