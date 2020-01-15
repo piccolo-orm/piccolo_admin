@@ -332,7 +332,7 @@ div.wrapper {
                     text-decoration: none;
 
                     &.delete:hover {
-                        color: #ff6161;
+                        color: @red;
                     }
                 }
 

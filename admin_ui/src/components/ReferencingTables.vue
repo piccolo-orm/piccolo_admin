@@ -83,6 +83,10 @@ export default Vue.extend({
 <style scoped lang="less">
 @import "../vars.less";
 
+a {
+    text-decoration: none;
+}
+
 p.referencing_title {
     color: @border_color;
     font-size: 0.8rem;
