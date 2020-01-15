@@ -8,12 +8,21 @@
                 <label>
                     {{ property.title }}
                     <router-link
-                        :to="{name: addRow, params: {tableName: property.to}}"
+                        :to="{name: 'addRow', params: {tableName: property.to}}"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
                     >
                         <font-awesome-icon icon="plus" />
+                    </router-link>
+
+                    <router-link
+                        :to="{name: 'editRow', params: {tableName: property.to, rowID: getKeySelectID(property.title)}}"
+                        class="add"
+                        target="_blank"
+                        v-if="!isFilter"
+                    >
+                        <font-awesome-icon icon="edit" />
                     </router-link>
                 </label>
                 <KeySelect
@@ -22,6 +31,7 @@
                     v-bind:isNullable="property.nullable"
                     v-bind:tableName="property.to"
                     v-bind:value="getValue(property.title)"
+                    v-on:valueChanged="keySelectChanged(property.title, $event)"
                 />
             </template>
             <template v-else>
@@ -39,11 +49,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue"
+
 import KeySelect from "./KeySelect.vue"
 import InputField from "./InputField.vue"
 
-export default {
+export default Vue.extend({
     props: {
         row: Object,
         schema: Object,
@@ -56,8 +68,13 @@ export default {
         InputField,
         KeySelect
     },
+    data() {
+        return {
+            keySelectIDs: {}
+        }
+    },
     methods: {
-        getValue(propertyTitle) {
+        getValue(propertyTitle: string) {
             let value = this.row
                 ? this.row[
                       propertyTitle
@@ -67,9 +84,18 @@ export default {
                   ]
                 : undefined
             return value
+        },
+        getKeySelectID(propertyTitle: string) {
+            return (
+                this.keySelectIDs[propertyTitle] || this.getValue(propertyTitle)
+            )
+        },
+        keySelectChanged(propertyTitle: string, value: number) {
+            console.log(`${propertyTitle} = ${value}`)
+            Vue.set(this.keySelectIDs, propertyTitle, value)
         }
     }
-}
+})
 </script>
 
 <style scoped lang="less">

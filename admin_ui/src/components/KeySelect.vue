@@ -1,5 +1,9 @@
 <template>
-    <select v-bind:name="fieldName">
+    <select
+        v-bind:name="fieldName"
+        v-model="selectedValue"
+        v-on:change="$emit('valueChanged', selectedValue)"
+    >
         <option
             v-if="isFilter"
             value="all"
@@ -35,12 +39,14 @@ export default {
     },
     data() {
         return {
-            ids: []
+            ids: [],
+            selectedValue: undefined
         }
     },
     async mounted() {
         const response = await this.$store.dispatch("fetchIds", this.tableName)
         this.ids = response.data
+        this.selectedValue = this.value
     }
 }
 </script>

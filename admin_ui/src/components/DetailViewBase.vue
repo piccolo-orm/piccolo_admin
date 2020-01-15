@@ -2,7 +2,7 @@
     <div>
         <NavBar />
 
-        <div class="edit_wrapper">
+        <div class="inner">
             <BackButton />
 
             <slot></slot>
@@ -28,13 +28,17 @@ export default Vue.extend({
 <style scoped lang="less">
 @import "../vars.less";
 
-div.edit_wrapper {
+div.inner {
     margin: 0 auto;
     max-width: 40rem;
     padding: 0 0.5rem;
 
     h1 {
         margin: 0;
+    }
+
+    a {
+        text-decoration: none;
     }
 }
 </style>

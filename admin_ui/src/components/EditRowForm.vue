@@ -1,6 +1,6 @@
 <template>
     <div v-if="schema">
-        <h1>Edit</h1>
+        <h1>Edit {{ tableName }}</h1>
 
         <pre>{{ errors }}</pre>
 
@@ -85,35 +85,7 @@ export default Vue.extend({
 
 
 <style scoped lang="less">
-@import "../vars.less";
-
-div.edit_wrapper {
-    margin: 0 auto;
-    max-width: 40rem;
-    padding: 0 0.5rem;
-
-    a {
-        text-decoration: none;
-    }
-
-    h1 {
-        margin: 0;
-    }
-
-    p.referencing_title {
-        color: @border_color;
-        font-size: 0.8rem;
-        margin-top: 1rem;
-        padding: 0.5rem 0;
-    }
-
-    ul.related_tables {
-        li {
-            span.table {
-                font-weight: bold;
-                text-transform: capitalize;
-            }
-        }
-    }
+h1 {
+    text-transform: capitalize;
 }
 </style>
