@@ -88,6 +88,21 @@ export default Vue.extend({
             }
         )
 
+        // Handle 404 errors - if a page isn't found.
+        axios.interceptors.response.use(
+            function(response) {
+                return response
+            },
+            function(error) {
+                if (error.response && error.response.status == 404) {
+                    console.log("Page not found")
+                    alert("Page not found")
+                    app.$router.push({ name: "home" })
+                }
+                return Promise.reject(error)
+            }
+        )
+
         const response = await axios.get("./api/user/")
         this.$store.commit("updateUser", response.data)
     }
