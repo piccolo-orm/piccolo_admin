@@ -29,7 +29,6 @@ export default {}
 }
 
 a#delete {
-    color: @off_white;
     text-decoration: none;
 
     &:hover {

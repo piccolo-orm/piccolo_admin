@@ -18,7 +18,10 @@
                 :tableName="tableName"
             />
             <p id="delete">
-                <DeleteButton v-on:triggered="deleteRow" />
+                <DeleteButton
+                    class="subtle"
+                    v-on:triggered="deleteRow"
+                />
             </p>
         </div>
     </div>
