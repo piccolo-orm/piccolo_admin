@@ -18,13 +18,7 @@
                 :tableName="tableName"
             />
             <p id="delete">
-                <a
-                    href="#"
-                    title="Delete"
-                    v-on:click.prevent="deleteRow"
-                >
-                    <font-awesome-icon icon="trash-alt" />
-                </a>
+                <DeleteButton v-on:triggered="deleteRow" />
             </p>
         </div>
     </div>
@@ -34,12 +28,14 @@
 <script lang="ts">
 import Vue from "vue"
 import ReferencingTables from "../components/ReferencingTables.vue"
-import RowForm from "../components/RowForm.vue"
+import DeleteButton from "./DeleteButton.vue"
+import RowForm from "./RowForm.vue"
 import { UpdateRow, DeleteRow } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
     components: {
+        DeleteButton,
         RowForm,
         ReferencingTables
     },
@@ -124,8 +120,6 @@ export default Vue.extend({
 
 
 <style scoped lang="less">
-@import "../vars.less";
-
 h1 {
     text-transform: capitalize;
 }
@@ -143,13 +137,7 @@ div.action_wrapper {
         text-align: right;
 
         a {
-            color: @off_white;
             font-size: 0.8rem;
-            text-decoration: none;
-
-            &:hover {
-                color: @red;
-            }
         }
     }
 }

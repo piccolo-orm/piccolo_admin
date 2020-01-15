@@ -85,14 +85,10 @@
                                     </router-link>
                                 </li>
                                 <li>
-                                    <a
+                                    <DeleteButton
                                         class="subtle delete"
-                                        href="#"
-                                        title="Delete Row"
-                                        v-on:click.prevent="deleteRow(row.id)"
-                                    >
-                                        <font-awesome-icon icon="trash-alt" />
-                                    </a>
+                                        v-on:triggered="deleteRow(row.id)"
+                                    />
                                 </li>
                             </ul>
                         </td>
@@ -132,8 +128,10 @@
 <script lang="ts">
 import Vue from "vue"
 import axios from "axios"
-import AddRowModal from "../components/AddRowModal.vue"
+
 import BaseView from "./BaseView.vue"
+import AddRowModal from "../components/AddRowModal.vue"
+import DeleteButton from "../components/DeleteButton.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
@@ -151,6 +149,7 @@ export default Vue.extend({
     components: {
         AddRowModal,
         BaseView,
+        DeleteButton,
         Pagination,
         RowFilter,
         RowSortModal,
