@@ -103,6 +103,25 @@ export default Vue.extend({
             }
         )
 
+        // Handle 502 errors - if a page isn't found.
+        axios.interceptors.response.use(
+            function(response) {
+                return response
+            },
+            function(error) {
+                if (error.response && error.response.status == 502) {
+                    console.log("The server can't be reached.")
+                    let message: i.APIResponseMessage = {
+                        contents:
+                            "The server can't be reached - please try later.",
+                        type: "error"
+                    }
+                    app.$store.commit("updateApiResponseMessage", message)
+                }
+                return Promise.reject(error)
+            }
+        )
+
         const response = await axios.get("./api/user/")
         this.$store.commit("updateUser", response.data)
     }
