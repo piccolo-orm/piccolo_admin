@@ -43,9 +43,25 @@ export default {
             selectedValue: undefined
         }
     },
+    methods: {
+        async fetchData() {
+            const response = await this.$store.dispatch(
+                "fetchIds",
+                this.tableName
+            )
+            this.ids = response.data
+        }
+    },
+    watch: {
+        async tableName() {
+            await this.fetchData()
+        },
+        value() {
+            this.selectedValue = this.value
+        }
+    },
     async mounted() {
-        const response = await this.$store.dispatch("fetchIds", this.tableName)
-        this.ids = response.data
+        await this.fetchData()
         this.selectedValue = this.value
     }
 }
