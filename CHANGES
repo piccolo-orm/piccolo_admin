@@ -1,3 +1,7 @@
+0.3.8
+=====
+Updated piccolo_api requirements.
+
 0.3.7
 =====
 UI improvements, and catching 404 errors.
