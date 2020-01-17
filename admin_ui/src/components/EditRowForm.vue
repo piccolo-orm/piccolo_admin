@@ -1,6 +1,35 @@
 <template>
     <div v-if="schema">
-        <h1>Edit {{ tableName }}</h1>
+        <div class="header">
+            <h1>Edit {{ tableName }}</h1>
+
+            <p>
+                <a
+                    class="subtle"
+                    href="#"
+                    v-on:click.prevent="showDropdown = !showDropdown"
+                >
+                    More
+                    <font-awesome-icon
+                        icon="angle-up"
+                        v-if="showDropdown"
+                    />
+                    <font-awesome-icon
+                        icon="angle-down"
+                        v-if="!showDropdown"
+                    />
+                    <DropDownMenu v-if="showDropdown">
+                        <li>
+                            <DeleteButton
+                                :includeTitle="true"
+                                class="subtle"
+                                v-on:triggered="deleteRow"
+                            />
+                        </li>
+                    </DropDownMenu>
+                </a>
+            </p>
+        </div>
 
         <pre>{{ errors }}</pre>
 
@@ -12,39 +41,36 @@
             <button>Save</button>
         </form>
 
-        <div class="action_wrapper">
-            <ReferencingTables
-                :rowID="rowID"
-                :tableName="tableName"
-            />
-            <p id="delete">
-                <DeleteButton
-                    class="subtle"
-                    v-on:triggered="deleteRow"
-                />
-            </p>
-        </div>
+        <ReferencingTables
+            :rowID="rowID"
+            :tableName="tableName"
+        />
     </div>
 </template>
 
 
 <script lang="ts">
 import Vue from "vue"
+
 import ReferencingTables from "../components/ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
+import DropDownMenu from "./DropDownMenu.vue"
 import RowForm from "./RowForm.vue"
+
 import { UpdateRow, DeleteRow } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
     components: {
         DeleteButton,
+        DropDownMenu,
         RowForm,
         ReferencingTables
     },
     data: function() {
         return {
-            errors: ""
+            errors: "",
+            showDropdown: false
         }
     },
     computed: {
@@ -123,24 +149,31 @@ export default Vue.extend({
 
 
 <style scoped lang="less">
-h1 {
-    text-transform: capitalize;
-}
+@import "../vars.less";
 
-div.action_wrapper {
+div.header {
+    align-items: center;
     display: flex;
     flex-direction: row;
 
-    div,
-    p#delete {
-        flex: 50%;
+    h1 {
+        text-transform: capitalize;
+        flex-grow: 1;
     }
-
-    p#delete {
+    p {
+        flex-grow: 0;
+        position: relative;
         text-align: right;
 
         a {
-            font-size: 0.8rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    }
+
+    li {
+        a {
+            color: white;
         }
     }
 }

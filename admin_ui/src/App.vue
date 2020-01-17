@@ -267,6 +267,7 @@ body {
     input,
     select {
         box-sizing: border-box;
+        font-size: 0.8rem;
         padding: 0.5rem;
         margin-bottom: 0.5rem;
     }

@@ -1,37 +1,6 @@
 <template>
     <ul id="drop_down_menu">
-        <li>
-            <a
-                href="#"
-                v-on:click.prevent="logout"
-            >
-                <font-awesome-icon icon="sign-out-alt" />Log out
-            </a>
-        </li>
-        <li v-if="darkMode">
-            <a
-                href="#"
-                v-on:click.prevent="updateDarkMode(false)"
-            >
-                <font-awesome-icon icon="sun" />Light Mode
-            </a>
-        </li>
-        <li v-else>
-            <a
-                href="#"
-                v-on:click.prevent="updateDarkMode(true)"
-            >
-                <font-awesome-icon icon="moon" />Dark Mode
-            </a>
-        </li>
-        <li>
-            <a
-                href="#"
-                v-on:click.prevent="showAboutModal"
-            >
-                <font-awesome-icon icon="info-circle" />About
-            </a>
-        </li>
+        <slot />
     </ul>
 </template>
 
@@ -39,33 +8,7 @@
 import axios from "axios"
 import Vue from "vue"
 
-export default Vue.extend({
-    computed: {
-        darkMode() {
-            return this.$store.state.darkMode
-        }
-    },
-    methods: {
-        updateDarkMode(enabled: boolean) {
-            this.$store.commit("updateDarkMode", enabled)
-        },
-        showAboutModal() {
-            this.$store.commit("updateShowAboutModal", true)
-        },
-        async logout() {
-            if (window.confirm("Are you sure you want to logout?")) {
-                console.log("Logging out")
-                try {
-                    await axios.post("./api/logout/")
-                    this.$router.push({ name: "login" })
-                } catch (error) {
-                    console.log("Logout failed")
-                    console.log(error)
-                }
-            }
-        }
-    }
-})
+export default Vue.extend({})
 </script>
 
 <style scoped lang="less">
@@ -74,19 +17,21 @@ export default Vue.extend({
 ul {
     background-color: darken(@dark_grey, 5%);
     box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.5);
+    list-style: none;
     padding: 0;
     position: absolute;
     top: 100%;
     right: 0;
     width: 15rem;
     margin-top: 0.5rem;
+    z-index: 100;
 
     li {
         text-align: center;
         width: 100%;
 
         &:hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         a {

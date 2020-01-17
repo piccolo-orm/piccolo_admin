@@ -6,11 +6,19 @@
         v-on:click.prevent="$emit('triggered')"
     >
         <font-awesome-icon icon="trash-alt" />
+        <span v-if="includeTitle">Delete</span>
     </a>
 </template>
 
 <script>
-export default {}
+export default {
+    props: {
+        includeTitle: {
+            type: Boolean,
+            default: false
+        }
+    }
+}
 </script>
 
 <style scoped lang="less">
@@ -30,6 +38,10 @@ export default {}
 
 a#delete {
     text-decoration: none;
+
+    span {
+        padding-left: 0.2rem;
+    }
 
     &:hover {
         color: @red;

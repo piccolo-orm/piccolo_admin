@@ -33,7 +33,7 @@
                             icon="angle-down"
                             v-if="!showDropdown"
                         />
-                        <DropDownMenu v-if="showDropdown" />
+                        <NavDropDownMenu v-if="showDropdown" />
                     </a>
                 </li>
             </ul>
@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import DropDownMenu from "./DropDownMenu.vue"
+import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 
 export default Vue.extend({
@@ -67,7 +67,7 @@ export default Vue.extend({
     },
     components: {
         SidebarOverlay,
-        DropDownMenu
+        NavDropDownMenu
     }
 })
 </script>
