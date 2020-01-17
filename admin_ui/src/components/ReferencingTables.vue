@@ -25,8 +25,9 @@
                     href="#"
                     v-on:click.prevent="clickedReference(reference)"
                 >
-                    <span class="table">{{ reference.tableName }}</span>
-                    ({{ reference.columnName }} column)
+                    <span class="table bold">{{ reference.tableName }}</span>
+                    with a matching
+                    <span class="bold">{{ reference.columnName }}</span>
                     <font-awesome-icon icon="external-link-alt" />
                 </a>
             </li>
@@ -97,8 +98,14 @@ p.referencing_title {
 ul.related_tables {
     li {
         span.table {
-            font-weight: bold;
             text-transform: capitalize;
+        }
+        span.bold {
+            font-weight: bold;
+        }
+
+        svg {
+            padding-left: 0.5rem;
         }
     }
 }
