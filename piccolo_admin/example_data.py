@@ -23,6 +23,7 @@ MOVIES = [
             "destroy the powerful weapon created by the Galactic Empire."
         ),
         "release_date": datetime.datetime(year=1977, month=12, day=27),
+        "won_oscar": True,
     },
     {
         "name": "The Empire Strikes Back",
@@ -34,6 +35,7 @@ MOVIES = [
             "friends try to fend off the Imperial fleet."
         ),
         "release_date": datetime.datetime(year=1980, month=5, day=20),
+        "won_oscar": True,
     },
     {
         "name": "Return of the Jedi",
@@ -45,6 +47,7 @@ MOVIES = [
             "to destroy the second Death Star."
         ),
         "release_date": datetime.datetime(year=1983, month=6, day=2),
+        "won_oscar": True,
     },
     {
         "name": "Star Wars: Episode I – The Phantom Menace",
@@ -57,6 +60,7 @@ MOVIES = [
             "to the Force."
         ),
         "release_date": datetime.datetime(year=1999, month=7, day=16),
+        "won_oscar": False,
     },
     {
         "name": "Star Wars: Episode II – Attack of the Clones",
@@ -68,6 +72,7 @@ MOVIES = [
             "balance, the Jedi must defend the galaxy against the evil Sith."
         ),
         "release_date": datetime.datetime(year=2002, month=5, day=16),
+        "won_oscar": False,
     },
     {
         "name": "Star Wars: Episode III – Revenge of the Sith",
@@ -80,6 +85,7 @@ MOVIES = [
             "temptation."
         ),
         "release_date": datetime.datetime(year=2005, month=5, day=19),
+        "won_oscar": False,
     },
     {
         "name": "Star Wars: The Force Awakens",
@@ -91,6 +97,7 @@ MOVIES = [
             "to stop them and find Luke, the last surviving Jedi."
         ),
         "release_date": datetime.datetime(year=2015, month=12, day=17),
+        "won_oscar": False,
     },
     {
         "name": "Rogue One: A Star Wars Story",
@@ -102,6 +109,7 @@ MOVIES = [
             "group of resistance fighters, who aim to steal its blueprints."
         ),
         "release_date": datetime.datetime(year=2016, month=12, day=13),
+        "won_oscar": False,
     },
     {
         "name": "Star Wars: The Last Jedi",
@@ -113,6 +121,7 @@ MOVIES = [
             "against the First Order."
         ),
         "release_date": datetime.datetime(year=2017, month=12, day=14),
+        "won_oscar": False,
     },
     {
         "name": "Solo: A Star Wars Story",
@@ -124,6 +133,7 @@ MOVIES = [
             "and meets individuals who change his life."
         ),
         "release_date": datetime.datetime(year=2018, month=5, day=25),
+        "won_oscar": False,
     },
     {
         "name": "Star Wars: The Rise of Skywalker",
@@ -135,6 +145,7 @@ MOVIES = [
             "knowledge of generations behind them, the final battle commences."
         ),
         "release_date": datetime.datetime(year=2019, month=12, day=19),
+        "won_oscar": False,
     },
     {
         "name": "The Lord of the Rings: The Fellowship of the Ring",
@@ -147,6 +158,7 @@ MOVIES = [
             "destroyed."
         ),
         "release_date": datetime.datetime(year=2001, month=12, day=10),
+        "won_oscar": True,
     },
     {
         "name": "The Lord of the Rings: The Two Towers",
@@ -158,6 +170,7 @@ MOVIES = [
             "Saruman launches an assault on it."
         ),
         "release_date": datetime.datetime(year=2002, month=12, day=11),
+        "won_oscar": True,
     },
     {
         "name": "The Lord of the Rings - The Return of the King",
@@ -169,6 +182,7 @@ MOVIES = [
             "they follow Gollum unaware of the path he is leading them to."
         ),
         "release_date": datetime.datetime(year=2003, month=12, day=17),
+        "won_oscar": True,
     },
     {
         "name": "The Hobbit: An Unexpected Journey",
@@ -180,6 +194,7 @@ MOVIES = [
             "Erebor and all its riches from the dragon Smaug."
         ),
         "release_date": datetime.datetime(year=2012, month=12, day=12),
+        "won_oscar": False,
     },
     {
         "name": "The Hobbit: The Desolation of Smaug",
@@ -192,6 +207,7 @@ MOVIES = [
             "dragon Smaug."
         ),
         "release_date": datetime.datetime(year=2013, month=12, day=13),
+        "won_oscar": False,
     },
     {
         "name": "The Hobbit: The Battle of the Five Armies",
@@ -203,5 +219,6 @@ MOVIES = [
             "arises."
         ),
         "release_date": datetime.datetime(year=2014, month=12, day=1),
+        "won_oscar": False,
     },
 ]

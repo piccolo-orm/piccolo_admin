@@ -70,6 +70,19 @@
                                     :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
                                 >{{ row[name + '_readable'] }}</router-link>
                             </span>
+                            <span
+                                class="boolean"
+                                v-else-if="isBoolean(name)"
+                            >
+                                <font-awesome-icon
+                                    icon="check"
+                                    v-if="row[name] === true"
+                                />
+                                <font-awesome-icon
+                                    icon="times"
+                                    v-else
+                                />
+                            </span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
@@ -194,6 +207,9 @@ export default Vue.extend({
             let property = this.schema.properties[name]
             return property != undefined ? property.foreign_key : false
         },
+        isBoolean(name: string) {
+            return this.schema.properties[name]["type"] == "boolean"
+        },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
             return this.schema.properties[name].to
@@ -305,6 +321,11 @@ div.wrapper {
 
             tr {
                 text-align: left;
+
+                span.boolean {
+                    opacity: 0.5;
+                    padding-left: 0.5rem;
+                }
             }
             td {
                 font-size: 0.9em;
