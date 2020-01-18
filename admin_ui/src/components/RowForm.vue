@@ -2,7 +2,7 @@
     <div>
         <div
             v-bind:key="property.title"
-            v-for="property in schema.properties"
+            v-for="(property, index) in schema.properties"
         >
             <template v-if="property.foreign_key">
                 <label>
@@ -29,6 +29,7 @@
                     v-bind:fieldName="property.title.toLowerCase()"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
+                    v-bind:key="getKey(index)"
                     v-bind:tableName="property.to"
                     v-bind:value="getValue(property.title)"
                     v-on:valueChanged="keySelectChanged(property.title, $event)"
@@ -70,7 +71,9 @@ export default Vue.extend({
     },
     data() {
         return {
-            keySelectIDs: {}
+            keySelectIDs: {},
+            baseIndex: 1,
+            windowListener: undefined
         }
     },
     methods: {
@@ -93,6 +96,26 @@ export default Vue.extend({
         keySelectChanged(propertyTitle: string, value: number) {
             console.log(`${propertyTitle} = ${value}`)
             Vue.set(this.keySelectIDs, propertyTitle, value)
+        },
+        // We use this to refresh KeySelect components
+        getKey(index: number) {
+            return index + this.baseIndex
+        }
+    },
+    mounted() {
+        window.addEventListener("message", receiveMessage, false)
+
+        let app = this
+
+        function receiveMessage(event) {
+            if (event.origin !== document.location.origin) return
+            console.log("Received message")
+            app.baseIndex = app.baseIndex + 1
+        }
+    },
+    destroyed() {
+        if (this.windowListener) {
+            window.removeEventListener("message", this.windowListener)
         }
     }
 })

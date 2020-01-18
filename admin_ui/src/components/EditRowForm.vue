@@ -104,6 +104,10 @@ export default Vue.extend({
                 return
             }
             this.errors = ""
+
+            if (opener) {
+                opener.postMessage("edited row", document.location.origin)
+            }
         },
         async deleteRow() {
             if (window.confirm("Are you sure you want to delete this row?")) {

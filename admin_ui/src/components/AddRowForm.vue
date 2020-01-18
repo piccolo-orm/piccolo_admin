@@ -62,6 +62,9 @@ export default {
 
             this.$emit("addedRow")
             this.$emit("close")
+            if (opener) {
+                opener.postMessage("edited row", document.location.origin)
+            }
         }
     },
     async mounted() {
