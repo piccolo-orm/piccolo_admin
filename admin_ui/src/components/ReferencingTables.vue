@@ -25,10 +25,10 @@
                     href="#"
                     v-on:click.prevent="clickedReference(reference)"
                 >
+                    <font-awesome-icon icon="external-link-alt" />
                     <span class="table bold">{{ reference.tableName }}</span>
                     with a matching
                     <span class="bold">{{ reference.columnName }}</span>
-                    <font-awesome-icon icon="external-link-alt" />
                 </a>
             </li>
         </ul>
@@ -91,12 +91,19 @@ a {
 p.referencing_title {
     color: @border_color;
     font-size: 0.8rem;
+    margin-bottom: 0rem;
     margin-top: 1rem;
     padding: 0.5rem 0;
 }
 
 ul.related_tables {
+    padding-left: 1rem;
+    padding-top: 0;
+    margin-top: 0;
+
     li {
+        list-style: none;
+
         span.table {
             text-transform: capitalize;
         }
