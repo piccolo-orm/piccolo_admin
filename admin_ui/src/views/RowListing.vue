@@ -9,9 +9,10 @@
                             <router-link
                                 :to="{name: 'addRow', params: {tableName: tableName}}"
                                 class="subtle"
-                                v-on:click.prevent="showAddRow = true"
                             >
-                                <font-awesome-icon icon="plus" />Add Row
+                                <span v-on:click.prevent="showAddRow = true">
+                                    <font-awesome-icon icon="plus" />Add Row
+                                </span>
                             </router-link>
                         </li>
                         <li>

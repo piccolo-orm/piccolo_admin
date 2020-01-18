@@ -3,6 +3,7 @@
         <AddRowForm
             v-bind:schema="schema"
             v-bind:tableName="tableName"
+            v-on:addedRow="$emit('addedRow')"
             v-on:close="$emit('close')"
         />
     </Modal>
