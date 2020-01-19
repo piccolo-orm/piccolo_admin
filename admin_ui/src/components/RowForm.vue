@@ -4,11 +4,11 @@
             v-bind:key="property.title"
             v-for="(property, index) in schema.properties"
         >
-            <template v-if="property.foreign_key">
+            <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
                     <router-link
-                        :to="{name: 'addRow', params: {tableName: property.to}}"
+                        :to="{name: 'addRow', params: {tableName: property.extra.to}}"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -17,7 +17,7 @@
                     </router-link>
 
                     <router-link
-                        :to="{name: 'editRow', params: {tableName: property.to, rowID: getKeySelectID(property.title)}}"
+                        :to="{name: 'editRow', params: {tableName: property.extra.to, rowID: getKeySelectID(property.title)}}"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -30,7 +30,7 @@
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
                     v-bind:key="getKey(index)"
-                    v-bind:tableName="property.to"
+                    v-bind:tableName="property.extra.to"
                     v-bind:value="getValue(property.title)"
                     v-on:valueChanged="keySelectChanged(property.title, $event)"
                 />

@@ -178,7 +178,8 @@ body {
     }
 
     input,
-    select {
+    select,
+    textarea {
         background-color: darken(white, 5%);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: @dark_grey;
@@ -230,7 +231,8 @@ body {
     }
 
     input,
-    select {
+    select,
+    textarea {
         background-color: darken(@dark_grey, 4%);
         border: 1px solid rgba(0, 0, 0, 0.2);
         color: @off_white;
@@ -265,7 +267,8 @@ body {
     }
 
     input,
-    select {
+    select,
+    textarea {
         box-sizing: border-box;
         font-size: 0.8rem;
         padding: 0.5rem;
@@ -274,8 +277,15 @@ body {
 
     input,
     button,
-    select {
+    select,
+    textarea {
         width: 100%;
+    }
+
+    textarea {
+        min-height: 3rem;
+        max-width: 100%;
+        min-width: 100%;
     }
 
     select {
@@ -285,6 +295,7 @@ body {
         background-repeat: no-repeat, repeat;
         background-position: right 0.7em top 50%, 0 0;
         background-size: 0.65em auto, 100%;
+        border-radius: 0;
     }
 
     button {

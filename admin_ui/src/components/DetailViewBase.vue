@@ -31,7 +31,7 @@ export default Vue.extend({
 div.inner {
     margin: 0 auto;
     max-width: 40rem;
-    padding: 0 0.5rem;
+    padding: 1rem 0.5rem;
 
     h1 {
         margin: 0;

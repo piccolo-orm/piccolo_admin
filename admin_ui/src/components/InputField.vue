@@ -32,6 +32,18 @@
                 />
             </template>
 
+            <div v-else-if="format == 'text-area' && isFilter == false">
+                <textarea
+                    autocomplete="off"
+                    ref="textarea"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:placeholder="placeholder"
+                    v-bind:style="{height: textareaHeight}"
+                    v-model="localValue"
+                    v-on:input="setTextareaHeight"
+                />
+            </div>
+
             <input
                 type="text"
                 v-bind:name="getFieldName(title)"
@@ -67,6 +79,8 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue"
+
 import OperatorField from "./OperatorField.vue"
 import flatpickr from "flatpickr"
 
@@ -88,6 +102,12 @@ export default {
     components: {
         OperatorField
     },
+    data() {
+        return {
+            localValue: undefined,
+            textareaHeight: "50px"
+        }
+    },
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
@@ -99,10 +119,27 @@ export default {
                 .toLowerCase()
                 .split(" ")
                 .join("_")
+        },
+        setTextareaHeight() {
+            let element = this.$refs.textarea
+            if (element) {
+                if (element.scrollHeight > element.clientHeight) {
+                    this.textareaHeight = element.scrollHeight + "px"
+                }
+            }
+        }
+    },
+    watch: {
+        value() {
+            this.localValue = this.value
         }
     },
     mounted() {
         flatpickr(".datetime", { enableTime: true })
+        let app = this
+        setTimeout(function() {
+            app.setTextareaHeight(), 0
+        })
     }
 }
 </script>

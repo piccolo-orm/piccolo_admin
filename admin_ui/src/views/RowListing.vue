@@ -206,7 +206,7 @@ export default Vue.extend({
     methods: {
         isForeignKey(name: string) {
             let property = this.schema.properties[name]
-            return property != undefined ? property.foreign_key : false
+            return property != undefined ? property.extra.foreign_key : false
         },
         isBoolean(name: string) {
             return this.schema.properties[name]["type"] == "boolean"
