@@ -1,7 +1,5 @@
 <template>
     <div>
-        <label>{{ title }}</label>
-
         <template v-if="type == 'integer'">
             <OperatorField
                 :fieldName="getFieldName(title)"

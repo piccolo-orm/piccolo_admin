@@ -2,11 +2,16 @@
     <div>
         <div
             v-bind:key="property.title"
-            v-for="(property, index) in schema.properties"
+            v-for="(property, keyName) in schema.properties"
         >
             <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
+
                     <router-link
                         :to="{name: 'addRow', params: {tableName: property.extra.to}}"
                         class="add"
@@ -29,18 +34,26 @@
                     v-bind:fieldName="property.title.toLowerCase()"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
-                    v-bind:key="getKey(index)"
+                    v-bind:key="getKey(keyName)"
                     v-bind:tableName="property.extra.to"
                     v-bind:value="getValue(property.title)"
                     v-on:valueChanged="keySelectChanged(property.title, $event)"
                 />
             </template>
             <template v-else>
+                <label>
+                    {{ property.title }}
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
+                </label>
                 <InputField
                     v-bind:format="property.format"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
                     v-bind:key="property.title"
+                    v-bind:required="isRequired(keyName)"
                     v-bind:title="property.title"
                     v-bind:type="property.type || property.anyOf[0].type"
                     v-bind:value="getValue(property.title)"
@@ -98,8 +111,14 @@ export default Vue.extend({
             Vue.set(this.keySelectIDs, propertyTitle, value)
         },
         // We use this to refresh KeySelect components
-        getKey(index: number) {
-            return index + this.baseIndex
+        getKey(keyName: string) {
+            return keyName + this.baseIndex
+        },
+        isRequired(keyName: string) {
+            return (
+                !this.isFilter &&
+                (this.schema.required || []).indexOf(keyName) != -1
+            )
         }
     },
     mounted() {
@@ -124,5 +143,10 @@ export default Vue.extend({
 <style scoped lang="less">
 .add {
     float: right;
+}
+
+span.required {
+    opacity: 0.5;
+    padding-left: 0.05rem;
 }
 </style>
