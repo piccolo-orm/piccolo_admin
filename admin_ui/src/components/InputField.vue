@@ -22,14 +22,11 @@
                     :fieldName="title.toLowerCase()"
                     v-if="isFilter"
                 />
-                <input
-                    autocomplete="off"
-                    class="datetime"
-                    type="text"
+                <flat-pickr
+                    v-bind:config="{ enableTime: true }"
                     v-bind:name="getFieldName(title)"
-                    v-bind:placeholder="placeholder"
-                    v-bind:value="value"
-                />
+                    v-model="localValue"
+                ></flat-pickr>
             </template>
 
             <div v-else-if="format == 'text-area' && isFilter == false">
@@ -48,8 +45,8 @@
                 type="text"
                 v-bind:name="getFieldName(title)"
                 v-bind:placeholder="placeholder"
-                v-bind:value="value"
                 v-else
+                v-model="localValue"
             />
         </template>
 
@@ -81,8 +78,8 @@
 <script lang="ts">
 import Vue from "vue"
 
+import flatPickr from "vue-flatpickr-component"
 import OperatorField from "./OperatorField.vue"
-import flatpickr from "flatpickr"
 
 export default {
     props: {
@@ -100,6 +97,7 @@ export default {
         }
     },
     components: {
+        flatPickr,
         OperatorField
     },
     data() {
@@ -132,14 +130,16 @@ export default {
     watch: {
         value() {
             this.localValue = this.value
+            this.setTextareaHeight()
         }
     },
     mounted() {
-        flatpickr(".datetime", { enableTime: true })
+        this.localValue = this.value
+
         let app = this
         setTimeout(function() {
-            app.setTextareaHeight(), 0
-        })
+            app.setTextareaHeight()
+        }, 0)
     }
 }
 </script>
