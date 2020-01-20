@@ -28,6 +28,7 @@ div#overlay {
     bottom: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.7);
+    overflow: auto;
 
     div.modal {
         border-radius: 0.5rem;
