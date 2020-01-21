@@ -198,9 +198,6 @@ export default Vue.extend({
                 return string.substring(0, 80) + "..."
             }
             return string
-        },
-        readable(value) {
-            return value.split("_").join(" ")
         }
     },
     methods: {

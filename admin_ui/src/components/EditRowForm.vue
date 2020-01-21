@@ -1,7 +1,7 @@
 <template>
     <div v-if="schema">
         <div class="header">
-            <h1>Edit {{ tableName }}</h1>
+            <h1>Edit {{ tableName | readable }}</h1>
 
             <p>
                 <a
