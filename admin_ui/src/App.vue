@@ -186,7 +186,9 @@ body {
     }
 
     tr {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        &:nth-child(even) {
+            background-color: whitesmoke;
+        }
     }
 
     .opaque {
@@ -227,7 +229,9 @@ body {
     }
 
     tr {
-        border-bottom: 1px solid @border_color;
+        &:nth-child(even) {
+            background-color: darken(@dark_grey, 3%);
+        }
     }
 
     input,
