@@ -62,7 +62,11 @@ export default Vue.extend({
                 console.log("Logging out")
                 try {
                     await axios.post("./api/logout/")
-                    this.$router.push({ name: "login" })
+                    // Reload the entire page, rather than using vue-router,
+                    // otherwise some data from Vuex will remain in memory.
+                    // The app will redirect the user to the login page
+                    // after the reload.
+                    location.replace(window.location.pathname)
                 } catch (error) {
                     console.log("Logout failed")
                     console.log(error)
