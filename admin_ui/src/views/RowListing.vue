@@ -76,10 +76,12 @@
                                 v-else-if="isBoolean(name)"
                             >
                                 <font-awesome-icon
+                                    class="correct"
                                     icon="check"
                                     v-if="row[name] === true"
                                 />
                                 <font-awesome-icon
+                                    class="incorrect"
                                     icon="times"
                                     v-else
                                 />
@@ -321,8 +323,14 @@ div.wrapper {
                 text-align: left;
 
                 span.boolean {
-                    opacity: 0.5;
                     padding-left: 0.5rem;
+
+                    svg.correct {
+                        color: @green;
+                    }
+                    svg.incorrect {
+                        color: @red;
+                    }
                 }
             }
             td {
