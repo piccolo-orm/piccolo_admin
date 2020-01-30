@@ -33,7 +33,7 @@ class Sessions(SessionsBase, db=DB):
     pass
 
 
-class User(BaseUser, db=DB):
+class User(BaseUser, db=DB, tablename="piccolo_user"):
     pass
 
 
