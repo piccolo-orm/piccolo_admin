@@ -26,7 +26,7 @@ export default new Vuex.Store({
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
-        user: undefined,
+        user: undefined
     },
     mutations: {
         updateTableNames(state, value) {
@@ -74,7 +74,7 @@ export default new Vuex.Store({
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
             localStorage.setItem('darkMode', String(enabled))
-        },
+        }
     },
     actions: {
         async fetchTableNames(context) {
@@ -170,7 +170,7 @@ export default new Vuex.Store({
             return response
         },
         async updateRow(context, config: i.UpdateRow) {
-            const response = await axios.put(
+            const response = await axios.patch(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`,
                 config.data
             )
