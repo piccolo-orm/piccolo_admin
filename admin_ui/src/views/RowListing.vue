@@ -4,37 +4,37 @@
             <div class="left_column">
                 <div class="title_bar">
                     <h1>{{ tableName | readable }}</h1>
-                    <ul>
-                        <li>
-                            <router-link
-                                :to="{name: 'addRow', params: {tableName: tableName}}"
-                                class="subtle"
-                            >
-                                <span v-on:click.prevent="showAddRow = true">
-                                    <font-awesome-icon icon="plus" />Add Row
-                                </span>
-                            </router-link>
-                        </li>
-                        <li>
-                            <a
-                                class="subtle"
-                                href="#"
-                                v-on:click.prevent="showSort = !showSort"
-                            >
+                    <div class="buttons">
+                        <router-link
+                            :to="{name: 'addRow', params: {tableName: tableName}}"
+                            class="button"
+                        >
+                            <span v-on:click.prevent="showAddRow = true">
+                                <font-awesome-icon icon="plus" />Add Row
+                            </span>
+                        </router-link>
+
+                        <a
+                            class="button"
+                            href="#"
+                            v-on:click.prevent="showSort = !showSort"
+                        >
+                            <span>
                                 <font-awesome-icon icon="sort" />Sort
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                class="subtle"
-                                href="#"
-                                v-on:click.prevent="showFilter = !showFilter"
-                            >
+                            </span>
+                        </a>
+
+                        <a
+                            class="button"
+                            href="#"
+                            v-on:click.prevent="showFilter = !showFilter"
+                        >
+                            <span>
                                 <font-awesome-icon icon="filter" />
                                 {{ showFilter ? "Hide" : "Show" }} Filters
-                            </a>
-                        </li>
-                    </ul>
+                            </span>
+                        </a>
+                    </div>
                 </div>
 
                 <p v-if="rows.length == 0">No results found</p>
@@ -283,20 +283,27 @@ div.wrapper {
             flex-grow: 0;
         }
 
-        ul {
+        div.buttons {
+            display: flex;
+            flex-direction: row;
             margin: 0;
             padding: 0.5rem;
 
-            li {
-                display: inline-block;
-                padding-left: 1rem;
+            a.button {
+                display: block;
+                flex-grow: 0;
+                font-weight: bold;
+                padding: 0 !important;
+                text-decoration: none;
+                margin-left: 0.25rem;
 
-                &:first-child {
-                    padding-left: 0;
+                span {
+                    display: block;
+                    padding: 0.2rem 0.5rem;
                 }
 
-                a {
-                    text-decoration: none;
+                &:first-child {
+                    margin-left: 0;
                 }
             }
         }

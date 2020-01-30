@@ -19,6 +19,9 @@
     "trailing-comma": false,
     "no-debugger": false,
     "no-console": false,
-    "object-literal-shorthand": true
+    "object-literal-shorthand": true,
+    "only-arrow-functions": false,
+    "triple-equals": false,
+    "arrow-parens": false
   }
 }

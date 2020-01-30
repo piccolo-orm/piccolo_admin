@@ -323,6 +323,14 @@ body {
         &:hover {
             transition: color 0.5s;
         }
+
+        &.button {
+            background-color: @dark_blue;
+            color: white;
+            font-size: 0.7em;
+            padding: 0.3rem 0.5rem;
+            text-transform: uppercase;
+        }
     }
 
     svg {
