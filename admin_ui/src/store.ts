@@ -17,7 +17,7 @@ export default new Vuex.Store({
         apiResponseMessage: null as i.APIResponseMessage | null,
         currentPageNumber: 1,
         currentTableName: undefined,
-        darkMode: true,
+        darkMode: false,
         filterParams: {},
         pageSize: 1,
         rowCount: 0,

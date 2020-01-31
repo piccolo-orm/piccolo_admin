@@ -9,15 +9,7 @@
                     href="#"
                     v-on:click.prevent="showDropdown = !showDropdown"
                 >
-                    More
-                    <font-awesome-icon
-                        icon="angle-up"
-                        v-if="showDropdown"
-                    />
-                    <font-awesome-icon
-                        icon="angle-down"
-                        v-if="!showDropdown"
-                    />
+                    <font-awesome-icon icon="ellipsis-v" />
                     <DropDownMenu v-if="showDropdown">
                         <li>
                             <DeleteButton

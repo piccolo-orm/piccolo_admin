@@ -1,5 +1,5 @@
 <template>
-    <ul id="pagination">
+    <ul class="pagination">
         <li
             :key="n"
             v-for="n in pageCount"
@@ -51,10 +51,10 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @activeColor: rgba(0, 0, 0, 0.2);
 
-ul {
+ul.pagination {
     list-style: none;
     padding: 0;
 
@@ -64,14 +64,14 @@ ul {
         font-size: 0.8rem;
         margin-left: 0.5rem;
 
-        &:hover {
-            background-color: @activeColor;
-        }
-
         a {
             padding: 0.4rem 0.7rem;
             display: block;
             text-decoration: none;
+
+            &:hover {
+                background-color: @activeColor;
+            }
 
             &.active {
                 background-color: @activeColor;

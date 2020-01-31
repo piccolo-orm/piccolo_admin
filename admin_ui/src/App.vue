@@ -35,7 +35,7 @@ export default Vue.extend({
         let darkMode = JSON.parse(localStorage.getItem("darkMode"))
 
         if (darkMode === null) {
-            darkMode = true
+            darkMode = false
         }
 
         this.$store.commit("updateDarkMode", darkMode)
@@ -169,6 +169,20 @@ body {
 
     ul#drop_down_menu {
         background-color: @dark_blue;
+    }
+
+    ul.pagination {
+        li {
+            a {
+                &:hover {
+                    background-color: whitesmoke;
+                }
+
+                &.active {
+                    background-color: whitesmoke;
+                }
+            }
+        }
     }
 
     a {
