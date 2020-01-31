@@ -27,6 +27,7 @@ ul {
     z-index: 100;
 
     li {
+        margin: 0 !important;
         text-align: center;
         width: 100%;
 
@@ -35,6 +36,8 @@ ul {
         }
 
         a {
+            color: white !important;
+            font-weight: bold;
             display: block;
             padding: 0.5rem 1rem;
             box-sizing: border-box;

@@ -44,7 +44,7 @@
                             v-bind:key="name"
                             v-for="name in cellNames"
                         >{{ schema.properties[name] ? schema.properties[name].title : name }}</th>
-                        <th>Actions</th>
+                        <th></th>
                     </tr>
 
                     <tr
@@ -89,24 +89,31 @@
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
-                        <td class="snug">
-                            <ul>
-                                <li>
-                                    <router-link
-                                        :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
-                                        class="subtle"
-                                        title="Edit Row"
-                                    >
-                                        <font-awesome-icon icon="edit" />
-                                    </router-link>
-                                </li>
-                                <li>
-                                    <DeleteButton
-                                        class="subtle delete"
-                                        v-on:triggered="deleteRow(row.id)"
-                                    />
-                                </li>
-                            </ul>
+                        <td>
+                            <span style="position: relative; display: block; text-align: right;">
+                                <font-awesome-icon
+                                    icon="ellipsis-v"
+                                    v-on:click.prevent="visibleDropdown = visibleDropdown ? undefined : row.id "
+                                />
+                                <DropDownMenu v-if="visibleDropdown == row.id">
+                                    <li>
+                                        <router-link
+                                            :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
+                                            class="subtle"
+                                            title="Edit Row"
+                                        >
+                                            <font-awesome-icon icon="edit" />Edit
+                                        </router-link>
+                                    </li>
+                                    <li>
+                                        <DeleteButton
+                                            :includeTitle="true"
+                                            class="subtle delete"
+                                            v-on:triggered="deleteRow(row.id)"
+                                        />
+                                    </li>
+                                </DropDownMenu>
+                            </span>
                         </td>
                     </tr>
                 </table>
@@ -145,9 +152,10 @@
 import Vue from "vue"
 import axios from "axios"
 
-import BaseView from "./BaseView.vue"
 import AddRowModal from "../components/AddRowModal.vue"
+import BaseView from "./BaseView.vue"
 import DeleteButton from "../components/DeleteButton.vue"
+import DropDownMenu from "../components/DropDownMenu.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
@@ -159,13 +167,15 @@ export default Vue.extend({
         return {
             showAddRow: false,
             showFilter: false,
-            showSort: false
+            showSort: false,
+            visibleDropdown: null
         }
     },
     components: {
         AddRowModal,
         BaseView,
         DeleteButton,
+        DropDownMenu,
         Pagination,
         RowFilter,
         RowSortModal,
@@ -353,7 +363,7 @@ div.wrapper {
             }
             td,
             th {
-                padding: 0.2rem 0.5rem;
+                padding: 0.5rem;
             }
             td {
                 &.last-child {

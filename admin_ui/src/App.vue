@@ -153,6 +153,16 @@ body {
         border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
 
+    div.sidebar {
+        background-color: whitesmoke;
+
+        li {
+            a:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+        }
+    }
+
     .right_column {
         border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
@@ -226,6 +236,10 @@ body {
                 color: white;
             }
         }
+    }
+
+    ul#drop_down_menu {
+        background-color: lighten(@dark_grey, 5%);
     }
 
     tr {
