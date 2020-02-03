@@ -78,7 +78,7 @@ div#message_popup {
 
     p,
     a {
-        color: @off_white !important;
+        color: white !important;
     }
 
     p.message {

@@ -91,10 +91,13 @@
 
                         <td>
                             <span style="position: relative; display: block; text-align: right;">
-                                <font-awesome-icon
-                                    icon="ellipsis-v"
+                                <a
+                                    class="subtle"
+                                    href="#"
                                     v-on:click.prevent="visibleDropdown = visibleDropdown ? undefined : row.id "
-                                />
+                                >
+                                    <font-awesome-icon icon="ellipsis-v" />
+                                </a>
                                 <DropDownMenu v-if="visibleDropdown == row.id">
                                     <li>
                                         <router-link
@@ -222,7 +225,7 @@ export default Vue.extend({
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
-            return this.schema.properties[name].to
+            return this.schema.properties[name].extra.to
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
