@@ -154,17 +154,51 @@ class AdminRouter(Router):
         return JSONResponse([i._meta.tablename for i in self.tables])
 
 
+def get_all_tables(
+    tables: t.Sequence[t.Type[Table]],
+) -> t.Sequence[t.Type[Table]]:
+    """
+    Fetch any related tables, and include them.
+    """
+    output: t.List[t.Type[Table]] = []
+
+    def get_references(table: t.Type[Table]):
+        references = [
+            i._foreign_key_meta.references
+            for i in table._meta.foreign_key_columns
+        ]
+        for reference in references:
+            if reference not in output:
+                output.append(reference)
+                get_references(reference)
+
+    for table in tables:
+        if table not in output:
+            output.append(table)
+        get_references(table)
+
+    return output
+
+
 def create_admin(
-    tables: t.Sequence[Table],
-    auth_table: BaseUser = BaseUser,
+    tables: t.Sequence[t.Type[Table]],
+    auth_table: t.Type[BaseUser] = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
     page_size: int = 15,
     read_only: bool = False,
+    auto_include_related=True,
 ):
     """
     :param page_size: The number of results shown on each page.
-    :param read_only: All non auth endpoints only respond to GET requests.
+    :param read_only: Makes all non auth endpoints only respond to GET
+    requests.
+    :param auto_include_related: If a table has foreign keys to other tables,
+    those tables will also be included in the admin by default, if not already
+    specified. Otherwise the admin won't work as expected.
     """
+    if auto_include_related:
+        tables = get_all_tables(tables)
+
     return ExceptionMiddleware(
         CSRFMiddleware(
             AdminRouter(
