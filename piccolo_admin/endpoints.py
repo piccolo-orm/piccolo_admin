@@ -1,6 +1,7 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
+from __future__ import annotations
 from functools import partial
 import os
 import typing as t
@@ -11,6 +12,11 @@ from piccolo.extensions.user.tables import BaseUser
 from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.rate_limiting.middleware import (
+    RateLimitingMiddleware,
+    RateLimitProvider,
+    InMemoryLimitProvider,
+)
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
@@ -46,6 +52,7 @@ class AdminRouter(Router):
         session_table: t.Type[SessionsBase] = SessionsBase,
         page_size: int = 15,
         read_only: bool = False,
+        rate_limit_provider: t.Optional[RateLimitProvider] = None,
     ) -> None:
         self.auth_table = auth_table
 
@@ -59,6 +66,11 @@ class AdminRouter(Router):
             ),
             on_error=handle_auth_exception,
         )
+
+        if not rate_limit_provider:
+            rate_limit_provider = InMemoryLimitProvider(
+                limit=1000, timespan=300
+            )
 
         table_routes: t.List[BaseRoute] = [
             Mount(
@@ -93,9 +105,12 @@ class AdminRouter(Router):
                         ),
                         Route(
                             path="/login/",
-                            endpoint=session_login(
-                                auth_table=self.auth_table,
-                                session_table=session_table,
+                            endpoint=RateLimitingMiddleware(
+                                app=session_login(
+                                    auth_table=self.auth_table,
+                                    session_table=session_table,
+                                ),
+                                provider=rate_limit_provider,
                             ),
                             methods=["POST"],
                         ),
