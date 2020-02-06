@@ -1,3 +1,8 @@
+0.4.1
+=====
+Using rate limit middleware on login endpoint. Auto including related tables.
+Using PATCH instead of PUT when editing a row. UI improvements.
+
 0.4.0
 =====
 Using textarea for Text database fields, using new API schema format, and
