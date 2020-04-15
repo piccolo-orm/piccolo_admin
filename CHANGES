@@ -1,3 +1,7 @@
+0.5.0
+=====
+Updated dependencies, and vendored remaining Javascript.
+
 0.4.1
 =====
 Using rate limit middleware on login endpoint. Auto including related tables.
