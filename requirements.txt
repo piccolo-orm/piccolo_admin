@@ -1,6 +1,6 @@
 starlette==0.13.3
-piccolo==0.9.3
-piccolo_api==0.6.1
+piccolo==0.10.0
+piccolo_api==0.7.0
 uvicorn==0.11.3
 aiofiles==0.5.0
-Hypercorn==0.9.4
+Hypercorn==0.9.5

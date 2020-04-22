@@ -9,7 +9,7 @@ import sys
 
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo.engine.sqlite import SQLiteEngine
-from piccolo.extensions.user.tables import BaseUser
+from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
     Varchar,

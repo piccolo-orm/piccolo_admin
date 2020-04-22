@@ -7,7 +7,7 @@ import os
 import typing as t
 
 from piccolo.table import Table
-from piccolo.extensions.user.tables import BaseUser
+from piccolo.apps.user.tables import BaseUser
 
 from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
