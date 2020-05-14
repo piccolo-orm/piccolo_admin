@@ -35,12 +35,12 @@ Since the admin is an ASGI app, you can either run it standalone like in the dem
 For example, using Starlette routes:
 
 ```python
-from piccolo_admin.endpoints import AdminRouter
+from piccolo_admin.endpoints import create_admin
 from starlette.routing import Router, Route
 import uvicorn
 
 from my_project.tables import Director, Movie
-from my_project.endpoints import create_admin
+
 
 
 admin = create_admin([Director, Movie])
