@@ -57,6 +57,20 @@ if __name__ == '__main__':
 
 ```
 
+## Session table
+
+The admin uses session auth, which requires a database table.
+
+Add `piccolo_admin.piccolo_app` to the APP_REGISTRY in your piccolo_conf.py
+project file, then run:
+
+```bash
+piccolo migrations forwards session_auth
+```
+
+To learn more about the Piccolo project files, check out the [docs](https://piccolo-orm.readthedocs.io/en/latest/piccolo/projects_and_apps/piccolo_apps.html).
+
+
 ## Contributing
 
 The backend is just vanilla Python.
