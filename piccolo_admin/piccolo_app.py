@@ -17,6 +17,9 @@ APP_CONFIG = AppConfig(
         CURRENT_DIRECTORY, "piccolo_migrations"
     ),
     table_classes=[],
-    migration_dependencies=["piccolo_api.session_auth.piccolo_app"],
+    migration_dependencies=[
+        "piccolo_api.session_auth.piccolo_app",
+        "piccolo.apps.user.piccolo_app",
+    ],
     commands=[],
 )
