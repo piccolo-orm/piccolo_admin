@@ -1,3 +1,7 @@
+0.6.3
+=====
+Bumped requirements and added apps to piccolo_app migration dependencies.
+
 0.6.2
 =====
 Converted into a Piccolo app.
