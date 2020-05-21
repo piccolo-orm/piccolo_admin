@@ -103,7 +103,7 @@ export default Vue.extend({
             }
         )
 
-        // Handle 502 errors - if a page isn't found.
+        // Handle 502 errors - if the server can't be reached.
         axios.interceptors.response.use(
             function(response) {
                 return response

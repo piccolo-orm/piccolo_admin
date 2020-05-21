@@ -1,3 +1,7 @@
+0.6.6
+=====
+Disabling redirect on session auth.
+
 0.6.5
 =====
 Loosening requirements for Piccolo projects.

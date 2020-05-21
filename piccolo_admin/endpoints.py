@@ -109,6 +109,7 @@ class AdminRouter(Router):
                                 app=session_login(
                                     auth_table=self.auth_table,
                                     session_table=session_table,
+                                    redirect_to=None,
                                 ),
                                 provider=rate_limit_provider,
                             ),
