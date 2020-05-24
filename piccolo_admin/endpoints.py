@@ -62,7 +62,9 @@ class AdminRouter(Router):
         auth_middleware = partial(
             AuthenticationMiddleware,
             backend=SessionsAuthBackend(
-                auth_table=auth_table, session_table=session_table,
+                auth_table=auth_table,
+                session_table=session_table,
+                admin_only=True,
             ),
             on_error=handle_auth_exception,
         )
