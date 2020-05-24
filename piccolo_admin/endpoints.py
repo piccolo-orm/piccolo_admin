@@ -2,6 +2,7 @@
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
+from datetime import timedelta
 from functools import partial
 import os
 import typing as t
@@ -50,6 +51,9 @@ class AdminRouter(Router):
         *tables: t.Type[Table],
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
+        session_expiry: timedelta = timedelta(hours=1),
+        max_session_expiry: timedelta = timedelta(days=7),
+        increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
         page_size: int = 15,
         read_only: bool = False,
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
@@ -66,6 +70,7 @@ class AdminRouter(Router):
                 auth_table=auth_table,
                 session_table=session_table,
                 admin_only=True,
+                increase_expiry=increase_expiry,
             ),
             on_error=handle_auth_exception,
         )
@@ -112,6 +117,8 @@ class AdminRouter(Router):
                                 app=session_login(
                                     auth_table=self.auth_table,
                                     session_table=session_table,
+                                    session_expiry=session_expiry,
+                                    max_session_expiry=max_session_expiry,
                                     redirect_to=None,
                                     production=production,
                                 ),
@@ -204,6 +211,9 @@ def create_admin(
     tables: t.Sequence[t.Type[Table]],
     auth_table: t.Type[BaseUser] = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
+    session_expiry: timedelta = timedelta(hours=1),
+    max_session_expiry: timedelta = timedelta(days=7),
+    increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
     page_size: int = 15,
     read_only: bool = False,
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
@@ -219,6 +229,14 @@ def create_admin(
     :param session_table:
         Either a SessionBase, or SessionBase subclass table, which is used
         for storing and querying session tokens.
+    :param session_expiry:
+        How long a session is valid for.
+    :param max_session_expiry:
+        The maximum time a session is valid for, taking into account any
+        refreshes using `increase_expiry`.
+    :param increase_expiry:
+        If set, the `session_expiry` will be increased by this amount if it's
+        close to expiry.
     :param page_size:
         The admin API paginates contents - this sets the number of results
         in each page.
@@ -249,6 +267,9 @@ def create_admin(
                 *tables,
                 auth_table=auth_table,
                 session_table=session_table,
+                session_expiry=session_expiry,
+                max_session_expiry=max_session_expiry,
+                increase_expiry=increase_expiry,
                 page_size=page_size,
                 read_only=read_only,
                 rate_limit_provider=rate_limit_provider,
