@@ -1,3 +1,7 @@
+0.7.0
+=====
+Exposing more configuration options for session auth.
+
 0.6.6
 =====
 Disabling redirect on session auth.
