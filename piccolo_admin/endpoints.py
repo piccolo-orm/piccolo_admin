@@ -53,6 +53,7 @@ class AdminRouter(Router):
         page_size: int = 15,
         read_only: bool = False,
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
+        production: bool = False,
     ) -> None:
         self.auth_table = auth_table
 
@@ -112,6 +113,7 @@ class AdminRouter(Router):
                                     auth_table=self.auth_table,
                                     session_table=session_table,
                                     redirect_to=None,
+                                    production=production,
                                 ),
                                 provider=rate_limit_provider,
                             ),
@@ -204,16 +206,40 @@ def create_admin(
     session_table: t.Type[SessionsBase] = SessionsBase,
     page_size: int = 15,
     read_only: bool = False,
-    auto_include_related=True,
+    rate_limit_provider: t.Optional[RateLimitProvider] = None,
+    production: bool = False,
+    auto_include_related: bool = True,
 ):
     """
-    :param page_size: The number of results shown on each page.
-    :param read_only: Makes all non auth endpoints only respond to GET
-    requests.
-    :param auto_include_related: If a table has foreign keys to other tables,
-    those tables will also be included in the admin by default, if not already
-    specified. Otherwise the admin won't work as expected.
+    :param tables:
+        Each of the tables will be added to the admin.
+    :param auth_table:
+        Either a BaseUser, or BaseUser subclass table, which is used for
+        fetching users.
+    :param session_table:
+        Either a SessionBase, or SessionBase subclass table, which is used
+        for storing and querying session tokens.
+    :param page_size:
+        The admin API paginates contents - this sets the number of results
+        in each page.
+    :param read_only:
+        If True, all non auth endpoints only respond to GET requests - the
+        admin can still be viewed, and the data can be filtered. Useful for
+        creating online demos.
+    :param rate_limit_provider:
+        Rate limiting middleware is used to protect the login endpoint
+        against brute force attack. If not set, an InMemoryLimitProvider
+        will be configured with reasonable defaults.
+    :param production:
+        If True, the admin will enforce stronger security - for example,
+        the cookies used will be secure, meaning they are only sent over
+        HTTPS.
+    :param auto_include_related:
+        If a table has foreign keys to other tables, those tables will also be
+        included in the admin by default, if not already specified. Otherwise
+        the admin won't work as expected.
     """
+
     if auto_include_related:
         tables = get_all_tables(tables)
 
@@ -223,7 +249,10 @@ def create_admin(
                 *tables,
                 auth_table=auth_table,
                 session_table=session_table,
+                page_size=page_size,
                 read_only=read_only,
+                rate_limit_provider=rate_limit_provider,
+                production=production,
             ),
         )
     )
