@@ -1,3 +1,7 @@
+0.8.0
+=====
+Added support for Numeric and Real column types in Piccolo.
+
 0.7.0
 =====
 Exposing more configuration options for session auth.
