@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 
 DIRECTORS = [
@@ -15,7 +16,8 @@ DIRECTORS = [
 MOVIES = [
     {
         "name": "Star Wars: Episode IV - A New Hope",
-        "rating": 93,
+        "rating": 93.3,
+        "duration": 125,
         "director": 2,
         "description": (
             "After Princess Leia, the leader of the Rebel Alliance, is held "
@@ -24,10 +26,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=1977, month=12, day=27),
         "won_oscar": True,
+        "box_office": Decimal("775.5"),
     },
     {
         "name": "The Empire Strikes Back",
-        "rating": 94,
+        "rating": 94.0,
+        "duration": 127,
         "director": 5,
         "description": (
             "Darth Vader is adamant about turning Luke Skywalker to the dark "
@@ -36,10 +40,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=1980, month=5, day=20),
         "won_oscar": True,
+        "box_office": Decimal("547.9"),
     },
     {
         "name": "Return of the Jedi",
-        "rating": 82,
+        "rating": 82.0,
+        "duration": 136,
         "director": 6,
         "description": (
             "Luke Skywalker attempts to bring his father back to the light "
@@ -48,10 +54,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=1983, month=6, day=2),
         "won_oscar": True,
+        "box_office": Decimal("475.3"),
     },
     {
         "name": "Star Wars: Episode I – The Phantom Menace",
-        "rating": 53,
+        "rating": 53.0,
+        "duration": 136,
         "director": 2,
         "description": (
             "Two Jedi Knights set out to search for someone who can "
@@ -61,10 +69,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=1999, month=7, day=16),
         "won_oscar": False,
+        "box_office": Decimal("1027.0"),
     },
     {
         "name": "Star Wars: Episode II – Attack of the Clones",
         "rating": 65,
+        "duration": 144,
         "director": 2,
         "description": (
             "While pursuing an assassin, Obi Wan uncovers a sinister plot to "
@@ -73,10 +83,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2002, month=5, day=16),
         "won_oscar": False,
+        "box_office": Decimal("653.0"),
     },
     {
         "name": "Star Wars: Episode III – Revenge of the Sith",
-        "rating": 80,
+        "rating": 80.0,
+        "duration": 140,
         "director": 2,
         "description": (
             "Anakin joins forces with Obi-Wan and sets Palpatine free from "
@@ -86,10 +98,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2005, month=5, day=19),
         "won_oscar": False,
+        "box_office": Decimal("868.4"),
     },
     {
         "name": "Star Wars: The Force Awakens",
-        "rating": 93,
+        "rating": 93.0,
+        "duration": 135,
         "director": 3,
         "description": (
             "A new order threatens to destroy the New Republic. Finn, Rey and "
@@ -98,10 +112,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2015, month=12, day=17),
         "won_oscar": False,
+        "box_office": Decimal("2068.0"),
     },
     {
         "name": "Rogue One: A Star Wars Story",
-        "rating": 83,
+        "rating": 83.1,
+        "duration": 133,
         "director": 4,
         "description": (
             "When she's a child, Jyn's father is forcibly taken by the Empire "
@@ -110,10 +126,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2016, month=12, day=13),
         "won_oscar": False,
+        "box_office": Decimal("1056.0"),
     },
     {
         "name": "Star Wars: The Last Jedi",
-        "rating": 91,
+        "rating": 91.2,
+        "duration": 152,
         "director": 7,
         "description": (
             "Rey seeks to learn the ways of the Jedi under Luke Skywalker, "
@@ -122,10 +140,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2017, month=12, day=14),
         "won_oscar": False,
+        "box_office": Decimal("1333.0"),
     },
     {
         "name": "Solo: A Star Wars Story",
-        "rating": 70,
+        "rating": 70.5,
+        "duration": 135,
         "director": 8,
         "description": (
             "In a galaxy where hyperfuel is in high demand, Han Solo gets "
@@ -134,10 +154,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2018, month=5, day=25),
         "won_oscar": False,
+        "box_office": Decimal("393.2"),
     },
     {
         "name": "Star Wars: The Rise of Skywalker",
-        "rating": 54,
+        "rating": 54.7,
+        "duration": 142,
         "director": 3,
         "description": (
             "The surviving Resistance faces the First Order once more as Rey, "
@@ -146,10 +168,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2019, month=12, day=19),
         "won_oscar": False,
+        "box_office": Decimal("1074.0"),
     },
     {
         "name": "The Lord of the Rings: The Fellowship of the Ring",
-        "rating": 91,
+        "rating": 91.1,
+        "duration": 208,
         "director": 1,
         "description": (
             "A young hobbit, Frodo, who has found the One Ring that belongs "
@@ -159,10 +183,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2001, month=12, day=10),
         "won_oscar": True,
+        "box_office": Decimal("887.8"),
     },
     {
         "name": "The Lord of the Rings: The Two Towers",
-        "rating": 95,
+        "rating": 95.2,
+        "duration": 223,
         "director": 1,
         "description": (
             "Frodo and Sam arrive in Mordor with the help of Gollum. A number "
@@ -171,10 +197,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2002, month=12, day=11),
         "won_oscar": True,
+        "box_office": Decimal("951.2"),
     },
     {
         "name": "The Lord of the Rings - The Return of the King",
-        "rating": 93,
+        "rating": 93.0,
+        "duration": 201,
         "director": 1,
         "description": (
             "The former Fellowship members prepare for the final battle. "
@@ -183,10 +211,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2003, month=12, day=17),
         "won_oscar": True,
+        "box_office": Decimal("1142.0"),
     },
     {
         "name": "The Hobbit: An Unexpected Journey",
-        "rating": 64,
+        "rating": 64.2,
+        "duration": 182,
         "director": 1,
         "description": (
             "Bilbo Baggins, a hobbit, is persuaded into accompanying a wizard "
@@ -195,10 +225,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2012, month=12, day=12),
         "won_oscar": False,
+        "box_office": Decimal("1021.0"),
     },
     {
         "name": "The Hobbit: The Desolation of Smaug",
-        "rating": 74,
+        "rating": 74.9,
+        "duration": 187,
         "director": 1,
         "description": (
             "Bilbo Baggins, a hobbit, and his companions face great dangers "
@@ -208,10 +240,12 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2013, month=12, day=13),
         "won_oscar": False,
+        "box_office": Decimal("958.0"),
     },
     {
         "name": "The Hobbit: The Battle of the Five Armies",
-        "rating": 59,
+        "rating": 59.0,
+        "duration": 164,
         "director": 1,
         "description": (
             "Bilbo fights against a number of enemies to save the life of his "
@@ -220,5 +254,6 @@ MOVIES = [
         ),
         "release_date": datetime.datetime(year=2014, month=12, day=1),
         "won_oscar": False,
+        "box_office": Decimal("956.0"),
     },
 ]

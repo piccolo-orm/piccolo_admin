@@ -18,6 +18,8 @@ from piccolo.columns import (
     Boolean,
     Text,
     Timestamp,
+    Numeric,
+    Real,
 )
 from piccolo.columns.readable import Readable
 
@@ -47,11 +49,13 @@ class Director(Table, db=DB):
 
 class Movie(Table, db=DB):
     name = Varchar(length=300)
-    rating = Integer()
+    rating = Real()
+    duration = Integer()
     director = ForeignKey(references=Director)
     won_oscar = Boolean()
     description = Text()
     release_date = Timestamp()
+    box_office = Numeric(digits=(5, 1))
 
 
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)

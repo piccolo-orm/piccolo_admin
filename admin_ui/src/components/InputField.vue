@@ -70,6 +70,19 @@
                 >False</option>
             </select>
         </template>
+
+        <template v-if="type == 'number'">
+            <OperatorField
+                :fieldName="title.toLowerCase()"
+                v-if="isFilter"
+            />
+            <input
+                type="text"
+                v-bind:name="getFieldName(title)"
+                v-bind:placeholder="placeholder"
+                v-model="localValue"
+            />
+        </template>
     </div>
 </template>
 
