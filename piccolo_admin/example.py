@@ -121,4 +121,8 @@ if __name__ == "__main__":
     persist = "--persist" in args
     read_only_db = "--read-only-db" in args
     use_hypercorn = "--hypercorn" in args
-    main(persist=persist, read_only_db=read_only_db)
+    main(
+        persist=persist,
+        read_only_db=read_only_db,
+        use_hypercorn=use_hypercorn,
+    )
