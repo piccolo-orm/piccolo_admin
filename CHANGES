@@ -1,3 +1,7 @@
+0.8.1
+=====
+Bumped node and pip requirements.
+
 0.8.0
 =====
 Added support for Numeric and Real column types in Piccolo.
