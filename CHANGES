@@ -1,3 +1,7 @@
+0.9.1
+=====
+Bumped node requirements because of security warning.
+
 0.9.0
 =====
 Bumped node and pip requirements.
