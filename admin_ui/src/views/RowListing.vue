@@ -120,7 +120,7 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">Showing {{ rows.length }} result(s)</p>
+                <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
 
                 <Pagination :tableName="tableName" />
             </div>
@@ -171,7 +171,7 @@ export default Vue.extend({
             showAddRow: false,
             showFilter: false,
             showSort: false,
-            visibleDropdown: null
+            visibleDropdown: null,
         }
     },
     components: {
@@ -182,7 +182,7 @@ export default Vue.extend({
         Pagination,
         RowFilter,
         RowSortModal,
-        TableNav
+        TableNav,
     },
     computed: {
         cellNames() {
@@ -199,7 +199,10 @@ export default Vue.extend({
         },
         schema() {
             return this.$store.state.schema
-        }
+        },
+        rowCount() {
+            return this.$store.state.rowCount
+        },
     },
     filters: {
         abbreviate(value) {
@@ -213,7 +216,7 @@ export default Vue.extend({
                 return string.substring(0, 80) + "..."
             }
             return string
-        }
+        },
     },
     methods: {
         isForeignKey(name: string) {
@@ -232,7 +235,7 @@ export default Vue.extend({
                 console.log("Deleting!")
                 await this.$store.dispatch("deleteRow", {
                     tableName: this.tableName,
-                    rowID
+                    rowID,
                 })
                 await this.fetchRows()
             }
@@ -242,21 +245,21 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
-        }
+        },
     },
     watch: {
-        "$route.params.tableName": async function() {
+        "$route.params.tableName": async function () {
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             await Promise.all([this.fetchRows(), this.fetchSchema()])
         },
-        "$route.query": async function() {
+        "$route.query": async function () {
             this.$store.commit(
                 "updateFilterParams",
                 this.$router.currentRoute.query
             )
             await this.fetchRows()
-        }
+        },
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
@@ -267,7 +270,7 @@ export default Vue.extend({
         )
 
         await Promise.all([this.fetchRows(), this.fetchSchema()])
-    }
+    },
 })
 </script>
 
