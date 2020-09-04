@@ -24,8 +24,8 @@ import TableNav from "./TableNav.vue"
 
 export default Vue.extend({
     components: {
-        TableNav
-    }
+        TableNav,
+    },
 })
 </script>
 
@@ -53,13 +53,14 @@ div.sidebar {
                 display: block;
                 padding: 0.5rem;
                 text-decoration: none;
+                border-left: 3px solid rgba(0, 0, 0, 0);
 
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
                 }
 
                 &.active {
-                    border-right: 3px solid @light_blue;
+                    border-left: 3px solid @light_blue;
                 }
             }
         }

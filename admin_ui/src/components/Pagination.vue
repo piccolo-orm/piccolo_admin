@@ -120,6 +120,7 @@ div#pagination {
         }
 
         label {
+            font-size: 0.9rem;
             margin-right: 1rem;
         }
 
