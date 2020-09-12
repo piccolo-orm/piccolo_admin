@@ -1,3 +1,7 @@
+0.10.0
+======
+Using latest piccolo, and piccolo_api.
+
 0.9.2
 =====
  * Improved pagination when there's lots of data.
