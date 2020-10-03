@@ -1,3 +1,8 @@
+0.10.1
+======
+Added ``allowed_hosts`` argument to ``create_admin`` - otherwise CSRF
+middleware will block requests when running under HTTPS.
+
 0.10.0
 ======
 Using latest piccolo, and piccolo_api.
