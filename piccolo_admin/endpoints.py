@@ -219,6 +219,7 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     auto_include_related: bool = True,
+    allowed_hosts: t.Sequence[str] = [],
 ):
     """
     :param tables:
@@ -256,6 +257,10 @@ def create_admin(
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
         the admin won't work as expected.
+    :param allowed_hosts:
+        This is used by the CSRF middleware as an additional layer of
+        protection when the admin is run under HTTPS. It must be a sequence of
+        strings, such as ['my_site.com'].
     """
 
     if auto_include_related:
@@ -275,5 +280,6 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
             ),
+            allowed_hosts=allowed_hosts,
         )
     )

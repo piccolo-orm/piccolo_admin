@@ -42,8 +42,9 @@ import uvicorn
 from my_project.tables import Director, Movie
 
 
-
-admin = create_admin([Director, Movie])
+# The `allowed_hosts` argument is required when running under HTTPS. It's used
+# for additional CSRF defence.
+admin = create_admin([Director, Movie], allowed_hosts=['my_site.com'])
 
 
 router = Router([
