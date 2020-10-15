@@ -126,6 +126,7 @@ div#pagination {
 
         select {
             width: auto;
+            padding-right: 1.5rem;
         }
     }
 }
