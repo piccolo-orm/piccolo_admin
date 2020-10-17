@@ -53,15 +53,17 @@ export default Vue.extend({
                     console.log("Login required")
                     let nextURL = app.$route.path
                     if (nextURL !== "/login") {
-                        setTimeout(function() {
-                            app.$router.push({
-                                name: "login",
-                                query: {
-                                    nextURL: nextURL
-                                }
-                            }),
-                                0
-                        })
+                        setTimeout(
+                            function() {
+                                app.$router.push({
+                                    name: "login",
+                                    query: {
+                                        nextURL: nextURL
+                                    }
+                                })
+                            },
+                            0
+                        )
                     }
                 }
                 return Promise.reject(error)
