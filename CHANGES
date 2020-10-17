@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.10.3
+------
+Fixing packaging issues - add Python 3.8 classifier, and missing index.html
+file.
+
 0.10.2
 ------
 Subtle UI fixes - page selector, and ``setTimeout`` typo.
