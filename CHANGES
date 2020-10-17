@@ -1,141 +1,148 @@
+Changes
+=======
+
+0.10.2
+------
+Subtle UI fixes - page selector, and ``setTimeout`` typo.
+
 0.10.1
-======
+------
 Added ``allowed_hosts`` argument to ``create_admin`` - otherwise CSRF
 middleware will block requests when running under HTTPS.
 
 0.10.0
-======
+------
 Using latest piccolo, and piccolo_api.
 
 0.9.2
-=====
+-----
  * Improved pagination when there's lots of data.
  * Bumped node dependencies.
 
 0.9.1
-=====
+-----
 Bumped node requirements because of security warning.
 
 0.9.0
-=====
+-----
 Bumped node and pip requirements.
 
 0.8.1
-=====
+-----
 Bumped node and pip requirements.
 
 0.8.0
-=====
+-----
 Added support for Numeric and Real column types in Piccolo.
 
 0.7.0
-=====
+-----
 Exposing more configuration options for session auth.
 
 0.6.6
-=====
+-----
 Disabling redirect on session auth.
 
 0.6.5
-=====
+-----
 Loosening requirements for Piccolo projects.
 
 0.6.4
-=====
+-----
 Bumped requirements.
 
 0.6.3
-=====
+-----
 Bumped requirements and added apps to piccolo_app migration dependencies.
 
 0.6.2
-=====
+-----
 Converted into a Piccolo app.
 
 0.6.1
-=====
+-----
 Bumped requirements.
 
 0.6.0
-=====
+-----
 Supporting piccolo 0.10.0.
 
 0.5.1
-=====
+-----
 Updated requirements.
 
 0.5.0
-=====
+-----
 Updated dependencies, and vendored remaining Javascript.
 
 0.4.1
-=====
+-----
 Using rate limit middleware on login endpoint. Auto including related tables.
 Using PATCH instead of PUT when editing a row. UI improvements.
 
 0.4.0
-=====
+-----
 Using textarea for Text database fields, using new API schema format, and
 various UI improvements.
 
 0.3.8
-=====
+-----
 Updated piccolo_api requirements.
 
 0.3.7
-=====
+-----
 UI improvements, and catching 404 errors.
 
 0.3.6
-=====
+-----
 Added 'about' modal to UI.
 
 0.3.5
-=====
+-----
 Updated sandbox - populates data.
 
 0.3.4
-=====
+-----
 Added sandbox, for deploying demo version online.
 
 v0.3.3
-======
+------
 UI improvements, including light mode. Support for pagination, and operators
 in filters.
 
 v0.3.2
-======
+------
 Fixed typo - missing trailing slash.
 
 v0.3.1
-======
+------
 Improved auth error handling, and adding defaults automatically when adding
 a new row.
 
 v0.3.0
-======
+------
 Login is working, and various UI improvements.
 
 v0.2.0
-======
+------
 Updated to work with Piccolo API code layout changes.
 
 v0.1.4
-======
+------
 Making edit row work.
 
 v0.1.3
-======
+------
 Added missing assets.
 
 v0.1.2
-======
+------
 Added missing assets.
 
 v0.1.1
-======
+------
 Fixing filters.
 
 v0.1.0
-======
+------
 Initial release.
