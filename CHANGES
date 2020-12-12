@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.10.4
+------
+ * Removed dependency number for ``uvicorn`` and ``Hypercorn`` - only the very
+   high level API is being used, which is unlikely to change, and was causing
+   issues for some users when installing via Poetry.
+ * Bumped node dependencies.
+
 0.10.3
 ------
 Fixing packaging issues - add Python 3.8 classifier, and missing index.html
