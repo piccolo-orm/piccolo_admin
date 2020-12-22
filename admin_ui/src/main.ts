@@ -31,7 +31,8 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser
+    faUser,
+    faFileCsv
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faAngleDown,
@@ -56,7 +57,8 @@ library.add(
     faTimes,
     faTools,
     faTrashAlt,
-    faUser
+    faUser,
+    faFileCsv
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
@@ -66,7 +68,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 // Add the CSRF token
-axios.interceptors.request.use(function(config) {
+axios.interceptors.request.use(function (config) {
     if (
         ['POST', 'PUT', 'DELETE', 'PATCH'].indexOf(
             config.method.toUpperCase()
@@ -80,7 +82,7 @@ axios.interceptors.request.use(function(config) {
 
 /*****************************************************************************/
 
-Vue.filter('readable', function(value) {
+Vue.filter('readable', function (value) {
     return value.split('_').join(' ')
 })
 
