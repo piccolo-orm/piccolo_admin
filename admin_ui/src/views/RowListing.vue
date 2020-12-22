@@ -41,6 +41,8 @@
                                 :fetch="fetchExportedRows"
                                 type="csv"
                                 :name="tableName + '.csv'"
+                                :before-generate="startDownload"
+                                :before-finish="finishDownload"
                             >
                                 <span>
                                     <font-awesome-icon icon="file-csv" /> Export
@@ -277,20 +279,42 @@ export default Vue.extend({
             });
             const data = response.data as i.RowCountAPIResponse;
 
-            // pass total number of rows to __page_size param to get all records from response
-            params["__page_size"] = data.count;
+            params["__page"] = data.count;
+            // set greater __page_size param to have fewer requests to api
+            params["__page_size"] = 1000;
+            const pages = Math.ceil(data.count / params["__page_size"]);
+            const expotredRows = [];
 
             try {
-                const response = await axios.get(
-                    `api/tables/${tableName}/?__readable=true`,
-                    {
-                        params: params,
-                    }
-                );
-                return response.data.rows;
+                for (let i = 1; i < pages + 1; i++) {
+                    params["__page"] = i;
+                    const response = await axios.get(
+                        `api/tables/${tableName}/?__readable=true`,
+                        {
+                            params: params,
+                        }
+                    );
+                    expotredRows.push(...response.data.rows);
+                }
+                return expotredRows;
             } catch (error) {
                 console.log(error.response);
             }
+        },
+        startDownload() {
+            alert("Start extracting your data");
+        },
+        async finishDownload() {
+            const params = this.$store.state.filterParams;
+            const tableName = this.$store.state.currentTableName;
+            // Get the row counts:
+            const response = await axios.get(`api/tables/${tableName}/count/`, {
+                params,
+            });
+            const data = response.data as i.RowCountAPIResponse;
+            // Reset __page_size param
+            params["__page_size"] = data.page_size;
+            alert("Your data is ready extract");
         },
         isForeignKey(name: string) {
             let property = this.schema.properties[name];
