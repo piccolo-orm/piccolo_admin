@@ -6,10 +6,7 @@
                     <h1>{{ tableName | readable }}</h1>
                     <div class="buttons">
                         <router-link
-                            :to="{
-                                name: 'addRow',
-                                params: { tableName: tableName },
-                            }"
+                            :to="{name: 'addRow', params: {tableName: tableName}}"
                             class="button"
                         >
                             <span v-on:click.prevent="showAddRow = true">
@@ -22,7 +19,9 @@
                             href="#"
                             v-on:click.prevent="showSort = !showSort"
                         >
-                            <span> <font-awesome-icon icon="sort" />Sort </span>
+                            <span>
+                                <font-awesome-icon icon="sort" />Sort
+                            </span>
                         </a>
 
                         <a
@@ -35,69 +34,48 @@
                                 {{ showFilter ? "Hide" : "Show" }} Filters
                             </span>
                         </a>
-
-                        <a class="button">
-                            <downloadexcel
-                                :fetch="fetchExportedRows"
-                                type="csv"
-                                :name="tableName + '.csv'"
-                                :before-generate="startDownload"
-                                :before-finish="finishDownload"
-                            >
-                                <span>
-                                    <font-awesome-icon icon="file-csv" /> Export
-                                    as CSV</span
-                                >
-                            </downloadexcel>
-                        </a>
+                        <CSVButton :tableName="tableName" />
                     </div>
                 </div>
 
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
                     <tr>
-                        <th v-bind:key="name" v-for="name in cellNames">
-                            {{
-                                schema.properties[name]
-                                    ? schema.properties[name].title
-                                    : name
-                            }}
-                        </th>
+                        <th
+                            v-bind:key="name"
+                            v-for="name in cellNames"
+                        >{{ schema.properties[name] ? schema.properties[name].title : name }}</th>
                         <th></th>
                     </tr>
 
-                    <tr v-bind:key="row.id" v-for="row in rows">
-                        <td v-bind:key="name" v-for="name in cellNames">
-                            <span class="link" v-if="name == 'id'">
+                    <tr
+                        v-bind:key="row.id"
+                        v-for="row in rows"
+                    >
+                        <td
+                            v-bind:key="name"
+                            v-for="name in cellNames"
+                        >
+                            <span
+                                class="link"
+                                v-if="name == 'id'"
+                            >
                                 <router-link
-                                    :to="{
-                                        name: 'editRow',
-                                        params: {
-                                            tableName: tableName,
-                                            rowID: row[name],
-                                        },
-                                    }"
-                                    >{{ row[name] }}</router-link
-                                >
+                                    :to="{name: 'editRow', params: {tableName: tableName, rowID: row[name] }}"
+                                >{{ row[name] }}</router-link>
                             </span>
                             <span
                                 class="link"
-                                v-else-if="
-                                    isForeignKey(name) & (row[name] !== null)
-                                "
+                                v-else-if="isForeignKey(name) & row[name] !== null"
                             >
                                 <router-link
-                                    :to="{
-                                        name: 'editRow',
-                                        params: {
-                                            tableName: getTableName(name),
-                                            rowID: row[name],
-                                        },
-                                    }"
-                                    >{{ row[name + "_readable"] }}</router-link
-                                >
+                                    :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
+                                >{{ row[name + '_readable'] }}</router-link>
                             </span>
-                            <span class="boolean" v-else-if="isBoolean(name)">
+                            <span
+                                class="boolean"
+                                v-else-if="isBoolean(name)"
+                            >
                                 <font-awesome-icon
                                     class="correct"
                                     icon="check"
@@ -113,40 +91,22 @@
                         </td>
 
                         <td>
-                            <span
-                                style="
-                                    position: relative;
-                                    display: block;
-                                    text-align: right;
-                                "
-                            >
+                            <span style="position: relative; display: block; text-align: right;">
                                 <a
                                     class="subtle"
                                     href="#"
-                                    v-on:click.prevent="
-                                        visibleDropdown = visibleDropdown
-                                            ? undefined
-                                            : row.id
-                                    "
+                                    v-on:click.prevent="visibleDropdown = visibleDropdown ? undefined : row.id "
                                 >
                                     <font-awesome-icon icon="ellipsis-v" />
                                 </a>
                                 <DropDownMenu v-if="visibleDropdown == row.id">
                                     <li>
                                         <router-link
-                                            :to="{
-                                                name: 'editRow',
-                                                params: {
-                                                    tableName: tableName,
-                                                    rowID: row.id,
-                                                },
-                                            }"
+                                            :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
                                             class="subtle"
                                             title="Edit Row"
                                         >
-                                            <font-awesome-icon
-                                                icon="edit"
-                                            />Edit
+                                            <font-awesome-icon icon="edit" />Edit
                                         </router-link>
                                     </li>
                                     <li>
@@ -161,14 +121,15 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">
-                    Showing {{ rows.length }} of {{ rowCount }} result(s)
-                </p>
+                <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
 
                 <Pagination :tableName="tableName" />
             </div>
 
-            <div class="right_column" v-if="showFilter">
+            <div
+                class="right_column"
+                v-if="showFilter"
+            >
                 <RowFilter />
             </div>
 
@@ -192,19 +153,18 @@
 
 
 <script lang="ts">
-import Vue from "vue";
-import axios from "axios";
-import downloadexcel from "vue-json-excel";
-import * as i from "../interfaces";
+import Vue from "vue"
+import axios from "axios"
 
-import AddRowModal from "../components/AddRowModal.vue";
-import BaseView from "./BaseView.vue";
-import DeleteButton from "../components/DeleteButton.vue";
-import DropDownMenu from "../components/DropDownMenu.vue";
-import Pagination from "../components/Pagination.vue";
-import RowFilter from "../components/RowFilter.vue";
-import RowSortModal from "../components/RowSortModal.vue";
-import TableNav from "../components/TableNav.vue";
+import AddRowModal from "../components/AddRowModal.vue"
+import BaseView from "./BaseView.vue"
+import CSVButton from "../components/CSVButton.vue"
+import DeleteButton from "../components/DeleteButton.vue"
+import DropDownMenu from "../components/DropDownMenu.vue"
+import Pagination from "../components/Pagination.vue"
+import RowFilter from "../components/RowFilter.vue"
+import RowSortModal from "../components/RowSortModal.vue"
+import TableNav from "../components/TableNav.vue"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -214,37 +174,37 @@ export default Vue.extend({
             showFilter: false,
             showSort: false,
             visibleDropdown: null,
-        };
+        }
     },
     components: {
         AddRowModal,
         BaseView,
+        CSVButton,
         DeleteButton,
         DropDownMenu,
         Pagination,
         RowFilter,
         RowSortModal,
         TableNav,
-        downloadexcel,
     },
     computed: {
         cellNames() {
-            const keys = [];
+            const keys = []
             for (const key in this.rows[0]) {
                 if (!key.endsWith("_readable")) {
-                    keys.push(key);
+                    keys.push(key)
                 }
             }
-            return keys;
+            return keys
         },
         rows() {
-            return this.$store.state.rows;
+            return this.$store.state.rows
         },
         schema() {
-            return this.$store.state.schema;
+            return this.$store.state.schema
         },
         rowCount() {
-            return this.$store.state.rowCount;
+            return this.$store.state.rowCount
         },
     },
     filters: {
@@ -252,123 +212,69 @@ export default Vue.extend({
             // We need to handle null values, and make sure text strings aren't
             // too long.
             if (value === null) {
-                return null;
+                return null
             }
-            let string = String(value);
+            let string = String(value)
             if (string.length > 100) {
-                return string.substring(0, 80) + "...";
+                return string.substring(0, 80) + "..."
             }
-            return string;
+            return string
         },
     },
     methods: {
-        // export as csv from json
-        async fetchExportedRows() {
-            const params = this.$store.state.filterParams;
-            const tableName = this.$store.state.currentTableName;
-
-            const sortBy = this.$store.state.sortBy;
-            if (sortBy) {
-                let prefix = sortBy.ascending ? "" : "-";
-                params["__order"] = prefix + sortBy.property;
-            }
-
-            // Get the row counts:
-            const response = await axios.get(`api/tables/${tableName}/count/`, {
-                params,
-            });
-            const data = response.data as i.RowCountAPIResponse;
-
-            params["__page"] = data.count;
-            // set greater __page_size param to have fewer requests to api
-            params["__page_size"] = 1000;
-            const pages = Math.ceil(data.count / params["__page_size"]);
-            const expotredRows = [];
-
-            try {
-                for (let i = 1; i < pages + 1; i++) {
-                    params["__page"] = i;
-                    const response = await axios.get(
-                        `api/tables/${tableName}/?__readable=true`,
-                        {
-                            params: params,
-                        }
-                    );
-                    expotredRows.push(...response.data.rows);
-                }
-                return expotredRows;
-            } catch (error) {
-                console.log(error.response);
-            }
-        },
-        startDownload() {
-            alert("Start extracting your data");
-        },
-        async finishDownload() {
-            const params = this.$store.state.filterParams;
-            const tableName = this.$store.state.currentTableName;
-            // Get the row counts:
-            const response = await axios.get(`api/tables/${tableName}/count/`, {
-                params,
-            });
-            const data = response.data as i.RowCountAPIResponse;
-            // Reset __page_size param
-            params["__page_size"] = data.page_size;
-            alert("Your data is ready extract");
-        },
         isForeignKey(name: string) {
-            let property = this.schema.properties[name];
-            return property != undefined ? property.extra.foreign_key : false;
+            let property = this.schema.properties[name]
+            return property != undefined ? property.extra.foreign_key : false
         },
         isBoolean(name: string) {
-            return this.schema.properties[name]["type"] == "boolean";
+            return this.schema.properties[name]["type"] == "boolean"
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
-            return this.schema.properties[name].extra.to;
+            return this.schema.properties[name].extra.to
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
-                console.log("Deleting!");
+                console.log("Deleting!")
                 await this.$store.dispatch("deleteRow", {
                     tableName: this.tableName,
                     rowID,
-                });
-                await this.fetchRows();
+                })
+                await this.fetchRows()
             }
         },
         async fetchRows() {
-            await this.$store.dispatch("fetchRows");
+            await this.$store.dispatch("fetchRows")
         },
         async fetchSchema() {
-            await this.$store.dispatch("fetchSchema", this.tableName);
+            await this.$store.dispatch("fetchSchema", this.tableName)
         },
     },
     watch: {
         "$route.params.tableName": async function () {
-            this.$store.commit("reset");
-            this.$store.commit("updateCurrentTablename", this.tableName);
-            await Promise.all([this.fetchRows(), this.fetchSchema()]);
+            this.$store.commit("reset")
+            this.$store.commit("updateCurrentTablename", this.tableName)
+            await Promise.all([this.fetchRows(), this.fetchSchema()])
         },
         "$route.query": async function () {
             this.$store.commit(
                 "updateFilterParams",
                 this.$router.currentRoute.query
-            );
-            await this.fetchRows();
+            )
+            await this.fetchRows()
         },
     },
     async mounted() {
-        this.$store.commit("updateCurrentTablename", this.tableName);
+        this.$store.commit("updateCurrentTablename", this.tableName)
 
         this.$store.commit(
             "updateFilterParams",
             this.$router.currentRoute.query
-        );
+        )
 
-        await Promise.all([this.fetchRows(), this.fetchSchema()]);
+        await Promise.all([this.fetchRows(), this.fetchSchema()])
     },
-});
+})
 </script>
 
 
