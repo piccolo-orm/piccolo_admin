@@ -34,6 +34,7 @@
                                 {{ showFilter ? "Hide" : "Show" }} Filters
                             </span>
                         </a>
+                        <CSVButton :tableName="tableName" />
                     </div>
                 </div>
 
@@ -157,6 +158,7 @@ import axios from "axios"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
+import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
 import Pagination from "../components/Pagination.vue"
@@ -177,6 +179,7 @@ export default Vue.extend({
     components: {
         AddRowModal,
         BaseView,
+        CSVButton,
         DeleteButton,
         DropDownMenu,
         Pagination,
@@ -300,6 +303,7 @@ div.wrapper {
         }
 
         div.buttons {
+            cursor: pointer;
             display: flex;
             flex-direction: row;
             margin: 0;
