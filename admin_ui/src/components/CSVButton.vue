@@ -21,11 +21,6 @@ import * as i from "../interfaces"
 
 export default {
     props: ["tableName"],
-    data() {
-        return {
-            tableName: this.tableName,
-        }
-    },
     components: {
         downloadexcel,
     },
@@ -33,16 +28,18 @@ export default {
         // Export data as csv from json:
         async fetchExportedRows() {
             const params = this.$store.state.filterParams
-            const tableName = this.$store.state.currentTableName
             const sortBy = this.$store.state.sortBy
             if (sortBy) {
                 let prefix = sortBy.ascending ? "" : "-"
                 params["__order"] = prefix + sortBy.property
             }
             // Get the row counts:
-            const response = await axios.get(`api/tables/${tableName}/count/`, {
-                params,
-            })
+            const response = await axios.get(
+                `api/tables/${this.tableName}/count/`,
+                {
+                    params,
+                }
+            )
             const data = response.data as i.RowCountAPIResponse
             const localParams = { ...params }
 
@@ -56,7 +53,7 @@ export default {
                 for (let i = 1; i < pages + 1; i++) {
                     localParams["__page"] = i
                     const response = await axios.get(
-                        `api/tables/${tableName}/?__readable=true`,
+                        `api/tables/${this.tableName}/?__readable=true`,
                         {
                             params: localParams,
                         }
@@ -68,20 +65,10 @@ export default {
                 console.log(error.response)
             }
         },
-        async startDownload() {
-            const params = this.$store.state.filterParams
-            const tableName = this.$store.state.currentTableName
-            const response = await axios.get(`api/tables/${tableName}/count/`, {
-                params,
-            })
-            const data = response.data as i.RowCountAPIResponse
-            if (data.count > 10000) {
-                alert(
-                    "Number of rows is really high. Do you want to start download your data."
-                )
-            } else {
-                this.startDownload
-            }
+        startDownload() {
+            alert(
+                "Your data will begin downloading. Large data sets may take a few seconds."
+            )
         },
         finishDownload() {
             alert("Your data is ready.")
