@@ -5,6 +5,13 @@
                 <div class="title_bar">
                     <h1>{{ tableName | readable }}</h1>
                     <div class="buttons">
+                        <a v-if="selected.length > 0">
+                            <BulkDeleteButton
+                                :selected="selected.length"
+                                v-on:triggered="deleteRows"
+                            />
+                        </a>
+
                         <router-link
                             :to="{name: 'addRow', params: {tableName: tableName}}"
                             class="button"
@@ -37,10 +44,24 @@
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
-
+                <p
+                    id="result_count"
+                    v-if="rows.length > 0"
+                >
+                    <b>{{ selected.length }}</b>
+                    selected result(s) on
+                    <b>page {{ currentPageNumber }}</b>
+                </p>
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
                     <tr>
+                        <th>
+                            <input
+                                @click="selectAll"
+                                type="checkbox"
+                                v-model="allSelected"
+                            />
+                        </th>
                         <th
                             v-bind:key="name"
                             v-for="name in cellNames"
@@ -52,6 +73,14 @@
                         v-bind:key="row.id"
                         v-for="row in rows"
                     >
+                        <td>
+                            <input
+                                :value="row.id"
+                                @click="select"
+                                type="checkbox"
+                                v-model="selected"
+                            />
+                        </td>
                         <td
                             v-bind:key="name"
                             v-for="name in cellNames"
@@ -158,6 +187,7 @@ import axios from "axios"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
+import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
@@ -170,6 +200,8 @@ export default Vue.extend({
     props: ["tableName"],
     data() {
         return {
+            selected: [],
+            allSelected: false,
             showAddRow: false,
             showFilter: false,
             showSort: false,
@@ -179,6 +211,7 @@ export default Vue.extend({
     components: {
         AddRowModal,
         BaseView,
+        BulkDeleteButton,
         CSVButton,
         DeleteButton,
         DropDownMenu,
@@ -205,6 +238,10 @@ export default Vue.extend({
         },
         rowCount() {
             return this.$store.state.rowCount
+        },
+        currentPageNumber() {
+            this.resetCheckbox()
+            return this.$store.state.currentPageNumber
         },
     },
     filters: {
@@ -233,6 +270,23 @@ export default Vue.extend({
             // Find the table name a foreign key refers to:
             return this.schema.properties[name].extra.to
         },
+        resetCheckbox() {
+            // For reseting checked checkboxes in methods,computed and watchers:
+            this.allSelected = false
+            this.selected = []
+        },
+        select() {
+            this.allSelected = false
+        },
+        selectAll() {
+            // Select all checkboxs and add row ids to selected array:
+            this.selected = []
+            if (!this.allSelected) {
+                for (let i in this.rows) {
+                    this.selected.push(this.rows[i].id)
+                }
+            }
+        },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
                 console.log("Deleting!")
@@ -243,7 +297,19 @@ export default Vue.extend({
                 await this.fetchRows()
             }
         },
+        async deleteRows() {
+            if (confirm(`Are you sure you want to delete selected rows?`)) {
+                console.log("Deleting rows!")
+                for (let i = 0; i < this.selected.length; i++) {
+                    await axios.delete(
+                        `api/tables/${this.tableName}/${this.selected[i]}/`
+                    )
+                }
+                await this.fetchRows()
+            }
+        },
         async fetchRows() {
+            this.resetCheckbox()
             await this.$store.dispatch("fetchRows")
         },
         async fetchSchema() {
@@ -252,11 +318,13 @@ export default Vue.extend({
     },
     watch: {
         "$route.params.tableName": async function () {
+            this.resetCheckbox()
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             await Promise.all([this.fetchRows(), this.fetchSchema()])
         },
         "$route.query": async function () {
+            this.resetCheckbox()
             this.$store.commit(
                 "updateFilterParams",
                 this.$router.currentRoute.query
@@ -373,7 +441,7 @@ div.wrapper {
             }
             td,
             th {
-                padding: 0.5rem;
+                padding: 0.7rem;
             }
             td {
                 &.last-child {
