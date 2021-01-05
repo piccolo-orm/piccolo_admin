@@ -8,7 +8,7 @@
             type="csv"
         >
             <span>
-                <font-awesome-icon icon="file-csv" />Export as CSV
+                <font-awesome-icon icon="file-csv" />Export CSV
             </span>
         </downloadexcel>
     </a>

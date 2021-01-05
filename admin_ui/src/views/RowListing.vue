@@ -44,10 +44,10 @@
                     </div>
                 </div>
                 <p
-                    id="result_count"
+                    id="selected_count"
                     v-if="rows.length > 0"
                 >
-                    <b>{{ selected.length }}</b>
+                    <b>{{ selectedRows.length }}</b>
                     selected result(s) on
                     <b>page {{ currentPageNumber }}</b>
                 </p>
@@ -56,7 +56,7 @@
                     <tr>
                         <th>
                             <input
-                                @click="selectAll"
+                                v-on:change="selectAllRows"
                                 type="checkbox"
                                 v-model="allSelected"
                             />
@@ -75,9 +75,9 @@
                         <td>
                             <input
                                 :value="row.id"
-                                @click="select"
+                                @click="selectRow"
                                 type="checkbox"
-                                v-model="selected"
+                                v-model="selectedRows"
                             />
                         </td>
                         <td
@@ -204,7 +204,7 @@ export default Vue.extend({
     props: ["tableName"],
     data() {
         return {
-            selected: [],
+            selectedRows: [],
             allSelected: false,
             showAddRow: false,
             showFilter: false,
@@ -244,7 +244,6 @@ export default Vue.extend({
             return this.$store.state.rowCount
         },
         currentPageNumber() {
-            this.resetCheckbox()
             return this.$store.state.currentPageNumber
         },
     },
@@ -262,7 +261,7 @@ export default Vue.extend({
             return string
         },
         humanReadable(value) {
-            return readableFormat.readableFormat(value)
+            return readableFormat(value)
         },
     },
     methods: {
@@ -283,21 +282,19 @@ export default Vue.extend({
         closeSideBar(value) {
             this.showFilter = value
         },
-        resetCheckbox() {
-            // For reseting checked checkboxes in methods,computed and watchers:
+        resetRowCheckbox() {
             this.allSelected = false
-            this.selected = []
+            this.selectedRows = []
         },
-        select() {
+        selectRow() {
             this.allSelected = false
         },
-        selectAll() {
-            // Select all checkboxs and add row ids to selected array:
-            this.selected = []
-            if (!this.allSelected) {
-                for (let i in this.rows) {
-                    this.selected.push(this.rows[i].id)
-                }
+        selectAllRows() {
+            // Select all checkboxes and add row ids to selected array:
+            if (this.allSelected) {
+                this.selectedRows = this.rows.map((row) => row.id)
+            } else {
+                this.selectedRows = []
             }
         },
         async deleteRow(rowID) {
@@ -311,18 +308,18 @@ export default Vue.extend({
             }
         },
         async deleteRows() {
-            if (confirm(`Are you sure you want to delete selected rows?`)) {
+            if (confirm(`Are you sure you want to delete the selected rows?`)) {
                 console.log("Deleting rows!")
-                for (let i = 0; i < this.selected.length; i++) {
-                    await axios.delete(
-                        `api/tables/${this.tableName}/${this.selected[i]}/`
-                    )
+                for (let i = 0; i < this.selectedRows.length; i++) {
+                    await this.$store.dispatch("deleteRow", {
+                        tableName: this.tableName,
+                        rowID: this.selectedRows[i],
+                    })
                 }
                 await this.fetchRows()
             }
         },
         async fetchRows() {
-            this.resetCheckbox()
             await this.$store.dispatch("fetchRows")
         },
         async fetchSchema() {
@@ -331,19 +328,20 @@ export default Vue.extend({
     },
     watch: {
         "$route.params.tableName": async function () {
-            this.resetCheckbox()
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             await Promise.all([this.fetchRows(), this.fetchSchema()])
         },
         "$route.query": async function () {
-            this.resetCheckbox()
             this.$store.commit(
                 "updateFilterParams",
                 this.$router.currentRoute.query
             )
             await this.fetchRows()
         },
+        rows() {
+            this.resetRowCheckbox()
+        }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
@@ -489,9 +487,13 @@ div.wrapper {
             }
         }
 
-        p#result_count {
+        p#result_count, p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
+        }
+
+        p#selected_count {
+            padding-left: 0.8rem;
         }
     }
 
