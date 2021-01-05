@@ -72,7 +72,25 @@
         </template>
 
         <template v-if="type == 'number'">
-            <template v-if="format == 'number'">
+            <template v-if="format == 'time-delta'">
+                <OperatorField
+                    :fieldName="title.toLowerCase()"
+                    v-if="isFilter"
+                />
+                <br />
+                <DurationWidget
+                    v-bind:timedelta="localValue"
+                    v-on:newTimedelta="updateLocalValue($event)"
+                />
+                <pre>{{ humanReadable }}</pre>
+                <input
+                    type="hidden"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:placeholder="placeholder"
+                    v-model="localValue"
+                />
+            </template>
+            <template v-else>
                 <OperatorField
                     :fieldName="title.toLowerCase()"
                     v-if="isFilter"
@@ -84,28 +102,12 @@
                     v-model="localValue"
                 />
             </template>
-            <template v-else-if="format == 'time-delta'">
-                <OperatorField
-                    :fieldName="title.toLowerCase()"
-                    v-if="isFilter"
-                />
-                <br />
-                <DurationWidget v-on:newTimedelta="updateLocalValue($event)" />
-                <pre>{{ humanReadable }}</pre>
-                <input
-                    type="hidden"
-                    v-bind:name="getFieldName(title)"
-                    v-bind:placeholder="placeholder"
-                    v-model="localValue"
-                />
-            </template>
         </template>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
-import { readableFormat } from "../utils"
 
 import flatPickr from "vue-flatpickr-component"
 import DurationWidget from "./DurationWidget.vue"
@@ -140,16 +142,6 @@ export default {
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
-        },
-        humanReadable: {
-            get() {
-                const timeRange = this.localValue
-                return readableFormat.readableFormat(timeRange)
-            },
-            set() {
-                const timeRange = this.localValue
-                return readableFormat.readableFormat(timeRange)
-            },
         },
     },
     methods: {
