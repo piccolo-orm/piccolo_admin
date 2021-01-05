@@ -1,4 +1,8 @@
 export function readableFormat (timeRange: number) {
+    if (timeRange === 0) {
+        return "0 seconds"
+    }
+
     const weeks = Math.floor(timeRange / (3600 * 24 * 7))
     const days = Math.floor(timeRange / (3600 * 24) % 7)
     const hours = Math.floor((timeRange % (3600 * 24)) / 3600)
