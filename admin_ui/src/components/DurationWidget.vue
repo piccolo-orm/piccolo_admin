@@ -1,0 +1,153 @@
+<template>
+    <div class="timedelta_widget">
+        <div class="segment">
+            <p>Weeks</p>
+            <select
+                v-model.number="weeks"
+                v-on:change="emitEvent"
+            >
+                <option
+                    :key="'w' + week"
+                    v-for="week in weekRange"
+                >{{ week }}</option>
+            </select>
+        </div>
+
+        <div class="segment">
+            <p>Days</p>
+            <select
+                v-model.number="days"
+                v-on:change="emitEvent"
+            >
+                <option
+                    :key="'d' + day"
+                    v-for="day in dayRange"
+                >{{ day }}</option>
+            </select>
+        </div>
+
+        <div class="segment">
+            <p>Hours</p>
+            <select
+                v-model.number="hours"
+                v-on:change="emitEvent"
+            >
+                <option
+                    :key="'h' + hour"
+                    v-for="hour in hourRange"
+                >{{ hour }}</option>
+            </select>
+        </div>
+
+        <div class="segment">
+            <p>Minutes</p>
+            <select
+                v-model.number="minutes"
+                v-on:change="emitEvent"
+            >
+                <option
+                    :key="'m' + minute"
+                    v-for="minute in minuteRange"
+                >{{ minute }}</option>
+            </select>
+        </div>
+
+        <div class="segment">
+            <p>Seconds</p>
+            <select
+                v-model.number="seconds"
+                v-on:change="emitEvent"
+            >
+                <option
+                    :key="'s' + second"
+                    v-for="second in secondRange"
+                >{{ second }}</option>
+            </select>
+        </div>
+    </div>
+</template>
+
+<script>
+const MINUTE = 60
+const HOUR = MINUTE * 60
+const DAY = HOUR * 24
+const WEEK = DAY * 7
+
+export default {
+    props: {
+        timedelta: {
+            // In seconds
+            default: 0,
+            type: Number,
+        },
+    },
+    data() {
+        return {
+            weekRange: [...Array(500).keys()],
+            dayRange: [...Array(7).keys()],
+            hourRange: [...Array(24).keys()],
+            minuteRange: [...Array(60).keys()],
+            secondRange: [...Array(60).keys()],
+            weeks: undefined,
+            days: undefined,
+            hours: undefined,
+            minutes: undefined,
+            seconds: undefined,
+        }
+    },
+    methods: {
+        emitEvent() {
+            const timedelta =
+                this.seconds +
+                this.minutes * MINUTE +
+                this.hours * HOUR +
+                this.days * DAY +
+                this.weeks * WEEK
+            this.$emit("newTimedelta", timedelta)
+        },
+        setupValues(timedelta) {
+            this.weeks = Math.floor(timedelta / WEEK)
+            timedelta += -this.weeks * WEEK
+
+            this.days = Math.floor(timedelta / DAY)
+            timedelta += -this.days * DAY
+
+            this.hours = Math.floor(timedelta / HOUR)
+            timedelta += -this.hours * HOUR
+
+            this.minutes = Math.floor(timedelta / MINUTE)
+            timedelta += -this.minutes * MINUTE
+
+            this.seconds = timedelta
+        },
+    },
+    watch: {
+        timedelta(timedelta) {
+            this.setupValues(timedelta)
+        },
+    },
+    mounted() {
+        this.setupValues(this.timedelta)
+    },
+}
+</script>
+
+
+<style scoped>
+div.timedelta_widget {
+    display: flex;
+    flex-direction: row;
+}
+
+div.segment {
+    padding-right: 0.4rem;
+    width: 100%;
+}
+
+p {
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    line-height: 1;
+    margin: 0;
+}
+</style>

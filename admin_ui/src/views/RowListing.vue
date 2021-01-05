@@ -116,6 +116,7 @@
                                     v-else
                                 />
                             </span>
+                            <span v-else-if="isInterval(name)">{{ row[name] | humanReadable }}</span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
@@ -159,7 +160,10 @@
                 class="right_column"
                 v-if="showFilter"
             >
-                <RowFilter />
+                <RowFilter
+                    :showFilterSidebar="showFilter"
+                    @closeSideBar="closeSideBar"
+                />
             </div>
 
             <AddRowModal
@@ -184,6 +188,7 @@
 <script lang="ts">
 import Vue from "vue"
 import axios from "axios"
+import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
@@ -257,6 +262,9 @@ export default Vue.extend({
             }
             return string
         },
+        humanReadable(value) {
+            return readableFormat.readableFormat(value)
+        },
     },
     methods: {
         isForeignKey(name: string) {
@@ -266,9 +274,15 @@ export default Vue.extend({
         isBoolean(name: string) {
             return this.schema.properties[name]["type"] == "boolean"
         },
+        isInterval(name: string) {
+            return this.schema.properties[name]["format"] == "time-delta"
+        },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
             return this.schema.properties[name].extra.to
+        },
+        closeSideBar(value) {
+            this.showFilter = value
         },
         resetCheckbox() {
             // For reseting checked checkboxes in methods,computed and watchers:
@@ -377,6 +391,12 @@ div.wrapper {
             margin: 0;
             padding: 0.5rem;
 
+            @media only screen and (max-width: 1024px) {
+                div.right_column {
+                    width: 50rem;
+                }
+            }
+
             a.button {
                 display: block;
                 flex-grow: 0;
@@ -480,7 +500,12 @@ div.wrapper {
         border-left: 1px solid @border_color;
         box-sizing: border-box;
         padding: 1rem;
-        width: 20rem;
+        width: 30rem;
+    }
+    @media (max-width: @mobile_width) {
+        div.right_column {
+            width: 110rem;
+        }
     }
 }
 </style>
