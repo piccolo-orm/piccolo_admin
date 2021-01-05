@@ -5,12 +5,11 @@
                 <div class="title_bar">
                     <h1>{{ tableName | readable }}</h1>
                     <div class="buttons">
-                        <a v-if="selected.length > 0">
-                            <BulkDeleteButton
-                                :selected="selected.length"
-                                v-on:triggered="deleteRows"
-                            />
-                        </a>
+                        <BulkDeleteButton
+                            :selected="selectedRows.length"
+                            v-on:triggered="deleteRows"
+                            v-if="selectedRows.length > 0"
+                        />
 
                         <router-link
                             :to="{name: 'addRow', params: {tableName: tableName}}"
