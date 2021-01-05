@@ -16,6 +16,7 @@ from piccolo.columns import (
     Integer,
     ForeignKey,
     Boolean,
+    Interval,
     Text,
     Timestamp,
     Numeric,
@@ -50,8 +51,9 @@ class Director(Table, db=DB):
 class Movie(Table, db=DB):
     name = Varchar(length=300)
     rating = Real()
-    duration = Integer()
+    duration = Interval()
     director = ForeignKey(references=Director)
+    oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
     release_date = Timestamp()
