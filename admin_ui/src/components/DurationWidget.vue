@@ -133,21 +133,26 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="less" scoped>
 div.timedelta_widget {
     display: flex;
     flex-direction: row;
-}
 
-div.segment {
-    padding-right: 0.4rem;
-    width: 100%;
-}
+    div.segment {
+        padding-right: 0.4rem;
+        width: 100%;
 
-p {
-    text-transform: uppercase;
-    font-size: 0.6rem;
-    line-height: 1;
-    margin: 0;
+        &:last-child {
+            padding-right: 0;
+        }
+
+        p {
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            line-height: 1;
+            margin: 0;
+            padding: 0.3rem 0;
+        }
+    }
 }
 </style>

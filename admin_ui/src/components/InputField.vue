@@ -77,7 +77,6 @@
                     :fieldName="title.toLowerCase()"
                     v-if="isFilter"
                 />
-                <br />
                 <DurationWidget
                     v-bind:timedelta="localValue"
                     v-on:newTimedelta="updateLocalValue($event)"
