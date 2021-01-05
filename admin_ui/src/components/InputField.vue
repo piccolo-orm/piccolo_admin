@@ -72,24 +72,43 @@
         </template>
 
         <template v-if="type == 'number'">
-            <OperatorField
-                :fieldName="title.toLowerCase()"
-                v-if="isFilter"
-            />
-            <input
-                type="text"
-                v-bind:name="getFieldName(title)"
-                v-bind:placeholder="placeholder"
-                v-model="localValue"
-            />
+            <template v-if="format == 'number'">
+                <OperatorField
+                    :fieldName="title.toLowerCase()"
+                    v-if="isFilter"
+                />
+                <input
+                    type="text"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:placeholder="placeholder"
+                    v-model="localValue"
+                />
+            </template>
+            <template v-else-if="format == 'time-delta'">
+                <OperatorField
+                    :fieldName="title.toLowerCase()"
+                    v-if="isFilter"
+                />
+                <br />
+                <DurationWidget v-on:newTimedelta="updateLocalValue($event)" />
+                <pre>{{ humanReadable }}</pre>
+                <input
+                    type="hidden"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:placeholder="placeholder"
+                    v-model="localValue"
+                />
+            </template>
         </template>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
+import { readableFormat } from "../utils"
 
 import flatPickr from "vue-flatpickr-component"
+import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 
 export default {
@@ -100,34 +119,42 @@ export default {
         format: String,
         isFilter: {
             type: Boolean,
-            default: true
+            default: true,
         },
         isNullable: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     components: {
         flatPickr,
-        OperatorField
+        DurationWidget,
+        OperatorField,
     },
     data() {
         return {
             localValue: undefined,
-            textareaHeight: "50px"
+            textareaHeight: "50px",
         }
     },
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
-        }
+        },
+        humanReadable: {
+            get() {
+                const timeRange = this.localValue
+                return readableFormat.readableFormat(timeRange)
+            },
+            set() {
+                const timeRange = this.localValue
+                return readableFormat.readableFormat(timeRange)
+            },
+        },
     },
     methods: {
         getFieldName(name: string) {
-            return name
-                .toLowerCase()
-                .split(" ")
-                .join("_")
+            return name.toLowerCase().split(" ").join("_")
         },
         setTextareaHeight() {
             let element = this.$refs.textarea
@@ -136,21 +163,31 @@ export default {
                     this.textareaHeight = element.scrollHeight + "px"
                 }
             }
-        }
+        },
+        updateLocalValue(event) {
+            this.localValue = event
+        },
     },
     watch: {
         value() {
             this.localValue = this.value
             this.setTextareaHeight()
-        }
+        },
     },
     mounted() {
         this.localValue = this.value
 
         let app = this
-        setTimeout(function() {
+        setTimeout(function () {
             app.setTextareaHeight()
         }, 0)
-    }
+    },
 }
 </script>
+
+<style lang="less">
+pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+</style>
