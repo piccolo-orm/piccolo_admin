@@ -1,8 +1,5 @@
 <template>
-    <div
-        :class="{dark_mode: darkMode, light_mode: !darkMode}"
-        id="app"
-    >
+    <div :class="{ dark_mode: darkMode, light_mode: !darkMode }" id="app">
         <router-view />
         <MessagePopup />
         <AboutModal v-if="showAboutModal" />
@@ -294,7 +291,7 @@ body {
     label {
         display: block;
         padding-bottom: 0.2rem;
-        padding-top: 0.5rem;
+        padding-top: 0.8rem;
     }
 
     input[type="text"],
