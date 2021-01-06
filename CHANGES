@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.10.6
+------
+Added bulk deletion, and a custom widget for `timedelta` - courtesy of
+sinisaos.
+
 0.10.5
 ------
 Added a CSV export button to the row listing - courtesy of sinisaos.
