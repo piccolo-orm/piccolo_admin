@@ -2,6 +2,16 @@
     <div>
         <h1>Filter</h1>
 
+        <a
+            @click="closeSideBar()"
+            class="button"
+            id="sidebar-close"
+        >
+            <span>
+                <font-awesome-icon icon="times" />
+            </span>Close
+        </a>
+
         <form
             ref="form"
             v-on:submit.prevent="submitForm($event)"
@@ -23,8 +33,11 @@ import RowForm from "./RowForm.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default Vue.extend({
+    props: {
+        showFilterSidebar: Boolean,
+    },
     components: {
-        RowForm
+        RowForm,
     },
     computed: {
         schema() {
@@ -32,13 +45,16 @@ export default Vue.extend({
         },
         tableName() {
             return this.$store.state.currentTableName
-        }
+        },
     },
     methods: {
+        closeSideBar() {
+            this.$emit("closeSideBar", false)
+        },
         showSuccess(contents: string) {
             var message: APIResponseMessage = {
                 contents: contents,
-                type: "success"
+                type: "success",
             }
             this.$store.commit("updateApiResponseMessage", message)
         },
@@ -72,11 +88,24 @@ export default Vue.extend({
                 return
             }
             this.showSuccess("Successfully cleared filters")
-        }
-    }
+        },
+    },
 })
 </script>
 
 
 <style scoped lang="less">
+@media only screen and (max-width: 991px) {
+    #sidebar-close {
+        cursor: pointer;
+        position: absolute;
+        top: 65px;
+        right: 20px;
+    }
+}
+@media only screen and (min-width: 991px) {
+    #sidebar-close {
+        display: none;
+    }
+}
 </style>

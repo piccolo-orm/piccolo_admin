@@ -5,13 +5,19 @@
                 <div class="title_bar">
                     <h1>{{ tableName | readable }}</h1>
                     <div class="buttons">
+                        <BulkDeleteButton
+                            :selected="selectedRows.length"
+                            v-on:triggered="deleteRows"
+                            v-if="selectedRows.length > 0"
+                        />
+
                         <router-link
                             :to="{name: 'addRow', params: {tableName: tableName}}"
                             class="button"
+                            v-on:click.prevent="showAddRow = true"
                         >
-                            <span v-on:click.prevent="showAddRow = true">
-                                <font-awesome-icon icon="plus" />Add Row
-                            </span>
+                            <font-awesome-icon icon="plus" />
+                            <span>Add Row</span>
                         </router-link>
 
                         <a
@@ -19,9 +25,8 @@
                             href="#"
                             v-on:click.prevent="showSort = !showSort"
                         >
-                            <span>
-                                <font-awesome-icon icon="sort" />Sort
-                            </span>
+                            <font-awesome-icon icon="sort" />
+                            <span>Sort</span>
                         </a>
 
                         <a
@@ -29,18 +34,30 @@
                             href="#"
                             v-on:click.prevent="showFilter = !showFilter"
                         >
-                            <span>
-                                <font-awesome-icon icon="filter" />
-                                {{ showFilter ? "Hide" : "Show" }} Filters
-                            </span>
+                            <font-awesome-icon icon="filter" />
+                            <span>{{ showFilter ? "Hide" : "Show" }} Filters</span>
                         </a>
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
-
+                <p
+                    id="selected_count"
+                    v-if="selectedRows.length > 0"
+                >
+                    <b>{{ selectedRows.length }}</b>
+                    selected result(s) on
+                    <b>page {{ currentPageNumber }}</b>
+                </p>
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
                     <tr>
+                        <th>
+                            <input
+                                v-on:change="selectAllRows"
+                                type="checkbox"
+                                v-model="allSelected"
+                            />
+                        </th>
                         <th
                             v-bind:key="name"
                             v-for="name in cellNames"
@@ -52,6 +69,14 @@
                         v-bind:key="row.id"
                         v-for="row in rows"
                     >
+                        <td>
+                            <input
+                                :value="row.id"
+                                @click="selectRow"
+                                type="checkbox"
+                                v-model="selectedRows"
+                            />
+                        </td>
                         <td
                             v-bind:key="name"
                             v-for="name in cellNames"
@@ -87,6 +112,7 @@
                                     v-else
                                 />
                             </span>
+                            <span v-else-if="isInterval(name)">{{ row[name] | humanReadable }}</span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
@@ -130,7 +156,10 @@
                 class="right_column"
                 v-if="showFilter"
             >
-                <RowFilter />
+                <RowFilter
+                    :showFilterSidebar="showFilter"
+                    @closeSideBar="closeSideBar"
+                />
             </div>
 
             <AddRowModal
@@ -155,9 +184,11 @@
 <script lang="ts">
 import Vue from "vue"
 import axios from "axios"
+import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
+import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
@@ -170,6 +201,8 @@ export default Vue.extend({
     props: ["tableName"],
     data() {
         return {
+            selectedRows: [],
+            allSelected: false,
             showAddRow: false,
             showFilter: false,
             showSort: false,
@@ -179,6 +212,7 @@ export default Vue.extend({
     components: {
         AddRowModal,
         BaseView,
+        BulkDeleteButton,
         CSVButton,
         DeleteButton,
         DropDownMenu,
@@ -206,6 +240,9 @@ export default Vue.extend({
         rowCount() {
             return this.$store.state.rowCount
         },
+        currentPageNumber() {
+            return this.$store.state.currentPageNumber
+        },
     },
     filters: {
         abbreviate(value) {
@@ -220,6 +257,9 @@ export default Vue.extend({
             }
             return string
         },
+        humanReadable(value) {
+            return readableFormat(value)
+        },
     },
     methods: {
         isForeignKey(name: string) {
@@ -229,9 +269,30 @@ export default Vue.extend({
         isBoolean(name: string) {
             return this.schema.properties[name]["type"] == "boolean"
         },
+        isInterval(name: string) {
+            return this.schema.properties[name]["format"] == "time-delta"
+        },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
             return this.schema.properties[name].extra.to
+        },
+        closeSideBar(value) {
+            this.showFilter = value
+        },
+        resetRowCheckbox() {
+            this.allSelected = false
+            this.selectedRows = []
+        },
+        selectRow() {
+            this.allSelected = false
+        },
+        selectAllRows() {
+            // Select all checkboxes and add row ids to selected array:
+            if (this.allSelected) {
+                this.selectedRows = this.rows.map((row) => row.id)
+            } else {
+                this.selectedRows = []
+            }
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
@@ -240,6 +301,18 @@ export default Vue.extend({
                     tableName: this.tableName,
                     rowID,
                 })
+                await this.fetchRows()
+            }
+        },
+        async deleteRows() {
+            if (confirm(`Are you sure you want to delete the selected rows?`)) {
+                console.log("Deleting rows!")
+                for (let i = 0; i < this.selectedRows.length; i++) {
+                    await this.$store.dispatch("deleteRow", {
+                        tableName: this.tableName,
+                        rowID: this.selectedRows[i],
+                    })
+                }
                 await this.fetchRows()
             }
         },
@@ -263,6 +336,9 @@ export default Vue.extend({
             )
             await this.fetchRows()
         },
+        rows() {
+            this.resetRowCheckbox()
+        }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
@@ -303,23 +379,39 @@ div.wrapper {
         }
 
         div.buttons {
+            box-sizing: border-box;
             cursor: pointer;
             display: flex;
             flex-direction: row;
             margin: 0;
             padding: 0.5rem;
 
+            @media(max-width: @mobile_width) {
+                width: 100%;
+            }
+
             a.button {
                 display: block;
                 flex-grow: 0;
                 font-weight: bold;
-                padding: 0 !important;
                 text-decoration: none;
                 margin-left: 0.25rem;
+                box-sizing: border-box;
+                padding: 0.2rem 0.5rem;
+                text-align: center;
+
+                @media(max-width: @mobile_width) {
+                    flex-grow: 1;
+
+                    svg {
+                        padding: 0 !important;
+                    }
+                }
 
                 span {
-                    display: block;
-                    padding: 0.2rem 0.5rem;
+                    @media(max-width: @mobile_width) {
+                        display: block;
+                    }
                 }
 
                 &:first-child {
@@ -373,7 +465,7 @@ div.wrapper {
             }
             td,
             th {
-                padding: 0.5rem;
+                padding: 0.7rem;
             }
             td {
                 &.last-child {
@@ -402,9 +494,10 @@ div.wrapper {
             }
         }
 
-        p#result_count {
+        p#result_count, p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
+            padding-left: 0.7rem;
         }
     }
 
@@ -412,7 +505,11 @@ div.wrapper {
         border-left: 1px solid @border_color;
         box-sizing: border-box;
         padding: 1rem;
-        width: 20rem;
+        width: 30rem;
+
+        @media (max-width: @mobile_width) {
+            width: 110rem;
+        }
     }
 }
 </style>

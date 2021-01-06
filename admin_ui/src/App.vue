@@ -1,8 +1,5 @@
 <template>
-    <div
-        :class="{dark_mode: darkMode, light_mode: !darkMode}"
-        id="app"
-    >
+    <div :class="{ dark_mode: darkMode, light_mode: !darkMode }" id="app">
         <router-view />
         <MessagePopup />
         <AboutModal v-if="showAboutModal" />
@@ -21,7 +18,7 @@ import MessagePopup from "./components/MessagePopup.vue"
 export default Vue.extend({
     components: {
         AboutModal,
-        MessagePopup
+        MessagePopup,
     },
     computed: {
         darkMode() {
@@ -29,7 +26,7 @@ export default Vue.extend({
         },
         showAboutModal() {
             return this.$store.state.aboutModal.showAboutModal
-        }
+        },
     },
     created() {
         let darkMode = JSON.parse(localStorage.getItem("darkMode"))
@@ -45,25 +42,22 @@ export default Vue.extend({
 
         // Handle auth errors - redirect to login.
         axios.interceptors.response.use(
-            function(response) {
+            function (response) {
                 return response
             },
-            function(error) {
+            function (error) {
                 if (error.response && error.response.status == 401) {
                     console.log("Login required")
                     let nextURL = app.$route.path
                     if (nextURL !== "/login") {
-                        setTimeout(
-                            function() {
-                                app.$router.push({
-                                    name: "login",
-                                    query: {
-                                        nextURL: nextURL
-                                    }
-                                })
-                            },
-                            0
-                        )
+                        setTimeout(function () {
+                            app.$router.push({
+                                name: "login",
+                                query: {
+                                    nextURL: nextURL,
+                                },
+                            })
+                        }, 0)
                     }
                 }
                 return Promise.reject(error)
@@ -73,16 +67,16 @@ export default Vue.extend({
         // Handle 405 errors - we get these when running the admin in
         // read only mode. Just show a message to the user.
         axios.interceptors.response.use(
-            function(response) {
+            function (response) {
                 return response
             },
-            function(error) {
+            function (error) {
                 if (error.response && error.response.status == 405) {
                     console.log("Method not allowed")
                     let message: i.APIResponseMessage = {
                         contents:
                             "Method not supported - running in read only mode.",
-                        type: "error"
+                        type: "error",
                     }
                     app.$store.commit("updateApiResponseMessage", message)
                 }
@@ -92,10 +86,10 @@ export default Vue.extend({
 
         // Handle 404 errors - if a page isn't found.
         axios.interceptors.response.use(
-            function(response) {
+            function (response) {
                 return response
             },
-            function(error) {
+            function (error) {
                 if (error.response && error.response.status == 404) {
                     console.log("Page not found")
                     alert("Page not found")
@@ -107,16 +101,16 @@ export default Vue.extend({
 
         // Handle 502 errors - if the server can't be reached.
         axios.interceptors.response.use(
-            function(response) {
+            function (response) {
                 return response
             },
-            function(error) {
+            function (error) {
                 if (error.response && error.response.status == 502) {
                     console.log("The server can't be reached.")
                     let message: i.APIResponseMessage = {
                         contents:
                             "The server can't be reached - please try later.",
-                        type: "error"
+                        type: "error",
                     }
                     app.$store.commit("updateApiResponseMessage", message)
                 }
@@ -126,7 +120,7 @@ export default Vue.extend({
 
         const response = await axios.get("./api/user/")
         this.$store.commit("updateUser", response.data)
-    }
+    },
 })
 </script>
 
@@ -297,10 +291,12 @@ body {
     label {
         display: block;
         padding-bottom: 0.2rem;
-        padding-top: 0.5rem;
+        padding-top: 0.8rem;
     }
 
-    input,
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
     select,
     textarea {
         box-sizing: border-box;
@@ -309,7 +305,9 @@ body {
         margin-bottom: 0.5rem;
     }
 
-    input,
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
     button,
     select,
     textarea {
