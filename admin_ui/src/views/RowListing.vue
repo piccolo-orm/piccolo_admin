@@ -14,10 +14,10 @@
                         <router-link
                             :to="{name: 'addRow', params: {tableName: tableName}}"
                             class="button"
+                            v-on:click.prevent="showAddRow = true"
                         >
-                            <span v-on:click.prevent="showAddRow = true">
-                                <font-awesome-icon icon="plus" />Add Row
-                            </span>
+                            <font-awesome-icon icon="plus" />
+                            <span>Add Row</span>
                         </router-link>
 
                         <a
@@ -25,9 +25,8 @@
                             href="#"
                             v-on:click.prevent="showSort = !showSort"
                         >
-                            <span>
-                                <font-awesome-icon icon="sort" />Sort
-                            </span>
+                            <font-awesome-icon icon="sort" />
+                            <span>Sort</span>
                         </a>
 
                         <a
@@ -35,17 +34,15 @@
                             href="#"
                             v-on:click.prevent="showFilter = !showFilter"
                         >
-                            <span>
-                                <font-awesome-icon icon="filter" />
-                                {{ showFilter ? "Hide" : "Show" }} Filters
-                            </span>
+                            <font-awesome-icon icon="filter" />
+                            <span>{{ showFilter ? "Hide" : "Show" }} Filters</span>
                         </a>
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
                 <p
                     id="selected_count"
-                    v-if="rows.length > 0"
+                    v-if="selectedRows.length > 0"
                 >
                     <b>{{ selectedRows.length }}</b>
                     selected result(s) on
@@ -382,29 +379,39 @@ div.wrapper {
         }
 
         div.buttons {
+            box-sizing: border-box;
             cursor: pointer;
             display: flex;
             flex-direction: row;
             margin: 0;
             padding: 0.5rem;
 
-            @media only screen and (max-width: 1024px) {
-                div.right_column {
-                    width: 50rem;
-                }
+            @media(max-width: @mobile_width) {
+                width: 100%;
             }
 
             a.button {
                 display: block;
                 flex-grow: 0;
                 font-weight: bold;
-                padding: 0 !important;
                 text-decoration: none;
                 margin-left: 0.25rem;
+                box-sizing: border-box;
+                padding: 0.2rem 0.5rem;
+                text-align: center;
+
+                @media(max-width: @mobile_width) {
+                    flex-grow: 1;
+
+                    svg {
+                        padding: 0 !important;
+                    }
+                }
 
                 span {
-                    display: block;
-                    padding: 0.2rem 0.5rem;
+                    @media(max-width: @mobile_width) {
+                        display: block;
+                    }
                 }
 
                 &:first-child {
@@ -490,10 +497,7 @@ div.wrapper {
         p#result_count, p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
-        }
-
-        p#selected_count {
-            padding-left: 0.8rem;
+            padding-left: 0.7rem;
         }
     }
 
@@ -502,9 +506,8 @@ div.wrapper {
         box-sizing: border-box;
         padding: 1rem;
         width: 30rem;
-    }
-    @media (max-width: @mobile_width) {
-        div.right_column {
+
+        @media (max-width: @mobile_width) {
             width: 110rem;
         }
     }

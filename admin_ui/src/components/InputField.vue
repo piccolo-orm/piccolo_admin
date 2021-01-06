@@ -81,7 +81,6 @@
                     v-bind:timedelta="localValue"
                     v-on:newTimedelta="updateLocalValue($event)"
                 />
-                <pre>{{ humanReadable }}</pre>
                 <input
                     type="hidden"
                     v-bind:name="getFieldName(title)"

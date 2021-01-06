@@ -5,10 +5,8 @@
         title="Delete selected Rows"
         v-on:click.prevent="$emit('triggered')"
     >
-        <span>
-            <font-awesome-icon icon="trash-alt" />
-            Delete {{ selected }} selected
-        </span>
+        <font-awesome-icon icon="trash-alt" />
+        <span>Delete {{ selected }} selected</span>
     </a>
 </template>
 

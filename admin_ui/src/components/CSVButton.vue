@@ -7,9 +7,8 @@
             :name="tableName + '.csv'"
             type="csv"
         >
-            <span>
-                <font-awesome-icon icon="file-csv" />Export CSV
-            </span>
+            <font-awesome-icon icon="file-csv" />
+            <span>Export CSV</span>
         </downloadexcel>
     </a>
 </template>
@@ -77,5 +76,10 @@ export default {
 }
 </script>
 
-
-
+<style lang="less" scoped>
+a.button {
+    div {
+        cursor: pointer;
+    }
+}
+</style>
