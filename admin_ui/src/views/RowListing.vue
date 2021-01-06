@@ -362,6 +362,7 @@ div.wrapper {
         display: flex;
         flex-direction: row;
         align-items: center;
+        padding: 0.5rem 0;
 
         @media (max-width: @mobile_width) {
             align-items: initial;
@@ -370,7 +371,7 @@ div.wrapper {
 
         h1 {
             text-transform: capitalize;
-            margin: 0.5rem 0.5rem 0.5rem 0;
+            margin: 0 0.5rem 0 0;
             flex-grow: 1;
         }
 
