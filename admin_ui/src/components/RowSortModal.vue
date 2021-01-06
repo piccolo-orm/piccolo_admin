@@ -16,21 +16,10 @@
                 >{{ key }}</option>
             </select>
 
-            <label>Ascending</label>
-            <input
-                name="ascending"
-                type="radio"
-                v-model="ascending"
-                value="ascending"
-            />
-
-            <label>Descending</label>
-            <input
-                name="ascending"
-                type="radio"
-                v-model="ascending"
-                value="descending"
-            />
+            <select v-model="ascending">
+                <option value="ascending">Ascending</option>
+                <option value="descending">Descending</option>
+            </select>
 
             <button v-on:click.prevent="save">Sort</button>
         </template>

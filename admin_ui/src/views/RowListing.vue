@@ -362,6 +362,7 @@ div.wrapper {
         display: flex;
         flex-direction: row;
         align-items: center;
+        padding: 0.5rem 0;
 
         @media (max-width: @mobile_width) {
             align-items: initial;
@@ -370,7 +371,7 @@ div.wrapper {
 
         h1 {
             text-transform: capitalize;
-            margin: 0.5rem;
+            margin: 0 0.5rem 0 0;
             flex-grow: 1;
         }
 
@@ -383,8 +384,6 @@ div.wrapper {
             cursor: pointer;
             display: flex;
             flex-direction: row;
-            margin: 0;
-            padding: 0.5rem;
 
             @media(max-width: @mobile_width) {
                 width: 100%;
@@ -428,14 +427,13 @@ div.wrapper {
     }
 
     div.left_column {
-        width: 80%;
-
-        @media (max-width: @mobile_width) {
-            width: 100%;
-        }
+        width: 100%;
+        padding: 0.5rem 0.8rem;
 
         table {
             border-collapse: collapse;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            box-shadow: -1px 0px 2px 1px rgba(0,0,0,0.1);
             width: 100%;
 
             tr {
@@ -497,15 +495,18 @@ div.wrapper {
         p#result_count, p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
-            padding-left: 0.7rem;
         }
     }
 
     div.right_column {
         border-left: 1px solid @border_color;
         box-sizing: border-box;
-        padding: 1rem;
+        padding: 0.5rem 0.8rem;
         width: 30rem;
+
+        h1 {
+            margin-top: 0.5rem;
+        }
 
         @media (max-width: @mobile_width) {
             width: 110rem;

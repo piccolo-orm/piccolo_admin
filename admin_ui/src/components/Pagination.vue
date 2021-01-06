@@ -88,14 +88,18 @@ export default {
 div#pagination {
     ul.pages {
         list-style: none;
+        margin: 0.5rem 0;
         padding: 0;
 
         li {
             border: 1px solid rgba(255, 255, 255, 0.2);
             display: inline-block;
             font-size: 0.8rem;
-            margin-left: 0.5rem;
-            margin-top: 0.5rem;
+            margin-right: 0.5rem;
+
+            &:last-child {
+                margin-right: 0;
+            }
 
             a {
                 padding: 0.4rem 0.7rem;

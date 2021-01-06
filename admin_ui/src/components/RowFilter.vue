@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="filter_wrapper">
         <h1>Filter</h1>
 
         <a
@@ -95,17 +95,14 @@ export default Vue.extend({
 
 
 <style scoped lang="less">
-@media only screen and (max-width: 991px) {
+div.filter_wrapper {
+    position: relative;
+
     #sidebar-close {
         cursor: pointer;
         position: absolute;
-        top: 65px;
-        right: 20px;
-    }
-}
-@media only screen and (min-width: 991px) {
-    #sidebar-close {
-        display: none;
+        top: 0.5rem;
+        right: 0.5rem;
     }
 }
 </style>
