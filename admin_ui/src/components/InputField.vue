@@ -175,9 +175,14 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 pre {
     white-space: pre-wrap;
     word-break: break-all;
+}
+input.flatpicker-input {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    width: 100%;
 }
 </style>
