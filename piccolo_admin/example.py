@@ -21,6 +21,7 @@ from piccolo.columns import (
     Timestamp,
     Numeric,
     Real,
+    Bytea,
 )
 from piccolo.columns.readable import Readable
 
@@ -60,7 +61,13 @@ class Movie(Table, db=DB):
     box_office = Numeric(digits=(5, 1))
 
 
-APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
+class Token(Table, db=DB):
+    token = Bytea()
+
+
+APP = create_admin(
+    [Director, Movie, Token], auth_table=User, session_table=Sessions
+)
 
 
 def populate_data():
@@ -70,6 +77,7 @@ def populate_data():
     Director.create_table().run_sync()
     Movie.create_table().run_sync()
     User.create_table().run_sync()
+    Token.create_table().run_sync()
     Sessions.create_table().run_sync()
 
     # Add some rows
