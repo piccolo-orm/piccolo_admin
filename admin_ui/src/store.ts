@@ -98,10 +98,12 @@ export default new Vuex.Store({
                     params
                 }
             )
+            params['__page_size'] = context.state.pageSize
+
             const data = response.data as i.RowCountAPIResponse
             context.commit('updateRowCount', data.count)
-            context.commit('updatePageSize', data.page_size)
-            if (data.count < data.page_size) {
+            context.commit('updatePageSize', params['__page_size'])
+            if (data.count < params['__page_size']) {
                 context.commit('updateCurrentPageNumber', 1)
             }
 
