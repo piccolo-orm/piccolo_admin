@@ -49,8 +49,6 @@
                     <b>page {{ currentPageNumber }}</b>
                 </p>
 
-                <ChangePageSize v-on:triggered="fetchRows()" />
-
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
                     <tr>
@@ -152,7 +150,10 @@
                 </table>
                 <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
 
-                <Pagination :tableName="tableName" />
+                <div class="pagination_wrapper">
+                    <Pagination :tableName="tableName" />
+                    <ChangePageSize />
+                </div>
             </div>
 
             <div
@@ -501,6 +502,19 @@ div.wrapper {
         p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
+        }
+
+        div.pagination_wrapper {
+            display: flex;
+            flex-direction: row;
+
+            div {
+                flex-grow: 1;
+
+                &:last-child {
+                    flex-grow: 0;
+                }
+            }
         }
     }
 

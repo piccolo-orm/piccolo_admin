@@ -1,41 +1,54 @@
 <template>
-    <p>
-        Show
-        <select
-            id="page_size"
-            v-model="selectedPageSize"
-            v-on:click.prevent="$emit('triggered')"
-        >
+    <div id="page_size">
+        <select v-model="selectedPageSize" v-on:change="changePageSize">
             <option
-                v-bind:key="option"
+                :label="`${option} per page`"
+                :key="option"
                 v-for="option in pageOptions"
-            >{{ option }}</option>
-            {{ pageSize }}
+            >
+                {{ option }}
+            </option>
         </select>
-        results
-    </p>
+    </div>
 </template>
 
 <script>
 export default {
     data() {
         return {
-            selectedPageSize: 5,
-            pageOptions: [5, 10, 25, 50, 100],
+            selectedPageSize: 15,
+            pageOptions: [5, 15, 30, 50, 100],
         }
+    },
+    methods: {
+        async changePageSize() {
+            this.$store.commit("updatePageSize", this.selectedPageSize)
+            this.$store.commit("updateCurrentPageNumber", 1)
+            await this.$store.dispatch("fetchRows")
+        },
     },
     computed: {
         pageSize() {
-            this.$store.state.pageSize = this.selectedPageSize
             return this.$store.state.pageSize
         },
+    },
+    watch: {
+        pageSize() {
+            this.selectedPageSize = this.pageSize
+        },
+    },
+    mounted() {
+        this.selectedPageSize = this.pageSize
     },
 }
 </script>
 
 <style lang="less" scoped>
-select#page_size {
-    width: 3.3rem;
-    margin-bottom: -5px;
+div#page_size {
+    margin: 0.5rem 0 0;
+
+    select {
+        width: 7rem;
+    }
 }
 </style>
