@@ -69,6 +69,7 @@ export default Vue.extend({
             }
 
             this.$store.commit("updateFilterParams", json)
+            this.$store.commit("updateCurrentPageNumber", 1)
 
             try {
                 await this.$store.dispatch("fetchRows")
@@ -82,6 +83,7 @@ export default Vue.extend({
             let form: HTMLFormElement = this.$refs.form
             form.reset()
             this.$store.commit("updateFilterParams", {})
+            this.$store.commit("updateCurrentPageNumber", 1)
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
