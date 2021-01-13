@@ -7,8 +7,8 @@
                     <div class="buttons">
                         <BulkDeleteButton
                             :selected="selectedRows.length"
-                            v-on:triggered="deleteRows"
                             v-if="selectedRows.length > 0"
+                            v-on:triggered="deleteRows"
                         />
 
                         <router-link
@@ -48,14 +48,15 @@
                     selected result(s) on
                     <b>page {{ currentPageNumber }}</b>
                 </p>
+
                 <p v-if="rows.length == 0">No results found</p>
                 <table v-else>
                     <tr>
                         <th>
                             <input
-                                v-on:change="selectAllRows"
                                 type="checkbox"
                                 v-model="allSelected"
+                                v-on:change="selectAllRows"
                             />
                         </th>
                         <th
@@ -149,7 +150,10 @@
                 </table>
                 <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
 
-                <Pagination :tableName="tableName" />
+                <div class="pagination_wrapper">
+                    <Pagination :tableName="tableName" />
+                    <ChangePageSize />
+                </div>
             </div>
 
             <div
@@ -192,6 +196,7 @@ import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
+import ChangePageSize from "../components/ChangePageSize.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
@@ -217,6 +222,7 @@ export default Vue.extend({
         DeleteButton,
         DropDownMenu,
         Pagination,
+        ChangePageSize,
         RowFilter,
         RowSortModal,
         TableNav,
@@ -338,7 +344,7 @@ export default Vue.extend({
         },
         rows() {
             this.resetRowCheckbox()
-        }
+        },
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
@@ -385,7 +391,7 @@ div.wrapper {
             display: flex;
             flex-direction: row;
 
-            @media(max-width: @mobile_width) {
+            @media (max-width: @mobile_width) {
                 width: 100%;
             }
 
@@ -399,7 +405,7 @@ div.wrapper {
                 padding: 0.2rem 0.5rem;
                 text-align: center;
 
-                @media(max-width: @mobile_width) {
+                @media (max-width: @mobile_width) {
                     flex-grow: 1;
 
                     svg {
@@ -408,7 +414,7 @@ div.wrapper {
                 }
 
                 span {
-                    @media(max-width: @mobile_width) {
+                    @media (max-width: @mobile_width) {
                         display: block;
                     }
                 }
@@ -432,8 +438,8 @@ div.wrapper {
 
         table {
             border-collapse: collapse;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            box-shadow: -1px 0px 2px 1px rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: -1px 0px 2px 1px rgba(0, 0, 0, 0.1);
             width: 100%;
 
             tr {
@@ -492,9 +498,23 @@ div.wrapper {
             }
         }
 
-        p#result_count, p#selected_count {
+        p#result_count,
+        p#selected_count {
             font-size: 0.6em;
             text-transform: uppercase;
+        }
+
+        div.pagination_wrapper {
+            display: flex;
+            flex-direction: row;
+
+            div {
+                flex-grow: 1;
+
+                &:last-child {
+                    flex-grow: 0;
+                }
+            }
         }
     }
 

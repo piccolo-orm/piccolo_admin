@@ -65,10 +65,11 @@ export default {
     },
     methods: {
         async changePage(pageNumber) {
-            console.log("Navigating to " + pageNumber)
-            this.$store.commit("updateCurrentPageNumber", pageNumber)
-
-            await this.$store.dispatch("fetchRows")
+            if (this.currentPageNumber != pageNumber) {
+                console.log("Navigating to " + pageNumber)
+                this.$store.commit("updateCurrentPageNumber", pageNumber)
+                await this.$store.dispatch("fetchRows")
+            }
         },
     },
     watch: {
@@ -95,6 +96,7 @@ div#pagination {
             border: 1px solid rgba(255, 255, 255, 0.2);
             display: inline-block;
             font-size: 0.8rem;
+            margin-bottom: 0.5rem;
             margin-right: 0.5rem;
 
             &:last-child {

@@ -239,8 +239,8 @@ def create_admin(
         If set, the `session_expiry` will be increased by this amount if it's
         close to expiry.
     :param page_size:
-        The admin API paginates contents - this sets the number of results
-        in each page.
+        The admin API paginates content - this sets the default number of
+        results on each page.
     :param read_only:
         If True, all non auth endpoints only respond to GET requests - the
         admin can still be viewed, and the data can be filtered. Useful for

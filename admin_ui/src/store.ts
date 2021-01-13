@@ -19,7 +19,7 @@ export default new Vuex.Store({
         currentTableName: undefined,
         darkMode: false,
         filterParams: {},
-        pageSize: 1,
+        pageSize: 15,
         rowCount: 0,
         rows: [],
         schema: undefined,
@@ -81,6 +81,19 @@ export default new Vuex.Store({
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit('updateTableNames', response.data)
         },
+        async fetchCount(context) {
+            const tableName = context.state.currentTableName
+            const params = context.state.filterParams
+            const response = await axios.get(
+                `${BASE_URL}tables/${tableName}/count/`,
+                {
+                    params
+                }
+            )
+            const data = response.data as i.RowCountAPIResponse
+            context.commit('updateRowCount', data.count)
+            return data
+        },
         async fetchRows(context) {
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
@@ -92,16 +105,10 @@ export default new Vuex.Store({
             }
 
             // Get the row counts:
-            const response = await axios.get(
-                `${BASE_URL}tables/${tableName}/count/`,
-                {
-                    params
-                }
-            )
-            const data = response.data as i.RowCountAPIResponse
-            context.commit('updateRowCount', data.count)
-            context.commit('updatePageSize', data.page_size)
-            if (data.count < data.page_size) {
+            const rowCountResponse = await context.dispatch('fetchCount')
+            params['__page_size'] = context.state.pageSize
+
+            if (rowCountResponse.count < params['__page_size']) {
                 context.commit('updateCurrentPageNumber', 1)
             }
 
