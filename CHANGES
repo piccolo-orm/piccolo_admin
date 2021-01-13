@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.10.7
+------
+ * Added page size selector - courtesy of sinisaos.
+ * Minor fixes
+
 0.10.6
 ------
 Added bulk deletion, and a custom widget for `timedelta` - courtesy of
