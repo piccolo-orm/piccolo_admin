@@ -45,7 +45,7 @@ export default {
 
 <style lang="less" scoped>
 div#page_size {
-    margin: 0.5rem 0 0;
+    margin: 0.3rem 0 0;
 
     select {
         width: 7rem;
