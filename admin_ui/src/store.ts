@@ -26,9 +26,13 @@ export default new Vuex.Store({
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
-        user: undefined
+        user: undefined,
+        sitename: {}
     },
     mutations: {
+        updateSiteName(state, value) {
+            state.sitename = value
+        },
         updateTableNames(state, value) {
             state.tableNames = value
         },
@@ -77,6 +81,10 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        async fetchSiteName(context) {
+            const response = await axios.get(`${BASE_URL}sitename/`)
+            context.commit('updateSiteName', response.data)
+        },
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit('updateTableNames', response.data)

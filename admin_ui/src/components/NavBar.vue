@@ -12,7 +12,8 @@
 
             <h1>
                 <router-link to="/">
-                    <font-awesome-icon icon="tools" />Piccolo Admin
+                    <font-awesome-icon icon="tools" />
+                    {{ siteName }} Admin
                 </router-link>
             </h1>
 
@@ -53,7 +54,7 @@ export default Vue.extend({
     data() {
         return {
             showSidebar: false,
-            showDropdown: false
+            showDropdown: false,
         }
     },
     computed: {
@@ -63,12 +64,18 @@ export default Vue.extend({
         username() {
             let user = this.$store.state.user
             return user ? user.username : "Unknown"
-        }
+        },
+        siteName() {
+            return this.$store.state.sitename.sitename
+        },
     },
     components: {
         SidebarOverlay,
-        NavDropDownMenu
-    }
+        NavDropDownMenu,
+    },
+    async created() {
+        await this.$store.dispatch("fetchSiteName")
+    },
 })
 </script>
 
