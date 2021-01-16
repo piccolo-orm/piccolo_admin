@@ -58,8 +58,10 @@ class AdminRouter(Router):
         read_only: bool = False,
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
+        sitename: str = "Piccolo",
     ) -> None:
         self.auth_table = auth_table
+        self.sitename = sitename
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             self.template = f.read()
@@ -149,6 +151,14 @@ class AdminRouter(Router):
                                 )
                             ),
                         ),
+                        Mount(
+                            path="/sitename/",
+                            app=auth_middleware(
+                                Router(
+                                    [Route(path="/", endpoint=self.get_sitename)]
+                                )
+                            ),
+                        ),
                     ]
                 ),
             ),
@@ -179,6 +189,11 @@ class AdminRouter(Router):
 
     def get_table_list(self, request: Request) -> JSONResponse:
         return JSONResponse([i._meta.tablename for i in self.tables])
+
+    ###########################################################################
+
+    def get_sitename(self, request: Request) -> JSONResponse:
+        return JSONResponse({"sitename": self.sitename})
 
 
 def get_all_tables(
@@ -218,6 +233,7 @@ def create_admin(
     read_only: bool = False,
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
+    sitename: str = "Piccolo",
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
 ):
@@ -253,6 +269,8 @@ def create_admin(
         If True, the admin will enforce stronger security - for example,
         the cookies used will be secure, meaning they are only sent over
         HTTPS.
+    :param sitename:
+        Specify a different site name in admin UI (default Piccolo Admin)
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
@@ -279,6 +297,7 @@ def create_admin(
                 read_only=read_only,
                 rate_limit_provider=rate_limit_provider,
                 production=production,
+                sitename=sitename,
             ),
             allowed_hosts=allowed_hosts,
         )
