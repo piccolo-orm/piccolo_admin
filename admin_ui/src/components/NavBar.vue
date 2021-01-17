@@ -4,7 +4,9 @@
             <span id="burger_menu">
                 <a
                     href="#"
-                    v-on:click.prevent="showSidebar = showSidebar ? false : true"
+                    v-on:click.prevent="
+                        showSidebar = showSidebar ? false : true
+                    "
                 >
                     <font-awesome-icon icon="bars" />
                 </a>
@@ -13,7 +15,7 @@
             <h1>
                 <router-link to="/">
                     <font-awesome-icon icon="tools" />
-                    {{ siteName }} Admin
+                    {{ siteName }}
                 </router-link>
             </h1>
 
@@ -22,10 +24,11 @@
                     <a
                         href="#"
                         id="user"
+                        :title="username"
                         v-on:click.prevent="showDropdown = !showDropdown"
                     >
                         <font-awesome-icon icon="user" />
-                        {{ username }}
+                        {{ truncatedUsername }}
                         <font-awesome-icon
                             icon="angle-up"
                             v-if="showDropdown"
@@ -62,19 +65,24 @@ export default Vue.extend({
             return this.$store.state.currentTableName
         },
         username() {
-            let user = this.$store.state.user
+            const user = this.$store.state.user
             return user ? user.username : "Unknown"
         },
+        truncatedUsername() {
+            const username = this.username
+            if (username.length > 20) {
+                return username.slice(0, 16) + "..."
+            } else {
+                return username
+            }
+        },
         siteName() {
-            return this.$store.state.sitename.sitename
+            return this.$store.state.metaModule.siteName
         },
     },
     components: {
         SidebarOverlay,
         NavDropDownMenu,
-    },
-    async created() {
-        await this.$store.dispatch("fetchSiteName")
     },
 })
 </script>
@@ -103,7 +111,7 @@ export default Vue.extend({
         font-size: 1.2rem;
 
         @media (max-width: @mobile_width) {
-            text-align: center;
+            display: none;
         }
     }
 
@@ -112,14 +120,14 @@ export default Vue.extend({
         flex-grow: 0;
         text-align: right;
 
+        @media (max-width: @mobile_width) {
+            flex-grow: 1;
+        }
+
         li {
             display: inline-block;
             position: relative;
         }
-    }
-
-    a#user {
-        padding-right: 1rem;
     }
 
     a {

@@ -1,7 +1,7 @@
 <template>
     <BaseView>
         <div class="welcome">
-            <h1>Welcome to Piccolo Admin</h1>
+            <h1>Welcome to {{ siteName }}</h1>
             <p>Select one of the tables in the sidebar to get started.</p>
         </div>
     </BaseView>
@@ -12,11 +12,16 @@ import BaseView from "./BaseView.vue"
 
 export default {
     components: {
-        BaseView
+        BaseView,
+    },
+    computed: {
+        siteName() {
+            return this.$store.state.metaModule.siteName
+        },
     },
     mounted() {
         this.$store.commit("updateCurrentTablename", "")
-    }
+    },
 }
 </script>
 

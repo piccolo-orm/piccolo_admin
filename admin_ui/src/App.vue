@@ -25,10 +25,10 @@ export default Vue.extend({
             return this.$store.state.darkMode
         },
         showAboutModal() {
-            return this.$store.state.aboutModal.showAboutModal
+            return this.$store.state.aboutModalModule.showAboutModal
         },
     },
-    created() {
+    async created() {
         let darkMode = JSON.parse(localStorage.getItem("darkMode"))
 
         if (darkMode === null) {
@@ -36,6 +36,8 @@ export default Vue.extend({
         }
 
         this.$store.commit("updateDarkMode", darkMode)
+
+        await this.$store.dispatch("fetchMeta")
     },
     async beforeCreate() {
         let app = this
