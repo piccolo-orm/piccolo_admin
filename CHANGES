@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.10.8
+------
+ * Can override the nav bar title (defaults to `Piccolo Admin`) - courtesy of
+   sinisaos.
+ * Other nav bar improvements, such as truncating long usernames.
+
 0.10.7
 ------
  * Added page size selector - courtesy of sinisaos.
