@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import * as i from './interfaces'
 
-import aboutModal from './modules/aboutModal'
+import aboutModalModule from './modules/aboutModal'
+import metaModule from './modules/meta'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,8 @@ const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default new Vuex.Store({
     modules: {
-        aboutModal
+        aboutModalModule,
+        metaModule
     },
     state: {
         apiResponseMessage: null as i.APIResponseMessage | null,
@@ -26,7 +28,7 @@ export default new Vuex.Store({
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
-        user: undefined
+        user: undefined,
     },
     mutations: {
         updateTableNames(state, value) {

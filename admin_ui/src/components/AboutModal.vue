@@ -2,7 +2,7 @@
     <Modal v-on:close="hideAboutModal">
         <h1>About</h1>
         <p>Thanks for using Piccolo Admin.</p>
-        <p>Version {{ meta.piccolo_admin_version }}</p>
+        <p>Version {{ piccoloAdminVersion }}</p>
     </Modal>
 </template>
 
@@ -11,25 +11,18 @@ import Modal from "./Modal.vue"
 
 export default {
     components: {
-        Modal
+        Modal,
     },
     computed: {
-        meta() {
-            return this.$store.state.aboutModal.meta
-        }
+        piccoloAdminVersion() {
+            return this.$store.state.metaModule.piccoloAdminVersion
+        },
     },
     methods: {
         hideAboutModal() {
             this.$store.commit("updateShowAboutModal", false)
-        }
+        },
     },
-    async created() {
-        try {
-            await this.$store.dispatch("fetchMeta")
-        } catch {
-            this.hideAboutModal()
-        }
-    }
 }
 </script>
 
