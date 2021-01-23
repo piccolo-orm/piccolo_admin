@@ -1,6 +1,6 @@
 # Piccolo Admin
 
-piccolo_admin provides a simple yet powerful admin interface on top of Piccolo models - allowing you to easily add / edit / filter your data.
+piccolo_admin provides a simple yet powerful admin interface on top of Piccolo tables - allowing you to easily add / edit / filter your data.
 
 ![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
 
@@ -58,47 +58,6 @@ if __name__ == '__main__':
 
 ```
 
-## Session table
+## Full docs
 
-The admin uses session auth, which requires a database table.
-
-Add `piccolo_admin.piccolo_app` to the APP_REGISTRY in your piccolo_conf.py
-project file, then run:
-
-```bash
-piccolo migrations forwards session_auth
-```
-
-To learn more about the Piccolo project files, check out the [docs](https://piccolo-orm.readthedocs.io/en/latest/piccolo/projects_and_apps/piccolo_apps.html).
-
-
-## Contributing
-
-The backend is just vanilla Python.
-
-The front end is built using Vue.js. To make modifications, clone the repo, and cd into the `admin_ui` directory.
-
-Install the npm dependencies:
-
-```bash
-npm install
-```
-
-And then you can launch the admin as follows:
-
-```bash
-npm run serve
-```
-
-It will auto refresh the UI as you make changes to the source files.
-
-The UI needs an API to interact with - the easiest way to do this is to use the demo app.
-
-```bash
-admin_demo
-
-# Or alternatively
-python -m piccolo_admin.example
-```
-
-You will need to configure a local webserver as a proxy - see extra/piccolo_admin.
+Full documentation is available on [Read the docs](https://piccolo-admin.readthedocs.io/en/latest/).
