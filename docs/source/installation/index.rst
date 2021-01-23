@@ -9,13 +9,16 @@ Install ``piccolo_admin``, ideally inside a `virtualenv <https://docs.python-gui
 
     pip install piccolo_admin
 
+Local demo
+----------
+
 To run a demo locally:
 
 .. code-block:: bash
 
     admin_demo
 
-And then just launch `<localhost:8000>`_ in your browser.
+And then just launch `<localhost:8000>`_ in your browser. Login using ``username: piccolo, password: piccolo123``.
 
 To see what happens behind the scenes, see ``piccolo_admin/example.py``.
 
@@ -25,3 +28,5 @@ In a few lines of code we are able to:
 * Setup a database
 * Create a REST API
 * Setup a web server and admin interface
+
+Next we'll look at integrating the Piccolo admin properly into your own project.
