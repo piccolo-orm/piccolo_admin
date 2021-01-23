@@ -1,7 +1,9 @@
 ASGI
-----
+====
 
-Since the admin is an ASGI app, you can either run it standalone like in the demo, or integrate it with a larger ASGI app.
+Since the admin is an `ASGI app <https://piccolo-orm.com/blog/introduction-to-asgi/>`_, you can either run it standalone like in the demo, or integrate it with a larger ASGI app.
+
+.. hint:: Piccolo can help you `create a new ASGI app <https://piccolo-orm.readthedocs.io/en/latest/piccolo/asgi/index.html>`_ - using ``piccolo asgi new``.
 
 For example, using Starlette routes:
 
@@ -28,7 +30,10 @@ For example, using Starlette routes:
     if __name__ == '__main__':
         uvicorn.run(router)
 
-Or using FastAPI application instance: 
+FastAPI example
+---------------
+
+Here's a complete example of a FastAPI app using Piccolo admin.
 
 .. code-block:: python
 
@@ -45,7 +50,7 @@ Or using FastAPI application instance:
                 "/admin/",
                 create_admin(
                     tables=[Director, Movie],
-                    # Specify a different site name in the 
+                    # Specify a different site name in the
                     # admin UI (default Piccolo Admin)
                     site_name = "Mysite Admin",
                     # Required when running under HTTPS:
@@ -72,10 +77,11 @@ To run ``app.py`` use:
 
     uvicorn app:app --port 8000 --host 0.0.0.0
 
-Now you can go to `<localhost:8000/admin>`_ and log in as admin user.
+Now you can go to `<localhost:8000/admin>`_ and log in as an admin user
+(see :ref:`Authentication` for how to create users).
 
 Source
-======
+------
 
 .. currentmodule:: piccolo_admin.endpoints
 
