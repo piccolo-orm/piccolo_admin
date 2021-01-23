@@ -1,5 +1,8 @@
 # Piccolo Admin
 
+[![Documentation Status](https://readthedocs.org/projects/piccolo-admin/badge/?version=latest)](https://piccolo-admin.readthedocs.io/en/latest/?badge=latest)
+
+
 piccolo_admin provides a simple yet powerful admin interface on top of Piccolo tables - allowing you to easily add / edit / filter your data.
 
 ![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
