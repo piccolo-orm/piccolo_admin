@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.10.9
+------
+Fixing a bug with fetching meta information from the API (Piccolo version,
+site name etc). When a user isn't logged in, it would fail. It now calls the
+API again after a successful login - courtesy of sinisaos.
+
 0.10.8
 ------
  * Can override the nav bar title (defaults to `Piccolo Admin`) - courtesy of
