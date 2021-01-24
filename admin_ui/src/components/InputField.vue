@@ -1,10 +1,7 @@
 <template>
     <div>
         <template v-if="type == 'integer'">
-            <OperatorField
-                :fieldName="getFieldName(title)"
-                v-if="isFilter"
-            />
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <input
                 step="1"
                 type="number"
@@ -33,7 +30,7 @@
                     ref="textarea"
                     v-bind:name="getFieldName(title)"
                     v-bind:placeholder="placeholder"
-                    v-bind:style="{height: textareaHeight}"
+                    v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
                 />
@@ -54,20 +51,22 @@
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
                     value="all"
-                >All</option>
+                >
+                    All
+                </option>
                 <option
                     v-bind:selected="value == null"
                     v-if="isNullable"
                     value="null"
-                >Null</option>
-                <option
-                    v-bind:selected="value == true"
-                    value="true"
-                >True</option>
-                <option
-                    v-bind:selected="value == false"
-                    value="false"
-                >False</option>
+                >
+                    Null
+                </option>
+                <option v-bind:selected="value == true" value="true">
+                    True
+                </option>
+                <option v-bind:selected="value == false" value="false">
+                    False
+                </option>
             </select>
         </template>
 
@@ -111,7 +110,7 @@ import flatPickr from "vue-flatpickr-component"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 
-export default {
+export default Vue.extend({
     props: {
         title: String,
         type: String,
@@ -172,7 +171,7 @@ export default {
             app.setTextareaHeight()
         }, 0)
     },
-}
+})
 </script>
 
 <style scoped lang="less">

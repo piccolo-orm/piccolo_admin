@@ -12,7 +12,10 @@
                         />
 
                         <router-link
-                            :to="{name: 'addRow', params: {tableName: tableName}}"
+                            :to="{
+                                name: 'addRow',
+                                params: { tableName: tableName },
+                            }"
                             class="button"
                             v-on:click.prevent="showAddRow = true"
                         >
@@ -35,15 +38,17 @@
                             v-on:click.prevent="showFilter = !showFilter"
                         >
                             <font-awesome-icon icon="filter" />
-                            <span>{{ showFilter ? "Hide" : "Show" }} Filters</span>
+                            <span
+                                >{{
+                                    showFilter ? "Hide" : "Show"
+                                }}
+                                Filters</span
+                            >
                         </a>
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
-                <p
-                    id="selected_count"
-                    v-if="selectedRows.length > 0"
-                >
+                <p id="selected_count" v-if="selectedRows.length > 0">
                     <b>{{ selectedRows.length }}</b>
                     selected result(s) on
                     <b>page {{ currentPageNumber }}</b>
@@ -59,17 +64,17 @@
                                 v-on:change="selectAllRows"
                             />
                         </th>
-                        <th
-                            v-bind:key="name"
-                            v-for="name in cellNames"
-                        >{{ schema.properties[name] ? schema.properties[name].title : name }}</th>
+                        <th v-bind:key="name" v-for="name in cellNames">
+                            {{
+                                schema.properties[name]
+                                    ? schema.properties[name].title
+                                    : name
+                            }}
+                        </th>
                         <th></th>
                     </tr>
 
-                    <tr
-                        v-bind:key="row.id"
-                        v-for="row in rows"
-                    >
+                    <tr v-bind:key="row.id" v-for="row in rows">
                         <td>
                             <input
                                 :value="row.id"
@@ -78,30 +83,37 @@
                                 v-model="selectedRows"
                             />
                         </td>
-                        <td
-                            v-bind:key="name"
-                            v-for="name in cellNames"
-                        >
-                            <span
-                                class="link"
-                                v-if="name == 'id'"
-                            >
+                        <td v-bind:key="name" v-for="name in cellNames">
+                            <span class="link" v-if="name == 'id'">
                                 <router-link
-                                    :to="{name: 'editRow', params: {tableName: tableName, rowID: row[name] }}"
-                                >{{ row[name] }}</router-link>
+                                    :to="{
+                                        name: 'editRow',
+                                        params: {
+                                            tableName: tableName,
+                                            rowID: row[name],
+                                        },
+                                    }"
+                                    >{{ row[name] }}</router-link
+                                >
                             </span>
                             <span
                                 class="link"
-                                v-else-if="isForeignKey(name) & row[name] !== null"
+                                v-else-if="
+                                    isForeignKey(name) & (row[name] !== null)
+                                "
                             >
                                 <router-link
-                                    :to="{name: 'editRow', params: {tableName: getTableName(name), rowID: row[name] }}"
-                                >{{ row[name + '_readable'] }}</router-link>
+                                    :to="{
+                                        name: 'editRow',
+                                        params: {
+                                            tableName: getTableName(name),
+                                            rowID: row[name],
+                                        },
+                                    }"
+                                    >{{ row[name + "_readable"] }}</router-link
+                                >
                             </span>
-                            <span
-                                class="boolean"
-                                v-else-if="isBoolean(name)"
-                            >
+                            <span class="boolean" v-else-if="isBoolean(name)">
                                 <font-awesome-icon
                                     class="correct"
                                     icon="check"
@@ -113,27 +125,47 @@
                                     v-else
                                 />
                             </span>
-                            <span v-else-if="isInterval(name)">{{ row[name] | humanReadable }}</span>
+                            <span v-else-if="isInterval(name)">{{
+                                row[name] | humanReadable
+                            }}</span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
                         <td>
-                            <span style="position: relative; display: block; text-align: right;">
+                            <span
+                                style="
+                                    position: relative;
+                                    display: block;
+                                    text-align: right;
+                                "
+                            >
                                 <a
                                     class="subtle"
                                     href="#"
-                                    v-on:click.prevent="visibleDropdown = visibleDropdown ? undefined : row.id "
+                                    v-on:click.prevent="
+                                        visibleDropdown = visibleDropdown
+                                            ? undefined
+                                            : row.id
+                                    "
                                 >
                                     <font-awesome-icon icon="ellipsis-v" />
                                 </a>
                                 <DropDownMenu v-if="visibleDropdown == row.id">
                                     <li>
                                         <router-link
-                                            :to="{name: 'editRow', params: {tableName: tableName, rowID: row.id}}"
+                                            :to="{
+                                                name: 'editRow',
+                                                params: {
+                                                    tableName: tableName,
+                                                    rowID: row.id,
+                                                },
+                                            }"
                                             class="subtle"
                                             title="Edit Row"
                                         >
-                                            <font-awesome-icon icon="edit" />Edit
+                                            <font-awesome-icon
+                                                icon="edit"
+                                            />Edit
                                         </router-link>
                                     </li>
                                     <li>
@@ -148,7 +180,9 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
+                <p id="result_count">
+                    Showing {{ rows.length }} of {{ rowCount }} result(s)
+                </p>
 
                 <div class="pagination_wrapper">
                     <Pagination :tableName="tableName" />
@@ -156,10 +190,7 @@
                 </div>
             </div>
 
-            <div
-                class="right_column"
-                v-if="showFilter"
-            >
+            <div class="right_column" v-if="showFilter">
                 <RowFilter
                     :showFilterSidebar="showFilter"
                     @closeSideBar="closeSideBar"
@@ -187,7 +218,6 @@
 
 <script lang="ts">
 import Vue from "vue"
-import axios from "axios"
 import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"

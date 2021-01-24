@@ -8,18 +8,18 @@ export default {
         piccoloAdminVersion: 'Unknown'
     },
     mutations: {
-        updateSiteName(state, value: Object) {
+        updateSiteName(state, value: string) {
             state.siteName = value
         },
-        updatePiccoloAdminVersion(state, value: Object) {
+        updatePiccoloAdminVersion(state, value: string) {
             state.piccoloAdminVersion = value
         },
     },
     actions: {
         async fetchMeta(context) {
             const response = await axios.get(`${BASE_URL}meta/`)
-            this.commit('updateSiteName', response.data.site_name)
-            this.commit('updatePiccoloAdminVersion', response.data.piccolo_admin_version)
+            context.commit('updateSiteName', response.data.site_name)
+            context.commit('updatePiccoloAdminVersion', response.data.piccolo_admin_version)
         }
     }
 }
