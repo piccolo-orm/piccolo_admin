@@ -4,14 +4,8 @@
 
         <pre>{{ errors }}</pre>
 
-        <form
-            v-if="defaults"
-            v-on:submit.prevent="submitForm($event)"
-        >
-            <RowForm
-                v-bind:row="defaults"
-                v-bind:schema="schema"
-            />
+        <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
+            <RowForm v-bind:row="defaults" v-bind:schema="schema" />
             <button>Create</button>
         </form>
     </div>
@@ -24,15 +18,15 @@ import { APIResponseMessage } from "../interfaces"
 export default {
     props: {
         tableName: String,
-        schema: Object
+        schema: Object,
     },
     components: {
-        RowForm
+        RowForm,
     },
-    data: function() {
+    data: function () {
         return {
             defaults: {},
-            errors: ""
+            errors: "",
         }
     },
     methods: {
@@ -45,9 +39,9 @@ export default {
                 json[i[0]] = i[1]
             }
             try {
-                const response = await this.$store.dispatch("createRow", {
+                await this.$store.dispatch("createRow", {
                     tableName: this.tableName,
-                    data: json
+                    data: json,
                 })
             } catch (error) {
                 this.errors = error.response.data
@@ -56,7 +50,7 @@ export default {
 
             var message: APIResponseMessage = {
                 contents: "Successfully added row",
-                type: "success"
+                type: "success",
             }
             this.$store.commit("updateApiResponseMessage", message)
 
@@ -65,12 +59,12 @@ export default {
             if (opener) {
                 opener.postMessage("edited row", document.location.origin)
             }
-        }
+        },
     },
     async mounted() {
         let response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
-    }
+    },
 }
 </script>
 

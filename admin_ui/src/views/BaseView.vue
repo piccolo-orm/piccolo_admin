@@ -13,15 +13,14 @@
 
 <script lang="ts">
 import Vue from "vue"
-import axios from "axios"
 import NavBar from "../components/NavBar.vue"
 import SidebarNav from "../components/SidebarNav.vue"
 
 export default Vue.extend({
     components: {
         NavBar,
-        SidebarNav
-    }
+        SidebarNav,
+    },
 })
 </script>
 
