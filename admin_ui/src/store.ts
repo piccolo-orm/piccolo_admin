@@ -190,6 +190,10 @@ export default new Vuex.Store({
             })
 
             return response
+        },
+        async fetchUser(context) {
+            const response = await axios.get(`${BASE_URL}user/`)
+            context.commit('updateUser', response.data)
         }
     }
 })
