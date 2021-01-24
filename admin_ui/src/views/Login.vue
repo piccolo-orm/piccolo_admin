@@ -4,16 +4,10 @@
             <h1>Login</h1>
             <form v-on:submit.prevent="login">
                 <label>Username</label>
-                <input
-                    type="text"
-                    v-model="username"
-                />
+                <input type="text" v-model="username" />
 
                 <label>Password</label>
-                <input
-                    type="password"
-                    v-model="password"
-                />
+                <input type="password" v-model="password" />
 
                 <button>Login</button>
             </form>
@@ -26,10 +20,10 @@
 import axios from "axios"
 
 export default {
-    data: function() {
+    data: function () {
         return {
             username: "",
-            password: ""
+            password: "",
         }
     },
     methods: {
@@ -38,19 +32,22 @@ export default {
             try {
                 let response = await axios.post(`./api/login/`, {
                     username: this.username,
-                    password: this.password
+                    password: this.password,
                 })
             } catch (error) {
                 console.log("Request failed")
                 console.log(error.response)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: "Problem logging in",
-                    type: "error"
+                    type: "error",
                 })
                 return
             }
-            let response = await axios.get("./api/user/")
-            this.$store.commit("updateUser", response.data)
+
+            await Promise.all([
+                this.$store.dispatch("fetchUser"),
+                this.$store.dispatch("fetchMeta"),
+            ])
 
             let nextURL = this.$route.query.nextURL
             if (nextURL) {
@@ -58,8 +55,8 @@ export default {
             } else {
                 this.$router.push({ name: "home" })
             }
-        }
-    }
+        },
+    },
 }
 </script>
 

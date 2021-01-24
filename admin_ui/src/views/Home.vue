@@ -22,9 +22,6 @@ export default {
     mounted() {
         this.$store.commit("updateCurrentTablename", "")
     },
-    async created() {
-        await this.$store.dispatch("fetchMeta")
-    },
 }
 </script>
 

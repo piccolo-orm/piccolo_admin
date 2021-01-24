@@ -120,8 +120,7 @@ export default Vue.extend({
             }
         )
 
-        const response = await axios.get("./api/user/")
-        this.$store.commit("updateUser", response.data)
+        await this.$store.dispatch("fetchUser")
     },
 })
 </script>
