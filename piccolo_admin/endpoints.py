@@ -7,12 +7,15 @@ from functools import partial
 import os
 import typing as t
 
+from fastapi import FastAPI
+
 from piccolo.table import Table
 from piccolo.apps.user.tables import BaseUser
 
 from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
 from piccolo_api.rate_limiting.middleware import (
     RateLimitingMiddleware,
     RateLimitProvider,
@@ -78,21 +81,31 @@ class AdminRouter(Router):
         )
 
         if not rate_limit_provider:
-            rate_limit_provider = InMemoryLimitProvider(
-                limit=1000, timespan=300
-            )
+            rate_limit_provider = InMemoryLimitProvider(limit=1000, timespan=300)
 
         table_routes: t.List[BaseRoute] = [
             Mount(
-                path=f"/{table._meta.tablename}/",
-                app=PiccoloCRUD(
-                    table, read_only=read_only, page_size=page_size
+                path=f"/{table._meta.tablename}",
+                app=FastAPIWrapper(
+                    root_url=f"/{table._meta.tablename}s",
+                    fastapi_app=FastAPI(),
+                    piccolo_crud=PiccoloCRUD(
+                        table=table,
+                        read_only=False,
+                    ),
+                    fastapi_kwargs=FastAPIKwargs(
+                        all_routes={"tags": [f"{table._meta.tablename.capitalize()}"]},
+                    ),
                 ),
             )
             for table in tables
         ]
         table_routes += [
-            Route(path="/", endpoint=self.get_table_list, methods=["GET"],)
+            Route(
+                path="/",
+                endpoint=self.get_table_list,
+                methods=["GET"],
+            )
         ]
 
         routes: t.List[BaseRoute] = [
@@ -130,25 +143,19 @@ class AdminRouter(Router):
                         ),
                         Route(
                             path="/logout/",
-                            endpoint=session_logout(
-                                session_table=session_table
-                            ),
+                            endpoint=session_logout(session_table=session_table),
                             methods=["POST"],
                         ),
                         Mount(
                             path="/user/",
                             app=auth_middleware(
-                                Router(
-                                    [Route(path="/", endpoint=self.get_user)]
-                                )
+                                Router([Route(path="/", endpoint=self.get_user)])
                             ),
                         ),
                         Mount(
                             path="/meta/",
                             app=auth_middleware(
-                                Router(
-                                    [Route(path="/", endpoint=self.get_meta)]
-                                )
+                                Router([Route(path="/", endpoint=self.get_meta)])
                             ),
                         ),
                     ]
@@ -203,8 +210,7 @@ def get_all_tables(
 
     def get_references(table: t.Type[Table]):
         references = [
-            i._foreign_key_meta.references
-            for i in table._meta.foreign_key_columns
+            i._foreign_key_meta.references for i in table._meta.foreign_key_columns
         ]
         for reference in references:
             if reference not in output:
