@@ -88,7 +88,11 @@ class AdminRouter(Router):
                 path=f"/{table._meta.tablename}",
                 app=FastAPIWrapper(
                     root_url=f"/{table._meta.tablename}s",
-                    fastapi_app=FastAPI(),
+                    fastapi_app=FastAPI(
+                        title=f"{self.site_name}",
+                        description=f"API documentation for table "
+                        f"{table._meta.tablename.capitalize()}",
+                    ),
                     piccolo_crud=PiccoloCRUD(
                         table=table,
                         read_only=False,
