@@ -4,11 +4,15 @@ An example of how to configure and run the admin.
 Can be run from the command line using `python -m piccolo_admin.example`,
 or `admin_demo`.
 """
+import asyncio
 import os
-import sys
+import typing as t
 
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo.engine.sqlite import SQLiteEngine
+from piccolo.engine.postgres import PostgresEngine
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
@@ -23,24 +27,21 @@ from piccolo.columns import (
     Real,
 )
 from piccolo.columns.readable import Readable
+import targ
 
 from piccolo_admin.endpoints import create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIES
 
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "example.sqlite")
-DB = SQLiteEngine(path=DB_PATH)
-
-
-class Sessions(SessionsBase, db=DB):
+class Sessions(SessionsBase):
     pass
 
 
-class User(BaseUser, db=DB, tablename="piccolo_user"):
+class User(BaseUser, tablename="piccolo_user"):
     pass
 
 
-class Director(Table, db=DB):
+class Director(Table):
     name = Varchar(length=300, null=False)
 
     @classmethod
@@ -48,7 +49,7 @@ class Director(Table, db=DB):
         return Readable(template="%s", columns=[cls.name])
 
 
-class Movie(Table, db=DB):
+class Movie(Table):
     name = Varchar(length=300)
     rating = Real()
     duration = Interval()
@@ -60,18 +61,31 @@ class Movie(Table, db=DB):
     box_office = Numeric(digits=(5, 1))
 
 
+TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
 APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
 
 
-def populate_data():
-    # Recreate the database
-    if os.path.exists(DB_PATH):
-        os.unlink(DB_PATH)
-    Director.create_table().run_sync()
-    Movie.create_table().run_sync()
-    User.create_table().run_sync()
-    Sessions.create_table().run_sync()
+def set_engine(engine: str = "sqlite"):
+    if engine == "postgres":
+        db = PostgresEngine(config={"database": "piccolo_admin"})
+    else:
+        sqlite_path = os.path.join(os.path.dirname(__file__), "example.sqlite")
+        db = SQLiteEngine(path=sqlite_path)
 
+    for table_class in TABLE_CLASSES:
+        table_class._meta._db = db
+
+
+def create_schema(persist: bool = False):
+    if not persist:
+        for table_class in reversed(TABLE_CLASSES):
+            table_class.alter().drop_table(if_exists=True).run_sync()
+
+    for table_class in TABLE_CLASSES:
+        table_class.create_table(if_not_exists=True).run_sync()
+
+
+def populate_data():
     # Add some rows
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
@@ -86,45 +100,32 @@ def populate_data():
     user.save().run_sync()
 
 
-def main(persist=False, read_only_db=False, use_hypercorn=False):
+def run(
+    persist: bool = False, engine: str = "sqlite",
+):
     """
-    If persist is set to True, we don't rebuild all of the data each time.
+    Start the Piccolo admin.
 
-    If read_only is set to True, the database will be opened in read_only
-    mode. Make sure use_hypercorn is also True.
+    :param persist:
+        If True, we don't rebuild all of the data each time.
+    :param engine:
+        Options are sqlite and postgres. By default sqlite is used.
+
     """
+    set_engine(engine)
+    create_schema(persist=persist)
+
     if not persist:
         populate_data()
 
-    if read_only_db:
-        DB.connection_kwargs.update(
-            {"uri": True, "database": f"file:{DB_PATH}?mode=ro"}
-        )
-
     # Server
-    if use_hypercorn:
-        import asyncio
-        from hypercorn.asyncio import serve
-        from hypercorn.config import Config
+    class CustomConfig(Config):
+        use_reloader = True
 
-        class CustomConfig(Config):
-            use_reloader = True
-
-        asyncio.run(serve(APP, CustomConfig()))
-    else:
-        # Uvicorn (v0.8) doesn't support breakpoints when using auto reload.
-        import uvicorn
-
-        uvicorn.run("piccolo_admin.example:APP", reload=True, debug=True)
+    asyncio.run(serve(APP, CustomConfig()))
 
 
 if __name__ == "__main__":
-    args = sys.argv
-    persist = "--persist" in args
-    read_only_db = "--read-only-db" in args
-    use_hypercorn = "--hypercorn" in args
-    main(
-        persist=persist,
-        read_only_db=read_only_db,
-        use_hypercorn=use_hypercorn,
-    )
+    cli = targ.CLI(description="Piccolo Admin")
+    cli.register(run)
+    cli.run(solo=True)

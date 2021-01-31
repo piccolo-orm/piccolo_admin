@@ -5,3 +5,4 @@ uvicorn
 aiofiles>=0.5.0
 Hypercorn
 fastapi>=0.62.0
+targ>=0.1.9
