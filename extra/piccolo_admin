@@ -14,7 +14,6 @@ server {
 		proxy_pass http://127.0.0.1:8080;
 	}
 
-
     location /sockjs-node {
         proxy_pass http://127.0.0.1:8080;
         proxy_http_version 1.1;
@@ -22,8 +21,11 @@ server {
         proxy_set_header Connection "Upgrade";
     }
 
-
 	location /api {
+		proxy_pass http://127.0.0.1:8000;
+	}
+
+	location /auth {
 		proxy_pass http://127.0.0.1:8000;
 	}
 }
