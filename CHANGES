@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.11.0
+------
+ * Refactored ``AdminRouter`` to use ``FastAPI``. This means the API is fully
+documented - courtesy of sinisaos.
+ * Moved auth endpoints from ``/api/`` to ``/auth/``, to separate
+auth from the main API.
+
 0.10.9
 ------
 Fixing a bug with fetching meta information from the API (Piccolo version,
