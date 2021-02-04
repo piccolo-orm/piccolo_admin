@@ -30,7 +30,7 @@ export default {
         async login() {
             console.log("Logging in")
             try {
-                await axios.post(`./api/login/`, {
+                await axios.post(`/auth/login/`, {
                     username: this.username,
                     password: this.password,
                 })

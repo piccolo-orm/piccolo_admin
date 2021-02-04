@@ -13,6 +13,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
 from piccolo_api.rate_limiting.middleware import (
     RateLimitingMiddleware,
     RateLimitProvider,
@@ -21,10 +22,11 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
+from pydantic import BaseModel
 
+from fastapi import FastAPI
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.requests import Request
-from starlette.routing import Router, Route, BaseRoute, Mount
 from starlette.staticfiles import StaticFiles
 from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -33,11 +35,21 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 
+class UserResponseModel(BaseModel):
+    username: str
+    user_id: str
+
+
+class MetaResponseModel(BaseModel):
+    piccolo_admin_version: str
+    site_name: str
+
+
 def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
-class AdminRouter(Router):
+class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
     """
@@ -60,11 +72,107 @@ class AdminRouter(Router):
         production: bool = False,
         site_name: str = "Piccolo Admin",
     ) -> None:
+        super().__init__(
+            title=site_name, description="Piccolo API documentation"
+        )
+
         self.auth_table = auth_table
         self.site_name = site_name
+        self.tables = tables
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             self.template = f.read()
+
+        #######################################################################
+
+        api_app = FastAPI()
+
+        for table in tables:
+            api_app.add_route(
+                path=f"/tables/{table._meta.tablename}",
+                route=FastAPIWrapper(
+                    root_url=f"/tables/{table._meta.tablename}",
+                    fastapi_app=api_app,
+                    piccolo_crud=PiccoloCRUD(
+                        table=table, read_only=read_only, page_size=page_size
+                    ),
+                    fastapi_kwargs=FastAPIKwargs(
+                        all_routes={
+                            "tags": [f"{table._meta.tablename.capitalize()}"]
+                        },
+                    ),
+                ),
+            )
+
+        api_app.add_api_route(
+            path="/tables/",
+            endpoint=self.get_table_list,
+            methods=["GET"],
+            response_model=t.List[str],
+            tags=["Tables"],
+        )
+
+        api_app.add_api_route(
+            path="/meta/",
+            endpoint=self.get_meta,
+            methods=["GET"],
+            tags=["Meta"],
+            response_model=MetaResponseModel,
+        )
+
+        api_app.add_api_route(
+            path="/user/",
+            endpoint=self.get_user,
+            methods=["GET"],
+            tags=["User"],
+            response_model=UserResponseModel,
+        )
+
+        #######################################################################
+
+        auth_app = FastAPI()
+
+        if not rate_limit_provider:
+            rate_limit_provider = InMemoryLimitProvider(
+                limit=1000, timespan=300
+            )
+
+        auth_app.mount(
+            path="/login/",
+            app=RateLimitingMiddleware(
+                app=session_login(
+                    auth_table=self.auth_table,
+                    session_table=session_table,
+                    session_expiry=session_expiry,
+                    max_session_expiry=max_session_expiry,
+                    redirect_to=None,
+                    production=production,
+                ),
+                provider=rate_limit_provider,
+            ),
+        )
+
+        auth_app.add_route(
+            path="/logout/",
+            route=session_logout(session_table=session_table),
+            methods=["POST"],
+        )
+
+        #######################################################################
+
+        self.router.add_route(
+            path="/", endpoint=self.get_root, methods=["GET"]
+        )
+
+        self.mount(
+            path="/css",
+            app=StaticFiles(directory=os.path.join(ASSET_PATH, "css")),
+        )
+
+        self.mount(
+            path="/js",
+            app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
+        )
 
         auth_middleware = partial(
             AuthenticationMiddleware,
@@ -77,115 +185,34 @@ class AdminRouter(Router):
             on_error=handle_auth_exception,
         )
 
-        if not rate_limit_provider:
-            rate_limit_provider = InMemoryLimitProvider(
-                limit=1000, timespan=300
-            )
-
-        table_routes: t.List[BaseRoute] = [
-            Mount(
-                path=f"/{table._meta.tablename}/",
-                app=PiccoloCRUD(
-                    table, read_only=read_only, page_size=page_size
-                ),
-            )
-            for table in tables
-        ]
-        table_routes += [
-            Route(path="/", endpoint=self.get_table_list, methods=["GET"],)
-        ]
-
-        routes: t.List[BaseRoute] = [
-            Route(path="/", endpoint=self.get_root, methods=["GET"]),
-            Mount(
-                path="/css",
-                app=StaticFiles(directory=os.path.join(ASSET_PATH, "css")),
-            ),
-            Mount(
-                path="/js",
-                app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
-            ),
-            Mount(
-                path="/api",
-                app=Router(
-                    [
-                        Mount(
-                            path="/tables/",
-                            app=auth_middleware(Router(table_routes)),
-                        ),
-                        Route(
-                            path="/login/",
-                            endpoint=RateLimitingMiddleware(
-                                app=session_login(
-                                    auth_table=self.auth_table,
-                                    session_table=session_table,
-                                    session_expiry=session_expiry,
-                                    max_session_expiry=max_session_expiry,
-                                    redirect_to=None,
-                                    production=production,
-                                ),
-                                provider=rate_limit_provider,
-                            ),
-                            methods=["POST"],
-                        ),
-                        Route(
-                            path="/logout/",
-                            endpoint=session_logout(
-                                session_table=session_table
-                            ),
-                            methods=["POST"],
-                        ),
-                        Mount(
-                            path="/user/",
-                            app=auth_middleware(
-                                Router(
-                                    [Route(path="/", endpoint=self.get_user)]
-                                )
-                            ),
-                        ),
-                        Mount(
-                            path="/meta/",
-                            app=auth_middleware(
-                                Router(
-                                    [Route(path="/", endpoint=self.get_meta)]
-                                )
-                            ),
-                        ),
-                    ]
-                ),
-            ),
-        ]
-
-        self.tables = tables
-        super().__init__(routes)
+        self.mount(path="/api", app=auth_middleware(api_app))
+        self.mount(path="/auth", app=auth_app)
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
 
     ###########################################################################
 
-    def get_user(self, request: Request) -> JSONResponse:
-        return JSONResponse(
-            {
-                "username": request.user.display_name,
-                "user_id": request.user.user_id,
-            }
+    def get_user(self, request: Request) -> UserResponseModel:
+        return UserResponseModel(
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
 
-    def get_meta(self, request: Request) -> JSONResponse:
-        return JSONResponse(
-            {
-                "piccolo_admin_version": piccolo_admin_version,
-                "site_name": self.site_name,
-            }
+    def get_meta(self, request: Request) -> MetaResponseModel:
+        return MetaResponseModel(
+            piccolo_admin_version=piccolo_admin_version,
+            site_name=self.site_name,
         )
 
     ###########################################################################
 
-    def get_table_list(self, request: Request) -> JSONResponse:
-        return JSONResponse([i._meta.tablename for i in self.tables])
+    def get_table_list(self, request: Request) -> t.List[str]:
+        """
+        Returns a list of all tables registered with the admin.
+        """
+        return [i._meta.tablename for i in self.tables]
 
     ###########################################################################
 

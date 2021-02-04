@@ -121,6 +121,7 @@ def run(
     # Server
     class CustomConfig(Config):
         use_reloader = True
+        accesslog = "-"
 
     asyncio.run(serve(APP, CustomConfig()))
 

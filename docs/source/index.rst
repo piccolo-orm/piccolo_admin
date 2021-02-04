@@ -16,4 +16,5 @@ Welcome to Piccolo Admin's documentation
    ../asgi/index
    ../authentication/index
    ../contributing/index
+   ../api_documentation/index
    ../changes/index

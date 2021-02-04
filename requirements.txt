@@ -1,7 +1,8 @@
 starlette>=0.13.0
 piccolo>=0.14.0
-piccolo_api>=0.11.0
+piccolo_api>=0.12.3
 uvicorn
 aiofiles>=0.5.0
 Hypercorn
+fastapi>=0.62.0
 targ>=0.1.9
