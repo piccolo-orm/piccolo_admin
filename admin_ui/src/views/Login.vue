@@ -4,10 +4,16 @@
             <h1>Login</h1>
             <form v-on:submit.prevent="login">
                 <label>Username</label>
-                <input type="text" v-model="username" />
+                <input
+                    type="text"
+                    v-model="username"
+                />
 
                 <label>Password</label>
-                <input type="password" v-model="password" />
+                <input
+                    type="password"
+                    v-model="password"
+                />
 
                 <button>Login</button>
             </form>
@@ -30,7 +36,7 @@ export default {
         async login() {
             console.log("Logging in")
             try {
-                await axios.post(`/auth/login/`, {
+                await axios.post(`./auth/login/`, {
                     username: this.username,
                     password: this.password,
                 })
