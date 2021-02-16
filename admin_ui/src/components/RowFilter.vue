@@ -80,10 +80,32 @@ export default Vue.extend({
         },
         async clearFilters() {
             console.log("Clearing ...")
-            let form: HTMLFormElement = this.$refs.form
+            let form: any = this.$refs.form
+
+            let elements = form.elements
             form.reset()
+
+            for (let i = 0; i < elements.length; i++) {
+                let field_type = elements[i].type
+
+                switch (field_type) {
+                    case "text":
+                    case "textarea":
+                    case "hidden":
+                        elements[i].value = ""
+                        break
+                    case "select-one":
+                        elements[i].selectedIndex = 0
+                        break
+
+                    default:
+                        break
+                }
+            }
+
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
+
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
