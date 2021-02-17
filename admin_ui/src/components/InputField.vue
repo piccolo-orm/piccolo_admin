@@ -17,8 +17,13 @@
                     :fieldName="title.toLowerCase()"
                     v-if="isFilter"
                 />
+                <!--
+                `disableMobile` is very poorly named - setting it to 'true'
+                enables the picker on mobile devices. It doesn't work great on
+                iOS, so an alternative picker is needed.
+                -->
                 <flat-pickr
-                    v-bind:config="{ enableTime: true }"
+                    v-bind:config="{ enableTime: true, disableMobile: 'true' }"
                     v-bind:name="getFieldName(title)"
                     v-model="localValue"
                 ></flat-pickr>
