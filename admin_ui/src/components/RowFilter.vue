@@ -80,10 +80,18 @@ export default Vue.extend({
         },
         async clearFilters() {
             console.log("Clearing ...")
-            let form: HTMLFormElement = this.$refs.form
+            let form: any = this.$refs.form
+            let elements = [...form.elements].forEach((element) => {
+                if (element.type == "hidden") {
+                    element.value = ""
+                }
+            })
+
             form.reset()
+
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
+
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
