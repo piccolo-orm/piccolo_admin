@@ -32,12 +32,9 @@
                 </label>
                 <KeySelect
                     v-bind:fieldName="property.title.toLowerCase()"
-                    v-bind:isFilter="isFilter"
-                    v-bind:isNullable="property.nullable"
-                    v-bind:key="getKey(keyName)"
+                    v-bind:key="getValue(property.title)"
                     v-bind:tableName="property.extra.to"
                     v-bind:value="getValue(property.title)"
-                    v-on:valueChanged="keySelectChanged(property.title, $event)"
                 />
             </template>
             <template v-else>
@@ -75,68 +72,35 @@ export default Vue.extend({
         schema: Object,
         isFilter: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     components: {
         InputField,
-        KeySelect
+        KeySelect,
     },
     data() {
         return {
             keySelectIDs: {},
-            baseIndex: 1,
-            windowListener: undefined
         }
     },
     methods: {
         getValue(propertyTitle: string) {
             let value = this.row
-                ? this.row[
-                      propertyTitle
-                          .toLowerCase()
-                          .split(" ")
-                          .join("_")
-                  ]
+                ? this.row[propertyTitle.toLowerCase().split(" ").join("_")]
                 : undefined
             return value
         },
         getKeySelectID(propertyTitle: string) {
-            return (
-                this.keySelectIDs[propertyTitle] || this.getValue(propertyTitle)
-            )
-        },
-        keySelectChanged(propertyTitle: string, value: number) {
-            console.log(`${propertyTitle} = ${value}`)
-            Vue.set(this.keySelectIDs, propertyTitle, value)
-        },
-        // We use this to refresh KeySelect components
-        getKey(keyName: string) {
-            return keyName + this.baseIndex
+            return this.getValue(propertyTitle)
         },
         isRequired(keyName: string) {
             return (
                 !this.isFilter &&
                 (this.schema.required || []).indexOf(keyName) != -1
             )
-        }
+        },
     },
-    mounted() {
-        window.addEventListener("message", receiveMessage, false)
-
-        let app = this
-
-        function receiveMessage(event) {
-            if (event.origin !== document.location.origin) return
-            console.log("Received message")
-            app.baseIndex = app.baseIndex + 1
-        }
-    },
-    destroyed() {
-        if (this.windowListener) {
-            window.removeEventListener("message", this.windowListener)
-        }
-    }
 })
 </script>
 
