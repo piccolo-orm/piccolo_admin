@@ -5,7 +5,10 @@ Can be run from the command line using `python -m piccolo_admin.example`,
 or `admin_demo`.
 """
 import asyncio
+import datetime
+import decimal
 import os
+import random
 import typing as t
 
 from hypercorn.asyncio import serve
@@ -30,7 +33,7 @@ from piccolo.columns.readable import Readable
 import targ
 
 from piccolo_admin.endpoints import create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIES
+from piccolo_admin.example_data import DIRECTORS, MOVIES, MOVIE_WORDS
 
 
 class Sessions(SessionsBase):
@@ -85,7 +88,15 @@ def create_schema(persist: bool = False):
         table_class.create_table(if_not_exists=True).run_sync()
 
 
-def populate_data():
+def populate_data(inflate: int = 0):
+    """
+    Populate the database with some example data.
+
+    :param inflate:
+        If set, this number of extra rows are inserted containing dummy data.
+        This is useful for testing.
+
+    """
     # Add some rows
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
@@ -99,10 +110,74 @@ def populate_data():
     )
     user.save().run_sync()
 
+    if inflate:
+        try:
+            import faker
+        except ImportError:
+            print(
+                "Install faker to use this feature: "
+                "`pip install piccolo_admin[faker]`"
+            )
+        else:
+            fake = faker.Faker()
+            remaining = inflate
+            chunk_size = 100
 
-def run(
-    persist: bool = False, engine: str = "sqlite",
-):
+            while remaining > 0:
+                if remaining < chunk_size:
+                    chunk_size = remaining
+                    remaining = 0
+                else:
+                    remaining = remaining - chunk_size
+
+                Director.insert(
+                    *[Director(name=fake.name()) for _ in range(chunk_size)]
+                ).run_sync()
+
+                director_ids = (
+                    Director.select(Director.id)
+                    .order_by(Director.id, ascending=False)
+                    .limit(chunk_size)
+                    .output(as_list=True)
+                    .run_sync()
+                )
+
+                movies = []
+                for _ in range(chunk_size):
+                    oscar_nominations = random.sample(
+                        [0, 0, 0, 0, 0, 1, 1, 3, 5], 1
+                    )[0]
+                    won_oscar = oscar_nominations > 0
+                    rating = (
+                        random.randint(80, 100)
+                        if won_oscar
+                        else random.randint(1, 100)
+                    ) / 10
+
+                    movie = Movie(
+                        name="{} {}".format(
+                            fake.word().title(),
+                            fake.word(ext_word_list=MOVIE_WORDS),
+                        ),
+                        rating=rating,
+                        duration=datetime.timedelta(
+                            minutes=random.randint(60, 210)
+                        ),
+                        director=random.sample(director_ids, 1)[0],
+                        oscar_nominations=oscar_nominations,
+                        won_oscar=won_oscar,
+                        description=fake.sentence(30),
+                        release_date=fake.date_time(),
+                        box_office=decimal.Decimal(
+                            str(random.randint(10, 1500) / 10)
+                        ),
+                    )
+                    movies.append(movie)
+
+                Movie.insert(*movies).run_sync()
+
+
+def run(persist: bool = False, engine: str = "sqlite", inflate: int = 0):
     """
     Start the Piccolo admin.
 
@@ -110,13 +185,17 @@ def run(
         If True, we don't rebuild all of the data each time.
     :param engine:
         Options are sqlite and postgres. By default sqlite is used.
+    :param inflate:
+        If set, this number of extra rows are inserted containing dummy data.
+        This is useful when you need to test with lots of data. Example
+        `--inflate=10000`.
 
     """
     set_engine(engine)
     create_schema(persist=persist)
 
     if not persist:
-        populate_data()
+        populate_data(inflate=inflate)
 
     # Server
     class CustomConfig(Config):

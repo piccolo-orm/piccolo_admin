@@ -30,5 +30,11 @@ The UI needs an API to interact with - the easiest way to do this is to use the 
     # Or alternatively
     python -m piccolo_admin.example
 
+    # You can also populate lots of test data
+    python -m piccolo_admin.example --inflate=10000
+
+    # To find out all available options:
+    python -m piccolo_admin.example --help
+
 
 You will need to configure a local webserver as a proxy - see extra/piccolo_admin.

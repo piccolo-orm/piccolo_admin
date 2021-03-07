@@ -274,3 +274,36 @@ MOVIES = [
         "box_office": Decimal("956.0"),
     },
 ]
+
+
+# Some random words used to generate fake movie names.
+MOVIE_WORDS = [
+    "Adventure",
+    "Alien",
+    "Armageddon",
+    "Android",
+    "Bridge",
+    "Captain",
+    "Destruction",
+    "Evolution",
+    "Extreme",
+    "Fantasy",
+    "Friend",
+    "Galaxy",
+    "King",
+    "Lord",
+    "Master",
+    "Max",
+    "Mutant",
+    "Outpost",
+    "Partner",
+    "Phantom",
+    "Power",
+    "Returns",
+    "Revenge",
+    "Robot",
+    "Star",
+    "Throne",
+    "Thunder",
+    "Twin",
+]
