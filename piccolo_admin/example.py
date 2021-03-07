@@ -88,7 +88,7 @@ def create_schema(persist: bool = False):
         table_class.create_table(if_not_exists=True).run_sync()
 
 
-def populate_data(inflate: int = 0):
+def populate_data(inflate: int = 0, engine: str = "sqlite"):
     """
     Populate the database with some example data.
 
@@ -100,6 +100,13 @@ def populate_data(inflate: int = 0):
     # Add some rows
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
+
+    if engine == "postgres":
+        # We need to update the sequence, as we explicitly set the IDs for the
+        # directors we just inserted
+        Director.raw(
+            "SELECT setval('director_id_seq', max(id)) FROM director"
+        ).run_sync()
 
     # Create a user for testing login
     user = User(
@@ -195,7 +202,7 @@ def run(persist: bool = False, engine: str = "sqlite", inflate: int = 0):
     create_schema(persist=persist)
 
     if not persist:
-        populate_data(inflate=inflate)
+        populate_data(inflate=inflate, engine=engine)
 
     # Server
     class CustomConfig(Config):
