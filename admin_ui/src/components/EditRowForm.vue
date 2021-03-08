@@ -26,7 +26,7 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowForm
+            <RowFormSelect
                 :row="selectedRow"
                 :schema="schema"
             />
@@ -44,10 +44,10 @@
 <script lang="ts">
 import Vue from "vue"
 
-import ReferencingTables from "../components/ReferencingTables.vue"
+import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
-import RowForm from "./RowForm.vue"
+import RowFormSelect from "./RowFormSelect.vue"
 
 import { UpdateRow, DeleteRow } from "../interfaces"
 
@@ -56,13 +56,13 @@ export default Vue.extend({
     components: {
         DeleteButton,
         DropDownMenu,
-        RowForm,
-        ReferencingTables
+        RowFormSelect,
+        ReferencingTables,
     },
-    data: function() {
+    data: function () {
         return {
             errors: "",
-            showDropdown: false
+            showDropdown: false,
         }
     },
     computed: {
@@ -71,7 +71,7 @@ export default Vue.extend({
         },
         selectedRow() {
             return this.$store.state.selectedRow
-        }
+        },
     },
     methods: {
         async submitForm(event) {
@@ -87,7 +87,7 @@ export default Vue.extend({
             let config: UpdateRow = {
                 tableName: this.tableName,
                 rowID: this.rowID,
-                data: json
+                data: json,
             }
             try {
                 await this.$store.dispatch("updateRow", config)
@@ -105,13 +105,13 @@ export default Vue.extend({
             if (window.confirm("Are you sure you want to delete this row?")) {
                 let config: DeleteRow = {
                     tableName: this.tableName,
-                    rowID: this.rowID
+                    rowID: this.rowID,
                 }
                 await this.$store.dispatch("deleteRow", config)
                 alert("Successfully deleted row")
                 this.$router.push({
                     name: "rowListing",
-                    params: { tableName: this.tableName }
+                    params: { tableName: this.tableName },
                 })
             }
         },
@@ -119,27 +119,27 @@ export default Vue.extend({
             this.$store.commit("updateCurrentTablename", this.tableName)
             await this.$store.dispatch("fetchSingleRow", {
                 tableName: this.tableName,
-                rowID: this.rowID
+                rowID: this.rowID,
             })
-        }
+        },
     },
     watch: {
-        "$route.params.tableName": async function() {
+        "$route.params.tableName": async function () {
             await Promise.all([
                 this.fetchData(),
-                this.$store.dispatch("fetchSchema", this.tableName)
+                this.$store.dispatch("fetchSchema", this.tableName),
             ])
         },
-        "$route.params.rowID": async function() {
+        "$route.params.rowID": async function () {
             await this.fetchData()
-        }
+        },
     },
     async mounted() {
         await Promise.all([
             this.fetchData(),
-            this.$store.dispatch("fetchSchema", this.tableName)
+            this.$store.dispatch("fetchSchema", this.tableName),
         ])
-    }
+    },
 })
 </script>
 

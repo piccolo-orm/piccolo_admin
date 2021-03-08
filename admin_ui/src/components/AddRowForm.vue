@@ -8,7 +8,7 @@
             v-if="defaults"
             v-on:submit.prevent="submitForm($event)"
         >
-            <RowForm
+            <RowFormSelect
                 v-bind:row="defaults"
                 v-bind:schema="schema"
             />
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import RowForm from "./RowForm.vue"
+import RowFormSelect from "./RowFormSelect.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default {
@@ -27,7 +27,7 @@ export default {
         schema: Object,
     },
     components: {
-        RowForm,
+        RowFormSelect,
     },
     data: function () {
         return {

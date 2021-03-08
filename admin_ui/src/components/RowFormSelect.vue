@@ -75,29 +75,24 @@ export default Vue.extend({
         schema: Object,
         isFilter: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     components: {
         InputField,
-        KeySelect
+        KeySelect,
     },
     data() {
         return {
             keySelectIDs: {},
             baseIndex: 1,
-            windowListener: undefined
+            windowListener: undefined,
         }
     },
     methods: {
         getValue(propertyTitle: string) {
             let value = this.row
-                ? this.row[
-                      propertyTitle
-                          .toLowerCase()
-                          .split(" ")
-                          .join("_")
-                  ]
+                ? this.row[propertyTitle.toLowerCase().split(" ").join("_")]
                 : undefined
             return value
         },
@@ -119,7 +114,7 @@ export default Vue.extend({
                 !this.isFilter &&
                 (this.schema.required || []).indexOf(keyName) != -1
             )
-        }
+        },
     },
     mounted() {
         window.addEventListener("message", receiveMessage, false)
@@ -136,7 +131,7 @@ export default Vue.extend({
         if (this.windowListener) {
             window.removeEventListener("message", this.windowListener)
         }
-    }
+    },
 })
 </script>
 

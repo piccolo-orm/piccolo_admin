@@ -30,17 +30,17 @@ export default {
         value: undefined,
         isFilter: {
             type: Boolean,
-            default: false
+            default: false,
         },
         isNullable: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     data() {
         return {
             ids: [],
-            selectedValue: undefined
+            selectedValue: undefined,
         }
     },
     methods: {
@@ -50,7 +50,7 @@ export default {
                 this.tableName
             )
             this.ids = response.data
-        }
+        },
     },
     watch: {
         async tableName() {
@@ -58,12 +58,12 @@ export default {
         },
         value() {
             this.selectedValue = this.value
-        }
+        },
     },
     async mounted() {
         await this.fetchData()
         this.selectedValue = this.value
-    }
+    },
 }
 </script>
 

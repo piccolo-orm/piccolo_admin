@@ -16,7 +16,7 @@
             ref="form"
             v-on:submit.prevent="submitForm($event)"
         >
-            <RowForm
+            <RowFormSearch
                 v-bind:isFilter="true"
                 v-bind:schema="schema"
             />
@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import RowForm from "./RowForm.vue"
+import RowFormSearch from "./RowFormSearch.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default Vue.extend({
@@ -37,7 +37,7 @@ export default Vue.extend({
         showFilterSidebar: Boolean,
     },
     components: {
-        RowForm,
+        RowFormSearch,
     },
     computed: {
         schema() {
