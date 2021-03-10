@@ -26,17 +26,11 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect
-                :row="selectedRow"
-                :schema="schema"
-            />
+            <RowFormSelect :row="selectedRow" :schema="schema" />
             <button>Save</button>
         </form>
 
-        <ReferencingTables
-            :rowID="rowID"
-            :tableName="tableName"
-        />
+        <ReferencingTables :rowID="rowID" :tableName="tableName" />
     </div>
 </template>
 
@@ -81,7 +75,7 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0].split(" ").join("_")] = i[1]
+                json[i[0].split(" ").join("_")] = i[1] == "null" ? null : i[1]
             }
 
             let config: UpdateRow = {
