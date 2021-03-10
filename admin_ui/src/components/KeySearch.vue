@@ -22,14 +22,14 @@
         >
             <ul>
                 <li
-                    :key="id"
-                    v-for="(readable, id) in ids"
+                    :key="id[0]"
+                    v-for="id in ids"
                     v-on:click="
-                        selectResult(readable, id)
+                        selectResult(...id)
                         showResults = false
                     "
                 >
-                    {{ readable }}
+                    {{ id[1] }}
                 </li>
             </ul>
         </div>
@@ -66,9 +66,19 @@ export default {
                 limit: 15,
             }
             const response = await this.$store.dispatch("fetchIds", config)
-            this.ids = response.data
+            // The response is a mapping of id to readable. We convert into
+            // an array of arrays like [[1, 'Bob'], ...], then sort them.
+            this.ids = Object.entries(response.data).sort((i, j) => {
+                if (i[1] > j[1]) {
+                    return 1
+                }
+                if (i[1] < j[1]) {
+                    return -1
+                }
+                return 0
+            })
         },
-        selectResult(readable, id) {
+        selectResult(id, readable) {
             this.selectedValue = readable
             this.hiddenSelectedValue = id
         },
