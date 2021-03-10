@@ -6,30 +6,44 @@
             type="text"
             v-bind:name="fieldName"
             v-model="selectedValue"
-            v-on:focus="resetResult(), toggle = true"
+            v-on:focus="
+                resetResult()
+                showResults = true
+            "
             v-on:keydown.enter.prevent
         />
         <div
-            id="results"
-            v-if="toggle"
+            class="results"
+            v-if="
+                selectedValue != undefined &&
+                showResults &&
+                Object.keys(ids).length > 0
+            "
         >
-            <div
-                :key="id"
-                v-for="(readable, id) in dropdownItems"
-                v-on:click="selectResult(readable, id), toggle = false"
-                v-on:focus="resetResult(), toggle = true"
-            >{{ readable }}</div>
+            <ul>
+                <li
+                    :key="id"
+                    v-for="(readable, id) in ids"
+                    v-on:click="
+                        selectResult(readable, id)
+                        showResults = false
+                    "
+                >
+                    {{ readable }}
+                </li>
+            </ul>
         </div>
         <input
             :value="hiddenSelectedValue"
             type="hidden"
             v-bind:name="fieldName"
-            v-on:focus="toggle = true"
         />
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { FetchIdsConfig } from "../interfaces"
+
 export default {
     props: {
         fieldName: String,
@@ -39,18 +53,19 @@ export default {
     data() {
         return {
             ids: [],
-            dropdownItems: {},
             selectedValue: undefined,
             hiddenSelectedValue: undefined,
-            toggle: false,
+            showResults: false,
         }
     },
     methods: {
         async fetchData() {
-            const response = await this.$store.dispatch(
-                "fetchIds",
-                this.tableName
-            )
+            const config: FetchIdsConfig = {
+                tableName: this.tableName,
+                search: this.selectedValue,
+                limit: 15,
+            }
+            const response = await this.$store.dispatch("fetchIds", config)
             this.ids = response.data
         },
         selectResult(readable, id) {
@@ -67,23 +82,13 @@ export default {
         async tableName() {
             await this.fetchData()
         },
-        selectedValue(searchValue) {
-            this.dropdownItems = {}
-            for (const property in this.ids) {
-                if (
-                    this.ids[property]
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase())
-                ) {
-                    this.dropdownItems[property] = this.ids[property]
-                }
-            }
+        async selectedValue(searchValue) {
+            await this.fetchData()
         },
     },
-    async mounted() {
+    mounted() {
         this.selectedValue = this.value
         this.hiddenSelectedValue = this.value
-        await this.fetchData()
     },
 }
 </script>
@@ -92,23 +97,48 @@ export default {
 <style lang="less" scoped>
 @import "../vars.less";
 
+.results {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+            box-sizing: border-box;
+            padding: 0.2rem;
+            list-style: none;
+        }
+    }
+}
+
 .light_mode {
     background-color: white;
     color: @dark_grey;
-    #results {
-        cursor: pointer;
+
+    .results {
         background-color: darken(white, 5%);
         color: @dark_grey;
+
+        li:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
     }
 }
 
 .dark_mode {
     background-color: @dark_grey;
     color: @off_white;
-    #results {
-        cursor: pointer;
+
+    .results {
         background-color: darken(@dark_grey, 4%);
         color: @off_white;
+
+        li:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
     }
 }
 </style>
