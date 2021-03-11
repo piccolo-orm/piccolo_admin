@@ -11,6 +11,7 @@
                 showResults = true
             "
             v-on:keydown.enter.prevent
+            v-on:change="checkNull"
         />
         <div
             class="results"
@@ -86,6 +87,13 @@ export default {
         resetResult() {
             this.selectedValue = undefined
             this.hiddenSelectedValue = undefined
+        },
+        checkNull(event) {
+            // The work around for setting a value of Null, is to type it in.
+            if (event.target.value.toUpperCase() == "NULL") {
+                console.log("Setting as null")
+                this.hiddenSelectedValue = null
+            }
         },
     },
     watch: {
