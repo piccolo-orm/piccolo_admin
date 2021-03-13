@@ -88,19 +88,16 @@ class AdminRouter(FastAPI):
         api_app = FastAPI()
 
         for table in tables:
-            api_app.add_route(
-                path=f"/tables/{table._meta.tablename}/",
-                route=FastAPIWrapper(
-                    root_url=f"/tables/{table._meta.tablename}/",
-                    fastapi_app=api_app,
-                    piccolo_crud=PiccoloCRUD(
-                        table=table, read_only=read_only, page_size=page_size
-                    ),
-                    fastapi_kwargs=FastAPIKwargs(
-                        all_routes={
-                            "tags": [f"{table._meta.tablename.capitalize()}"]
-                        },
-                    ),
+            FastAPIWrapper(
+                root_url=f"/tables/{table._meta.tablename}/",
+                fastapi_app=api_app,
+                piccolo_crud=PiccoloCRUD(
+                    table=table, read_only=read_only, page_size=page_size
+                ),
+                fastapi_kwargs=FastAPIKwargs(
+                    all_routes={
+                        "tags": [f"{table._meta.tablename.capitalize()}"]
+                    },
                 ),
             )
 
