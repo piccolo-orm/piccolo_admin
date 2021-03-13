@@ -139,9 +139,22 @@ export default new Vuex.Store({
             )
             return response
         },
-        async fetchIds(context, tableName: string) {
+        async fetchIds(context, config: i.FetchIdsConfig) {
+            const params = {}
+
+            if (config.search) {
+                params['search'] = config.search
+            }
+
+            if (config.limit) {
+                params['limit'] = config.limit
+            }
+
             const response = await axios.get(
-                `${BASE_URL}tables/${tableName}/ids/`
+                `${BASE_URL}tables/${config.tableName}/ids/`,
+                {
+                    params
+                }
             )
             return response
         },

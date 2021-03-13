@@ -14,9 +14,16 @@ export interface UpdateRow {
     data: object
 }
 
+
+export interface FetchIdsConfig {
+    tableName: string
+    limit: number
+    search: string
+}
+
 export interface FetchRowsConfig {
     tableName: string
-    params: object,
+    params: object
 }
 
 

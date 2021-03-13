@@ -4,25 +4,23 @@
         v-model="selectedValue"
         v-on:change="$emit('valueChanged', selectedValue)"
     >
-        <option
-            v-if="isFilter"
-            value="all"
-        >All</option>
-        <option
-            v-if="isNullable"
-            value="null"
-        >Null</option>
+        <option v-if="isFilter" value="all">All</option>
+        <option v-if="isNullable" value="null">Null</option>
         <option
             :key="id"
             :selected="value == id"
             :value="id"
             v-for="(readable, id) in ids"
-        >{{ readable }}</option>
+        >
+            {{ readable }}
+        </option>
     </select>
 </template>
 
 
-<script>
+<script lang="ts">
+import { FetchIdsConfig } from "../interfaces"
+
 export default {
     props: {
         fieldName: String,
@@ -30,27 +28,29 @@ export default {
         value: undefined,
         isFilter: {
             type: Boolean,
-            default: false
+            default: false,
         },
         isNullable: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     data() {
         return {
             ids: [],
-            selectedValue: undefined
+            selectedValue: undefined,
         }
     },
     methods: {
         async fetchData() {
-            const response = await this.$store.dispatch(
-                "fetchIds",
-                this.tableName
-            )
+            const config: FetchIdsConfig = {
+                tableName: this.tableName,
+                search: undefined,
+                limit: undefined,
+            }
+            const response = await this.$store.dispatch("fetchIds", config)
             this.ids = response.data
-        }
+        },
     },
     watch: {
         async tableName() {
@@ -58,12 +58,12 @@ export default {
         },
         value() {
             this.selectedValue = this.value
-        }
+        },
     },
     async mounted() {
         await this.fetchData()
         this.selectedValue = this.value
-    }
+    },
 }
 </script>
 

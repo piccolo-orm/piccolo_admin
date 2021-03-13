@@ -4,21 +4,15 @@
 
         <pre>{{ errors }}</pre>
 
-        <form
-            v-if="defaults"
-            v-on:submit.prevent="submitForm($event)"
-        >
-            <RowForm
-                v-bind:row="defaults"
-                v-bind:schema="schema"
-            />
+        <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
+            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
             <button>Create</button>
         </form>
     </div>
 </template>
 
 <script lang="ts">
-import RowForm from "./RowForm.vue"
+import RowFormSelect from "./RowFormSelect.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default {
@@ -27,7 +21,7 @@ export default {
         schema: Object,
     },
     components: {
-        RowForm,
+        RowFormSelect,
     },
     data: function () {
         return {
@@ -42,7 +36,7 @@ export default {
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0].split(" ").join("_")] = i[1]
+                json[i[0].split(" ").join("_")] = i[1] == "null" ? null : i[1]
             }
             try {
                 await this.$store.dispatch("createRow", {
