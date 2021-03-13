@@ -21,22 +21,20 @@ APP = create_admin(
 )
 
 
-def run(host="localhost", port=8080):
+def sandbox(host: str = "localhost", port: int = 8080):
+    """
+    Run the Piccolo Admin in read only mode with a SQLite database.
+
+    :param host:
+        Which host to serve the app on.
+    :param host:
+        Which port to serve the app on.
+
+    """
     set_engine()
     create_schema(persist=False)
     populate_data()
     uvicorn.run(APP, host=host, port=port)
-
-
-def sandbox(production: bool = False):
-    """
-    Run the Piccolo Admin in read only mode with a SQLite database.
-    """
-    kwargs = {}
-    if production:
-        kwargs.update({"host": "0.0.0.0", "port": 80})
-
-    run(**kwargs)
 
 
 if __name__ == "__main__":
