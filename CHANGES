@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.11.8
+------
+ * The foreign key selector in the sidebar is now search based, rather than a
+select element - courtesy of sinisaos. This makes the admin work better with
+very large data sets.
+ * Fixed a bug with nullable foreign keys. The value can now be set to null
+without a validation error.
+
 0.11.7
 ------
 Added a ``--inflate`` option to the CLI in example.py. This allows lots of
