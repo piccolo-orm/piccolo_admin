@@ -36,10 +36,6 @@
                     v-bind:tableName="property.extra.to"
                     v-bind:value="$route.params.rowID ? row[keyName + '_readable']: ''"
                 />
-                <input
-                    type="hidden"
-                    v-bind:value="getValue(property.title)"
-                />
             </template>
             <template v-else>
                 <label>
