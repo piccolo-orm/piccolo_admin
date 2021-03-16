@@ -30,14 +30,15 @@
                         <font-awesome-icon icon="edit" />
                     </router-link>
                 </label>
-                <KeySelect
+                <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
-                    v-bind:isFilter="isFilter"
-                    v-bind:isNullable="property.nullable"
-                    v-bind:key="getKey(keyName)"
+                    v-bind:key="getValue(property.title)"
                     v-bind:tableName="property.extra.to"
+                    v-bind:value="$route.params.rowID ? row[keyName + '_readable']: ''"
+                />
+                <input
+                    type="hidden"
                     v-bind:value="getValue(property.title)"
-                    v-on:valueChanged="keySelectChanged(property.title, $event)"
                 />
             </template>
             <template v-else>
@@ -66,7 +67,7 @@
 <script lang="ts">
 import Vue from "vue"
 
-import KeySelect from "./KeySelect.vue"
+import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 
 export default Vue.extend({
@@ -80,7 +81,7 @@ export default Vue.extend({
     },
     components: {
         InputField,
-        KeySelect,
+        KeySearch,
     },
     data() {
         return {

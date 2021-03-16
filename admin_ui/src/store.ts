@@ -166,7 +166,7 @@ export default new Vuex.Store({
         },
         async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
             const response = await axios.get(
-                `${BASE_URL}tables/${config.tableName}/${config.rowID}/`
+                `${BASE_URL}tables/${config.tableName}/${config.rowID}/?__readable=true`
             )
             context.commit('updateSelectedRow', response.data)
             return response
