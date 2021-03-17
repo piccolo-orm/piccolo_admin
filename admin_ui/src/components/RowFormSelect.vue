@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="row">
         <div
             v-bind:key="property.title"
             v-for="(property, keyName) in schema.properties"
