@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="row">
         <div
             v-bind:key="property.title"
             v-for="(property, keyName) in schema.properties"
@@ -7,13 +7,13 @@
             <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
-                    <span
-                        class="required"
-                        v-if="isRequired(keyName)"
-                    >*</span>
+                    <span class="required" v-if="isRequired(keyName)">*</span>
 
                     <router-link
-                        :to="{name: 'addRow', params: {tableName: property.extra.to}}"
+                        :to="{
+                            name: 'addRow',
+                            params: { tableName: property.extra.to },
+                        }"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -22,7 +22,13 @@
                     </router-link>
 
                     <router-link
-                        :to="{name: 'editRow', params: {tableName: property.extra.to, rowID: getKeySelectID(property.title)}}"
+                        :to="{
+                            name: 'editRow',
+                            params: {
+                                tableName: property.extra.to,
+                                rowID: getKeySelectID(property.title),
+                            },
+                        }"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -30,23 +36,18 @@
                         <font-awesome-icon icon="edit" />
                     </router-link>
                 </label>
-                <KeySelect
+                <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
-                    v-bind:isFilter="isFilter"
-                    v-bind:isNullable="property.nullable"
-                    v-bind:key="getKey(keyName)"
+                    v-bind:key="getValue(property.title)"
                     v-bind:tableName="property.extra.to"
-                    v-bind:value="getValue(property.title)"
-                    v-on:valueChanged="keySelectChanged(property.title, $event)"
+                    v-bind:rowID="getValue(property.title)"
+                    v-bind:readable="getValue(property.title + '_readable')"
                 />
             </template>
             <template v-else>
                 <label>
                     {{ property.title }}
-                    <span
-                        class="required"
-                        v-if="isRequired(keyName)"
-                    >*</span>
+                    <span class="required" v-if="isRequired(keyName)">*</span>
                 </label>
                 <InputField
                     v-bind:format="property.format"
@@ -66,7 +67,7 @@
 <script lang="ts">
 import Vue from "vue"
 
-import KeySelect from "./KeySelect.vue"
+import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 
 export default Vue.extend({
@@ -80,7 +81,7 @@ export default Vue.extend({
     },
     components: {
         InputField,
-        KeySelect,
+        KeySearch,
     },
     data() {
         return {
