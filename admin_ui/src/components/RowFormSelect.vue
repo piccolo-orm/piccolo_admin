@@ -7,13 +7,13 @@
             <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
-                    <span
-                        class="required"
-                        v-if="isRequired(keyName)"
-                    >*</span>
+                    <span class="required" v-if="isRequired(keyName)">*</span>
 
                     <router-link
-                        :to="{name: 'addRow', params: {tableName: property.extra.to}}"
+                        :to="{
+                            name: 'addRow',
+                            params: { tableName: property.extra.to },
+                        }"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -22,7 +22,13 @@
                     </router-link>
 
                     <router-link
-                        :to="{name: 'editRow', params: {tableName: property.extra.to, rowID: getKeySelectID(property.title)}}"
+                        :to="{
+                            name: 'editRow',
+                            params: {
+                                tableName: property.extra.to,
+                                rowID: getKeySelectID(property.title),
+                            },
+                        }"
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
@@ -34,16 +40,14 @@
                     v-bind:fieldName="property.title.toLowerCase()"
                     v-bind:key="getValue(property.title)"
                     v-bind:tableName="property.extra.to"
-                    v-bind:value="$route.params.rowID ? row[keyName + '_readable']: ''"
+                    v-bind:rowID="getValue(property.title)"
+                    v-bind:readable="getValue(property.title + '_readable')"
                 />
             </template>
             <template v-else>
                 <label>
                     {{ property.title }}
-                    <span
-                        class="required"
-                        v-if="isRequired(keyName)"
-                    >*</span>
+                    <span class="required" v-if="isRequired(keyName)">*</span>
                 </label>
                 <InputField
                     v-bind:format="property.format"

@@ -4,7 +4,6 @@
             autocomplete="off"
             placeholder="Type here to search"
             type="text"
-            v-bind:name="fieldName"
             v-model="selectedValue"
             v-on:focus="
                 resetResult()
@@ -49,7 +48,8 @@ export default {
     props: {
         fieldName: String,
         tableName: String,
-        value: undefined,
+        rowID: undefined,
+        readable: undefined,
     },
     data() {
         return {
@@ -100,13 +100,13 @@ export default {
         async tableName() {
             await this.fetchData()
         },
-        async selectedValue(searchValue) {
+        async selectedValue() {
             await this.fetchData()
         },
     },
     mounted() {
-        this.selectedValue = this.value
-        this.hiddenSelectedValue = this.value
+        this.selectedValue = this.readable
+        this.hiddenSelectedValue = this.rowID
     },
 }
 </script>
