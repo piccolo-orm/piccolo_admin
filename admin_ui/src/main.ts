@@ -18,12 +18,14 @@ import {
     faEdit,
     faEllipsisV,
     faExternalLinkAlt,
+    faFileCsv,
     faFilter,
-    faLevelUpAlt,
     faHome,
     faInfoCircle,
+    faLevelUpAlt,
     faMoon,
     faPlus,
+    faQuestionCircle,
     faSignOutAlt,
     faSort,
     faSun,
@@ -32,7 +34,6 @@ import {
     faTools,
     faTrashAlt,
     faUser,
-    faFileCsv
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faAngleDown,
@@ -44,12 +45,14 @@ library.add(
     faEdit,
     faEllipsisV,
     faExternalLinkAlt,
+    faFileCsv,
     faFilter,
     faHome,
     faInfoCircle,
     faLevelUpAlt,
     faMoon,
     faPlus,
+    faQuestionCircle,
     faSignOutAlt,
     faSort,
     faSun,
@@ -58,7 +61,6 @@ library.add(
     faTools,
     faTrashAlt,
     faUser,
-    faFileCsv
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

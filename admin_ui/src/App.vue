@@ -134,8 +134,11 @@ html {
 }
 
 body {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
     margin: 0;
+    position: relative;
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -285,6 +288,7 @@ body {
 }
 
 #app {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     min-height: 100%;

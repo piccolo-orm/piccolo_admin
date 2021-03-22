@@ -54,14 +54,14 @@ class Director(Table):
 
 class Movie(Table):
     name = Varchar(length=300)
-    rating = Real()
+    rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
     director = ForeignKey(references=Director)
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
     release_date = Timestamp()
-    box_office = Numeric(digits=(5, 1))
+    box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)

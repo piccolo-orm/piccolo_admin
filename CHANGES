@@ -2,28 +2,28 @@ Changes
 =======
 
 0.11.10
-------
+-------
  * The foreign key selector in the add and edit row forms now use the search
- based UI - courtesy of sinisaos.
+   based UI, courtesy of sinisaos.
  * Fixing a Vue JS warning about a route parameter being undefined.
 
 0.11.9
 ------
  * Exposed the ``host`` and ``port`` options directly in the sandbox CLI.
- * Fixing a bug with read only mode - was raising a 500 with disallowed HTTPS
- methods
+ * Fixing a bug with read only mode. Was raising a 500 with disallowed HTTPS
+   methods
 
 0.11.8
 ------
  * The foreign key selector in the sidebar is now search based, rather than a
-select element - courtesy of sinisaos. This makes the admin work better with
-very large data sets.
+   select element, courtesy of sinisaos. This makes the admin work better with
+   very large data sets.
  * Fixed a bug with nullable foreign keys. The value can now be set to null
-without a validation error.
+   without a validation error.
 
 0.11.7
 ------
-Added a ``--inflate`` option to the CLI in example.py. This allows lots of
+Added an ``--inflate`` option to the CLI in example.py. This allows lots of
 dummy data to be added during development.
 
 0.11.6
@@ -55,9 +55,9 @@ Starlette.
 0.11.0
 ------
  * Refactored ``AdminRouter`` to use ``FastAPI``. This means the API is fully
-documented - courtesy of sinisaos.
+   documented - courtesy of sinisaos.
  * Moved auth endpoints from ``/api/`` to ``/auth/``, to separate
-auth from the main API.
+   auth from the main API.
 
 0.10.9
 ------
@@ -201,44 +201,44 @@ Updated sandbox - populates data.
 -----
 Added sandbox, for deploying demo version online.
 
-v0.3.3
-------
+0.3.3
+-----
 UI improvements, including light mode. Support for pagination, and operators
 in filters.
 
-v0.3.2
-------
+0.3.2
+-----
 Fixed typo - missing trailing slash.
 
-v0.3.1
-------
+0.3.1
+-----
 Improved auth error handling, and adding defaults automatically when adding
 a new row.
 
-v0.3.0
-------
+0.3.0
+-----
 Login is working, and various UI improvements.
 
-v0.2.0
-------
+0.2.0
+-----
 Updated to work with Piccolo API code layout changes.
 
-v0.1.4
-------
+0.1.4
+-----
 Making edit row work.
 
-v0.1.3
-------
+0.1.3
+-----
 Added missing assets.
 
-v0.1.2
-------
+0.1.2
+-----
 Added missing assets.
 
-v0.1.1
-------
+0.1.1
+-----
 Fixing filters.
 
-v0.1.0
-------
+0.1.0
+-----
 Initial release.
