@@ -8,6 +8,10 @@
                 <label>
                     {{ property.title }}
                     <span class="required" v-if="isRequired(keyName)">*</span>
+                    <Tooltip
+                        v-if="property.extra.help_text"
+                        :content="property.extra.help_text"
+                    />
 
                     <router-link
                         :to="{
@@ -48,6 +52,10 @@
                 <label>
                     {{ property.title }}
                     <span class="required" v-if="isRequired(keyName)">*</span>
+                    <Tooltip
+                        v-if="property.extra.help_text"
+                        :content="property.extra.help_text"
+                    />
                 </label>
                 <InputField
                     v-bind:format="property.format"
@@ -69,6 +77,7 @@ import Vue from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
+import Tooltip from "./Tooltip.vue"
 
 export default Vue.extend({
     props: {
@@ -82,6 +91,7 @@ export default Vue.extend({
     components: {
         InputField,
         KeySearch,
+        Tooltip,
     },
     data() {
         return {
@@ -127,6 +137,8 @@ export default Vue.extend({
             console.log("Received message")
             app.baseIndex = app.baseIndex + 1
         }
+
+        this.windowListener = receiveMessage
     },
     destroyed() {
         if (this.windowListener) {
