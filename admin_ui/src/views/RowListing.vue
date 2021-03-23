@@ -3,7 +3,15 @@
         <template v-if="schema != undefined">
             <div class="left_column">
                 <div class="title_bar">
-                    <h1>{{ tableName | readable }}</h1>
+                    <div class="title">
+                        <h1>
+                            {{ tableName | readable }}
+                        </h1>
+                        <Tooltip
+                            v-if="schema.help_text"
+                            :content="schema.help_text"
+                        />
+                    </div>
                     <div class="buttons">
                         <BulkDeleteButton
                             :selected="selectedRows.length"
@@ -231,6 +239,7 @@ import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
 import TableNav from "../components/TableNav.vue"
+import Tooltip from "../components/Tooltip.vue"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -256,6 +265,7 @@ export default Vue.extend({
         RowFilter,
         RowSortModal,
         TableNav,
+        Tooltip,
     },
     computed: {
         cellNames() {
@@ -405,10 +415,16 @@ div.wrapper {
             flex-direction: column;
         }
 
-        h1 {
-            text-transform: capitalize;
-            margin: 0 0.5rem 0 0;
+        div.title {
             flex-grow: 1;
+            display: flex;
+            align-items: center;
+
+            h1 {
+                display: inline-block;
+                text-transform: capitalize;
+                margin: 0 0.5rem 0 0;
+            }
         }
 
         p {
