@@ -44,7 +44,7 @@ class User(BaseUser, tablename="piccolo_user"):
     pass
 
 
-class Director(Table):
+class Director(Table, help_text="The main director for a movie."):
     name = Varchar(length=300, null=False)
 
     @classmethod

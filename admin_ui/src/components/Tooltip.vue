@@ -112,6 +112,7 @@ export default {
 span.tooltip {
     color: @light_blue;
     display: inline-block;
+    font-size: 0.9rem;
 
     div.popup {
         display: block;
