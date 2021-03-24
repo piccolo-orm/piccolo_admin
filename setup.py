@@ -35,7 +35,7 @@ setup(
     license="MIT",
     include_package_data=True,
     entry_points={
-        "console_scripts": ["admin_demo = piccolo_admin.example:main",],
+        "console_scripts": ["admin_demo = piccolo_admin.example:main"],
     },
     classifiers=[
         "License :: OSI Approved :: MIT License",
