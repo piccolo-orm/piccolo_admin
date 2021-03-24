@@ -1,4 +1,4 @@
-from .endpoints import create_admin  # noqa
-
-
-__VERSION__ = "0.11.12"
+from .endpoints import (  # noqa
+    create_admin,
+    PICCOLO_ADMIN_VERSION as __VERSION_,
+)

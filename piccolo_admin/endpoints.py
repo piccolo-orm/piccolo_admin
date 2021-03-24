@@ -10,7 +10,6 @@ import typing as t
 from piccolo.table import Table
 from piccolo.apps.user.tables import BaseUser
 
-from piccolo_admin import __VERSION__ as piccolo_admin_version
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
@@ -32,6 +31,7 @@ from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 
+PICCOLO_ADMIN_VERSION = "0.11.12"
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 
@@ -199,7 +199,7 @@ class AdminRouter(FastAPI):
 
     def get_meta(self, request: Request) -> MetaResponseModel:
         return MetaResponseModel(
-            piccolo_admin_version=piccolo_admin_version,
+            piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
         )
 
