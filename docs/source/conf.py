@@ -28,8 +28,8 @@ copyright = f"{year}, {author}"
 
 import piccolo_admin  # noqa
 
-version = ".".join(piccolo_admin.__VERSION__.split(".")[:3])
-release = piccolo_admin.__VERSION__
+version = ".".join(piccolo_admin.version.__VERSION__.split(".")[:3])
+release = piccolo_admin.version.__VERSION__
 
 # -- General configuration ---------------------------------------------------
 

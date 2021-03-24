@@ -1,4 +1,2 @@
-from .endpoints import (  # noqa
-    create_admin,
-    PICCOLO_ADMIN_VERSION as __VERSION_,
-)
+from .endpoints import create_admin  # noqa
+from .version import __VERSION__  # noqa

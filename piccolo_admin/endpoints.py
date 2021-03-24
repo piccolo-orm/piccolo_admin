@@ -30,8 +30,9 @@ from starlette.staticfiles import StaticFiles
 from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
+from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
-PICCOLO_ADMIN_VERSION = "0.11.12"
+
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 
