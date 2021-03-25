@@ -7,9 +7,7 @@ from functools import partial
 import os
 import typing as t
 
-from piccolo.table import Table
 from piccolo.apps.user.tables import BaseUser
-
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
@@ -31,6 +29,9 @@ from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
+
+if t.TYPE_CHECKING:
+    from piccolo.table import Table
 
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
