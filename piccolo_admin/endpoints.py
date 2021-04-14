@@ -187,6 +187,10 @@ class AdminRouter(FastAPI):
         self.mount(path="/api", app=auth_middleware(api_app))
         self.mount(path="/auth", app=auth_app)
 
+        # We make the meta endpoint available without auth, because it contains
+        # the site name.
+        self.add_api_route("/meta/", endpoint=self.get_meta)
+
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
 
