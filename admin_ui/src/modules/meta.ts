@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-const BASE_URL = process.env.VUE_APP_BASE_URI
-
 export default {
     state: {
         siteName: 'Piccolo Admin',
@@ -17,7 +15,7 @@ export default {
     },
     actions: {
         async fetchMeta(context) {
-            const response = await axios.get(`${BASE_URL}meta/`)
+            const response = await axios.get(`./meta/`)
             context.commit('updateSiteName', response.data.site_name)
             context.commit('updatePiccoloAdminVersion', response.data.piccolo_admin_version)
         }

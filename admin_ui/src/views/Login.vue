@@ -1,7 +1,7 @@
 <template>
     <div id="login">
         <div class="inner">
-            <h1>Login</h1>
+            <h1>{{ siteName }}</h1>
             <form v-on:submit.prevent="login">
                 <label>Username</label>
                 <input
@@ -31,6 +31,11 @@ export default {
             username: "",
             password: "",
         }
+    },
+    computed: {
+        siteName() {
+            return this.$store.state.metaModule.siteName
+        },
     },
     methods: {
         async login() {
@@ -71,12 +76,13 @@ export default {
 div#login {
     div.inner {
         margin: 0 auto;
-        max-width: 40rem;
+        max-width: 30rem;
         padding: 0 0.5rem;
 
         h1 {
             margin-top: 0;
-            padding-top: 2rem;
+            padding-top: 4rem;
+            text-align: center;
         }
     }
 }
