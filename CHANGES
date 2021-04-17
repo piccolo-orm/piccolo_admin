@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.11.13
+-------
+Exposing the site name on the login page, courtesy of sinisaos.
+
 0.11.12
 -------
 Added tooltips using the ``help_text`` attribute on ``Table``.
