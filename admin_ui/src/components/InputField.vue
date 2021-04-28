@@ -88,7 +88,6 @@
                 <input
                     type="hidden"
                     v-bind:name="getFieldName(title)"
-                    v-bind:placeholder="placeholder"
                     v-model="localValue"
                 />
             </template>
@@ -105,6 +104,18 @@
                 />
             </template>
         </template>
+
+        <template v-if="type == 'array'">
+            <ArrayWidget
+                :array="localValue"
+                v-on:updateArray="localValue = $event"
+            />
+            <input
+                type="hidden"
+                v-bind:name="getFieldName(title)"
+                :value="JSON.stringify(localValue)"
+            />
+        </template>
     </div>
 </template>
 
@@ -112,6 +123,7 @@
 import Vue from "vue"
 
 import flatPickr from "vue-flatpickr-component"
+import ArrayWidget from "./ArrayWidget.vue"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 
@@ -132,6 +144,7 @@ export default Vue.extend({
     },
     components: {
         flatPickr,
+        ArrayWidget,
         DurationWidget,
         OperatorField,
     },

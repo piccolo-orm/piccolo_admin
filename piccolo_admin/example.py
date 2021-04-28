@@ -19,6 +19,7 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
+    Array,
     Varchar,
     Integer,
     ForeignKey,
@@ -62,6 +63,7 @@ class Movie(Table):
     description = Text()
     release_date = Timestamp()
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
+    tags = Array(base_column=Varchar())
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
