@@ -47,6 +47,13 @@ class User(BaseUser, tablename="piccolo_user"):
 
 class Director(Table, help_text="The main director for a movie."):
     name = Varchar(length=300, null=False)
+    years_nominated = Array(
+        base_column=Integer(),
+        help_text=(
+            "Which years this director was nominated for a best director "
+            "Oscar."
+        ),
+    )
 
     @classmethod
     def get_readable(cls):

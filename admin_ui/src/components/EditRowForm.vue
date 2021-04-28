@@ -81,6 +81,7 @@ export default Vue.extend({
                 if (value == "null") {
                     value = null
                 } else if (this.schema.properties[key].type == "array") {
+                    // @ts-ignore
                     value = JSON.parse(value)
                 }
 
