@@ -1,12 +1,22 @@
 <template>
     <div>
-        <input
-            v-for="(value, index) in internalArray"
-            :key="index"
-            :value="value"
-            v-on:change="updateArray($event, index)"
-        />
-        <button v-on:click.prevent="addArrayElement">Add</button>
+        <ul class="array_items">
+            <li v-for="(value, index) in internalArray" :key="index">
+                <input
+                    :value="value"
+                    :type="inputType"
+                    v-on:change="updateArray($event, index)"
+                />
+                <a href="#" v-on:click.prevent="removeArrayElement(index)"
+                    ><font-awesome-icon icon="times"
+                /></a>
+            </li>
+            <li>
+                <a href="#" v-on:click.prevent="addArrayElement"
+                    ><font-awesome-icon icon="plus" />Add</a
+                >
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -16,6 +26,10 @@ export default {
         array: {
             type: Array,
             default: () => [],
+        },
+        inputType: {
+            type: String,
+            default: "text",
         },
     },
     data() {
@@ -30,6 +44,11 @@ export default {
         },
         addArrayElement() {
             this.internalArray = [...this.internalArray, ""]
+            this.$emit("updateArray", this.internalArray)
+        },
+        removeArrayElement(index) {
+            this.$delete(this.internalArray, index)
+            this.$emit("updateArray", this.internalArray)
         },
     },
     watch: {
@@ -43,5 +62,27 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="less">
+ul.array_items {
+    padding: 0;
+    width: 100%;
+
+    li {
+        display: flex;
+        flex-direction: row;
+        list-style: none;
+        margin-bottom: 0.8rem;
+        align-items: center;
+
+        a {
+            text-decoration: none;
+        }
+
+        input {
+            flex-grow: 1;
+            margin-right: 0.5rem;
+            margin-bottom: 0 !important;
+        }
+    }
+}
 </style>
