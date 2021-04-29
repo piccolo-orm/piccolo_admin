@@ -2,24 +2,12 @@
     <div class="filter_wrapper">
         <h1>Filter</h1>
 
-        <a
-            @click="closeSideBar()"
-            class="button"
-            id="sidebar-close"
-        >
-            <span>
-                <font-awesome-icon icon="times" />
-            </span>Close
+        <a @click="closeSideBar()" class="button" id="sidebar-close">
+            <span> <font-awesome-icon icon="times" /> </span>Close
         </a>
 
-        <form
-            ref="form"
-            v-on:submit.prevent="submitForm($event)"
-        >
-            <RowFormSearch
-                v-bind:isFilter="true"
-                v-bind:schema="schema"
-            />
+        <form ref="form" v-on:submit.prevent="submitForm($event)">
+            <RowFormSearch v-bind:isFilter="true" v-bind:schema="schema" />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -63,8 +51,20 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                if (i[1] && i[1] != "all") {
-                    json[i[0].split(" ").join("_")] = i[1]
+                const key = i[0].split(" ").join("_")
+                let value: any = i[1]
+
+                if (value && value != "all") {
+                    if (this.schema.properties[key]?.type == "array") {
+                        // @ts-ignore
+                        value = JSON.parse(value).filter((i) => i)
+                        // Ignore any empty values.
+                        value = Array.isArray(value)
+                            ? value.filter((i) => i)
+                            : value
+                    }
+
+                    json[key] = value
                 }
             }
 
@@ -81,7 +81,7 @@ export default Vue.extend({
         async clearFilters() {
             console.log("Clearing ...")
             let form: any = this.$refs.form
-            let elements = [...form.elements].forEach((element) => {
+            let _ = [...form.elements].forEach((element) => {
                 if (element.type == "hidden") {
                     element.value = ""
                 }
