@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.12.0
+------
+Added support for ``Array`` column type.
+
 0.11.13
 -------
 Exposing the site name on the login page, courtesy of sinisaos.
