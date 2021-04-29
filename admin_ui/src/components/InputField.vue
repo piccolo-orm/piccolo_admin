@@ -132,6 +132,8 @@ export default Vue.extend({
         title: String,
         type: String,
         value: undefined,
+        // Fields can share the same type, but have different formats. For
+        // example, 'text-area', when type is 'string'.
         format: String,
         isFilter: {
             type: Boolean,
