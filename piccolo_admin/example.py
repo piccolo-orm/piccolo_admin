@@ -19,6 +19,7 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
+    Array,
     Varchar,
     Integer,
     ForeignKey,
@@ -46,6 +47,13 @@ class User(BaseUser, tablename="piccolo_user"):
 
 class Director(Table, help_text="The main director for a movie."):
     name = Varchar(length=300, null=False)
+    years_nominated = Array(
+        base_column=Integer(),
+        help_text=(
+            "Which years this director was nominated for a best director "
+            "Oscar."
+        ),
+    )
 
     @classmethod
     def get_readable(cls):
@@ -62,6 +70,7 @@ class Movie(Table):
     description = Text()
     release_date = Timestamp()
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
+    tags = Array(base_column=Varchar())
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)

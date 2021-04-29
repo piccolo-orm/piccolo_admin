@@ -3,14 +3,14 @@ from decimal import Decimal
 
 
 DIRECTORS = [
-    {"id": 1, "name": "Peter Jackson"},
-    {"id": 2, "name": "George Lucas"},
-    {"id": 3, "name": "J.J. Abrams"},
-    {"id": 4, "name": "Gareth Edwards"},
-    {"id": 5, "name": "Irvin Kershner"},
-    {"id": 6, "name": "Richard Marquand"},
-    {"id": 7, "name": "Rian Johnson"},
-    {"id": 8, "name": "Ron Howard"},
+    {"id": 1, "name": "Peter Jackson", "years_nominated": [2002, 2004]},
+    {"id": 2, "name": "George Lucas", "years_nominated": [1974, 1978]},
+    {"id": 3, "name": "J.J. Abrams", "years_nominated": []},
+    {"id": 4, "name": "Gareth Edwards", "years_nominated": []},
+    {"id": 5, "name": "Irvin Kershner", "years_nominated": []},
+    {"id": 6, "name": "Richard Marquand", "years_nominated": []},
+    {"id": 7, "name": "Rian Johnson", "years_nominated": []},
+    {"id": 8, "name": "Ron Howard", "years_nominated": [2002, 2009]},
 ]
 
 MOVIES = [

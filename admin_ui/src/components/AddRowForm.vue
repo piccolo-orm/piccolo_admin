@@ -36,7 +36,17 @@ export default {
 
             const json = {}
             for (const i of form.entries()) {
-                json[i[0].split(" ").join("_")] = i[1] == "null" ? null : i[1]
+                const key = i[0].split(" ").join("_")
+                let value = i[1]
+
+                if (value == "null") {
+                    value = null
+                } else if (this.schema.properties[key].type == "array") {
+                    // @ts-ignore
+                    value = JSON.parse(value)
+                }
+
+                json[key] = value
             }
             try {
                 await this.$store.dispatch("createRow", {
