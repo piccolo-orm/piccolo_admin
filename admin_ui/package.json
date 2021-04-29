@@ -17,7 +17,6 @@
     "flatpickr": "^4.6.9",
     "is-svg": "^4.3.1",
     "js-cookie": "^2.2.1",
-    "qs": "^6.10.1",
     "ssri": "^8.0.1",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
