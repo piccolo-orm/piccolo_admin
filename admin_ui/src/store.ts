@@ -5,6 +5,7 @@ import * as i from './interfaces'
 
 import aboutModalModule from './modules/aboutModal'
 import metaModule from './modules/meta'
+import userManagement from './modules/userManagement'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const BASE_URL = process.env.VUE_APP_BASE_URI
 export default new Vuex.Store({
     modules: {
         aboutModalModule,
-        metaModule
+        metaModule,
+        userManagement
     },
     state: {
         apiResponseMessage: null as i.APIResponseMessage | null,

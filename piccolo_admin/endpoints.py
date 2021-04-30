@@ -127,6 +127,14 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        api_app.add_api_route(
+            path="/user-management/",
+            endpoint=self.get_user_list,
+            methods=["GET"],
+            tags=["User"],
+            response_model=t.List[UserResponseModel]
+        )
+
         #######################################################################
 
         auth_app = FastAPI()
@@ -200,6 +208,22 @@ class AdminRouter(FastAPI):
         return UserResponseModel(
             username=request.user.display_name, user_id=request.user.user_id,
         )
+
+    ###########################################################################
+
+    async def get_user_list(self) -> t.List[UserResponseModel]:
+        """
+        Returns a list of all users on the system. The user accessing this
+        endpoint has to be a superuser for this to be allowed.
+        """
+        users = await self.auth_table.select("username", "id").run()
+        return [
+            UserResponseModel(username=i["username"], user_id=i["id"])
+            for i in users
+        ]
+
+    def change_user_password(self, request: Request):
+        pass
 
     ###########################################################################
 

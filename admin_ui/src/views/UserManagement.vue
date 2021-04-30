@@ -2,7 +2,11 @@
     <BaseView>
         <div class="users_lists">
             <TitleBar title="Users"></TitleBar>
-            <div>Stuff</div>
+            <ul>
+                <li v-for="(user, index) in userList" :key="index">
+                    {{ user }}
+                </li>
+            </ul>
         </div>
     </BaseView>
 </template>
@@ -18,8 +22,15 @@ export default Vue.extend({
         BaseView,
         TitleBar,
     },
-    mounted() {
+    computed: {
+        userList(): any[] {
+            return this.$store.state.userManagement.userList
+        },
+    },
+    async mounted() {
         this.$store.commit("updateCurrentTablename", "")
+
+        await this.$store.dispatch("userManagement/fetchUserList")
     },
 })
 </script>
