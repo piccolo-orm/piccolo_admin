@@ -2,17 +2,11 @@
     <BaseView>
         <template v-if="schema != undefined">
             <div class="left_column">
-                <div class="title_bar">
-                    <div class="title">
-                        <h1>
-                            {{ tableName | readable }}
-                        </h1>
-                        <Tooltip
-                            v-if="schema.help_text"
-                            :content="schema.help_text"
-                        />
-                    </div>
-                    <div class="buttons">
+                <TitleBar
+                    :title="tableName | readable"
+                    :titleTooltip="schema.help_text"
+                >
+                    <template v-slot:buttons>
                         <BulkDeleteButton
                             :selected="selectedRows.length"
                             v-if="selectedRows.length > 0"
@@ -54,8 +48,9 @@
                             >
                         </a>
                         <CSVButton :tableName="tableName" />
-                    </div>
-                </div>
+                    </template>
+                </TitleBar>
+
                 <p id="selected_count" v-if="selectedRows.length > 0">
                     <b>{{ selectedRows.length }}</b>
                     selected result(s) on
@@ -239,6 +234,7 @@ import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
 import TableNav from "../components/TableNav.vue"
+import TitleBar from "../components/TitleBar.vue"
 import Tooltip from "../components/Tooltip.vue"
 
 export default Vue.extend({
@@ -265,6 +261,7 @@ export default Vue.extend({
         RowFilter,
         RowSortModal,
         TableNav,
+        TitleBar,
         Tooltip,
     },
     computed: {
@@ -404,74 +401,6 @@ export default Vue.extend({
 @import "../vars.less";
 
 div.wrapper {
-    div.title_bar {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 0.5rem 0;
-
-        @media (max-width: @mobile_width) {
-            align-items: initial;
-            flex-direction: column;
-        }
-
-        div.title {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-
-            h1 {
-                display: inline-block;
-                text-transform: capitalize;
-                margin: 0 0.5rem 0 0;
-            }
-        }
-
-        p {
-            flex-grow: 0;
-        }
-
-        div.buttons {
-            box-sizing: border-box;
-            cursor: pointer;
-            display: flex;
-            flex-direction: row;
-
-            @media (max-width: @mobile_width) {
-                width: 100%;
-            }
-
-            a.button {
-                display: block;
-                flex-grow: 0;
-                font-weight: bold;
-                text-decoration: none;
-                margin-left: 0.25rem;
-                box-sizing: border-box;
-                padding: 0.2rem 0.5rem;
-                text-align: center;
-
-                @media (max-width: @mobile_width) {
-                    flex-grow: 1;
-
-                    svg {
-                        padding: 0 !important;
-                    }
-                }
-
-                span {
-                    @media (max-width: @mobile_width) {
-                        display: block;
-                    }
-                }
-
-                &:first-child {
-                    margin-left: 0;
-                }
-            }
-        }
-    }
-
     div.left_column,
     div.right_column {
         overflow: auto;

@@ -27,6 +27,8 @@ export default {
 
 <style scoped lang="less">
 div.welcome {
+    box-sizing: border-box;
     padding: 0 1rem;
+    width: 100%;
 }
 </style>

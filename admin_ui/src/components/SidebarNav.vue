@@ -1,20 +1,24 @@
 <template>
     <div class="sidebar">
         <p class="opaque">
-            <router-link
-                class="subtle"
-                to="/"
-            >
+            <router-link class="subtle active" to="/">
                 <font-awesome-icon icon="home" />Home
             </router-link>
         </p>
         <p class="opaque">
+            <router-link class="subtle" to="/user-management">
+                <font-awesome-icon icon="user" /> Users
+            </router-link>
+        </p>
+        <p class="opaque">
             <font-awesome-icon icon="table" />Tables
-            <span style="float: right;">
+            <span style="float: right">
                 <font-awesome-icon icon="angle-down" />
             </span>
         </p>
-        <TableNav />
+        <div class="table_nav_wrapper">
+            <TableNav />
+        </div>
     </div>
 </template>
 
@@ -41,26 +45,29 @@ div.sidebar {
         margin: 0;
 
         a {
+            display: block;
             text-decoration: none;
         }
     }
 
-    ul {
-        margin: 0;
+    div.table_nav_wrapper {
+        ul {
+            margin: 0;
 
-        li {
-            a {
-                display: block;
-                padding: 0.5rem;
-                text-decoration: none;
-                border-left: 3px solid rgba(0, 0, 0, 0);
+            li {
+                a {
+                    display: block;
+                    padding: 0.5rem;
+                    text-decoration: none;
+                    border-left: 3px solid rgba(0, 0, 0, 0);
 
-                &:hover {
-                    background-color: rgba(0, 0, 0, 0.2);
-                }
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.2);
+                    }
 
-                &.active {
-                    border-left: 3px solid @light_blue;
+                    &.active {
+                        border-left: 3px solid @light_blue;
+                    }
                 }
             }
         }

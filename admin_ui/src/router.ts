@@ -6,6 +6,7 @@ import EditRow from './views/EditRow.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import RowListing from './views/RowListing.vue'
+import UserManagement from './views/UserManagement.vue'
 
 
 Vue.use(Router);
@@ -24,6 +25,11 @@ export default new Router({
             path: '/login/',
             name: 'login',
             component: Login,
+        },
+        {
+            path: '/user-management/',
+            name: 'userManagement',
+            component: UserManagement,
         },
         {
             path: '/:tableName/',
