@@ -18,6 +18,9 @@ export default Vue.extend({
         BaseView,
         TitleBar,
     },
+    mounted() {
+        this.$store.commit("updateCurrentTablename", "")
+    },
 })
 </script>
 

@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import Tooltip from "./Tooltip.vue"
+
 export default {
     props: {
         title: {
@@ -23,6 +25,9 @@ export default {
             type: String,
             default: undefined,
         },
+    },
+    components: {
+        Tooltip,
     },
 }
 </script>
