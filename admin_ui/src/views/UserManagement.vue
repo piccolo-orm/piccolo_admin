@@ -27,13 +27,7 @@
                         <td>Admin</td>
                         <td>Superuser</td>
                         <td>
-                            <span
-                                style="
-                                    position: relative;
-                                    display: block;
-                                    text-align: right;
-                                "
-                            >
+                            <span style="display: block; text-align: right">
                                 <a
                                     href="#"
                                     v-on:click.prevent="
