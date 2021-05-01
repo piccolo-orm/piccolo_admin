@@ -2,11 +2,29 @@
     <BaseView>
         <div class="users_lists">
             <TitleBar title="Users"></TitleBar>
-            <ul>
-                <li v-for="(user, index) in userList" :key="index">
-                    {{ user }}
-                </li>
-            </ul>
+            <Table>
+                <template v-slot:thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Active</th>
+                        <th>Last login</th>
+                        <th>Admin</th>
+                        <th>Superuser</th>
+                        <th>Tools</th>
+                    </tr>
+                </template>
+
+                <template v-slot:tbody>
+                    <tr v-for="(user, index) in userList" :key="index">
+                        <td>{{ user.username }}</td>
+                        <td>Active</td>
+                        <td>Last login</td>
+                        <td>Admin</td>
+                        <td>Superuser</td>
+                        <td>Tools</td>
+                    </tr>
+                </template>
+            </Table>
         </div>
     </BaseView>
 </template>
@@ -15,11 +33,13 @@
 <script lang="ts">
 import Vue from "vue"
 import BaseView from "./BaseView.vue"
+import Table from "../components/Table.vue"
 import TitleBar from "../components/TitleBar.vue"
 
 export default Vue.extend({
     components: {
         BaseView,
+        Table,
         TitleBar,
     },
     computed: {
