@@ -1,5 +1,10 @@
 <template>
     <BaseView>
+        <PasswordModal
+            v-if="showPasswordModal"
+            v-on:close="showPasswordModal = false"
+        />
+
         <div class="users_lists">
             <TitleBar title="Users"></TitleBar>
             <Table>
@@ -21,7 +26,23 @@
                         <td>Last login</td>
                         <td>Admin</td>
                         <td>Superuser</td>
-                        <td>Tools</td>
+                        <td>
+                            <span
+                                style="
+                                    position: relative;
+                                    display: block;
+                                    text-align: right;
+                                "
+                            >
+                                <a
+                                    href="#"
+                                    v-on:click.prevent="
+                                        showPasswordModal = true
+                                    "
+                                    >Change password</a
+                                >
+                            </span>
+                        </td>
                     </tr>
                 </template>
             </Table>
@@ -35,12 +56,19 @@ import Vue from "vue"
 import BaseView from "./BaseView.vue"
 import Table from "../components/Table.vue"
 import TitleBar from "../components/TitleBar.vue"
+import PasswordModal from "../components/PasswordModal.vue"
 
 export default Vue.extend({
     components: {
         BaseView,
+        PasswordModal,
         Table,
         TitleBar,
+    },
+    data() {
+        return {
+            showPasswordModal: false,
+        }
     },
     computed: {
         userList(): any[] {
