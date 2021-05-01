@@ -154,7 +154,7 @@ body {
     }
 
     div.sidebar {
-        background-color: whitesmoke;
+        background-color: @light_blue_grey;
 
         li {
             a:hover {
@@ -175,11 +175,11 @@ body {
         li {
             a {
                 &:hover {
-                    background-color: whitesmoke;
+                    background-color: @light_blue_grey;
                 }
 
                 &.active {
-                    background-color: whitesmoke;
+                    background-color: @light_blue_grey;
                 }
             }
         }
@@ -211,7 +211,7 @@ body {
 
     tr {
         &:nth-child(even) {
-            background-color: whitesmoke;
+            background-color: @light_blue_grey;
         }
     }
 
