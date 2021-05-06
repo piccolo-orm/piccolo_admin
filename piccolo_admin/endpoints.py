@@ -20,6 +20,7 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from pydantic import BaseModel
+from pydantic.types import constr
 
 from fastapi import FastAPI
 from starlette.responses import HTMLResponse, JSONResponse
@@ -39,12 +40,17 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 class UserResponseModel(BaseModel):
     username: str
-    user_id: str
+    id: int
 
 
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+
+
+class ChangePassword(BaseModel):
+    username: str
+    password: constr(min_length=8)
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -132,7 +138,14 @@ class AdminRouter(FastAPI):
             endpoint=self.get_user_list,
             methods=["GET"],
             tags=["User"],
-            response_model=t.List[UserResponseModel]
+            response_model=t.List[UserResponseModel],
+        )
+
+        api_app.add_api_route(
+            path="/change-password/",
+            endpoint=self.change_password,
+            methods=["POST"],
+            tags=["User"],
         )
 
         #######################################################################
@@ -206,7 +219,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name, id=int(request.user.user_id),
         )
 
     ###########################################################################
@@ -218,12 +231,35 @@ class AdminRouter(FastAPI):
         """
         users = await self.auth_table.select("username", "id").run()
         return [
-            UserResponseModel(username=i["username"], user_id=i["id"])
+            UserResponseModel(username=i["username"], id=i["id"])
             for i in users
         ]
 
-    def change_user_password(self, request: Request):
-        pass
+    async def change_password(self, request: Request, model: ChangePassword):
+        """
+        Change a user's password. Only superusers are allowed to do this.
+        """
+        user = (
+            await self.auth_table.objects()
+            .first()
+            .where(self.auth_table.id == request.user.user_id)
+            .run()
+        )
+
+        if (user.username != model.username) and not user.superuser:
+            return JSONResponse(
+                {
+                    "message": (
+                        "Only superusers can change other people's passwords"
+                    )
+                },
+                status_code=403,
+            )
+
+        await self.auth_table.update_password(
+            user=model.username, password=model.password
+        )
+        return JSONResponse({"message": "Password updated"})
 
     ###########################################################################
 
