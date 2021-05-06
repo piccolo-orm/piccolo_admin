@@ -3,6 +3,7 @@
         <PasswordModal
             v-if="showPasswordModal"
             v-on:close="showPasswordModal = false"
+            v-bind:username="activeUser.username"
         />
 
         <div class="users_lists">
@@ -31,6 +32,7 @@
                                 <a
                                     href="#"
                                     v-on:click.prevent="
+                                        activeUser = user
                                         showPasswordModal = true
                                     "
                                     >Change password</a
@@ -62,6 +64,7 @@ export default Vue.extend({
     data() {
         return {
             showPasswordModal: false,
+            activeUser: undefined,
         }
     },
     computed: {

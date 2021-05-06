@@ -18,11 +18,14 @@
 import axios from "axios"
 
 import Modal from "./Modal.vue"
+import { APIResponseMessage } from "../interfaces"
+
+const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default {
     props: {
-        userId: {
-            type: Number,
+        username: {
+            type: String,
             default: undefined,
         },
     },
@@ -44,11 +47,16 @@ export default {
                 return
             }
 
-            await axios.post(`./change-password/`, {
-                userID: this.userID,
+            await axios.post(`${BASE_URL}change-password/`, {
+                username: this.username,
                 password: this.password,
             })
 
+            const message: APIResponseMessage = {
+                contents: "Successfully updated password.",
+                type: "success",
+            }
+            this.$store.commit("updateApiResponseMessage", message)
             this.$emit("close")
         },
     },

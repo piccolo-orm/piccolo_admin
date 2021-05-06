@@ -2,6 +2,12 @@ import axios from 'axios'
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
+
+interface UserResponse {
+    id: Number
+}
+
+
 export default {
     namespaced: true,
     state: {
