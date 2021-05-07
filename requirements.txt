@@ -1,4 +1,4 @@
-piccolo>=0.18.2
+piccolo>=0.19.0
 piccolo_api>=0.13.0
 uvicorn
 aiofiles>=0.5.0
