@@ -40,6 +40,6 @@ jobs:
         with:
           node-version: 14
       - name: Build front end assets
-        run: cd ./admin_ui && npm run build && cd ..
+        run: cd ./admin_ui && npm install && npm run build && cd ..
       - name: Test with pytest, SQLite
         run: cd tests && ./run-tests.sh
