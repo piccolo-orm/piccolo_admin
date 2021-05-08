@@ -34,7 +34,7 @@ from piccolo.columns.readable import Readable
 import targ
 
 from piccolo_admin.endpoints import create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIES, MOVIE_WORDS
+from piccolo_admin.example_data import DIRECTORS, MOVIES, MOVIE_WORDS, USERS
 
 
 class Sessions(SessionsBase):
@@ -118,13 +118,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
         ).run_sync()
 
     # Create a user for testing login
-    user = User(
-        username="piccolo",
-        password="piccolo123",
-        admin=True,
-        email="admin@test.com",
-    )
-    user.save().run_sync()
+    User.insert(*[User(**u) for u in USERS]).run_sync()
 
     if inflate:
         try:

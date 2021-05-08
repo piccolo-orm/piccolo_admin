@@ -1,6 +1,49 @@
 import datetime
 from decimal import Decimal
 
+USERS = [
+    {
+        "username": "piccolo",
+        "password": "piccolo123",
+        "admin": True,
+        "email": "piccolo@test.com",
+        "active": True,
+        "superuser": True,
+    },
+    {
+        "username": "superuser",
+        "password": "piccolo123",
+        "admin": True,
+        "email": "superuseradmin@test.com",
+        "active": True,
+        "superuser": True,
+    },
+    {
+        "username": "admin",
+        "password": "piccolo123",
+        "admin": True,
+        "email": "admin@test.com",
+        "active": True,
+        "superuser": False,
+    },
+    {
+        "username": "inactive",
+        "password": "piccolo123",
+        "admin": True,
+        "email": "inactive@test.com",
+        "active": False,
+        "superuser": False,
+    },
+    {
+        "username": "non_admin",
+        "password": "piccolo123",
+        "admin": False,
+        "email": "non_admin@test.com",
+        "active": True,
+        "superuser": False,
+    },
+]
+
 
 DIRECTORS = [
     {"id": 1, "name": "Peter Jackson", "years_nominated": [2002, 2004]},
