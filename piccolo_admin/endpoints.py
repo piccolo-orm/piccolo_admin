@@ -41,6 +41,9 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 class UserResponseModel(BaseModel):
     username: str
     id: int
+    admin: bool
+    superuser: bool
+    active: bool
 
 
 class MetaResponseModel(BaseModel):
@@ -217,10 +220,16 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_user(self, request: Request) -> UserResponseModel:
-        return UserResponseModel(
-            username=request.user.display_name, id=int(request.user.user_id),
+    async def get_user(self, request: Request) -> UserResponseModel:
+        user = (
+            await self.auth_table.select(
+                "username", "id", "admin", "active", "superuser"
+            )
+            .first()
+            .where(self.auth_table.id == request.user.user_id)
+            .run()
         )
+        return UserResponseModel(**user)
 
     ###########################################################################
 
@@ -229,11 +238,10 @@ class AdminRouter(FastAPI):
         Returns a list of all users on the system. The user accessing this
         endpoint has to be a superuser for this to be allowed.
         """
-        users = await self.auth_table.select("username", "id").run()
-        return [
-            UserResponseModel(username=i["username"], id=i["id"])
-            for i in users
-        ]
+        users = await self.auth_table.select(
+            "username", "id", "admin", "active", "superuser"
+        ).run()
+        return [UserResponseModel(**i) for i in users]
 
     async def change_password(self, request: Request, model: ChangePassword):
         """
