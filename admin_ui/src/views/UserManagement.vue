@@ -10,16 +10,16 @@
             <Modal v-if="showHelpModal" v-on:close="showHelpModal = false">
                 <h1>Help</h1>
 
-                <h2><font-awesome-icon icon="check" />Active</h2>
+                <h3><font-awesome-icon icon="check" />Active</h3>
                 <p>
                     A user's account must be active in order to login, even if
                     they are an admin or superuser.
                 </p>
 
-                <h2><font-awesome-icon icon="key" />Admin</h2>
+                <h3><font-awesome-icon icon="key" />Admin</h3>
                 <p>Is able to login to the admin.</p>
 
-                <h2><font-awesome-icon icon="star" />Superuser</h2>
+                <h3><font-awesome-icon icon="star" />Superuser</h3>
                 <p>Is able to change any other user's password.</p>
             </Modal>
 

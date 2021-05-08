@@ -44,7 +44,8 @@ div#overlay {
             text-align: right;
         }
 
-        h2 {
+        h2,
+        h3 {
             margin-bottom: 0;
         }
     }
