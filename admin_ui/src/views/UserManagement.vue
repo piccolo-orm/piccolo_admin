@@ -78,7 +78,7 @@
                 </Table>
             </div>
         </template>
-        <p v-else>Loading ...</p>
+        <p v-else class="loading">Loading ...</p>
     </BaseView>
 </template>
 
@@ -131,5 +131,9 @@ div.users_lists {
     box-sizing: border-box;
     width: 100%;
     padding: 0.5rem 0.8rem;
+}
+p.loading {
+    flex-grow: 1;
+    text-align: center;
 }
 </style>
