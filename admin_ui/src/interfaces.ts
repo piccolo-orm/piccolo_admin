@@ -57,3 +57,12 @@ export interface TableReference {
 export interface TableReferencesAPIResponse {
     references: TableReference[]
 }
+
+
+export interface User {
+    id: Number
+    username: String
+    admin: Boolean
+    active: Boolean
+    superuser: Boolean
+}

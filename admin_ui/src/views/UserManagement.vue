@@ -13,7 +13,6 @@
                     <tr>
                         <th>Username</th>
                         <th>Active</th>
-                        <th>Last login</th>
                         <th>Admin</th>
                         <th>Superuser</th>
                         <th>Tools</th>
@@ -23,10 +22,9 @@
                 <template v-slot:tbody>
                     <tr v-for="(user, index) in userList" :key="index">
                         <td>{{ user.username }}</td>
-                        <td>Active</td>
-                        <td>Last login</td>
-                        <td>Admin</td>
-                        <td>Superuser</td>
+                        <td><BooleanIcon v-bind:boolean="user.active" /></td>
+                        <td><BooleanIcon v-bind:boolean="user.admin" /></td>
+                        <td><BooleanIcon v-bind:boolean="user.superuser" /></td>
                         <td>
                             <span style="display: block; text-align: right">
                                 <a
@@ -49,14 +47,18 @@
 
 <script lang="ts">
 import Vue from "vue"
+
 import BaseView from "./BaseView.vue"
+import BooleanIcon from "../components/BooleanIcon.vue"
 import Table from "../components/Table.vue"
 import TitleBar from "../components/TitleBar.vue"
 import PasswordModal from "../components/PasswordModal.vue"
+import { User } from "../interfaces"
 
 export default Vue.extend({
     components: {
         BaseView,
+        BooleanIcon,
         PasswordModal,
         Table,
         TitleBar,
@@ -68,7 +70,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        userList(): any[] {
+        userList(): User[] {
             return this.$store.state.userManagement.userList
         },
     },

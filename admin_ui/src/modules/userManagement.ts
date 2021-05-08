@@ -1,17 +1,13 @@
 import axios from 'axios'
+import { User } from '../interfaces'
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
-
-
-interface UserResponse {
-    id: Number
-}
 
 
 export default {
     namespaced: true,
     state: {
-        userList: [],
+        userList: [] as User[],
     },
     mutations: {
         updateUserList(state, value: any[]) {
