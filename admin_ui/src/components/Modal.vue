@@ -2,11 +2,7 @@
     <div id="overlay">
         <div class="modal opaque">
             <p class="close">
-                <a
-                    class="subtle"
-                    href="#"
-                    v-on:click.prevent="$emit('close')"
-                >
+                <a class="subtle" href="#" v-on:click.prevent="$emit('close')">
                     <font-awesome-icon icon="times" />
                 </a>
             </p>
@@ -46,6 +42,10 @@ div#overlay {
 
         p.close {
             text-align: right;
+        }
+
+        h2 {
+            margin-bottom: 0;
         }
     }
 }

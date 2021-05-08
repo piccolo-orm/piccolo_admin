@@ -7,15 +7,40 @@
                 v-bind:username="activeUser.username"
             />
 
+            <Modal v-if="showHelpModal" v-on:close="showHelpModal = false">
+                <h1>Help</h1>
+
+                <h2><font-awesome-icon icon="check" />Active</h2>
+                <p>
+                    A user's account must be active in order to login, even if
+                    they are an admin or superuser.
+                </p>
+
+                <h2><font-awesome-icon icon="key" />Admin</h2>
+                <p>Is able to login to the admin.</p>
+
+                <h2><font-awesome-icon icon="star" />Superuser</h2>
+                <p>Is able to change any other user's password.</p>
+            </Modal>
+
             <div class="users_lists">
-                <TitleBar title="Users"></TitleBar>
+                <TitleBar title="Users">
+                    <template v-slot:buttons
+                        ><a
+                            class="button"
+                            v-on:click.prevent="showHelpModal = true"
+                            ><font-awesome-icon icon="question-circle" />
+                            Help</a
+                        ></template
+                    >
+                </TitleBar>
                 <Table>
                     <template v-slot:thead>
                         <tr>
-                            <th>Username</th>
-                            <th>Active</th>
-                            <th>Admin</th>
-                            <th>Superuser</th>
+                            <th><font-awesome-icon icon="user" />Username</th>
+                            <th><font-awesome-icon icon="check" />Active</th>
+                            <th><font-awesome-icon icon="key" /> Admin</th>
+                            <th><font-awesome-icon icon="star" />Superuser</th>
                             <th>Tools</th>
                         </tr>
                     </template>
@@ -66,18 +91,21 @@ import BooleanIcon from "../components/BooleanIcon.vue"
 import Table from "../components/Table.vue"
 import TitleBar from "../components/TitleBar.vue"
 import PasswordModal from "../components/PasswordModal.vue"
+import Modal from "../components/Modal.vue"
 import { User } from "../interfaces"
 
 export default Vue.extend({
     components: {
         BaseView,
         BooleanIcon,
+        Modal,
         PasswordModal,
         Table,
         TitleBar,
     },
     data() {
         return {
+            showHelpModal: true,
             showPasswordModal: false,
         }
     },
