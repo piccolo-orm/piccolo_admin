@@ -28,13 +28,6 @@ table {
 
         span.boolean {
             padding-left: 0.5rem;
-
-            svg.correct {
-                color: @green;
-            }
-            svg.incorrect {
-                color: @red;
-            }
         }
     }
     td {

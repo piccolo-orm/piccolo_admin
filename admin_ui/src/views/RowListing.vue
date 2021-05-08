@@ -122,21 +122,11 @@
                                         }}</router-link
                                     >
                                 </span>
-                                <span
-                                    class="boolean"
+
+                                <BooleanIcon
                                     v-else-if="isBoolean(name)"
-                                >
-                                    <font-awesome-icon
-                                        class="correct"
-                                        icon="check"
-                                        v-if="row[name] === true"
-                                    />
-                                    <font-awesome-icon
-                                        class="incorrect"
-                                        icon="times"
-                                        v-else
-                                    />
-                                </span>
+                                    v-bind:boolean="row[name] === true"
+                                />
                                 <span v-else-if="isInterval(name)">{{
                                     row[name] | humanReadable
                                 }}</span>
@@ -240,6 +230,7 @@ import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
+import BooleanIcon from "../components/BooleanIcon.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
@@ -268,6 +259,7 @@ export default Vue.extend({
     components: {
         AddRowModal,
         BaseView,
+        BooleanIcon,
         BulkDeleteButton,
         CSVButton,
         DeleteButton,
