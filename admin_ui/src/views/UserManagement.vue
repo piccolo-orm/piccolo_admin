@@ -105,7 +105,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            showHelpModal: true,
+            showHelpModal: false,
             showPasswordModal: false,
         }
     },
