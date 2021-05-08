@@ -3,6 +3,10 @@
         <h1>Change password</h1>
 
         <form v-on:submit.prevent="updatePassword">
+            <label>Username</label>
+            <input type="text" v-bind:value="username" disabled />
+
+            <label>New Password</label>
             <input v-model="password" type="password" placeholder="Password" />
             <input
                 v-model="confirmedPassword"
