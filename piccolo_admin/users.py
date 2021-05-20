@@ -10,12 +10,19 @@ patch_single
 delete_single
 post_single
 get_all
+    No restrictions
 delete_all
+
 get_references
+    No restrictions
 get_ids
+    No restrictions
 get_new
+    No restrictions
 get_schema
+    No restrictions
 get_count
+    No restrictions
 """
 
 
@@ -43,7 +50,7 @@ def validate_delete_single(
 def validate_delete_all(
     piccolo_crud: PiccoloCRUD, request: Request, auth_table: BaseUser, **kwargs
 ):
-    breakpoint()
+    pass
 
 
 def validate_get_all(
