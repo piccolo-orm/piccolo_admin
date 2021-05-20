@@ -7,6 +7,11 @@
                 v-bind:username="activeUser.username"
             />
 
+            <AddUserModal
+                v-if="showAddUserModal"
+                v-on:close="showAddUserModal = false"
+            />
+
             <Modal v-if="showHelpModal" v-on:close="showHelpModal = false">
                 <h1>Help</h1>
 
@@ -17,22 +22,31 @@
                 </p>
 
                 <h3><font-awesome-icon icon="key" />Admin</h3>
-                <p>Is able to login to the admin.</p>
+                <p>Is able to login to the admin, and create non-superusers.</p>
 
                 <h3><font-awesome-icon icon="star" />Superuser</h3>
-                <p>Is able to change any other user's password.</p>
+                <p>
+                    Is able to create any type of user, and change other user's
+                    password.
+                </p>
             </Modal>
 
             <div class="users_lists">
                 <TitleBar title="Users">
-                    <template v-slot:buttons
-                        ><a
+                    <template v-slot:buttons>
+                        <a
                             class="button"
                             v-on:click.prevent="showHelpModal = true"
                             ><font-awesome-icon icon="question-circle" />
                             Help</a
-                        ></template
-                    >
+                        >
+
+                        <a
+                            class="button"
+                            v-on:click.prevent="showAddUserModal = true"
+                            ><font-awesome-icon icon="plus" /> Add</a
+                        >
+                    </template>
                 </TitleBar>
                 <Table>
                     <template v-slot:thead>
@@ -86,6 +100,7 @@
 <script lang="ts">
 import Vue from "vue"
 
+import AddUserModal from "../components/AddUserModal.vue"
 import BaseView from "./BaseView.vue"
 import BooleanIcon from "../components/BooleanIcon.vue"
 import Table from "../components/Table.vue"
@@ -96,6 +111,7 @@ import { User } from "../interfaces"
 
 export default Vue.extend({
     components: {
+        AddUserModal,
         BaseView,
         BooleanIcon,
         Modal,
@@ -105,6 +121,7 @@ export default Vue.extend({
     },
     data() {
         return {
+            showAddUserModal: false,
             showHelpModal: false,
             showPasswordModal: false,
         }

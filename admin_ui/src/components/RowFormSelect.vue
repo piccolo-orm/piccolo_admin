@@ -4,7 +4,7 @@
             v-bind:key="property.title"
             v-for="(property, keyName) in schema.properties"
         >
-            <template v-if="property.extra.foreign_key">
+            <template v-if="property.extra && property.extra.foreign_key">
                 <label>
                     {{ property.title }}
                     <span class="required" v-if="isRequired(keyName)">*</span>
@@ -53,7 +53,7 @@
                     {{ property.title }}
                     <span class="required" v-if="isRequired(keyName)">*</span>
                     <Tooltip
-                        v-if="property.extra.help_text"
+                        v-if="property.extra && property.extra.help_text"
                         :content="property.extra.help_text"
                     />
                 </label>

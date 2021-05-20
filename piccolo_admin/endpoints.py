@@ -2,12 +2,15 @@
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
+import dataclasses
 from datetime import timedelta
 from functools import partial
 import os
 import typing as t
 
 from piccolo.apps.user.tables import BaseUser
+from piccolo_api.crud.serializers import create_pydantic_model
+from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
@@ -19,10 +22,10 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
-from pydantic import BaseModel
-from pydantic.types import constr
 
 from fastapi import FastAPI
+from pydantic import BaseModel
+from pydantic.types import constr
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
@@ -30,6 +33,7 @@ from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
+from .users import USER_VALIDATORS
 
 if t.TYPE_CHECKING:
     from piccolo.table import Table
@@ -51,7 +55,7 @@ class MetaResponseModel(BaseModel):
     site_name: str
 
 
-class ChangePassword(BaseModel):
+class ChangePasswordModel(BaseModel):
     username: str
     password: constr(min_length=8)
 
@@ -99,11 +103,28 @@ class AdminRouter(FastAPI):
         api_app = FastAPI()
 
         for table in tables:
+            if table is session_table:
+                # The session table is made read-only, as it's a security hole
+                # otherwise.
+                _read_only = True
+            else:
+                _read_only = read_only
+
+            if table is auth_table:
+                validators = dataclasses.replace(
+                    USER_VALIDATORS, extra_context={"auth_table": auth_table}
+                )
+            else:
+                validators = Validators()
+
             FastAPIWrapper(
                 root_url=f"/tables/{table._meta.tablename}/",
                 fastapi_app=api_app,
                 piccolo_crud=PiccoloCRUD(
-                    table=table, read_only=read_only, page_size=page_size
+                    table=table,
+                    read_only=_read_only,
+                    page_size=page_size,
+                    validators=validators,
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
@@ -136,13 +157,35 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
-        api_app.add_api_route(
-            path="/user-management/",
-            endpoint=self.get_user_list,
-            methods=["GET"],
-            tags=["User"],
-            response_model=t.List[UserResponseModel],
-        )
+        #######################################################################
+
+        # # TODO - add validators ...
+        # FastAPIWrapper(
+        #     root_url="/user-management/",
+        #     fastapi_app=api_app,
+        #     piccolo_crud=PiccoloCRUD(
+        #         table=auth_table,
+        #         read_only=_read_only,
+        #         page_size=page_size,
+        #         validators=USER_VALIDATORS,
+        #     ),
+        #     fastapi_kwargs=FastAPIKwargs(all_routes={"tags": ["User"]},),
+        # )
+
+        # api_app.add_api_route(
+        #     path="/user-management/",
+        #     endpoint=self.get_user_list,
+        #     methods=["GET"],
+        #     tags=["User"],
+        #     response_model=t.List[UserResponseModel],
+        # )
+
+        # api_app.add_api_route(
+        #     path="/user-management/schema/",
+        #     endpoint=self.get_user_schema,
+        #     methods=["GET"],
+        #     tags=["User"],
+        # )
 
         api_app.add_api_route(
             path="/change-password/",
@@ -203,6 +246,7 @@ class AdminRouter(FastAPI):
                 auth_table=auth_table,
                 session_table=session_table,
                 admin_only=True,
+                active_only=True,
                 increase_expiry=increase_expiry,
             ),
             on_error=handle_auth_exception,
@@ -233,19 +277,24 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    async def get_user_schema(self) -> JSONResponse:
+        pydantic_model = create_pydantic_model(table=self.auth_table)
+        return JSONResponse(pydantic_model.schema())
+
     async def get_user_list(self) -> t.List[UserResponseModel]:
         """
-        Returns a list of all users on the system. The user accessing this
-        endpoint has to be a superuser for this to be allowed.
+        Returns a list of all users on the system.
         """
         users = await self.auth_table.select(
             "username", "id", "admin", "active", "superuser"
         ).run()
         return [UserResponseModel(**i) for i in users]
 
-    async def change_password(self, request: Request, model: ChangePassword):
+    async def change_password(
+        self, request: Request, model: ChangePasswordModel
+    ):
         """
-        Change a user's password. Only superusers are allowed to do this.
+        Change a user's password.
         """
         user = (
             await self.auth_table.objects()

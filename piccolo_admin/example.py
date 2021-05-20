@@ -74,7 +74,9 @@ class Movie(Table):
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
-APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
+APP = create_admin(
+    [Director, Movie, User], auth_table=User, session_table=Sessions
+)
 
 
 def set_engine(engine: str = "sqlite"):

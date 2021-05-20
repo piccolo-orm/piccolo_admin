@@ -8,16 +8,24 @@ export default {
     namespaced: true,
     state: {
         userList: [] as User[],
+        userSchema: null
     },
     mutations: {
         updateUserList(state, value: any[]) {
             state.userList = value
         },
+        updateUserSchema(state, value: any) {
+            state.userSchema = value
+        }
     },
     actions: {
         async fetchUserList(context) {
             const response = await axios.get(`${BASE_URL}user-management/`)
-            context.commit('updateUserList', response.data)
+            context.commit('updateUserList', response.data.rows)
+        },
+        async fetchUserSchema(context) {
+            const response = await axios.get(`${BASE_URL}user-management/schema/`)
+            context.commit('updateUserSchema', response.data)
         }
     }
 }
