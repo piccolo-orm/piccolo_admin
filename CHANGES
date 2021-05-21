@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.12.1
+------
+Fixed issue with ``BigInt`` values being displayed incorrectly.
+
 0.12.0
 ------
 Added support for ``Array`` column type.
