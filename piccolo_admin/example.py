@@ -20,6 +20,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
     Array,
+    BigInt,
     Varchar,
     Integer,
     ForeignKey,
@@ -71,6 +72,7 @@ class Movie(Table):
     release_date = Timestamp()
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
+    barcode = BigInt(default=0)
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
@@ -123,6 +125,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
         password="piccolo123",
         admin=True,
         email="admin@test.com",
+        active=True,
     )
     user.save().run_sync()
 

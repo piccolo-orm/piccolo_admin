@@ -54,7 +54,13 @@ export default {
                     data: json,
                 })
             } catch (error) {
-                this.errors = error.response.data
+                const data = error.response.data
+
+                if (typeof data != "string") {
+                    this.errors = JSON.stringify(data, null, 2)
+                } else {
+                    this.errors = data
+                }
                 return
             }
 
