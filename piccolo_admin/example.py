@@ -20,6 +20,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import (
     Array,
+    BigInt,
     Varchar,
     Integer,
     ForeignKey,
@@ -71,6 +72,7 @@ class Movie(Table):
     release_date = Timestamp()
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
+    barcode = BigInt(default=0)
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
@@ -119,7 +121,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
             "SELECT setval('director_id_seq', max(id)) FROM director"
         ).run_sync()
 
-    # Create a user for testing login
+    # Create users for testing login
     User.insert(*[User(**u) for u in USERS]).run_sync()
 
     if inflate:
