@@ -37,7 +37,10 @@ class TestChangeUserPassword(TestCase):
         BaseUser.create_table(if_not_exists=True).run_sync()
 
         BaseUser(
-            username=self.username, password=self.password, admin=True
+            username=self.username,
+            password=self.password,
+            admin=True,
+            active=True,
         ).save().run_sync()
 
     def tearDown(self):
