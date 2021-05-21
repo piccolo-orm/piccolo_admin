@@ -67,6 +67,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 /*****************************************************************************/
 
 import axios from 'axios'
+import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
 
 // Add the CSRF token
@@ -81,6 +82,17 @@ axios.interceptors.request.use(function (config) {
     }
     return config
 })
+
+// Handle BigInt values
+axios.defaults.transformResponse = [function (data) {
+    if (typeof data === 'string') {
+        try {
+            data = JSONBig.parse(data);
+        } catch (e) {
+        }
+    }
+    return data;
+}]
 
 /*****************************************************************************/
 
