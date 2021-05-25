@@ -7,6 +7,7 @@ or `admin_demo`.
 import asyncio
 import datetime
 import decimal
+import enum
 import os
 import random
 import typing as t
@@ -47,6 +48,11 @@ class User(BaseUser, tablename="piccolo_user"):
 
 
 class Director(Table, help_text="The main director for a movie."):
+    class Gender(enum.Enum):
+        male = "m"
+        female = "f"
+        non_binary = "n"
+
     name = Varchar(length=300, null=False)
     years_nominated = Array(
         base_column=Integer(),
@@ -55,6 +61,7 @@ class Director(Table, help_text="The main director for a movie."):
             "Oscar."
         ),
     )
+    gender = Varchar(length=1, choices=Gender)
 
     @classmethod
     def get_readable(cls):
@@ -149,9 +156,19 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                 else:
                     remaining = remaining - chunk_size
 
-                Director.insert(
-                    *[Director(name=fake.name()) for _ in range(chunk_size)]
-                ).run_sync()
+                directors = []
+                genders = ["m", "f", "n"]
+                for _ in range(chunk_size):
+                    gender = random.choice(genders)
+                    if gender == "m":
+                        name = fake.name_male()
+                    elif gender == "f":
+                        name = fake.name_female()
+                    else:
+                        name = fake.name_nonbinary()
+                    directors.append(Director(name=name, gender=gender))
+
+                Director.insert(*directors).run_sync()
 
                 director_ids = (
                     Director.select(Director.id)

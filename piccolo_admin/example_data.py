@@ -3,14 +3,34 @@ from decimal import Decimal
 
 
 DIRECTORS = [
-    {"id": 1, "name": "Peter Jackson", "years_nominated": [2002, 2004]},
-    {"id": 2, "name": "George Lucas", "years_nominated": [1974, 1978]},
-    {"id": 3, "name": "J.J. Abrams", "years_nominated": []},
-    {"id": 4, "name": "Gareth Edwards", "years_nominated": []},
-    {"id": 5, "name": "Irvin Kershner", "years_nominated": []},
-    {"id": 6, "name": "Richard Marquand", "years_nominated": []},
-    {"id": 7, "name": "Rian Johnson", "years_nominated": []},
-    {"id": 8, "name": "Ron Howard", "years_nominated": [2002, 2009]},
+    {
+        "id": 1,
+        "name": "Peter Jackson",
+        "years_nominated": [2002, 2004],
+        "gender": "m",
+    },
+    {
+        "id": 2,
+        "name": "George Lucas",
+        "years_nominated": [1974, 1978],
+        "gender": "m",
+    },
+    {"id": 3, "name": "J.J. Abrams", "years_nominated": [], "gender": "m"},
+    {"id": 4, "name": "Gareth Edwards", "years_nominated": [], "gender": "m"},
+    {"id": 5, "name": "Irvin Kershner", "years_nominated": [], "gender": "m"},
+    {
+        "id": 6,
+        "name": "Richard Marquand",
+        "years_nominated": [],
+        "gender": "m",
+    },
+    {"id": 7, "name": "Rian Johnson", "years_nominated": [], "gender": "m"},
+    {
+        "id": 8,
+        "name": "Ron Howard",
+        "years_nominated": [2002, 2009],
+        "gender": "m",
+    },
 ]
 
 MOVIES = [
