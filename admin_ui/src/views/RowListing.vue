@@ -451,6 +451,10 @@ div.wrapper {
                 padding: 0.2rem 0.5rem;
                 text-align: center;
 
+                &:hover {
+                    color: white;
+                }
+
                 @media (max-width: @mobile_width) {
                     flex-grow: 1;
 
