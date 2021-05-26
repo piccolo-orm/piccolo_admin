@@ -9,7 +9,7 @@ export default {
         title: "Hello",
         type: "string",
         value: "hello",
-        mode: "dark_mode",
+        mode: "light_mode",
     },
     argTypes: {
         type: {

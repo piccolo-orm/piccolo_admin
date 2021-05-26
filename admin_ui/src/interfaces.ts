@@ -57,3 +57,14 @@ export interface TableReference {
 export interface TableReferencesAPIResponse {
     references: TableReference[]
 }
+
+/*****************************************************************************/
+
+export interface Choice {
+    display_name: string
+    value: string
+}
+
+export interface Choices {
+    [key: string]: Choice
+}
