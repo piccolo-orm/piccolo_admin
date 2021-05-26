@@ -54,6 +54,16 @@ import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 
 export default Vue.extend({
+    props: {
+        username: {
+            type: String,
+            default: "Unknown",
+        },
+        siteName: {
+            type: String,
+            default: "Piccolo Admin",
+        },
+    },
     data() {
         return {
             showSidebar: false,
@@ -61,13 +71,6 @@ export default Vue.extend({
         }
     },
     computed: {
-        tableName() {
-            return this.$store.state.currentTableName
-        },
-        username() {
-            const user = this.$store.state.user
-            return user ? user.username : "Unknown"
-        },
         truncatedUsername() {
             const username = this.username
             if (username.length > 20) {
@@ -75,9 +78,6 @@ export default Vue.extend({
             } else {
                 return username
             }
-        },
-        siteName() {
-            return this.$store.state.metaModule.siteName
         },
     },
     components: {
@@ -90,6 +90,10 @@ export default Vue.extend({
 
 <style lang="less">
 @import "../vars.less";
+
+#nav {
+    background-color: darken(@dark_grey, 5%);
+}
 
 #nav {
     display: flex;
