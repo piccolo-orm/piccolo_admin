@@ -129,9 +129,18 @@ import OperatorField from "./OperatorField.vue"
 
 export default Vue.extend({
     props: {
-        title: String,
-        type: String,
-        value: undefined,
+        title: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            default: "string",
+        },
+        value: {
+            type: undefined,
+            default: undefined,
+        },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
         format: String,
@@ -142,6 +151,10 @@ export default Vue.extend({
         isNullable: {
             type: Boolean,
             default: false,
+        },
+        choices: {
+            type: Array,
+            default: null,
         },
     },
     components: {

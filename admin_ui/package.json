@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -28,14 +30,21 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.13.8",
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
+    "@storybook/addon-actions": "^6.2.9",
+    "@storybook/addon-essentials": "^6.2.9",
+    "@storybook/addon-links": "^6.2.9",
+    "@storybook/vue": "^6.2.9",
     "@vue/cli-plugin-babel": "^3.12.1",
     "@vue/cli-plugin-typescript": "^3.12.1",
     "@vue/cli-service": "^4.5.12",
+    "babel-loader": "^8.2.2",
     "less": "^3.13.1",
     "less-loader": "^4.1.0",
     "typescript": "^3.9.9",
+    "vue-loader": "^15.9.7",
     "vue-template-compiler": "^2.6.12"
   }
 }

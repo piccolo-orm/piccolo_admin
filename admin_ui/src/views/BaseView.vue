@@ -1,6 +1,6 @@
 <template>
     <div class="base_view">
-        <NavBar />
+        <NavBar :username="username" :siteName="siteName" />
         <div class="wrapper">
             <div class="sidebar_wrapper">
                 <SidebarNav />
@@ -20,6 +20,15 @@ export default Vue.extend({
     components: {
         NavBar,
         SidebarNav,
+    },
+    computed: {
+        username() {
+            const user = this.$store.state.user
+            return user ? user.username : "Unknown"
+        },
+        siteName() {
+            return this.$store.state.metaModule.siteName
+        },
     },
 })
 </script>
