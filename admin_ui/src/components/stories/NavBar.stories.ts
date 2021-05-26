@@ -4,7 +4,7 @@ export default {
     title: 'Components/NavBar',
     component: NavBar,
     args: {
-        mode: "dark_mode",
+        mode: "light_mode",
     },
     argTypes: {
         mode: {

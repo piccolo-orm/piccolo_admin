@@ -3,15 +3,36 @@ from decimal import Decimal
 
 
 DIRECTORS = [
-    {"id": 1, "name": "Peter Jackson", "years_nominated": [2002, 2004]},
-    {"id": 2, "name": "George Lucas", "years_nominated": [1974, 1978]},
-    {"id": 3, "name": "J.J. Abrams", "years_nominated": []},
-    {"id": 4, "name": "Gareth Edwards", "years_nominated": []},
-    {"id": 5, "name": "Irvin Kershner", "years_nominated": []},
-    {"id": 6, "name": "Richard Marquand", "years_nominated": []},
-    {"id": 7, "name": "Rian Johnson", "years_nominated": []},
-    {"id": 8, "name": "Ron Howard", "years_nominated": [2002, 2009]},
+    {
+        "id": 1,
+        "name": "Peter Jackson",
+        "years_nominated": [2002, 2004],
+        "gender": "m",
+    },
+    {
+        "id": 2,
+        "name": "George Lucas",
+        "years_nominated": [1974, 1978],
+        "gender": "m",
+    },
+    {"id": 3, "name": "J.J. Abrams", "years_nominated": [], "gender": "m"},
+    {"id": 4, "name": "Gareth Edwards", "years_nominated": [], "gender": "m"},
+    {"id": 5, "name": "Irvin Kershner", "years_nominated": [], "gender": "m"},
+    {
+        "id": 6,
+        "name": "Richard Marquand",
+        "years_nominated": [],
+        "gender": "m",
+    },
+    {"id": 7, "name": "Rian Johnson", "years_nominated": [], "gender": "m"},
+    {
+        "id": 8,
+        "name": "Ron Howard",
+        "years_nominated": [2002, 2009],
+        "gender": "m",
+    },
 ]
+
 
 MOVIES = [
     {
@@ -28,6 +49,8 @@ MOVIES = [
         "oscar_nominations": 11,
         "won_oscar": True,
         "box_office": Decimal("775.5"),
+        "barcode": 3999361649,
+        "genre": 2,
     },
     {
         "name": "The Empire Strikes Back",
@@ -43,6 +66,8 @@ MOVIES = [
         "oscar_nominations": 4,
         "won_oscar": True,
         "box_office": Decimal("547.9"),
+        "barcode": 2384023507,
+        "genre": 2,
     },
     {
         "name": "Return of the Jedi",
@@ -58,6 +83,8 @@ MOVIES = [
         "oscar_nominations": 5,
         "won_oscar": True,
         "box_office": Decimal("475.3"),
+        "barcode": 9874111507,
+        "genre": 2,
     },
     {
         "name": "Star Wars: Episode I – The Phantom Menace",
@@ -74,6 +101,8 @@ MOVIES = [
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1027.0"),
+        "barcode": 4637581510,
+        "genre": 2,
     },
     {
         "name": "Star Wars: Episode II – Attack of the Clones",
@@ -89,6 +118,8 @@ MOVIES = [
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("653.0"),
+        "barcode": 8392825607,
+        "genre": 2,
     },
     {
         "name": "Star Wars: Episode III – Revenge of the Sith",
@@ -105,6 +136,8 @@ MOVIES = [
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("868.4"),
+        "barcode": 5174272602,
+        "genre": 2,
     },
     {
         "name": "Star Wars: The Force Awakens",
@@ -120,6 +153,8 @@ MOVIES = [
         "oscar_nominations": 5,
         "won_oscar": False,
         "box_office": Decimal("2068.0"),
+        "barcode": 9476361634,
+        "genre": 2,
     },
     {
         "name": "Rogue One: A Star Wars Story",
@@ -135,6 +170,8 @@ MOVIES = [
         "oscar_nominations": 2,
         "won_oscar": False,
         "box_office": Decimal("1056.0"),
+        "barcode": 6396501778,
+        "genre": 2,
     },
     {
         "name": "Star Wars: The Last Jedi",
@@ -150,6 +187,8 @@ MOVIES = [
         "oscar_nominations": 4,
         "won_oscar": False,
         "box_office": Decimal("1333.0"),
+        "barcode": 1020122875,
+        "genre": 2,
     },
     {
         "name": "Solo: A Star Wars Story",
@@ -165,6 +204,8 @@ MOVIES = [
         "oscar_nominations": 0,
         "won_oscar": False,
         "box_office": Decimal("393.2"),
+        "barcode": 4949091770,
+        "genre": 2,
     },
     {
         "name": "Star Wars: The Rise of Skywalker",
@@ -180,6 +221,8 @@ MOVIES = [
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1074.0"),
+        "barcode": 3592641903,
+        "genre": 2,
     },
     {
         "name": "The Lord of the Rings: The Fellowship of the Ring",
@@ -196,6 +239,8 @@ MOVIES = [
         "oscar_nominations": 12,
         "won_oscar": True,
         "box_office": Decimal("887.8"),
+        "barcode": 9520764061,
+        "genre": 1,
     },
     {
         "name": "The Lord of the Rings: The Two Towers",
@@ -211,6 +256,8 @@ MOVIES = [
         "oscar_nominations": 6,
         "won_oscar": True,
         "box_office": Decimal("951.2"),
+        "barcode": 2545685641,
+        "genre": 1,
     },
     {
         "name": "The Lord of the Rings - The Return of the King",
@@ -226,6 +273,8 @@ MOVIES = [
         "oscar_nominations": 12,
         "won_oscar": True,
         "box_office": Decimal("1142.0"),
+        "barcode": 6118332538,
+        "genre": 1,
     },
     {
         "name": "The Hobbit: An Unexpected Journey",
@@ -241,6 +290,8 @@ MOVIES = [
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1021.0"),
+        "barcode": 3604722656,
+        "genre": 1,
     },
     {
         "name": "The Hobbit: The Desolation of Smaug",
@@ -257,6 +308,8 @@ MOVIES = [
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("958.0"),
+        "barcode": 2522965834,
+        "genre": 1,
     },
     {
         "name": "The Hobbit: The Battle of the Five Armies",
@@ -272,6 +325,8 @@ MOVIES = [
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("956.0"),
+        "barcode": 3939605744,
+        "genre": 2,
     },
 ]
 

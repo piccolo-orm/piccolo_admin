@@ -104,6 +104,9 @@
                                     >{{ row[name] }}</router-link
                                 >
                             </span>
+                            <span v-else-if="choicesLookup[name]">{{
+                                choicesLookup[name][row[name]]
+                            }}</span>
                             <span
                                 class="link"
                                 v-else-if="
@@ -240,6 +243,7 @@ import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
 import TableNav from "../components/TableNav.vue"
 import Tooltip from "../components/Tooltip.vue"
+import { Choice, Choices, Schema } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -288,6 +292,34 @@ export default Vue.extend({
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
+        },
+        // We create an object for quickly mapping a choice value to it's
+        // display value. It maps column name -> choice value -> display value.
+        // For example {'genre': {1: 'Sci-Fi'}}
+        choicesLookup() {
+            let schema: Schema = this.schema
+            const output = {}
+
+            for (const [columnName, config] of Object.entries(
+                schema.properties
+            )) {
+                const choices: Choices = config.extra.choices
+
+                const reducer = (accumulator: Object, choice: Choice) => {
+                    accumulator[choice.value] = choice.display_name
+                    return accumulator
+                }
+
+                if (choices) {
+                    output[columnName] = Object.values(choices).reduce(
+                        reducer,
+                        {}
+                    )
+                } else {
+                    output[columnName] = null
+                }
+            }
+            return output
         },
     },
     filters: {
@@ -450,6 +482,10 @@ div.wrapper {
                 box-sizing: border-box;
                 padding: 0.2rem 0.5rem;
                 text-align: center;
+
+                &:hover {
+                    color: white;
+                }
 
                 @media (max-width: @mobile_width) {
                     flex-grow: 1;

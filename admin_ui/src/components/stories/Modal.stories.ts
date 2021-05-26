@@ -5,7 +5,7 @@ export default {
     title: "Components/Modal",
     component: Modal,
     args: {
-        mode: "dark_mode",
+        mode: "light_mode",
     },
     argTypes: {
         mode: {
