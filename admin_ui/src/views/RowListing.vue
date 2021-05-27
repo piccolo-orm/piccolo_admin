@@ -443,7 +443,7 @@ export default Vue.extend({
 @import "../vars.less";
 
 div.wrapper {
-    <<<<<<< HEAD ======= div.title_bar {
+    div.title_bar {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -515,7 +515,7 @@ div.wrapper {
         }
     }
 
-    >>>>>>>master div.left_column,
+    div.left_column,
     div.right_column {
         overflow: auto;
         padding: 0.5rem;
