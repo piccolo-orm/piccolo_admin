@@ -3,7 +3,7 @@ Changes
 
 0.13.0
 ------
-Modified the UI to support columns with a ``changes`` attribute set. A select
+Modified the UI to support columns with a ``choices`` attribute set. A select
 input element is shown.
 
 0.12.1
