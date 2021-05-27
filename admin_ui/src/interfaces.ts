@@ -66,3 +66,46 @@ export interface User {
     active: Boolean
     superuser: Boolean
 }
+
+/*****************************************************************************/
+
+export interface Choice {
+    display_name: string
+    value: string
+}
+
+export interface Choices {
+    [key: string]: Choice
+}
+
+/*****************************************************************************/
+
+export interface Schema {
+    title: string;
+    type: string;
+    properties: Properties;
+    help_text: null;
+}
+
+export interface Properties {
+    [key: string]: RowConfig;
+}
+
+export interface RowConfig {
+    title: string;
+    extra: RowConfigExtra;
+    nullable: boolean;
+    type: string;
+    format?: string;
+    maxLength?: number;
+    items?: ArrayItems;
+}
+
+export interface RowConfigExtra {
+    help_text: null | string;
+    choices: Choices | null;
+}
+
+export interface ArrayItems {
+    type: string;
+}

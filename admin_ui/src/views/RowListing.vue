@@ -58,6 +58,7 @@
                 </p>
 
                 <p v-if="rows.length == 0">No results found</p>
+
                 <Table v-else>
                     <template v-slot:thead>
                         <tr>
@@ -102,6 +103,9 @@
                                         >{{ row[name] }}</router-link
                                     >
                                 </span>
+                                <span v-else-if="choicesLookup[name]">{{
+                                    choicesLookup[name][row[name]]
+                                }}</span>
                                 <span
                                     class="link"
                                     v-else-if="
@@ -243,6 +247,7 @@ import Table from "../components/Table.vue"
 import TableNav from "../components/TableNav.vue"
 import TitleBar from "../components/TitleBar.vue"
 import Tooltip from "../components/Tooltip.vue"
+import { Choice, Choices, Schema } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -294,6 +299,34 @@ export default Vue.extend({
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
+        },
+        // We create an object for quickly mapping a choice value to it's
+        // display value. It maps column name -> choice value -> display value.
+        // For example {'genre': {1: 'Sci-Fi'}}
+        choicesLookup() {
+            let schema: Schema = this.schema
+            const output = {}
+
+            for (const [columnName, config] of Object.entries(
+                schema.properties
+            )) {
+                const choices: Choices = config.extra.choices
+
+                const reducer = (accumulator: Object, choice: Choice) => {
+                    accumulator[choice.value] = choice.display_name
+                    return accumulator
+                }
+
+                if (choices) {
+                    output[columnName] = Object.values(choices).reduce(
+                        reducer,
+                        {}
+                    )
+                } else {
+                    output[columnName] = null
+                }
+            }
+            return output
         },
     },
     filters: {
@@ -410,7 +443,79 @@ export default Vue.extend({
 @import "../vars.less";
 
 div.wrapper {
-    div.left_column,
+    <<<<<<< HEAD ======= div.title_bar {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.5rem 0;
+
+        @media (max-width: @mobile_width) {
+            align-items: initial;
+            flex-direction: column;
+        }
+
+        div.title {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+
+            h1 {
+                display: inline-block;
+                text-transform: capitalize;
+                margin: 0 0.5rem 0 0;
+            }
+        }
+
+        p {
+            flex-grow: 0;
+        }
+
+        div.buttons {
+            box-sizing: border-box;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+
+            @media (max-width: @mobile_width) {
+                width: 100%;
+            }
+
+            a.button {
+                display: block;
+                flex-grow: 0;
+                font-weight: bold;
+                text-decoration: none;
+                margin-left: 0.25rem;
+                box-sizing: border-box;
+                padding: 0.2rem 0.5rem;
+                text-align: center;
+
+                &:hover {
+                    color: white;
+                }
+
+                @media (max-width: @mobile_width) {
+                    flex-grow: 1;
+
+                    svg {
+                        padding: 0 !important;
+                    }
+                }
+
+                span {
+                    @media (max-width: @mobile_width) {
+                        display: block;
+                    }
+                }
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+
+    >>>>>>>master div.left_column,
     div.right_column {
         overflow: auto;
         padding: 0.5rem;

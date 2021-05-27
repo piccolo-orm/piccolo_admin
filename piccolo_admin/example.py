@@ -7,6 +7,7 @@ or `admin_demo`.
 import asyncio
 import datetime
 import decimal
+import enum
 import os
 import random
 import typing as t
@@ -30,6 +31,7 @@ from piccolo.columns import (
     Timestamp,
     Numeric,
     Real,
+    SmallInt,
 )
 from piccolo.columns.readable import Readable
 import targ
@@ -47,6 +49,11 @@ class User(BaseUser, tablename="piccolo_user"):
 
 
 class Director(Table, help_text="The main director for a movie."):
+    class Gender(enum.Enum):
+        male = "m"
+        female = "f"
+        non_binary = "n"
+
     name = Varchar(length=300, null=False)
     years_nominated = Array(
         base_column=Integer(),
@@ -55,6 +62,7 @@ class Director(Table, help_text="The main director for a movie."):
             "Oscar."
         ),
     )
+    gender = Varchar(length=1, choices=Gender)
 
     @classmethod
     def get_readable(cls):
@@ -62,6 +70,16 @@ class Director(Table, help_text="The main director for a movie."):
 
 
 class Movie(Table):
+    class Genre(int, enum.Enum):
+        fantasy = 1
+        sci_fi = 2
+        documentary = 3
+        horror = 4
+        action = 5
+        comedy = 6
+        romance = 7
+        musical = 8
+
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
@@ -73,6 +91,7 @@ class Movie(Table):
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
+    genre = SmallInt(choices=Genre, null=True)
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
@@ -144,9 +163,19 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                 else:
                     remaining = remaining - chunk_size
 
-                Director.insert(
-                    *[Director(name=fake.name()) for _ in range(chunk_size)]
-                ).run_sync()
+                directors = []
+                genders = ["m", "f", "n"]
+                for _ in range(chunk_size):
+                    gender = random.choice(genders)
+                    if gender == "m":
+                        name = fake.name_male()
+                    elif gender == "f":
+                        name = fake.name_female()
+                    else:
+                        name = fake.name_nonbinary()
+                    directors.append(Director(name=name, gender=gender))
+
+                Director.insert(*directors).run_sync()
 
                 director_ids = (
                     Director.select(Director.id)
@@ -157,6 +186,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                 )
 
                 movies = []
+                genres = [i.value for i in Movie.Genre]
                 for _ in range(chunk_size):
                     oscar_nominations = random.sample(
                         [0, 0, 0, 0, 0, 1, 1, 3, 5], 1
@@ -185,6 +215,8 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                         box_office=decimal.Decimal(
                             str(random.randint(10, 1500) / 10)
                         ),
+                        barcode=random.randint(1_000_000_000, 9_999_999_999),
+                        genre=random.choice(genres),
                     )
                     movies.append(movie)
 

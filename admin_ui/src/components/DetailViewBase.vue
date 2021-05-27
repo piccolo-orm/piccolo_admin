@@ -1,6 +1,6 @@
 <template>
     <div>
-        <NavBar />
+        <NavBar :username="username" :siteName="siteName" />
 
         <div class="inner">
             <BackButton />
@@ -19,8 +19,17 @@ import NavBar from "./NavBar.vue"
 export default Vue.extend({
     components: {
         BackButton,
-        NavBar
-    }
+        NavBar,
+    },
+    computed: {
+        username() {
+            const user = this.$store.state.user
+            return user ? user.username : "Unknown"
+        },
+        siteName() {
+            return this.$store.state.metaModule.siteName
+        },
+    },
 })
 </script>
 

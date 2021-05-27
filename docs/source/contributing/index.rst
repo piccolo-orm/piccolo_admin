@@ -38,3 +38,14 @@ The UI needs an API to interact with - the easiest way to do this is to use the 
 
 
 You will need to configure a local webserver as a proxy - see extra/piccolo_admin.
+
+
+Storybook
+---------
+
+The project uses `Storybook JS <https://storybook.js.org/>`_, which is a nice tool
+for viewing UI components in isolation. To launch it:
+
+.. code-block:: bash
+
+    npm run storybook

@@ -1,6 +1,17 @@
 <template>
     <div>
-        <template v-if="type == 'integer'">
+        <template v-if="choices">
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <ChoiceSelect
+                :fieldName="getFieldName(title)"
+                :value="value"
+                :choices="choices"
+                :isNullable="isNullable"
+                :isFilter="isFilter"
+            />
+        </template>
+
+        <template v-else-if="type == 'integer'">
             <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <input
                 step="1"
@@ -11,10 +22,10 @@
             />
         </template>
 
-        <template v-if="type == 'string'">
+        <template v-else-if="type == 'string'">
             <template v-if="format == 'date-time'">
                 <OperatorField
-                    :fieldName="title.toLowerCase()"
+                    :fieldName="getFieldName(title)"
                     v-if="isFilter"
                 />
                 <!--
@@ -50,7 +61,7 @@
             />
         </template>
 
-        <template v-if="type == 'boolean'">
+        <template v-else-if="type == 'boolean'">
             <select v-bind:name="getFieldName(title)">
                 <option
                     v-bind:selected="value == 'all'"
@@ -75,7 +86,7 @@
             </select>
         </template>
 
-        <template v-if="type == 'number'">
+        <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
                 <OperatorField
                     :fieldName="title.toLowerCase()"
@@ -105,7 +116,7 @@
             </template>
         </template>
 
-        <template v-if="type == 'array'">
+        <template v-else-if="type == 'array'">
             <ArrayWidget
                 :array="localValue"
                 v-on:updateArray="localValue = $event"
@@ -120,18 +131,30 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, { PropType } from "vue"
 
 import flatPickr from "vue-flatpickr-component"
+
 import ArrayWidget from "./ArrayWidget.vue"
+import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
+import { Choices } from "../interfaces"
 
 export default Vue.extend({
     props: {
-        title: String,
-        type: String,
-        value: undefined,
+        title: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            default: "string",
+        },
+        value: {
+            type: undefined,
+            default: undefined,
+        },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
         format: String,
@@ -143,10 +166,15 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        choices: {
+            type: Object as PropType<Choices>,
+            default: null,
+        },
     },
     components: {
         flatPickr,
         ArrayWidget,
+        ChoiceSelect,
         DurationWidget,
         OperatorField,
     },
