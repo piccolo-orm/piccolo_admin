@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.13.1
+------
+ * Bumped Node dependencies with security warnings.
+ * Slightly changed light mode styles (blue-grey sidebar instead of grey).
+ * Fixed the `admin_demo` command which is installed by setup.py - the path was
+   wrong.
+
 0.13.0
 ------
 Modified the UI to support columns with a ``choices`` attribute set. A select
