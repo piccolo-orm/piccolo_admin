@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.13.2
+------
+Rewrote `admin_demo` command to expose configuration options on the command
+line.
+
 0.13.1
 ------
  * Bumped Node dependencies with security warnings.
