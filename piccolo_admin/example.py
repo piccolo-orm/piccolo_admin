@@ -256,7 +256,11 @@ def run(persist: bool = False, engine: str = "sqlite", inflate: int = 0):
     asyncio.run(serve(APP, CustomConfig()))
 
 
-if __name__ == "__main__":
+def main():
     cli = targ.CLI(description="Piccolo Admin")
     cli.register(run)
     cli.run(solo=True)
+
+
+if __name__ == "__main__":
+    main()
