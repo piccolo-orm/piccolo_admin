@@ -7,4 +7,5 @@
 cd ..
 
 export PICCOLO_CONF="tests.piccolo_conf"
+rm piccolo_api_test.sqlite 2> /dev/null
 python -m pytest -s $@

@@ -40,6 +40,7 @@ ul {
             display: block;
             padding: 0.5rem 1rem;
             box-sizing: border-box;
+            text-decoration: none;
         }
     }
 }

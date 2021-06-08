@@ -32,9 +32,8 @@ class TestChangeUserPassword(TestCase):
     password = "H£ll0Wo3rlD"
 
     def setUp(self):
-        TableA.create_table(if_not_exists=True).run_sync()
-        SessionsBase.create_table(if_not_exists=True).run_sync()
-        BaseUser.create_table(if_not_exists=True).run_sync()
+        for _Table in (TableA, SessionsBase, BaseUser):
+            _Table.create_table(if_not_exists=True).run_sync()
 
         BaseUser(
             username=self.username,
@@ -44,9 +43,8 @@ class TestChangeUserPassword(TestCase):
         ).save().run_sync()
 
     def tearDown(self):
-        TableA.alter().drop_table(if_exists=True).run_sync()
-        SessionsBase.alter().drop_table(if_exists=True).run_sync()
-        BaseUser.alter().drop_table(if_exists=True).run_sync()
+        for _Table in (TableA, SessionsBase, BaseUser):
+            _Table.alter().drop_table(if_exists=True).run_sync()
 
     def test_change_user_password(self):
         """

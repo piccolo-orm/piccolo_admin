@@ -68,6 +68,13 @@ export default Vue.extend({
         },
     },
     methods: {
+        handleError(data) {
+            if (typeof data != "string") {
+                this.errors = JSON.stringify(data, null, 2)
+            } else {
+                this.errors = data
+            }
+        },
         async submitForm(event) {
             console.log("Submitting...")
 
@@ -96,13 +103,7 @@ export default Vue.extend({
             try {
                 await this.$store.dispatch("updateRow", config)
             } catch (error) {
-                const data = error.response.data
-
-                if (typeof data != "string") {
-                    this.errors = JSON.stringify(data, null, 2)
-                } else {
-                    this.errors = data
-                }
+                this.handleError(error.response.data)
                 return
             }
             this.errors = ""
@@ -127,10 +128,14 @@ export default Vue.extend({
         },
         async fetchData() {
             this.$store.commit("updateCurrentTablename", this.tableName)
-            await this.$store.dispatch("fetchSingleRow", {
-                tableName: this.tableName,
-                rowID: this.rowID,
-            })
+            try {
+                await this.$store.dispatch("fetchSingleRow", {
+                    tableName: this.tableName,
+                    rowID: this.rowID,
+                })
+            } catch (error) {
+                this.handleError(error.response.data)
+            }
         },
     },
     watch: {

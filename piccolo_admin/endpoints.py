@@ -111,9 +111,7 @@ class AdminRouter(FastAPI):
                 _read_only = read_only
 
             if table is auth_table:
-                validators = dataclasses.replace(
-                    USER_VALIDATORS, extra_context={"auth_table": auth_table}
-                )
+                validators = dataclasses.replace(USER_VALIDATORS)
             else:
                 validators = Validators()
 
@@ -159,33 +157,33 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        # # TODO - add validators ...
-        # FastAPIWrapper(
-        #     root_url="/user-management/",
-        #     fastapi_app=api_app,
-        #     piccolo_crud=PiccoloCRUD(
-        #         table=auth_table,
-        #         read_only=_read_only,
-        #         page_size=page_size,
-        #         validators=USER_VALIDATORS,
-        #     ),
-        #     fastapi_kwargs=FastAPIKwargs(all_routes={"tags": ["User"]},),
-        # )
+        # TODO - replace with validators ...
+        FastAPIWrapper(
+            root_url="/user-management/",
+            fastapi_app=api_app,
+            piccolo_crud=PiccoloCRUD(
+                table=auth_table,
+                read_only=read_only,
+                page_size=page_size,
+                validators=USER_VALIDATORS,
+            ),
+            fastapi_kwargs=FastAPIKwargs(all_routes={"tags": ["User"]},),
+        )
 
-        # api_app.add_api_route(
-        #     path="/user-management/",
-        #     endpoint=self.get_user_list,
-        #     methods=["GET"],
-        #     tags=["User"],
-        #     response_model=t.List[UserResponseModel],
-        # )
+        api_app.add_api_route(
+            path="/user-management/",
+            endpoint=self.get_user_list,
+            methods=["GET"],
+            tags=["User"],
+            response_model=t.List[UserResponseModel],
+        )
 
-        # api_app.add_api_route(
-        #     path="/user-management/schema/",
-        #     endpoint=self.get_user_schema,
-        #     methods=["GET"],
-        #     tags=["User"],
-        # )
+        api_app.add_api_route(
+            path="/user-management/schema/",
+            endpoint=self.get_user_schema,
+            methods=["GET"],
+            tags=["User"],
+        )
 
         api_app.add_api_route(
             path="/change-password/",

@@ -1,6 +1,6 @@
 <template>
     <Modal v-on:close="$emit('close')">
-        <h1>Change password</h1>
+        <h1><font-awesome-icon icon="lock" />Change password</h1>
 
         <form v-on:submit.prevent="updatePassword">
             <label>Username</label>
