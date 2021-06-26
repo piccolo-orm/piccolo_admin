@@ -11,6 +11,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
+from piccolo_api.openapi.endpoints import swagger_ui
 from piccolo_api.rate_limiting.middleware import (
     RateLimitingMiddleware,
     RateLimitProvider,
@@ -87,7 +88,8 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        api_app = FastAPI()
+        api_app = FastAPI(docs_url=None)
+        api_app.add_route("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table in tables:
             FastAPIWrapper(
