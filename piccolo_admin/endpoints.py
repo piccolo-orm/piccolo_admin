@@ -89,7 +89,7 @@ class AdminRouter(FastAPI):
         #######################################################################
 
         api_app = FastAPI(docs_url=None)
-        api_app.add_route("/docs/", swagger_ui(schema_url="../openapi.json"))
+        api_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table in tables:
             FastAPIWrapper(
