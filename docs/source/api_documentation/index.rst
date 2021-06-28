@@ -11,5 +11,4 @@ API.
 
 .. image:: https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/redoc.png
 
-.. hint:: Unfortunately, due to CSRF middleware, the interactive features of
- Swagger only work for GET requests.
+.. hint:: As of version 0.14.0, Swagger interactive features work with all HTTP methods.
