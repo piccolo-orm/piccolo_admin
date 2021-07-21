@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ./admin_ui && npm run build && cd ..
+npm run build && cd ..
 rm -rf ./build/*
 rm -rf ./dist/*
 python setup.py sdist bdist_wheel

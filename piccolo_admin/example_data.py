@@ -1,7 +1,6 @@
 import datetime
 from decimal import Decimal
 
-
 DIRECTORS = [
     {
         "id": 1,

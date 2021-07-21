@@ -1,8 +1,9 @@
 from unittest import TestCase
 
-from piccolo_admin.endpoints import get_all_tables
-from piccolo.table import Table
 from piccolo.columns.column_types import ForeignKey, Varchar
+from piccolo.table import Table
+
+from piccolo_admin.endpoints import get_all_tables
 
 
 class TableA(Table):
