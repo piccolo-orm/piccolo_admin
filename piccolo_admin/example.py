@@ -12,32 +12,32 @@ import os
 import random
 import typing as t
 
+import targ
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
-from piccolo_api.session_auth.tables import SessionsBase
-from piccolo.engine.sqlite import SQLiteEngine
-from piccolo.engine.postgres import PostgresEngine
 from piccolo.apps.user.tables import BaseUser
-from piccolo.table import Table
 from piccolo.columns import (
     Array,
     BigInt,
-    Varchar,
-    Integer,
-    ForeignKey,
     Boolean,
+    ForeignKey,
+    Integer,
     Interval,
-    Text,
-    Timestamp,
     Numeric,
     Real,
     SmallInt,
+    Text,
+    Timestamp,
+    Varchar,
 )
 from piccolo.columns.readable import Readable
-import targ
+from piccolo.engine.postgres import PostgresEngine
+from piccolo.engine.sqlite import SQLiteEngine
+from piccolo.table import Table
+from piccolo_api.session_auth.tables import SessionsBase
 
 from piccolo_admin.endpoints import create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIES, MOVIE_WORDS
+from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES
 
 
 class Sessions(SessionsBase):

@@ -2,32 +2,32 @@
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
-from datetime import timedelta
-from functools import partial
+
 import os
 import typing as t
-
-from piccolo.apps.user.tables import BaseUser
-from piccolo_api.csrf.middleware import CSRFMiddleware
-from piccolo_api.crud.endpoints import PiccoloCRUD
-from piccolo_api.fastapi.endpoints import FastAPIWrapper, FastAPIKwargs
-from piccolo_api.openapi.endpoints import swagger_ui
-from piccolo_api.rate_limiting.middleware import (
-    RateLimitingMiddleware,
-    RateLimitProvider,
-    InMemoryLimitProvider,
-)
-from piccolo_api.session_auth.endpoints import session_login, session_logout
-from piccolo_api.session_auth.tables import SessionsBase
-from piccolo_api.session_auth.middleware import SessionsAuthBackend
-from pydantic import BaseModel
+from datetime import timedelta
+from functools import partial
 
 from fastapi import FastAPI
-from starlette.responses import HTMLResponse, JSONResponse
-from starlette.requests import Request
-from starlette.staticfiles import StaticFiles
+from piccolo.apps.user.tables import BaseUser
+from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.csrf.middleware import CSRFMiddleware
+from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
+from piccolo_api.openapi.endpoints import swagger_ui
+from piccolo_api.rate_limiting.middleware import (
+    InMemoryLimitProvider,
+    RateLimitingMiddleware,
+    RateLimitProvider,
+)
+from piccolo_api.session_auth.endpoints import session_login, session_logout
+from piccolo_api.session_auth.middleware import SessionsAuthBackend
+from piccolo_api.session_auth.tables import SessionsBase
+from pydantic import BaseModel
 from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.requests import Request
+from starlette.responses import HTMLResponse, JSONResponse
+from starlette.staticfiles import StaticFiles
 
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
@@ -200,7 +200,8 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name,
+            user_id=request.user.user_id,
         )
 
     ###########################################################################
