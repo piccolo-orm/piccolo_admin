@@ -17,6 +17,7 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns import (
+    JSON,
     Array,
     BigInt,
     Boolean,
@@ -37,7 +38,7 @@ from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 
 from piccolo_admin.endpoints import create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES
+from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
 class Sessions(SessionsBase):
@@ -94,8 +95,21 @@ class Movie(Table):
     genre = SmallInt(choices=Genre, null=True)
 
 
-TABLE_CLASSES: t.Tuple[t.Type[Table]] = (Director, Movie, User, Sessions)
-APP = create_admin([Director, Movie], auth_table=User, session_table=Sessions)
+class Studio(Table, help_text="A movie studio."):
+    name = Varchar()
+    facilities = JSON()
+
+
+TABLE_CLASSES: t.Tuple[t.Type[Table]] = (
+    Director,
+    Movie,
+    Studio,
+    User,
+    Sessions,
+)
+APP = create_admin(
+    [Director, Movie, Studio], auth_table=User, session_table=Sessions
+)
 
 
 def set_engine(engine: str = "sqlite"):
@@ -130,6 +144,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     # Add some rows
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
+    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the

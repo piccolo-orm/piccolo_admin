@@ -330,6 +330,18 @@ MOVIES = [
 ]
 
 
+STUDIOS = [
+    {
+        "name": "Shepperton Studios",
+        "facilities": {
+            "sound_stage": True,
+            "catering": True,
+            "water_tank": True,
+        },
+    }
+]
+
+
 # Some random words used to generate fake movie names.
 MOVIE_WORDS = [
     "Adventure",
