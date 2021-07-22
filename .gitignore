@@ -11,3 +11,8 @@ node_modules/
 *.egg-info/
 build/
 dist/
+.coverage
+coverage.xml
+htmlcov/
+.env/
+.venv/
