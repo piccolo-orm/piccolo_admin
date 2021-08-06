@@ -4,4 +4,4 @@ livereload==2.6.3
 sphinx-autodoc-typehints==1.11.1
 
 # Also include the main requirements, so it will build on ReadTheDocs.
--r ../requirements.txt
+-r ../requirements/requirements.txt

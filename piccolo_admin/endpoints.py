@@ -31,7 +31,7 @@ from starlette.staticfiles import StaticFiles
 
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
-if t.TYPE_CHECKING:
+if t.TYPE_CHECKING:  # pragma: no cover
     from piccolo.table import Table
 
 
