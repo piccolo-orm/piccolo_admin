@@ -63,6 +63,7 @@ export default {
                 }
                 return
             }
+            this.errors = ""
 
             var message: APIResponseMessage = {
                 contents: "Successfully added row",
