@@ -1,20 +1,30 @@
 <template>
     <div>
         <ul class="array_items">
-            <li v-for="(value, index) in internalArray" :key="index">
+            <li
+                :key="index"
+                v-for="(value, index) in internalArray"
+            >
                 <input
-                    :value="value"
                     :type="inputType"
+                    :value="value"
+                    id="choice"
                     v-on:change="updateArray($event, index)"
                 />
-                <a href="#" v-on:click.prevent="removeArrayElement(index)"
-                    ><font-awesome-icon icon="times"
-                /></a>
+                <a
+                    href="#"
+                    v-on:click.prevent="removeArrayElement(index)"
+                >
+                    <font-awesome-icon icon="times" />
+                </a>
             </li>
             <li>
-                <a href="#" v-on:click.prevent="addArrayElement"
-                    ><font-awesome-icon icon="plus" />Add</a
+                <a
+                    href="#"
+                    v-on:click.prevent="addArrayElement"
                 >
+                    <font-awesome-icon icon="plus" />Add
+                </a>
             </li>
         </ul>
     </div>

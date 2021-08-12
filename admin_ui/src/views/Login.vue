@@ -5,12 +5,14 @@
             <form v-on:submit.prevent="login">
                 <label>Username</label>
                 <input
+                    name="username"
                     type="text"
                     v-model="username"
                 />
 
                 <label>Password</label>
                 <input
+                    name="password"
                     type="password"
                     v-model="password"
                 />
