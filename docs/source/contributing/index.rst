@@ -57,7 +57,7 @@ Cypress
 Cypress is a tool for running end to end tests. It enables us to check that the
 entire application is working as expected.
 
-Before launching it, make sure that Piccolo Admin front end code, and
+Before launching it, make sure that the Piccolo Admin front end code and
 backend code are running (see above).
 
 Then launch Cypress as follows:
@@ -68,4 +68,4 @@ Then launch Cypress as follows:
 
 
 This will launch the Cypress app, which is basically a wrapper around Chrome,
-from which you can launch the automated tests.
+from which you can start the automated tests.
