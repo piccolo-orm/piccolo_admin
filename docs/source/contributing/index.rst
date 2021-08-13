@@ -49,3 +49,23 @@ for viewing UI components in isolation. To launch it:
 .. code-block:: bash
 
     npm run storybook
+
+
+Cypress
+-------
+
+Cypress is a tool for running end to end tests. It enables us to check that the
+entire application is working as expected.
+
+Before launching it, make sure that Piccolo Admin front end code, and
+backend code are running (see above).
+
+Then launch Cypress as follows:
+
+.. code-block:: bash
+
+    npm run cypress:open
+
+
+This will launch the Cypress app, which is basically a wrapper around Chrome,
+from which you can launch the automated tests.
