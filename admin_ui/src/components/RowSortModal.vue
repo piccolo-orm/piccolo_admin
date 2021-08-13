@@ -16,7 +16,10 @@
                 >{{ key }}</option>
             </select>
 
-            <select v-model="ascending">
+            <select
+                name="ordering"
+                v-model="ascending"
+            >
                 <option value="ascending">Ascending</option>
                 <option value="descending">Descending</option>
             </select>
@@ -33,29 +36,29 @@ import * as i from "../interfaces"
 export default {
     props: {
         schema: Object,
-        tableName: String
+        tableName: String,
     },
     data() {
         return {
             ascending: "descending",
-            propertyName: "id"
+            propertyName: "id",
         }
     },
     components: {
-        Modal
+        Modal,
     },
     methods: {
         async save() {
             let config: i.SortByConfig = {
                 property: this.propertyName,
-                ascending: this.ascending == "ascending"
+                ascending: this.ascending == "ascending",
             }
             this.$store.commit("updateSortBy", config)
 
             await this.$store.dispatch("fetchRows")
 
             this.$emit("close")
-        }
+        },
     },
     mounted() {
         let sortBy: i.SortByConfig | null = this.$store.state.sortBy
@@ -63,7 +66,7 @@ export default {
             this.ascending = sortBy.ascending ? "ascending" : "descending"
             this.propertyName = sortBy.property
         }
-    }
+    },
 }
 </script>
 
