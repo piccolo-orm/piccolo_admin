@@ -5,4 +5,4 @@
 # To run a single test tests/test_foo.py::TestFoo::test_foo
 
 export PICCOLO_CONF="tests.piccolo_conf"
-python -m pytest --cov=piccolo_admin --cov-report xml --cov-report html --cov-fail-under 23 -s $@
+python -m pytest --cov=piccolo_admin --cov-report xml --cov-report html --cov-fail-under 90 -s $@
