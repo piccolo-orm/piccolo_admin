@@ -5,7 +5,7 @@ line-length = 79
 profile = "black"
 line_length = 79
 
-[tool.coverage.run]
+[tool.coverage.report]
 omit = ["piccolo_admin/example.py", 
         "piccolo_admin/example_data.py", 
         "piccolo_admin/piccolo_app.py",
