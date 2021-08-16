@@ -18,14 +18,13 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import * as i from "../interfaces"
 
-export default Vue.extend({
+export default {
     data() {
         return {
             visible: false,
-            timeLastAppeared: 0
+            timeLastAppeared: 0,
         }
     },
     computed: {
@@ -36,12 +35,12 @@ export default Vue.extend({
         },
         apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
-        }
+        },
     },
     methods: {
         getTime(): number {
             return new Date().getTime()
-        }
+        },
     },
     watch: {
         visible() {
@@ -58,9 +57,9 @@ export default Vue.extend({
                     app.visible = false
                 }
             }, 3000)
-        }
-    }
-})
+        },
+    },
+}
 </script>
 
 

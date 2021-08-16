@@ -2,12 +2,24 @@
     <div class="filter_wrapper">
         <h1>Filter</h1>
 
-        <a @click="closeSideBar()" class="button" id="sidebar-close">
-            <span> <font-awesome-icon icon="times" /> </span>Close
+        <a
+            @click="closeSideBar()"
+            class="button"
+            id="sidebar-close"
+        >
+            <span>
+                <font-awesome-icon icon="times" />
+            </span>Close
         </a>
 
-        <form ref="form" v-on:submit.prevent="submitForm($event)">
-            <RowFormSearch v-bind:isFilter="true" v-bind:schema="schema" />
+        <form
+            ref="form"
+            v-on:submit.prevent="submitForm($event)"
+        >
+            <RowFormSearch
+                v-bind:isFilter="true"
+                v-bind:schema="schema"
+            />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -16,11 +28,10 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import RowFormSearch from "./RowFormSearch.vue"
 import { APIResponseMessage } from "../interfaces"
 
-export default Vue.extend({
+export default {
     props: {
         showFilterSidebar: Boolean,
     },
@@ -100,7 +111,7 @@ export default Vue.extend({
             this.showSuccess("Successfully cleared filters")
         },
     },
-})
+}
 </script>
 
 

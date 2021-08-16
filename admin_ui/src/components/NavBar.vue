@@ -22,9 +22,9 @@
             <ul>
                 <li>
                     <a
+                        :title="username"
                         href="#"
                         id="user"
-                        :title="username"
                         v-on:click.prevent="showDropdown = !showDropdown"
                     >
                         <font-awesome-icon icon="user" />
@@ -49,11 +49,10 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 
-export default Vue.extend({
+export default {
     props: {
         username: {
             type: String,
@@ -84,7 +83,7 @@ export default Vue.extend({
         SidebarOverlay,
         NavDropDownMenu,
     },
-})
+}
 </script>
 
 

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import App from './App.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -56,4 +56,5 @@ library.add(
     faTrashAlt,
     faUser,
 )
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+App.mount('font-awesome-icon')

@@ -26,18 +26,22 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect :row="selectedRow" :schema="schema" />
+            <RowFormSelect
+                :row="selectedRow"
+                :schema="schema"
+            />
             <button>Save</button>
         </form>
 
-        <ReferencingTables :rowID="rowID" :tableName="tableName" />
+        <ReferencingTables
+            :rowID="rowID"
+            :tableName="tableName"
+        />
     </div>
 </template>
 
 
 <script lang="ts">
-import Vue from "vue"
-
 import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
@@ -45,7 +49,7 @@ import RowFormSelect from "./RowFormSelect.vue"
 
 import { UpdateRow, DeleteRow } from "../interfaces"
 
-export default Vue.extend({
+export default {
     props: ["tableName", "rowID"],
     components: {
         DeleteButton,
@@ -150,7 +154,7 @@ export default Vue.extend({
             this.$store.dispatch("fetchSchema", this.tableName),
         ])
     },
-})
+}
 </script>
 
 

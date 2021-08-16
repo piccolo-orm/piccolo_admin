@@ -1,16 +1,16 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import axios from 'axios'
 import * as i from './interfaces'
 
 import aboutModalModule from './modules/aboutModal'
 import metaModule from './modules/meta'
 
-Vue.use(Vuex)
+
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
-export default new Vuex.Store({
+export default createStore({
     modules: {
         aboutModalModule,
         metaModule
@@ -98,6 +98,7 @@ export default new Vuex.Store({
         },
         async fetchRows(context) {
             const params = context.state.filterParams
+            console.log(params)
             const tableName = context.state.currentTableName
 
             const sortBy = context.state.sortBy

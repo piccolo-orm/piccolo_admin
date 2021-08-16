@@ -1,18 +1,24 @@
 <template>
     <div>
         <template v-if="choices">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
-            <ChoiceSelect
+            <OperatorField
                 :fieldName="getFieldName(title)"
-                :value="value"
+                v-if="isFilter"
+            />
+            <ChoiceSelect
                 :choices="choices"
-                :isNullable="isNullable"
+                :fieldName="getFieldName(title)"
                 :isFilter="isFilter"
+                :isNullable="isNullable"
+                :value="value"
             />
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField
+                :fieldName="getFieldName(title)"
+                v-if="isFilter"
+            />
             <input
                 step="1"
                 type="number"
@@ -67,22 +73,20 @@
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
                     value="all"
-                >
-                    All
-                </option>
+                >All</option>
                 <option
                     v-bind:selected="value == null"
                     v-if="isNullable"
                     value="null"
-                >
-                    Null
-                </option>
-                <option v-bind:selected="value == true" value="true">
-                    True
-                </option>
-                <option v-bind:selected="value == false" value="false">
-                    False
-                </option>
+                >Null</option>
+                <option
+                    v-bind:selected="value == true"
+                    value="true"
+                >True</option>
+                <option
+                    v-bind:selected="value == false"
+                    value="false"
+                >False</option>
             </select>
         </template>
 
@@ -122,9 +126,9 @@
                 v-on:updateArray="localValue = $event"
             />
             <input
+                :value="JSON.stringify(localValue)"
                 type="hidden"
                 v-bind:name="getFieldName(title)"
-                :value="JSON.stringify(localValue)"
             />
         </template>
     </div>
@@ -141,7 +145,7 @@ import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 import { Choices } from "../interfaces"
 
-export default Vue.extend({
+export default {
     props: {
         title: {
             type: String,
@@ -219,7 +223,7 @@ export default Vue.extend({
             app.setTextareaHeight()
         }, 0)
     },
-})
+}
 </script>
 
 <style scoped lang="less">

@@ -1,6 +1,9 @@
 <template>
     <div>
-        <NavBar :username="username" :siteName="siteName" />
+        <NavBar
+            :siteName="siteName"
+            :username="username"
+        />
 
         <div class="inner">
             <BackButton />
@@ -12,11 +15,10 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import BackButton from "./BackButton.vue"
 import NavBar from "./NavBar.vue"
 
-export default Vue.extend({
+export default {
     components: {
         BackButton,
         NavBar,
@@ -30,7 +32,7 @@ export default Vue.extend({
             return this.$store.state.metaModule.siteName
         },
     },
-})
+}
 </script>
 
 

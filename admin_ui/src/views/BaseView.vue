@@ -1,6 +1,9 @@
 <template>
     <div class="base_view">
-        <NavBar :username="username" :siteName="siteName" />
+        <NavBar
+            :siteName="siteName"
+            :username="username"
+        />
         <div class="wrapper">
             <div class="sidebar_wrapper">
                 <SidebarNav />
@@ -16,7 +19,7 @@ import Vue from "vue"
 import NavBar from "../components/NavBar.vue"
 import SidebarNav from "../components/SidebarNav.vue"
 
-export default Vue.extend({
+export default {
     components: {
         NavBar,
         SidebarNav,
@@ -30,7 +33,7 @@ export default Vue.extend({
             return this.$store.state.metaModule.siteName
         },
     },
-})
+}
 </script>
 
 

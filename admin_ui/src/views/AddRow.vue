@@ -1,6 +1,10 @@
 <template>
     <DetailViewBase>
-        <AddRowForm :schema="schema" :tableName="tableName" v-if="schema" />
+        <AddRowForm
+            :schema="schema"
+            :tableName="tableName"
+            v-if="schema"
+        />
     </DetailViewBase>
 </template>
 
@@ -10,7 +14,7 @@ import Vue from "vue"
 import AddRowForm from "../components/AddRowForm.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
-export default Vue.extend({
+export default {
     props: ["tableName"],
     components: {
         AddRowForm,
@@ -25,7 +29,7 @@ export default Vue.extend({
         this.$store.commit("updateCurrentTablename", this.tableName)
         await this.$store.dispatch("fetchSchema", this.tableName)
     },
-})
+}
 </script>
 
 

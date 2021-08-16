@@ -5,12 +5,12 @@
             placeholder="Type here to search"
             type="text"
             v-model="selectedValue"
+            v-on:change="checkNull"
             v-on:focus="
-                resetResult()
+                resetResult(),
                 showResults = true
             "
             v-on:keydown.enter.prevent
-            v-on:change="checkNull"
         />
         <div
             class="results"
@@ -25,12 +25,10 @@
                     :key="id[0]"
                     v-for="id in ids"
                     v-on:click="
-                        selectResult(...id)
+                        selectResult(...id),
                         showResults = false
                     "
-                >
-                    {{ id[1] }}
-                </li>
+                >{{ id[1] }}</li>
             </ul>
         </div>
         <input

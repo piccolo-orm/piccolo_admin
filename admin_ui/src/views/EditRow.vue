@@ -9,17 +9,16 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import EditRowForm from "../components/EditRowForm.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
-export default Vue.extend({
+export default {
     props: ["tableName", "rowID"],
     components: {
         EditRowForm,
-        DetailViewBase
-    }
-})
+        DetailViewBase,
+    },
+}
 </script>
 
 

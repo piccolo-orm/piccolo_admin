@@ -19,14 +19,13 @@
 </template>
 
 <script>
-import Vue from "vue"
 import TableNav from "./TableNav.vue"
 
-export default Vue.extend({
+export default {
     components: {
         TableNav,
     },
-})
+}
 </script>
 
 <style lang="less">

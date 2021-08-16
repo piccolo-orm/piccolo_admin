@@ -7,10 +7,13 @@
             <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
                     <Tooltip
-                        v-if="property.extra.help_text"
                         :content="property.extra.help_text"
+                        v-if="property.extra.help_text"
                     />
 
                     <router-link
@@ -43,21 +46,25 @@
                 <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
                     v-bind:key="getValue(property.title)"
-                    v-bind:tableName="property.extra.to"
-                    v-bind:rowID="getValue(property.title)"
                     v-bind:readable="getValue(property.title + '_readable')"
+                    v-bind:rowID="getValue(property.title)"
+                    v-bind:tableName="property.extra.to"
                 />
             </template>
             <template v-else>
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
                     <Tooltip
-                        v-if="property.extra.help_text"
                         :content="property.extra.help_text"
+                        v-if="property.extra.help_text"
                     />
                 </label>
                 <InputField
+                    v-bind:choices="property.extra.choices"
                     v-bind:format="property.format"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
@@ -66,7 +73,6 @@
                     v-bind:title="property.title"
                     v-bind:type="property.type || property.anyOf[0].type"
                     v-bind:value="getValue(property.title)"
-                    v-bind:choices="property.extra.choices"
                 />
             </template>
         </div>
@@ -74,13 +80,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
-
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
 
-export default Vue.extend({
+export default {
     props: {
         row: Object,
         schema: Object,
@@ -115,7 +119,8 @@ export default Vue.extend({
         },
         keySelectChanged(propertyTitle: string, value: number) {
             console.log(`${propertyTitle} = ${value}`)
-            Vue.set(this.keySelectIDs, propertyTitle, value)
+            // TODO replace Vue.set()
+            //Vue.set(this.keySelectIDs, propertyTitle, value)
         },
         // We use this to refresh KeySelect components
         getKey(keyName: string) {
@@ -146,7 +151,7 @@ export default Vue.extend({
             window.removeEventListener("message", this.windowListener)
         }
     },
-})
+}
 </script>
 
 <style scoped lang="less">

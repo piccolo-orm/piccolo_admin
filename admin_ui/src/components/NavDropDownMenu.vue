@@ -37,11 +37,10 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
 
 import DropDownMenu from "./DropDownMenu.vue"
 
-export default Vue.extend({
+export default {
     components: {
         DropDownMenu,
     },
@@ -74,7 +73,7 @@ export default Vue.extend({
             }
         },
     },
-})
+}
 </script>
 
 <style scoped lang="less">

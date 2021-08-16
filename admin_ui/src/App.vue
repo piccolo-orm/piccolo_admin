@@ -1,5 +1,8 @@
 <template>
-    <div :class="{ dark_mode: darkMode, light_mode: !darkMode }" id="app">
+    <div
+        :class="{ dark_mode: darkMode, light_mode: !darkMode }"
+        id="app"
+    >
         <router-view />
         <MessagePopup />
         <AboutModal v-if="showAboutModal" />
@@ -9,13 +12,12 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
 import * as i from "./interfaces"
 
 import AboutModal from "./components/AboutModal.vue"
 import MessagePopup from "./components/MessagePopup.vue"
 
-export default Vue.extend({
+export default {
     components: {
         AboutModal,
         MessagePopup,
@@ -122,7 +124,7 @@ export default Vue.extend({
 
         await this.$store.dispatch("fetchUser")
     },
-})
+}
 </script>
 
 

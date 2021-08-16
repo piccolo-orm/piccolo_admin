@@ -10,7 +10,7 @@
                 v-bind:class="{active: isActive(tableName)}"
             >
                 <font-awesome-icon icon="level-up-alt" />
-                {{ tableName | readable }}
+                {{ readable(tableName) }}
             </router-link>
         </li>
     </ul>
@@ -18,16 +18,14 @@
 
 
 <script lang="ts">
-import Vue from "vue"
-
-export default Vue.extend({
+export default {
     computed: {
         tableNames() {
             return this.$store.state.tableNames
         },
         currentTableName() {
             return this.$store.state.currentTableName
-        }
+        },
     },
     methods: {
         showListing(tableName: string) {
@@ -36,17 +34,15 @@ export default Vue.extend({
         },
         isActive(tableName: string): boolean {
             return this.currentTableName === tableName
-        }
-    },
-    filters: {
+        },
         readable(value) {
             return value.split("_").join(" ")
-        }
+        },
     },
     async mounted() {
         await this.$store.dispatch("fetchTableNames")
-    }
-})
+    },
+}
 </script>
 
 

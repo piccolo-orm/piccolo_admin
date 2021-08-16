@@ -37,16 +37,14 @@
 
 
 <script lang="ts">
-import Vue from "vue"
-import { Location } from "vue-router"
 import { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
-export default Vue.extend({
+export default {
     props: ["tableName", "rowID"],
-    data: function() {
+    data: function () {
         return {
             references: [] as TableReference[],
-            showReferencing: false
+            showReferencing: false,
         }
     },
     methods: {
@@ -55,29 +53,31 @@ export default Vue.extend({
                 "fetchTableReferences",
                 this.tableName
             )
-            this.references = (response.data as TableReferencesAPIResponse).references
+            this.references = (
+                response.data as TableReferencesAPIResponse
+            ).references
         },
         clickedReference(reference: TableReference) {
             let columnName = reference.columnName
             let query = {}
             query[columnName] = this.rowID
 
-            let location: Location = {
+            let location = {
                 name: "rowListing",
                 params: { tableName: reference.tableName },
-                query
+                query,
             }
             let vueUrl = this.$router.resolve(location).href
             window.open(
                 `${document.location.origin}${document.location.pathname}${vueUrl}`,
                 "_blank"
             )
-        }
+        },
     },
     async mounted() {
         await this.fetchTableReferences()
-    }
-})
+    },
+}
 </script>
 
 
