@@ -101,7 +101,7 @@ class Studio(Table, help_text="A movie studio."):
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
-    Director,
+    Director,  # type: ignore
     Movie,
     Studio,
     User,
