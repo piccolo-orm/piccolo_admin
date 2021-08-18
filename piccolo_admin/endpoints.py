@@ -10,6 +10,7 @@ from functools import partial
 
 from fastapi import FastAPI
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.reference import LazyTableReference
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
@@ -200,8 +201,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -237,9 +237,15 @@ def get_all_tables(
             for i in table._meta.foreign_key_columns
         ]
         for reference in references:
-            if reference not in output:
-                output.append(reference)
-                get_references(reference)
+            table = (
+                reference.resolve()
+                if isinstance(reference, LazyTableReference)
+                else reference
+            )
+
+            if table not in output:
+                output.append(table)
+                get_references(table)
 
     for table in tables:
         if table not in output:
