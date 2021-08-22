@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { createStore } from 'vuex'
 import axios from 'axios'
 import * as i from './interfaces'
@@ -98,9 +97,7 @@ export default createStore({
         },
         async fetchRows(context) {
             const params = context.state.filterParams
-            console.log(params)
             const tableName = context.state.currentTableName
-
             const sortBy = context.state.sortBy
             if (sortBy) {
                 let prefix = sortBy.ascending ? '' : '-'

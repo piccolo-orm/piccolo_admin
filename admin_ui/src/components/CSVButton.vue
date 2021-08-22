@@ -1,31 +1,25 @@
 <template>
-    <a class="button">
-        <downloadexcel
-            :before-finish="finishDownload"
-            :before-generate="startDownload"
-            :fetch="fetchExportedRows"
-            :name="tableName + '.csv'"
-            type="csv"
-        >
-            <font-awesome-icon icon="file-csv" />
-            <span>Export CSV</span>
-        </downloadexcel>
+    <a
+        class="button"
+        v-on:click="fetchExportedRows"
+    >
+        <font-awesome-icon icon="file-csv" />
+        <span>Export CSV</span>
     </a>
 </template>
 
 <script lang="ts">
 import axios from "axios"
-import downloadexcel from "vue-json-excel"
 import * as i from "../interfaces"
 
 export default {
     props: ["tableName"],
-    components: {
-        downloadexcel,
-    },
     methods: {
         // Export data as csv from json:
         async fetchExportedRows() {
+            alert(
+                "Your data will begin downloading. Large data sets may take a while."
+            )
             const params = this.$store.state.filterParams
             const sortBy = this.$store.state.sortBy
             if (sortBy) {
@@ -59,18 +53,24 @@ export default {
                     )
                     exportedRows.push(...response.data.rows)
                 }
-                return exportedRows
+                let csv = "data:text/csv;charset=utf-8,"
+                csv += [
+                    Object.keys(exportedRows[0]).join(";"),
+                    ...exportedRows.map((item) =>
+                        Object.values(item).join(";")
+                    ),
+                ]
+                    .join("\n")
+                    .replace(/(^\[)|(\]$)/gm, "")
+                const data = encodeURI(csv)
+                const link = document.createElement("a")
+                link.setAttribute("href", data)
+                link.setAttribute("download", `${this.tableName}.csv`)
+                link.click()
+                alert("Your data is ready.")
             } catch (error) {
                 console.log(error.response)
             }
-        },
-        startDownload() {
-            alert(
-                "Your data will begin downloading. Large data sets may take a few seconds."
-            )
-        },
-        finishDownload() {
-            alert("Your data is ready.")
         },
     },
 }

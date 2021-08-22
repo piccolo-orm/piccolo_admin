@@ -1,7 +1,7 @@
 <template>
     <div v-if="schema">
         <div class="header">
-            <h1>Edit {{ tableName | readable }}</h1>
+            <h1>Edit {{ readable(tableName) }}</h1>
 
             <p>
                 <a
@@ -72,6 +72,9 @@ export default {
         },
     },
     methods: {
+        readable(value) {
+            return value.split("_").join(" ")
+        },
         async submitForm(event) {
             console.log("Submitting...")
 

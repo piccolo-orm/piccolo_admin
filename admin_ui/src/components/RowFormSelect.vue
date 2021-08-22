@@ -119,8 +119,7 @@ export default {
         },
         keySelectChanged(propertyTitle: string, value: number) {
             console.log(`${propertyTitle} = ${value}`)
-            // TODO replace Vue.set()
-            //Vue.set(this.keySelectIDs, propertyTitle, value)
+            Reflect.set(this.keySelectIDs, propertyTitle, value)
         },
         // We use this to refresh KeySelect components
         getKey(keyName: string) {

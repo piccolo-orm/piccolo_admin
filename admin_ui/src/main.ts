@@ -2,63 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-    faAngleDown,
-    faAngleLeft,
-    faAngleRight,
-    faAngleUp,
-    faBars,
-    faCheck,
-    faEdit,
-    faEllipsisV,
-    faExternalLinkAlt,
-    faFileCsv,
-    faFilter,
-    faHome,
-    faInfoCircle,
-    faLevelUpAlt,
-    faMoon,
-    faPlus,
-    faQuestionCircle,
-    faSignOutAlt,
-    faSort,
-    faSun,
-    faTable,
-    faTimes,
-    faTools,
-    faTrashAlt,
-    faUser,
-} from '@fortawesome/free-solid-svg-icons'
-
-library.add(
-    faAngleDown,
-    faAngleLeft,
-    faAngleRight,
-    faAngleUp,
-    faBars,
-    faCheck,
-    faEdit,
-    faEllipsisV,
-    faExternalLinkAlt,
-    faFileCsv,
-    faFilter,
-    faHome,
-    faInfoCircle,
-    faLevelUpAlt,
-    faMoon,
-    faPlus,
-    faQuestionCircle,
-    faSignOutAlt,
-    faSort,
-    faSun,
-    faTable,
-    faTimes,
-    faTools,
-    faTrashAlt,
-    faUser,
-)
+import FontAwesomeIcon from './fontawesome'
 
 /*****************************************************************************/
 
@@ -92,13 +36,7 @@ axios.defaults.transformResponse = [function (data) {
 
 /*****************************************************************************/
 
-// Vue.filter('readable', function (value) {
-//     return value.split('_').join(' ')
-// })
-
-/*****************************************************************************/
-
-const app = createApp(App as any)
+createApp(App as any)
     .use(router)
     .use(store)
     .component("font-awesome-icon", FontAwesomeIcon)

@@ -13,7 +13,15 @@
                 />
                 <a
                     href="#"
+                    v-if="value !== ''"
                     v-on:click.prevent="removeArrayElement(index)"
+                >
+                    <font-awesome-icon icon="times" />
+                </a>
+                <a
+                    href="#"
+                    v-else
+                    v-on:click.prevent="removeArrayField(index)"
                 >
                     <font-awesome-icon icon="times" />
                 </a>
@@ -49,7 +57,7 @@ export default {
     },
     methods: {
         updateArray($event, index) {
-            this.$set(this.internalArray, index, $event.target.value)
+            Reflect.set(this.internalArray, index, $event.target.value)
             this.$emit("updateArray", this.internalArray)
         },
         addArrayElement() {
@@ -57,7 +65,11 @@ export default {
             this.$emit("updateArray", this.internalArray)
         },
         removeArrayElement(index) {
-            this.$delete(this.internalArray, index)
+            Reflect.deleteProperty(this.internalArray, index)
+            this.$emit("updateArray", this.internalArray)
+        },
+        removeArrayField(index) {
+            this.internalArray.splice(index, 1)
             this.$emit("updateArray", this.internalArray)
         },
     },

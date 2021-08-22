@@ -1,4 +1,3 @@
-import App from './App.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -57,4 +56,4 @@ library.add(
     faUser,
 )
 
-App.mount('font-awesome-icon')
+export default FontAwesomeIcon

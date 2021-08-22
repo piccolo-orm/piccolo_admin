@@ -10,7 +10,6 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import AddRowForm from "../components/AddRowForm.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 

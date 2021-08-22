@@ -52,17 +52,11 @@ export default {
             function (error) {
                 if (error.response && error.response.status == 401) {
                     console.log("Login required")
-                    let nextURL = app.$route.path
-                    if (nextURL !== "/login") {
-                        setTimeout(function () {
-                            app.$router.push({
-                                name: "login",
-                                query: {
-                                    nextURL: nextURL,
-                                },
-                            })
-                        }, 0)
-                    }
+                    setTimeout(function () {
+                        app.$router.push({
+                            name: "login",
+                        })
+                    }, 0)
                 }
                 return Promise.reject(error)
             }

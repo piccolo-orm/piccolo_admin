@@ -1,11 +1,17 @@
 <template>
     <div>
-        <h1>Add {{ tableName | readable }}</h1>
+        <h1>Add {{ readable(tableName) }}</h1>
 
         <pre>{{ errors }}</pre>
 
-        <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
+        <form
+            v-if="defaults"
+            v-on:submit.prevent="submitForm($event)"
+        >
+            <RowFormSelect
+                v-bind:row="defaults"
+                v-bind:schema="schema"
+            />
             <button>Create</button>
         </form>
     </div>
@@ -76,6 +82,9 @@ export default {
             if (opener) {
                 opener.postMessage("edited row", document.location.origin)
             }
+        },
+        readable(value) {
+            return value.split("_").join(" ")
         },
     },
     async mounted() {

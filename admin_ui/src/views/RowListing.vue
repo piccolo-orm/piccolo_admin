@@ -241,7 +241,6 @@
 
 
 <script lang="ts">
-import Vue from "vue"
 import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
@@ -421,24 +420,12 @@ export default {
             this.$store.commit("updateCurrentTablename", this.tableName)
             await Promise.all([this.fetchRows(), this.fetchSchema()])
         },
-        "$route.query": async function () {
-            this.$store.commit(
-                "updateFilterParams",
-                this.$router.currentRoute.query
-            )
-            await this.fetchRows()
-        },
         rows() {
             this.resetRowCheckbox()
         },
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
-
-        this.$store.commit(
-            "updateFilterParams",
-            this.$router.currentRoute.query
-        )
 
         await Promise.all([this.fetchRows(), this.fetchSchema()])
     },
