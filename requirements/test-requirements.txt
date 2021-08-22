@@ -2,3 +2,4 @@ pytest==6.2.2
 pytest-cov==2.10.1
 flake8==3.9.0
 piccolo[postgres,sqlite]>=0.30.0
+requests==2.24.0

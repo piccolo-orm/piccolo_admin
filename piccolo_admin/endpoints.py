@@ -10,6 +10,7 @@ from functools import partial
 
 from fastapi import FastAPI
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.reference import LazyTableReference
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
@@ -107,7 +108,7 @@ class AdminRouter(FastAPI):
 
         api_app.add_api_route(
             path="/tables/",
-            endpoint=self.get_table_list,
+            endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
             response_model=t.List[str],
             tags=["Tables"],
@@ -115,7 +116,7 @@ class AdminRouter(FastAPI):
 
         api_app.add_api_route(
             path="/meta/",
-            endpoint=self.get_meta,
+            endpoint=self.get_meta,  # type: ignore
             methods=["GET"],
             tags=["Meta"],
             response_model=MetaResponseModel,
@@ -123,7 +124,7 @@ class AdminRouter(FastAPI):
 
         api_app.add_api_route(
             path="/user/",
-            endpoint=self.get_user,
+            endpoint=self.get_user,  # type: ignore
             methods=["GET"],
             tags=["User"],
             response_model=UserResponseModel,
@@ -191,7 +192,7 @@ class AdminRouter(FastAPI):
 
         # We make the meta endpoint available without auth, because it contains
         # the site name.
-        self.add_api_route("/meta/", endpoint=self.get_meta)
+        self.add_api_route("/meta/", endpoint=self.get_meta)  # type: ignore
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
@@ -200,8 +201,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -222,9 +222,6 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_site_name(self, request: Request) -> JSONResponse:
-        return JSONResponse({"site_name": self.site_name})
-
 
 def get_all_tables(
     tables: t.Sequence[t.Type[Table]],
@@ -235,14 +232,20 @@ def get_all_tables(
     output: t.List[t.Type[Table]] = []
 
     def get_references(table: t.Type[Table]):
-        references = [
+        references: t.List[t.Union[t.Type[Table], t.Any]] = [
             i._foreign_key_meta.references
             for i in table._meta.foreign_key_columns
         ]
         for reference in references:
-            if reference not in output:
-                output.append(reference)
-                get_references(reference)
+            table = (
+                reference.resolve()
+                if isinstance(reference, LazyTableReference)
+                else reference
+            )
+
+            if table not in output:
+                output.append(table)
+                get_references(table)
 
     for table in tables:
         if table not in output:

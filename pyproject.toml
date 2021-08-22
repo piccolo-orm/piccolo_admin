@@ -4,3 +4,11 @@ line-length = 79
 [tool.isort]
 profile = "black"
 line_length = 79
+
+[tool.coverage.report]
+omit = [
+     "piccolo_admin/example.py",
+     "piccolo_admin/example_data.py", 
+     "piccolo_admin/piccolo_app.py",
+     "piccolo_admin/sandbox.py"
+] 
