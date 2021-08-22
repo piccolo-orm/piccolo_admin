@@ -6,6 +6,7 @@ from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import get_all_tables
 from piccolo_admin.sandbox import APP
+from piccolo_admin.version import __VERSION__
 
 
 class TableA(Table):
@@ -33,7 +34,10 @@ class TestAdminRouter(TestCase):
         response = client.get("/meta/")
         self.assertEqual(
             response.json(),
-            {"piccolo_admin_version": "0.14.0", "site_name": "Piccolo Admin"},
+            {
+                "piccolo_admin_version": __VERSION__,
+                "site_name": "Piccolo Admin",
+            },
         )
         self.assertEqual(response.status_code, 200)
 
