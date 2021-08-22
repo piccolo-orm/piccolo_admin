@@ -100,15 +100,17 @@ class Studio(Table, help_text="A movie studio."):
     facilities = JSON()
 
 
-TABLE_CLASSES: t.Tuple[t.Type[Table]] = (
-    Director,
+TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
+    Director,  # type: ignore
     Movie,
     Studio,
     User,
     Sessions,
 )
 APP = create_admin(
-    [Director, Movie, Studio], auth_table=User, session_table=Sessions
+    [Movie, Director],
+    auth_table=User,
+    session_table=Sessions,
 )
 
 
@@ -117,7 +119,7 @@ def set_engine(engine: str = "sqlite"):
         db = PostgresEngine(config={"database": "piccolo_admin"})
     else:
         sqlite_path = os.path.join(os.path.dirname(__file__), "example.sqlite")
-        db = SQLiteEngine(path=sqlite_path)
+        db = SQLiteEngine(path=sqlite_path)  # type: ignore
 
     for table_class in TABLE_CLASSES:
         table_class._meta._db = db
@@ -142,9 +144,9 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
 
     """
     # Add some rows
-    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
-    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
-    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
+    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()  # type: ignore # noqa: E501
+    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()  # type: ignore
+    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()  # type: ignore
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the
@@ -198,8 +200,8 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                 Director.insert(*directors).run_sync()
 
                 director_ids = (
-                    Director.select(Director.id)
-                    .order_by(Director.id, ascending=False)
+                    Director.select(Director._meta.primary_key)
+                    .order_by(Director._meta.primary_key, ascending=False)
                     .limit(chunk_size)
                     .output(as_list=True)
                     .run_sync()
