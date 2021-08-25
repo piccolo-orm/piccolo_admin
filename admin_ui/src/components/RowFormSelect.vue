@@ -27,21 +27,6 @@
                     >
                         <font-awesome-icon icon="plus" />
                     </router-link>
-
-                    <router-link
-                        :to="{
-                            name: 'editRow',
-                            params: {
-                                tableName: property.extra.to,
-                                rowID: getKeySelectID(property.title),
-                            },
-                        }"
-                        class="add"
-                        target="_blank"
-                        v-if="!isFilter"
-                    >
-                        <font-awesome-icon icon="edit" />
-                    </router-link>
                 </label>
                 <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
@@ -100,7 +85,6 @@ export default {
     },
     data() {
         return {
-            keySelectIDs: {},
             baseIndex: 1,
             windowListener: undefined,
         }
@@ -113,13 +97,7 @@ export default {
             return value
         },
         getKeySelectID(propertyTitle: string) {
-            return (
-                this.keySelectIDs[propertyTitle] || this.getValue(propertyTitle)
-            )
-        },
-        keySelectChanged(propertyTitle: string, value: number) {
-            console.log(`${propertyTitle} = ${value}`)
-            Reflect.set(this.keySelectIDs, propertyTitle, value)
+            return this.getValue(propertyTitle)
         },
         // We use this to refresh KeySelect components
         getKey(keyName: string) {

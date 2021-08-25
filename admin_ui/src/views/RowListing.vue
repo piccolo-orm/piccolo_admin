@@ -340,10 +340,14 @@ export default {
             return property != undefined ? property.extra.foreign_key : false
         },
         isBoolean(name: string) {
-            return this.schema.properties[name]["type"] == "boolean"
+            let property = this.schema.properties[name]
+            return property != undefined ? property["type"] == "boolean" : false
         },
         isInterval(name: string) {
-            return this.schema.properties[name]["format"] == "time-delta"
+            let property = this.schema.properties[name]
+            return property != undefined
+                ? property["format"] == "time-delta"
+                : false
         },
         abbreviate(value) {
             // We need to handle null values, and make sure text strings aren't
@@ -425,6 +429,13 @@ export default {
         },
     },
     async mounted() {
+        this.$store.commit("updateCurrentTablename", this.tableName)
+
+        await Promise.all([this.fetchRows(), this.fetchSchema()])
+    },
+    // NEED HELP: Not a best idea but this works because
+    // at this time rows does not update to current table
+    async updated() {
         this.$store.commit("updateCurrentTablename", this.tableName)
 
         await Promise.all([this.fetchRows(), this.fetchSchema()])
