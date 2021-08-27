@@ -36,7 +36,7 @@ export default {
     },
     computed: {
         siteName() {
-            return this.$store.state.metaModule.siteName
+            return this.$store.state.siteName
         },
     },
     methods: {
@@ -47,6 +47,7 @@ export default {
                     username: this.username,
                     password: this.password,
                 })
+                this.$router.push({ name: "home" })
             } catch (error) {
                 console.log("Request failed")
                 console.log(error.response)
@@ -61,13 +62,6 @@ export default {
                 this.$store.dispatch("fetchUser"),
                 this.$store.dispatch("fetchMeta"),
             ])
-
-            let nextURL = this.$route.query.nextURL
-            if (nextURL) {
-                this.$router.push({ path: nextURL })
-            } else {
-                this.$router.push({ name: "home" })
-            }
         },
     },
 }

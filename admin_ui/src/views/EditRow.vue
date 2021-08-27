@@ -9,16 +9,17 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import EditRowForm from "../components/EditRowForm.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
-export default {
+export default defineComponent({
     props: ["tableName", "rowID"],
     components: {
         EditRowForm,
         DetailViewBase,
     },
-}
+})
 </script>
 
 

@@ -10,10 +10,11 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import AddRowForm from "../components/AddRowForm.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
-export default {
+export default defineComponent({
     props: ["tableName"],
     components: {
         AddRowForm,
@@ -28,7 +29,7 @@ export default {
         this.$store.commit("updateCurrentTablename", this.tableName)
         await this.$store.dispatch("fetchSchema", this.tableName)
     },
-}
+})
 </script>
 
 

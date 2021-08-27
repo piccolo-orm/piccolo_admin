@@ -18,10 +18,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import RowFormSelect from "./RowFormSelect.vue"
 import { APIResponseMessage } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         tableName: String,
         schema: Object,
@@ -36,22 +37,21 @@ export default {
         }
     },
     methods: {
-        async submitForm(event) {
+        async submitForm(event: any) {
             console.log("I was pressed")
             const form = new FormData(event.target)
 
-            const json = {}
+            const json = {} as any
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
-                let value = i[1]
+                let value: any = i[1]
 
                 if (value == "null") {
                     value = null
-                } else if (this.schema.properties[key].type == "array") {
                     // @ts-ignore
+                } else if (this.schema.properties[key].type == "array") {
                     value = JSON.parse(value)
                 }
-
                 json[key] = value
             }
             try {
@@ -83,7 +83,7 @@ export default {
                 opener.postMessage("edited row", document.location.origin)
             }
         },
-        readable(value) {
+        readable(value: string) {
             return value.split("_").join(" ")
         },
     },
@@ -91,7 +91,7 @@ export default {
         let response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
     },
-}
+})
 </script>
 
 <style scoped lang="less">

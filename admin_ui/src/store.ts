@@ -2,30 +2,25 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 import * as i from './interfaces'
 
-import aboutModalModule from './modules/aboutModal'
-import metaModule from './modules/meta'
-
-
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default createStore({
-    modules: {
-        aboutModalModule,
-        metaModule
-    },
     state: {
         apiResponseMessage: null as i.APIResponseMessage | null,
         currentPageNumber: 1,
         currentTableName: undefined,
         darkMode: false,
-        filterParams: {},
+        filterParams: {} as any,
         pageSize: 15,
+        piccoloAdminVersion: 'Unknown',
         rowCount: 0,
         rows: [],
         schema: undefined,
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
+        showAboutModal: false,
+        siteName: 'Piccolo Admin',
         tableNames: [],
         user: undefined,
     },
@@ -75,7 +70,16 @@ export default createStore({
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
             localStorage.setItem('darkMode', String(enabled))
-        }
+        },
+        updateShowAboutModal(state, value: boolean) {
+            state.showAboutModal = value
+        },
+        updateSiteName(state: any, value: string) {
+            state.siteName = value
+        },
+        updatePiccoloAdminVersion(state: any, value: string) {
+            state.piccoloAdminVersion = value
+        },
     },
     actions: {
         async fetchTableNames(context) {
@@ -96,7 +100,7 @@ export default createStore({
             return data
         },
         async fetchRows(context) {
-            const params = context.state.filterParams
+            const params: any = context.state.filterParams
             const tableName = context.state.currentTableName
             const sortBy = context.state.sortBy
             if (sortBy) {
@@ -138,7 +142,7 @@ export default createStore({
             return response
         },
         async fetchIds(context, config: i.FetchIdsConfig) {
-            const params = {}
+            const params: any = {}
 
             if (config.search) {
                 params['search'] = config.search
@@ -205,6 +209,11 @@ export default createStore({
         async fetchUser(context) {
             const response = await axios.get(`${BASE_URL}user/`)
             context.commit('updateUser', response.data)
+        },
+        async fetchMeta(context) {
+            const response = await axios.get(`./meta/`)
+            context.commit('updateSiteName', response.data.site_name)
+            context.commit('updatePiccoloAdminVersion', response.data.piccolo_admin_version)
         }
     }
 })

@@ -10,19 +10,20 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import Modal from "./Modal.vue"
 import AddRowForm from "./AddRowForm.vue"
 
-export default {
+export default defineComponent({
     props: {
         tableName: String,
-        schema: Object
+        schema: Object,
     },
     components: {
         Modal,
-        AddRowForm
-    }
-}
+        AddRowForm,
+    },
+})
 </script>
 
 <style scoped lang="less">

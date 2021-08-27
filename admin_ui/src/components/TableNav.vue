@@ -18,7 +18,9 @@
 
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     computed: {
         tableNames() {
             return this.$store.state.tableNames
@@ -35,14 +37,14 @@ export default {
         isActive(tableName: string): boolean {
             return this.currentTableName === tableName
         },
-        readable(value) {
+        readable(value: string) {
             return value.split("_").join(" ")
         },
     },
     async mounted() {
         await this.$store.dispatch("fetchTableNames")
     },
-}
+})
 </script>
 
 

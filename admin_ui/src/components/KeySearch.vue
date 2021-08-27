@@ -40,18 +40,19 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import { FetchIdsConfig } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         fieldName: String,
         tableName: String,
-        rowID: undefined,
-        readable: undefined,
+        rowID: undefined as any,
+        readable: undefined as any,
     },
     data() {
         return {
-            ids: [],
+            ids: [] as any,
             selectedValue: undefined,
             hiddenSelectedValue: undefined,
             showResults: false,
@@ -60,14 +61,14 @@ export default {
     methods: {
         async fetchData() {
             const config: FetchIdsConfig = {
-                tableName: this.tableName,
-                search: this.selectedValue,
+                tableName: this.tableName as string,
+                search: this.selectedValue as any,
                 limit: 15,
             }
             const response = await this.$store.dispatch("fetchIds", config)
             // The response is a mapping of id to readable. We convert into
             // an array of arrays like [[1, 'Bob'], ...], then sort them.
-            this.ids = Object.entries(response.data).sort((i, j) => {
+            this.ids = Object.entries<any>(response.data).sort((i, j) => {
                 if (i[1] > j[1]) {
                     return 1
                 }
@@ -77,7 +78,7 @@ export default {
                 return 0
             })
         },
-        selectResult(id, readable) {
+        selectResult(id: undefined, readable: undefined) {
             this.selectedValue = readable
             this.hiddenSelectedValue = id
         },
@@ -86,11 +87,13 @@ export default {
             this.selectedValue = undefined
             this.hiddenSelectedValue = undefined
         },
-        checkNull(event) {
+        checkNull(event: Event) {
             // The work around for setting a value of Null, is to type it in.
-            if (event.target.value.toUpperCase() == "NULL") {
+            if (
+                (event.target as HTMLInputElement).value.toUpperCase() == "NULL"
+            ) {
                 console.log("Setting as null")
-                this.hiddenSelectedValue = null
+                this.hiddenSelectedValue = undefined
             }
         },
     },
@@ -106,7 +109,7 @@ export default {
         this.selectedValue = this.readable
         this.hiddenSelectedValue = this.rowID
     },
-}
+})
 </script>
 
 

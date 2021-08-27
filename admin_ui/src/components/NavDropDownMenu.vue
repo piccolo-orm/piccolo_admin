@@ -36,11 +36,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import axios from "axios"
 
 import DropDownMenu from "./DropDownMenu.vue"
 
-export default {
+export default defineComponent({
     components: {
         DropDownMenu,
     },
@@ -73,7 +74,7 @@ export default {
             }
         },
     },
-}
+})
 </script>
 
 <style scoped lang="less">

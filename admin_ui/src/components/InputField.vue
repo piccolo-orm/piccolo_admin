@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue"
+import { PropType, defineComponent } from "vue"
 
 import flatPickr from "vue-flatpickr-component"
 
@@ -145,7 +145,7 @@ import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 import { Choices } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         title: {
             type: String,
@@ -198,14 +198,14 @@ export default {
             return name.toLowerCase().split(" ").join("_")
         },
         setTextareaHeight() {
-            let element = this.$refs.textarea
+            let element: any = this.$refs.textarea
             if (element) {
                 if (element.scrollHeight > element.clientHeight) {
                     this.textareaHeight = element.scrollHeight + "px"
                 }
             }
         },
-        updateLocalValue(event) {
+        updateLocalValue(event: any) {
             this.localValue = event
         },
     },
@@ -223,7 +223,7 @@ export default {
             app.setTextareaHeight()
         }, 0)
     },
-}
+})
 </script>
 
 <style scoped lang="less">

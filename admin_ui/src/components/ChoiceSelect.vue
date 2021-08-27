@@ -20,10 +20,10 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue"
+import { PropType, defineComponent } from "vue"
 import { Choices } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         fieldName: {
             type: String,
@@ -48,7 +48,7 @@ export default {
             default: false,
         },
     },
-}
+})
 </script>
 
 <style>

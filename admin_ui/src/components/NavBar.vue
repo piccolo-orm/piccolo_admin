@@ -49,10 +49,11 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 
-export default {
+export default defineComponent({
     props: {
         username: {
             type: String,
@@ -62,6 +63,10 @@ export default {
             type: String,
             default: "Piccolo Admin",
         },
+    },
+    components: {
+        SidebarOverlay,
+        NavDropDownMenu,
     },
     data() {
         return {
@@ -79,11 +84,7 @@ export default {
             }
         },
     },
-    components: {
-        SidebarOverlay,
-        NavDropDownMenu,
-    },
-}
+})
 </script>
 
 

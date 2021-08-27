@@ -10,13 +10,15 @@
     </a>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         selected: {
             type: Number,
             default: 0,
         },
     },
-}
+})
 </script>

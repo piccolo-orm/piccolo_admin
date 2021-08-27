@@ -11,7 +11,7 @@ import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
 
 // Add the CSRF token
-axios.interceptors.request.use(function (config) {
+axios.interceptors.request.use(function (config: any) {
     if (
         ['POST', 'PUT', 'DELETE', 'PATCH'].indexOf(
             config.method.toUpperCase()
@@ -36,7 +36,7 @@ axios.defaults.transformResponse = [function (data) {
 
 /*****************************************************************************/
 
-createApp(App as any)
+createApp(App)
     .use(router)
     .use(store)
     .component("font-awesome-icon", FontAwesomeIcon)

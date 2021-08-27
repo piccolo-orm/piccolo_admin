@@ -2,18 +2,16 @@
     <span class="tooltip">
         <a
             href="#"
+            title="Click for more info"
+            v-on:blur="hidePopup()"
             v-on:click.prevent="
                 popupVisible ? hidePopup($event) : showPopup($event)
             "
-            v-on:blur="hidePopup()"
-            title="Click for more info"
         >
             <font-awesome-icon icon="question-circle" />
         </a>
 
         <div
-            class="popup"
-            v-show="popupVisible"
             :style="{
                 top: popupTop,
                 bottom: popupBottom,
@@ -22,6 +20,8 @@
                 width: popupWidth,
                 textAlign: textAlign,
             }"
+            class="popup"
+            v-show="popupVisible"
         >
             <span>{{ content }}</span>
         </div>
@@ -29,7 +29,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         content: {
             default: "",
@@ -103,7 +105,7 @@ export default {
             window.removeEventListener("resize", this.onResize)
         }
     },
-}
+})
 </script>
 
 <style lang="less">

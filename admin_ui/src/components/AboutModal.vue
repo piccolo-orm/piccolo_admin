@@ -6,16 +6,17 @@
     </Modal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue"
 import Modal from "./Modal.vue"
 
-export default {
+export default defineComponent({
     components: {
         Modal,
     },
     computed: {
         piccoloAdminVersion() {
-            return this.$store.state.metaModule.piccoloAdminVersion
+            return this.$store.state.piccoloAdminVersion
         },
     },
     methods: {
@@ -23,7 +24,7 @@ export default {
             this.$store.commit("updateShowAboutModal", false)
         },
     },
-}
+})
 </script>
 
 <style>

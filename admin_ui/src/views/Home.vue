@@ -8,21 +8,22 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import BaseView from "./BaseView.vue"
 
-export default {
+export default defineComponent({
     components: {
         BaseView,
     },
     computed: {
         siteName() {
-            return this.$store.state.metaModule.siteName
+            return this.$store.state.siteName
         },
     },
     mounted() {
         this.$store.commit("updateCurrentTablename", "")
     },
-}
+})
 </script>
 
 <style scoped lang="less">

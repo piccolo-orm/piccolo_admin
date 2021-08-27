@@ -15,24 +15,25 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import NavBar from "../components/NavBar.vue"
 import SidebarNav from "../components/SidebarNav.vue"
 
-export default {
+export default defineComponent({
     components: {
         NavBar,
         SidebarNav,
     },
     computed: {
         username() {
-            const user = this.$store.state.user
+            const user: any = this.$store.state.user
             return user ? user.username : "Unknown"
         },
         siteName() {
-            return this.$store.state.metaModule.siteName
+            return this.$store.state.siteName
         },
     },
-}
+})
 </script>
 
 

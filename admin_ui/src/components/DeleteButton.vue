@@ -10,15 +10,17 @@
     </a>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         includeTitle: {
             type: Boolean,
-            default: false
-        }
-    }
-}
+            default: false,
+        },
+    },
+})
 </script>
 
 <style scoped lang="less">

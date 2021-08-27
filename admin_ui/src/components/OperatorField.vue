@@ -9,38 +9,40 @@
     </select>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
-        fieldName: String
+        fieldName: String,
     },
     data() {
         return {
             operators: [
                 {
                     label: "Less Than",
-                    value: "lt"
+                    value: "lt",
                 },
                 {
                     label: "Less Than or Equal To",
-                    value: "lte"
+                    value: "lte",
                 },
                 {
                     label: "Equals",
-                    value: "e"
+                    value: "e",
                 },
                 {
                     label: "Greater Than or Equal To",
-                    value: "gte"
+                    value: "gte",
                 },
                 {
                     label: "Greater Than",
-                    value: "gt"
-                }
-            ]
+                    value: "gt",
+                },
+            ],
         }
-    }
-}
+    },
+})
 </script>
 
 <style>

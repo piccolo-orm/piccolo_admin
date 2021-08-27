@@ -241,6 +241,7 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import { readableFormat } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
@@ -257,7 +258,7 @@ import TableNav from "../components/TableNav.vue"
 import Tooltip from "../components/Tooltip.vue"
 import { Choice, Choices, Schema } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: ["tableName"],
     data() {
         return {
@@ -296,7 +297,7 @@ export default {
         rows() {
             return this.$store.state.rows
         },
-        schema() {
+        schema(): any {
             return this.$store.state.schema
         },
         rowCount() {
@@ -309,15 +310,16 @@ export default {
         // display value. It maps column name -> choice value -> display value.
         // For example {'genre': {1: 'Sci-Fi'}}
         choicesLookup() {
-            let schema: Schema = this.schema
-            const output = {}
+            let schema: any = this.schema
+            const output = {} as any
 
             for (const [columnName, config] of Object.entries(
-                schema.properties
+                schema["properties"]
             )) {
-                const choices: Choices = config.extra.choices
+                // @ts-ignore
+                const choices = config.extra.choices
 
-                const reducer = (accumulator: Object, choice: Choice) => {
+                const reducer = (accumulator: any, choice: any) => {
                     accumulator[choice.value] = choice.display_name
                     return accumulator
                 }
@@ -349,7 +351,7 @@ export default {
                 ? property["format"] == "time-delta"
                 : false
         },
-        abbreviate(value) {
+        abbreviate(value: string) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
             if (value === null) {
@@ -361,17 +363,18 @@ export default {
             }
             return string
         },
-        humanReadable(value) {
+        humanReadable(value: number) {
             return readableFormat(value)
         },
-        readable(value) {
+        readable(value: string) {
             return value.split("_").join(" ")
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
+            // @ts-ignore
             return this.schema.properties[name].extra.to
         },
-        closeSideBar(value) {
+        closeSideBar(value: boolean) {
             this.showFilter = value
         },
         resetRowCheckbox() {
@@ -384,12 +387,13 @@ export default {
         selectAllRows() {
             // Select all checkboxes and add row ids to selected array:
             if (this.allSelected) {
+                // @ts-ignore
                 this.selectedRows = this.rows.map((row) => row.id)
             } else {
                 this.selectedRows = []
             }
         },
-        async deleteRow(rowID) {
+        async deleteRow(rowID: number) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
                 console.log("Deleting!")
                 await this.$store.dispatch("deleteRow", {
@@ -440,7 +444,7 @@ export default {
 
         await Promise.all([this.fetchRows(), this.fetchSchema()])
     },
-}
+})
 </script>
 
 

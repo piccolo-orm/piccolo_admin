@@ -2,25 +2,6 @@
     <div v-if="schema">
         <div class="header">
             <h1>Edit {{ readable(tableName) }}</h1>
-
-            <p>
-                <a
-                    class="subtle"
-                    href="#"
-                    v-on:click.prevent="showDropdown = !showDropdown"
-                >
-                    <font-awesome-icon icon="ellipsis-v" />
-                    <DropDownMenu v-if="showDropdown">
-                        <li>
-                            <DeleteButton
-                                :includeTitle="true"
-                                class="subtle"
-                                v-on:triggered="deleteRow"
-                            />
-                        </li>
-                    </DropDownMenu>
-                </a>
-            </p>
         </div>
 
         <pre>{{ errors }}</pre>
@@ -42,14 +23,15 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
 
-import { UpdateRow, DeleteRow } from "../interfaces"
+import { UpdateRow } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: ["tableName", "rowID"],
     components: {
         DeleteButton,
@@ -64,34 +46,31 @@ export default {
         }
     },
     computed: {
-        schema() {
+        schema(): any {
             return this.$store.state.schema
         },
-        selectedRow() {
+        selectedRow(): any {
             return this.$store.state.selectedRow
         },
     },
     methods: {
-        readable(value) {
+        readable(value: string) {
             return value.split("_").join(" ")
         },
-        async submitForm(event) {
+        async submitForm(event: any) {
             console.log("Submitting...")
-
             const form = new FormData(event.target)
 
-            const json = {}
+            const json = {} as any
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
-                let value = i[1]
+                let value: any = i[1]
 
                 if (value == "null") {
                     value = null
                 } else if (this.schema.properties[key].type == "array") {
-                    // @ts-ignore
                     value = JSON.parse(value)
                 }
-
                 json[key] = value
             }
 
@@ -116,20 +95,6 @@ export default {
 
             if (opener) {
                 opener.postMessage("edited row", document.location.origin)
-            }
-        },
-        async deleteRow() {
-            if (window.confirm("Are you sure you want to delete this row?")) {
-                let config: DeleteRow = {
-                    tableName: this.tableName,
-                    rowID: this.rowID,
-                }
-                await this.$store.dispatch("deleteRow", config)
-                alert("Successfully deleted row")
-                this.$router.push({
-                    name: "rowListing",
-                    params: { tableName: this.tableName },
-                })
             }
         },
         async fetchData() {
@@ -157,7 +122,7 @@ export default {
             this.$store.dispatch("fetchSchema", this.tableName),
         ])
     },
-}
+})
 </script>
 
 

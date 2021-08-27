@@ -18,9 +18,10 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import * as i from "../interfaces"
 
-export default {
+export default defineComponent({
     data() {
         return {
             visible: false,
@@ -33,7 +34,7 @@ export default {
                 ? this.apiResponseMessage.contents
                 : "-"
         },
-        apiResponseMessage(): i.APIResponseMessage {
+        apiResponseMessage(): i.APIResponseMessage | null {
             return this.$store.state.apiResponseMessage
         },
     },
@@ -59,7 +60,7 @@ export default {
             }, 3000)
         },
     },
-}
+})
 </script>
 
 

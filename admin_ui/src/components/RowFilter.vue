@@ -28,10 +28,11 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import RowFormSearch from "./RowFormSearch.vue"
 import { APIResponseMessage } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         showFilterSidebar: Boolean,
     },
@@ -39,10 +40,10 @@ export default {
         RowFormSearch,
     },
     computed: {
-        schema() {
+        schema(): any {
             return this.$store.state.schema
         },
-        tableName() {
+        tableName(): undefined {
             return this.$store.state.currentTableName
         },
     },
@@ -60,21 +61,19 @@ export default {
         async submitForm(event: any) {
             const form = new FormData(event.target)
 
-            const json = {}
+            const json = {} as any
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
                 let value: any = i[1]
 
                 if (value && value != "all") {
                     if (this.schema.properties[key]?.type == "array") {
-                        // @ts-ignore
-                        value = JSON.parse(value).filter((i) => i)
+                        value = JSON.parse(value).filter((i: any) => i)
                         // Ignore any empty values.
                         value = Array.isArray(value)
                             ? value.filter((i) => i)
                             : value
                     }
-
                     json[key] = value
                 }
             }
@@ -111,7 +110,7 @@ export default {
             this.showSuccess("Successfully cleared filters")
         },
     },
-}
+})
 </script>
 
 

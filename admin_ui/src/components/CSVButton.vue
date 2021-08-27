@@ -9,10 +9,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import axios from "axios"
 import * as i from "../interfaces"
 
-export default {
+export default defineComponent({
     props: ["tableName"],
     methods: {
         // Export data as csv from json:
@@ -53,7 +54,7 @@ export default {
                     )
                     exportedRows.push(...response.data.rows)
                 }
-                let csv = "data:text/csv;charset=utf-8,"
+                let csv: string = "data:text/csv;charset=utf-8,"
                 csv += [
                     Object.keys(exportedRows[0]).join(";"),
                     ...exportedRows.map((item) =>
@@ -62,8 +63,8 @@ export default {
                 ]
                     .join("\n")
                     .replace(/(^\[)|(\]$)/gm, "")
-                const data = encodeURI(csv)
-                const link = document.createElement("a")
+                const data: string = encodeURI(csv)
+                const link: HTMLAnchorElement = document.createElement("a")
                 link.setAttribute("href", data)
                 link.setAttribute("download", `${this.tableName}.csv`)
                 link.click()
@@ -73,7 +74,7 @@ export default {
             }
         },
     },
-}
+})
 </script>
 
 <style lang="less" scoped>

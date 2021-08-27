@@ -38,8 +38,10 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         array: {
             type: Array,
@@ -52,23 +54,27 @@ export default {
     },
     data() {
         return {
-            internalArray: [],
+            internalArray: [] as Array<any>,
         }
     },
     methods: {
-        updateArray($event, index) {
-            Reflect.set(this.internalArray, index, $event.target.value)
+        updateArray($event: Event, index: number) {
+            Reflect.set(
+                this.internalArray,
+                index,
+                ($event.target as HTMLInputElement).value
+            )
             this.$emit("updateArray", this.internalArray)
         },
         addArrayElement() {
             this.internalArray = [...this.internalArray, ""]
             this.$emit("updateArray", this.internalArray)
         },
-        removeArrayElement(index) {
+        removeArrayElement(index: number) {
             Reflect.deleteProperty(this.internalArray, index)
             this.$emit("updateArray", this.internalArray)
         },
-        removeArrayField(index) {
+        removeArrayField(index: number) {
             this.internalArray.splice(index, 1)
             this.$emit("updateArray", this.internalArray)
         },
@@ -81,7 +87,7 @@ export default {
     mounted() {
         this.internalArray = [...this.array]
     },
-}
+})
 </script>
 
 <style scoped lang="less">

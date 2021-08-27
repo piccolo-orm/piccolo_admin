@@ -11,13 +11,14 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import axios from "axios"
 import * as i from "./interfaces"
 
 import AboutModal from "./components/AboutModal.vue"
 import MessagePopup from "./components/MessagePopup.vue"
 
-export default {
+export default defineComponent({
     components: {
         AboutModal,
         MessagePopup,
@@ -27,12 +28,13 @@ export default {
             return this.$store.state.darkMode
         },
         showAboutModal() {
-            return this.$store.state.aboutModalModule.showAboutModal
+            return this.$store.state.showAboutModal
         },
     },
     async created() {
-        let darkMode = JSON.parse(localStorage.getItem("darkMode"))
-
+        let darkMode: boolean = JSON.parse(
+            localStorage.getItem("darkMode") as string
+        )
         if (darkMode === null) {
             darkMode = false
         }
@@ -118,7 +120,7 @@ export default {
 
         await this.$store.dispatch("fetchUser")
     },
-}
+})
 </script>
 
 

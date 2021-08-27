@@ -65,14 +65,15 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
 
-export default {
+export default defineComponent({
     props: {
         row: Object,
-        schema: Object,
+        schema: Object as any,
         isFilter: {
             type: Boolean,
             default: false,
@@ -115,20 +116,21 @@ export default {
 
         let app = this
 
-        function receiveMessage(event) {
+        function receiveMessage(event: any) {
             if (event.origin !== document.location.origin) return
             console.log("Received message")
             app.baseIndex = app.baseIndex + 1
         }
-
+        // @ts-ignore
         this.windowListener = receiveMessage
     },
     destroyed() {
         if (this.windowListener) {
+            // @ts-ignore
             window.removeEventListener("message", this.windowListener)
         }
     },
-}
+})
 </script>
 
 <style scoped lang="less">

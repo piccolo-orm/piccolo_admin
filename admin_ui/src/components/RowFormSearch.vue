@@ -73,13 +73,14 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 
-export default {
+export default defineComponent({
     props: {
         row: Object,
-        schema: Object,
+        schema: Object as any,
         isFilter: {
             type: Boolean,
             default: false,
@@ -111,7 +112,7 @@ export default {
             )
         },
     },
-}
+})
 </script>
 
 <style scoped lang="less">

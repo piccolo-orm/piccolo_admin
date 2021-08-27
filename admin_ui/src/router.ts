@@ -8,7 +8,7 @@ import RowListing from './views/RowListing.vue'
 
 
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'home',
@@ -40,7 +40,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    routes: routes as RouteRecordRaw[],
+    routes,
     history: createWebHashHistory()
 });
 

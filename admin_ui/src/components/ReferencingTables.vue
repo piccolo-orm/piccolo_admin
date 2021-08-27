@@ -37,9 +37,10 @@
 
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: ["tableName", "rowID"],
     data: function () {
         return {
@@ -59,7 +60,7 @@ export default {
         },
         clickedReference(reference: TableReference) {
             let columnName = reference.columnName
-            let query = {}
+            let query: any = {}
             query[columnName] = this.rowID
 
             let location = {
@@ -77,7 +78,7 @@ export default {
     async mounted() {
         await this.fetchTableReferences()
     },
-}
+})
 </script>
 
 

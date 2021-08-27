@@ -1,19 +1,22 @@
 <template>
     <div id="page_size">
-        <select v-model="selectedPageSize" v-on:change="changePageSize">
+        <select
+            v-model="selectedPageSize"
+            v-on:change="changePageSize"
+        >
             <option
-                :label="`${option} per page`"
                 :key="option"
+                :label="`${option} per page`"
                 v-for="option in pageOptions"
-            >
-                {{ option }}
-            </option>
+            >{{ option }}</option>
         </select>
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     data() {
         return {
             selectedPageSize: 15,
@@ -40,7 +43,7 @@ export default {
     mounted() {
         this.selectedPageSize = this.pageSize
     },
-}
+})
 </script>
 
 <style lang="less" scoped>

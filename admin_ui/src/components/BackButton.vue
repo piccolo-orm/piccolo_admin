@@ -1,19 +1,25 @@
 <template>
     <p>
-        <a href="#" v-if="showBackButton" v-on:click.prevent="$router.go(-1)">
+        <a
+            href="#"
+            v-if="showBackButton"
+            v-on:click.prevent="$router.go(-1)"
+        >
             <font-awesome-icon icon="angle-left" />Back
         </a>
     </p>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     computed: {
         showBackButton() {
             return window.history.length > 1
         },
     },
-}
+})
 </script>
 
 <style scoped lang="less">

@@ -30,10 +30,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import Modal from "./Modal.vue"
 import * as i from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         schema: Object,
         tableName: String,
@@ -67,7 +68,7 @@ export default {
             this.propertyName = sortBy.property
         }
     },
-}
+})
 </script>
 
 <style>

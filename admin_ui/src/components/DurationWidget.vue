@@ -67,13 +67,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue"
+
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 const WEEK = DAY * 7
 
-export default {
+export default defineComponent({
     props: {
         timedelta: {
             // In seconds
@@ -88,11 +90,11 @@ export default {
             hourRange: [...Array(24).keys()],
             minuteRange: [...Array(60).keys()],
             secondRange: [...Array(60).keys()],
-            weeks: undefined,
-            days: undefined,
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined,
+            weeks: undefined as any,
+            days: undefined as any,
+            hours: undefined as any,
+            minutes: undefined as any,
+            seconds: undefined as any,
         }
     },
     methods: {
@@ -105,7 +107,7 @@ export default {
                 this.weeks * WEEK
             this.$emit("newTimedelta", timedelta)
         },
-        setupValues(timedelta) {
+        setupValues(timedelta: number) {
             this.weeks = Math.floor(timedelta / WEEK)
             timedelta += -this.weeks * WEEK
 
@@ -122,14 +124,14 @@ export default {
         },
     },
     watch: {
-        timedelta(timedelta) {
+        timedelta(timedelta: number) {
             this.setupValues(timedelta)
         },
     },
     mounted() {
         this.setupValues(this.timedelta)
     },
-}
+})
 </script>
 
 

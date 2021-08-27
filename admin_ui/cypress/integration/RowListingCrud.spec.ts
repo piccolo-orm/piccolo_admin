@@ -1,8 +1,14 @@
 /// <reference types="Cypress" />
 
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+})
+
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F');
+        cy.visit('http://piccolo_admin/#/login/');
     });
 
     it('Open director table and made basic crud operations', () => {
