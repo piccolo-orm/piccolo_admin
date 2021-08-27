@@ -310,16 +310,15 @@ export default defineComponent({
         // display value. It maps column name -> choice value -> display value.
         // For example {'genre': {1: 'Sci-Fi'}}
         choicesLookup() {
-            let schema: any = this.schema
+            let schema: Schema = this.schema
             const output = {} as any
 
             for (const [columnName, config] of Object.entries(
                 schema["properties"]
             )) {
-                // @ts-ignore
-                const choices = config.extra.choices
+                const choices: Choices | null = config.extra.choices
 
-                const reducer = (accumulator: any, choice: any) => {
+                const reducer = (accumulator: any, choice: Choice) => {
                     accumulator[choice.value] = choice.display_name
                     return accumulator
                 }
@@ -371,7 +370,6 @@ export default defineComponent({
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
-            // @ts-ignore
             return this.schema.properties[name].extra.to
         },
         closeSideBar(value: boolean) {
