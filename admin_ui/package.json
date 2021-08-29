@@ -2,8 +2,8 @@
   "name": "admin_ui",
   "version": "0.1.0",
   "private": true,
-  "description": "## Project setup ``` npm install ```",
-  "author": "",
+  "description": "Admin interface for Piccolo ORM",
+  "author": "Daniel Townsend",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
