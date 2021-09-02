@@ -90,11 +90,11 @@ export default defineComponent({
             hourRange: [...Array(24).keys()],
             minuteRange: [...Array(60).keys()],
             secondRange: [...Array(60).keys()],
-            weeks: undefined as any,
-            days: undefined as any,
-            hours: undefined as any,
-            minutes: undefined as any,
-            seconds: undefined as any,
+            weeks: 0,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
         }
     },
     methods: {

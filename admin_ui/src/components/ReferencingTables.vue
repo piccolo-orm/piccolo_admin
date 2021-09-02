@@ -68,12 +68,10 @@ export default defineComponent({
                 params: { tableName: reference.tableName },
                 query,
             }
-            // updated store to get correct reference table search results
-            this.$store.commit("updateFilterParams", query)
             let vueUrl = this.$router.resolve(location).href
             window.open(
                 `${document.location.origin}${document.location.pathname}${vueUrl}`,
-                "_self"
+                "_blank"
             )
         },
     },

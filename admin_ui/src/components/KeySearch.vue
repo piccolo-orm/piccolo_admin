@@ -78,7 +78,7 @@ export default defineComponent({
                 return 0
             })
         },
-        selectResult(id: undefined, readable: undefined) {
+        selectResult(id: any, readable: any) {
             this.selectedValue = readable
             this.hiddenSelectedValue = id
         },

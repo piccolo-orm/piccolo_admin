@@ -8,7 +8,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login/');
+        cy.visit('http://piccolo_admin/#/login?nextURL=%2F');
     });
 
     it('Open director table and made basic filtering and sorting', () => {

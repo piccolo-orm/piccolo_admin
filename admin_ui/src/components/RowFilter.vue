@@ -43,7 +43,7 @@ export default defineComponent({
         schema(): any {
             return this.$store.state.schema
         },
-        tableName(): undefined {
+        tableName(): string | undefined {
             return this.$store.state.currentTableName
         },
     },

@@ -432,14 +432,12 @@ export default defineComponent({
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
-
+        this.$store.commit("updateFilterParams", this.$route.query)
         await Promise.all([this.fetchRows(), this.fetchSchema()])
     },
-    // NEED HELP: Not a best idea but this works because
-    // at this time rows does not update to current table
     async updated() {
         this.$store.commit("updateCurrentTablename", this.tableName)
-
+        this.$store.commit("updateFilterParams", this.$route.query)
         await Promise.all([this.fetchRows(), this.fetchSchema()])
     },
 })

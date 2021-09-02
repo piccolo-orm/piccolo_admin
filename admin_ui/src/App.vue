@@ -54,11 +54,17 @@ export default defineComponent({
             function (error) {
                 if (error.response && error.response.status == 401) {
                     console.log("Login required")
-                    setTimeout(function () {
-                        app.$router.push({
-                            name: "login",
-                        })
-                    }, 0)
+                    let nextURL = app.$route.path
+                    if (nextURL !== "/login") {
+                        setTimeout(function () {
+                            app.$router.push({
+                                name: "login",
+                                query: {
+                                    nextURL: nextURL,
+                                },
+                            })
+                        }, 0)
+                    }
                 }
                 return Promise.reject(error)
             }
