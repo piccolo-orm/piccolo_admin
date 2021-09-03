@@ -2,6 +2,25 @@
     <div v-if="schema">
         <div class="header">
             <h1>Edit {{ readable(tableName) }}</h1>
+
+            <p>
+                <a
+                    class="subtle"
+                    href="#"
+                    v-on:click.prevent="showDropdown = !showDropdown"
+                >
+                    <font-awesome-icon icon="ellipsis-v" />
+                    <DropDownMenu v-if="showDropdown">
+                        <li>
+                            <DeleteButton
+                                :includeTitle="true"
+                                class="subtle"
+                                v-on:triggered="deleteRow"
+                            />
+                        </li>
+                    </DropDownMenu>
+                </a>
+            </p>
         </div>
 
         <pre>{{ errors }}</pre>
@@ -29,7 +48,7 @@ import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
 
-import { UpdateRow } from "../interfaces"
+import { UpdateRow, DeleteRow } from "../interfaces"
 
 export default defineComponent({
     props: ["tableName", "rowID"],
@@ -39,7 +58,7 @@ export default defineComponent({
         RowFormSelect,
         ReferencingTables,
     },
-    data: function () {
+    data() {
         return {
             errors: "",
             showDropdown: false,
@@ -97,23 +116,26 @@ export default defineComponent({
                 opener.postMessage("edited row", document.location.origin)
             }
         },
+        async deleteRow() {
+            if (window.confirm("Are you sure you want to delete this row?")) {
+                let config: DeleteRow = {
+                    tableName: this.tableName,
+                    rowID: this.rowID,
+                }
+                await this.$store.dispatch("deleteRow", config)
+                alert("Successfully deleted row")
+                this.$router.push({
+                    name: "rowListing",
+                    params: { tableName: this.tableName },
+                })
+            }
+        },
         async fetchData() {
             this.$store.commit("updateCurrentTablename", this.tableName)
             await this.$store.dispatch("fetchSingleRow", {
                 tableName: this.tableName,
                 rowID: this.rowID,
             })
-        },
-    },
-    watch: {
-        "$route.params.tableName": async function () {
-            await Promise.all([
-                this.fetchData(),
-                this.$store.dispatch("fetchSchema", this.tableName),
-            ])
-        },
-        "$route.params.rowID": async function () {
-            await this.fetchData()
         },
     },
     async mounted() {

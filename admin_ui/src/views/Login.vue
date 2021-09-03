@@ -25,10 +25,11 @@
 
 
 <script>
+import { defineComponent } from "vue"
 import axios from "axios"
 
-export default {
-    data: function () {
+export default defineComponent({
+    data() {
         return {
             username: "",
             password: "",
@@ -64,7 +65,7 @@ export default {
             ])
         },
     },
-}
+})
 </script>
 
 

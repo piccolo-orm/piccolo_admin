@@ -421,11 +421,6 @@ export default defineComponent({
         },
     },
     watch: {
-        "$route.params.tableName": async function () {
-            this.$store.commit("reset")
-            this.$store.commit("updateCurrentTablename", this.tableName)
-            await Promise.all([this.fetchRows(), this.fetchSchema()])
-        },
         rows() {
             this.resetRowCheckbox()
         },

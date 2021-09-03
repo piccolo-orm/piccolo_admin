@@ -27,6 +27,21 @@
                     >
                         <font-awesome-icon icon="plus" />
                     </router-link>
+
+                    <router-link
+                        :to="{
+                            name: 'editRow',
+                            params: {
+                                tableName: property.extra.to,
+                                rowID: referenceTableID,
+                            },
+                        }"
+                        class="add"
+                        target="_blank"
+                        v-if="!isFilter"
+                    >
+                        <font-awesome-icon icon="edit" />
+                    </router-link>
                 </label>
                 <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
@@ -65,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, ref, computed } from "vue"
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
@@ -83,6 +98,11 @@ export default defineComponent({
         InputField,
         KeySearch,
         Tooltip,
+    },
+    setup() {
+        const rowId = ref(0)
+        const referenceTableID = computed(() => rowId.value + rowId.value)
+        return { referenceTableID }
     },
     data() {
         return {
