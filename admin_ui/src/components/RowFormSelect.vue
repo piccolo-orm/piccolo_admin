@@ -33,7 +33,7 @@
                             name: 'editRow',
                             params: {
                                 tableName: property.extra.to,
-                                rowID: referenceTableID,
+                                rowID: getKeySelectID(property.title),
                             },
                         }"
                         class="add"
@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue"
+import { defineComponent } from "vue"
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
@@ -99,11 +99,6 @@ export default defineComponent({
         KeySearch,
         Tooltip,
     },
-    setup() {
-        const rowId = ref(0)
-        const referenceTableID = computed(() => rowId.value + rowId.value)
-        return { referenceTableID }
-    },
     data() {
         return {
             baseIndex: 1,
@@ -118,7 +113,8 @@ export default defineComponent({
             return value
         },
         getKeySelectID(propertyTitle: string) {
-            return this.getValue(propertyTitle)
+            localStorage.setItem("rowID", this.getValue(propertyTitle))
+            return localStorage.getItem("rowID")
         },
         // We use this to refresh KeySelect components
         getKey(keyName: string) {
