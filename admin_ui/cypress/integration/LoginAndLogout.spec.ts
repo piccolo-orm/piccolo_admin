@@ -8,7 +8,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F');
+        cy.visit('http://piccolo_admin/#/login?nextURL=/');
     });
 
     it('Fill login form and redirect to admin page and then logout', () => {

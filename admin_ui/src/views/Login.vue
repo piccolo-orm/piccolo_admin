@@ -48,7 +48,12 @@ export default defineComponent({
                     username: this.username,
                     password: this.password,
                 })
-                this.$router.push({ name: "home" })
+                let nextURL = this.$route.query.nextURL
+                if (nextURL) {
+                    this.$router.push({ path: nextURL })
+                } else {
+                    this.$router.push({ name: "home" })
+                }
             } catch (error) {
                 console.log("Request failed")
                 console.log(error.response)
