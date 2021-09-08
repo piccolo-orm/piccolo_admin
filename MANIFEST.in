@@ -2,3 +2,4 @@ include piccolo_admin/dist/*.html
 include piccolo_admin/dist/**/*.css
 include piccolo_admin/dist/**/*.js
 include piccolo_admin/dist/**/*.js.map
+include piccolo_admin/py.typed
