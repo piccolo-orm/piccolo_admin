@@ -138,6 +138,17 @@ export default defineComponent({
             })
         },
     },
+    watch: {
+        "$route.params.tableName": async function () {
+            await Promise.all([
+                this.fetchData(),
+                this.$store.dispatch("fetchSchema", this.tableName),
+            ])
+        },
+        "$route.params.rowID": async function () {
+            await this.fetchData()
+        },
+    },
     async mounted() {
         await Promise.all([
             this.fetchData(),
