@@ -36,8 +36,9 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
+from pydantic import BaseModel
 
-from piccolo_admin.endpoints import create_admin
+from piccolo_admin.endpoints import create_admin, FormConfig
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
@@ -100,6 +101,29 @@ class Studio(Table, help_text="A movie studio."):
     facilities = JSON()
 
 
+class SendEmailModel(BaseModel):
+    email: str
+    title: str
+    content: str
+
+
+class ExampleModel(BaseModel):
+    num1: int
+    num2: int
+
+
+async def example_endpoint(request):
+    form = await request.json()
+    print(form)
+    return "Success"
+
+
+async def send_email_endpoint(request):
+    form = await request.json()
+    print(form)
+    return "Success"
+
+
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
     Director,  # type: ignore
     Movie,
@@ -109,6 +133,18 @@ TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
 )
 APP = create_admin(
     [Movie, Director],
+    forms=[
+        FormConfig(
+            name="Email form",
+            pydantic_model=SendEmailModel,
+            endpoint=send_email_endpoint,
+        ),
+        FormConfig(
+            name="Example form ",
+            pydantic_model=ExampleModel,
+            endpoint=example_endpoint,
+        ),
+    ],
     auth_table=User,
     session_table=Sessions,
 )

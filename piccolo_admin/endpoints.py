@@ -4,7 +4,9 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import os
+import smtplib
 import typing as t
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
@@ -49,6 +51,13 @@ class MetaResponseModel(BaseModel):
     site_name: str
 
 
+@dataclass
+class FormConfig:
+    name: str
+    pydantic_model: t.Type[BaseModel]
+    endpoint: t.Callable
+
+
 def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
@@ -65,6 +74,7 @@ class AdminRouter(FastAPI):
     def __init__(
         self,
         *tables: t.Type[Table],
+        forms: t.List = [],
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
         session_expiry: timedelta = timedelta(hours=1),
@@ -83,6 +93,7 @@ class AdminRouter(FastAPI):
         self.auth_table = auth_table
         self.site_name = site_name
         self.tables = tables
+        self.forms = forms
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             self.template = f.read()
@@ -128,6 +139,36 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             tags=["User"],
             response_model=UserResponseModel,
+        )
+
+        api_app.add_api_route(
+            path="/forms/",
+            endpoint=self.get_forms,  # type: ignore
+            methods=["GET"],
+            tags=["Forms"],
+            response_model=t.List[str],
+        )
+
+        api_app.add_api_route(
+            path="/forms/{name:str}/schema/",
+            endpoint=self.get_single_form_schema,  # type: ignore
+            methods=["GET"],
+            tags=["Form"],
+        )
+        # we can add this endpoint to dynamically change endpoints
+        # for axios.post
+        # api_app.add_api_route(
+        #     path="/forms/{name:str}/endpoint/",
+        #     endpoint=self.get_single_form_endpoint,  # type: ignore
+        #     methods=["GET"],
+        #     tags=["Form"],
+        # )
+
+        api_app.add_api_route(
+            path="/forms/{name:str}/",
+            endpoint=self.post_single_form,  # type: ignore
+            methods=["POST"],
+            tags=["Form"],
         )
 
         #######################################################################
@@ -201,7 +242,8 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name,
+            user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -211,6 +253,54 @@ class AdminRouter(FastAPI):
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
         )
+
+    ###########################################################################
+
+    def get_forms(self, request: Request) -> t.List[str]:
+        """
+        Returns a list of all forms from FormConfig.
+        """
+        return [form.name for form in self.forms]
+
+    def get_single_form_schema(self, request: Request, name: str) -> BaseModel:
+        param = request.path_params["name"]
+        for form in self.forms:
+            if form.name == param:
+                return form.pydantic_model.schema()
+
+    # we can add this method to dynamically change endpoints for axios.post
+    # def get_single_form_endpoint(self, request: Request, name: str) -> str:
+    #     param = request.path_params["name"]
+    #     for form in self.forms:
+    #         print(getattr(form.endpoint, "__name__", repr(form.endpoint)))
+    #         if form.name == param:
+    #             result = getattr(
+    #                 form.endpoint, "__name__", repr(form.endpoint)
+    #             )
+    #     return result
+
+    # manually processing the email form but no another form
+    async def post_single_form(self, request: Request) -> JSONResponse:
+        form = await request.json()
+
+        sender = "from@fromdomain.com"
+        receivers = [form["email"]]
+
+        message = f"""From: From Person <from@fromdomain.com>
+        To: To Person <{form["email"]}>
+        Subject: {form["title"]}
+
+        {form["content"]}
+        """
+
+        try:
+            smtpObj = smtplib.SMTP("localhost:1025")
+            smtpObj.sendmail(sender, receivers, message)
+            print("Successfully sent email")
+        except smtplib.SMTPException:
+            print("Error: unable to send email")
+
+        return JSONResponse({"form": form})
 
     ###########################################################################
 
@@ -257,6 +347,7 @@ def get_all_tables(
 
 def create_admin(
     tables: t.Sequence[t.Type[Table]],
+    forms: t.List = [],
     auth_table: t.Type[BaseUser] = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
     session_expiry: timedelta = timedelta(hours=1),
@@ -321,6 +412,7 @@ def create_admin(
         CSRFMiddleware(
             AdminRouter(
                 *tables,
+                forms=forms,
                 auth_table=auth_table,
                 session_table=session_table,
                 session_expiry=session_expiry,
