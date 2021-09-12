@@ -6,7 +6,7 @@
         >
             <label>{{ property.title }}</label>
             <InputField
-                v-bind:isFilter="isFilter"
+                v-bind:isFilter="false"
                 v-bind:key="keyName"
                 v-bind:title="property.title"
                 v-bind:type="property.type || property.anyOf[0].type"
@@ -22,10 +22,6 @@ import InputField from "./InputField.vue"
 export default Vue.extend({
     props: {
         schema: Object,
-        isFilter: {
-            type: Boolean,
-            default: false,
-        },
     },
     components: {
         InputField,

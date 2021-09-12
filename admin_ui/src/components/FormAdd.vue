@@ -9,7 +9,7 @@
             v-on:submit.prevent="submitForm($event)"
         >
             <NewForm v-bind:schema="defaults" />
-            <button>Create</button>
+            <button>Submit</button>
         </form>
     </div>
 </template>
@@ -43,7 +43,6 @@ export default Vue.extend({
             const form = new FormData(event.target)
 
             const json = {} as any
-            console.log(json)
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
                 let value: any = i[1]
@@ -60,7 +59,6 @@ export default Vue.extend({
                 .post(`${BASE_URL}forms/${this.formName}/`, json)
                 .then((res) => {
                     this.formData = res.data
-                    console.log(res.data)
                     this.$router.push("/")
                 })
                 .catch((error) => {
@@ -87,10 +85,6 @@ export default Vue.extend({
     async mounted() {
         let response = await this.$store.dispatch("getNewForm", this.formName)
         this.defaults = response.data
-        // this.formEndpoint = await this.$store.dispatch(
-        //     "getFormEndpointName",
-        //     this.formName
-        // )
     },
 })
 </script>

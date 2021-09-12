@@ -10,6 +10,7 @@ import decimal
 import enum
 import os
 import random
+import smtplib
 import typing as t
 
 import targ
@@ -101,27 +102,56 @@ class Studio(Table, help_text="A movie studio."):
     facilities = JSON()
 
 
-class SendEmailModel(BaseModel):
+class BusinessEmailModel(BaseModel):
     email: str
     title: str
     content: str
 
 
-class ExampleModel(BaseModel):
-    num1: int
-    num2: int
+class FriendsEmailModel(BaseModel):
+    email: str
+    title: str
+    content: str
 
 
-async def example_endpoint(request):
-    form = await request.json()
-    print(form)
-    return "Success"
+def business_email_endpoint(request, data):
+    sender = "info@example.com"
+    receivers = [data["email"]]
+
+    message = f"""From: From CEO <info@example.com>
+    To: To CEO <{data["email"]}>
+    Subject: {data["title"]}
+    {data["content"]}
+    """
+
+    try:
+        smtpObj = smtplib.SMTP("localhost:1025")
+        smtpObj.sendmail(sender, receivers, message)
+        print("Successfully sent email")
+    except smtplib.SMTPException:
+        print("Error: unable to send email")
+
+    return "Email sent"
 
 
-async def send_email_endpoint(request):
-    form = await request.json()
-    print(form)
-    return "Success"
+def friends_example_endpoint(request, data):
+    sender = "info@example.com"
+    receivers = [data["email"]]
+
+    message = f"""From: From Friend <info@example.com>
+    To: To Friend <{data["email"]}>
+    Subject: {data["title"]}
+    {data["content"]}
+    """
+
+    try:
+        smtpObj = smtplib.SMTP("localhost:1025")
+        smtpObj.sendmail(sender, receivers, message)
+        print("Successfully sent email")
+    except smtplib.SMTPException:
+        print("Error: unable to send email")
+
+    return "Email sent"
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
@@ -135,14 +165,14 @@ APP = create_admin(
     [Movie, Director],
     forms=[
         FormConfig(
-            name="Email form",
-            pydantic_model=SendEmailModel,
-            endpoint=send_email_endpoint,
+            name="Business email form",
+            pydantic_model=BusinessEmailModel,
+            endpoint=business_email_endpoint,
         ),
         FormConfig(
-            name="Example form ",
-            pydantic_model=ExampleModel,
-            endpoint=example_endpoint,
+            name="Friends email form",
+            pydantic_model=FriendsEmailModel,
+            endpoint=friends_example_endpoint,
         ),
     ],
     auth_table=User,

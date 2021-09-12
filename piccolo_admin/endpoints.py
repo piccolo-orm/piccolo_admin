@@ -4,7 +4,6 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import os
-import smtplib
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
@@ -25,7 +24,7 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from starlette.exceptions import ExceptionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import Request
@@ -56,6 +55,9 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable
+
+    def __post_init__(self):
+        self.slug = self.name.replace(" ", "-").lower()
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -94,6 +96,7 @@ class AdminRouter(FastAPI):
         self.site_name = site_name
         self.tables = tables
         self.forms = forms
+        self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             self.template = f.read()
@@ -134,14 +137,6 @@ class AdminRouter(FastAPI):
         )
 
         api_app.add_api_route(
-            path="/user/",
-            endpoint=self.get_user,  # type: ignore
-            methods=["GET"],
-            tags=["User"],
-            response_model=UserResponseModel,
-        )
-
-        api_app.add_api_route(
             path="/forms/",
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
@@ -155,20 +150,20 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             tags=["Form"],
         )
-        # we can add this endpoint to dynamically change endpoints
-        # for axios.post
-        # api_app.add_api_route(
-        #     path="/forms/{name:str}/endpoint/",
-        #     endpoint=self.get_single_form_endpoint,  # type: ignore
-        #     methods=["GET"],
-        #     tags=["Form"],
-        # )
 
         api_app.add_api_route(
             path="/forms/{name:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Form"],
+        )
+
+        api_app.add_api_route(
+            path="/user/",
+            endpoint=self.get_user,  # type: ignore
+            methods=["GET"],
+            tags=["User"],
+            response_model=UserResponseModel,
         )
 
         #######################################################################
@@ -248,59 +243,46 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    def get_forms(self, request: Request) -> t.List[str]:
+        return [form.name for form in self.forms]
+
+    def get_single_form_schema(
+        self, request: Request, name: str
+    ) -> BaseModel:  # pragma: no cover
+        param = request.path_params["name"]
+        for form in self.forms:
+            if form.name == param:
+                form_schema = form.pydantic_model.schema()
+        return form_schema
+
+    async def post_single_form(
+        self, request: Request
+    ) -> JSONResponse:  # pragma: no cover
+        form_name = request.path_params["name"]
+        form_config = self.form_config_map.get(
+            form_name.replace(" ", "-").lower()
+        )
+        data = await request.json()
+
+        try:
+            model_instance = form_config.pydantic_model(**data)  # type: ignore
+        except ValidationError as exception:
+            return JSONResponse({"message": exception}, status_code=400)
+
+        try:
+            form_config.endpoint(model_instance, data)  # type: ignore
+        except ValidationError as exception:
+            return JSONResponse({"message": exception}, status_code=400)
+
+        return JSONResponse({"message": "Successfully submitted"})
+
+    ###########################################################################
+
     def get_meta(self, request: Request) -> MetaResponseModel:
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
         )
-
-    ###########################################################################
-
-    def get_forms(self, request: Request) -> t.List[str]:
-        """
-        Returns a list of all forms from FormConfig.
-        """
-        return [form.name for form in self.forms]
-
-    def get_single_form_schema(self, request: Request, name: str) -> BaseModel:
-        param = request.path_params["name"]
-        for form in self.forms:
-            if form.name == param:
-                return form.pydantic_model.schema()
-
-    # we can add this method to dynamically change endpoints for axios.post
-    # def get_single_form_endpoint(self, request: Request, name: str) -> str:
-    #     param = request.path_params["name"]
-    #     for form in self.forms:
-    #         print(getattr(form.endpoint, "__name__", repr(form.endpoint)))
-    #         if form.name == param:
-    #             result = getattr(
-    #                 form.endpoint, "__name__", repr(form.endpoint)
-    #             )
-    #     return result
-
-    # manually processing the email form but no another form
-    async def post_single_form(self, request: Request) -> JSONResponse:
-        form = await request.json()
-
-        sender = "from@fromdomain.com"
-        receivers = [form["email"]]
-
-        message = f"""From: From Person <from@fromdomain.com>
-        To: To Person <{form["email"]}>
-        Subject: {form["title"]}
-
-        {form["content"]}
-        """
-
-        try:
-            smtpObj = smtplib.SMTP("localhost:1025")
-            smtpObj.sendmail(sender, receivers, message)
-            print("Successfully sent email")
-        except smtplib.SMTPException:
-            print("Error: unable to send email")
-
-        return JSONResponse({"form": form})
 
     ###########################################################################
 
