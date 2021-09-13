@@ -57,12 +57,17 @@ export default Vue.extend({
             }
             axios
                 .post(`${BASE_URL}forms/${this.formName}/`, json)
-                .then((res) => {
-                    this.formData = res.data
+                .then((response) => {
+                    this.formData = response.data
                     this.$router.push("/")
                 })
                 .catch((error) => {
                     const data = error.response.data
+                    var message: APIResponseMessage = {
+                        contents: "Errors in form",
+                        type: "error",
+                    }
+                    this.$store.commit("updateApiResponseMessage", message)
 
                     if (typeof data != "string") {
                         this.errors = JSON.stringify(data, null, 2)

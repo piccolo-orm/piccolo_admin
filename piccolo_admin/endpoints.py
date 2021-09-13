@@ -3,6 +3,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
 
+import json
 import os
 import typing as t
 from dataclasses import dataclass
@@ -244,6 +245,9 @@ class AdminRouter(FastAPI):
     ###########################################################################
 
     def get_forms(self, request: Request) -> t.List[str]:
+        """
+        Returns a list of all forms registered with the admin.
+        """
         return [form.name for form in self.forms]
 
     def get_single_form_schema(
@@ -267,12 +271,16 @@ class AdminRouter(FastAPI):
         try:
             model_instance = form_config.pydantic_model(**data)  # type: ignore
         except ValidationError as exception:
-            return JSONResponse({"message": exception}, status_code=400)
+            return JSONResponse(
+                {"message": json.loads(exception.json())}, status_code=400
+            )
 
         try:
             form_config.endpoint(model_instance, data)  # type: ignore
         except ValidationError as exception:
-            return JSONResponse({"message": exception}, status_code=400)
+            return JSONResponse(
+                {"message": json.loads(exception.json())}, status_code=400
+            )
 
         return JSONResponse({"message": "Successfully submitted"})
 
