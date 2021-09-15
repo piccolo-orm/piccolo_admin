@@ -39,7 +39,7 @@ from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel
 
-from piccolo_admin.endpoints import create_admin, FormConfig
+from piccolo_admin.endpoints import FormConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
@@ -154,8 +154,8 @@ def friends_example_endpoint(request, data):
     return "Email sent"
 
 
-TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
-    Director,  # type: ignore
+TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
+    Director,
     Movie,
     Studio,
     User,
