@@ -56,7 +56,7 @@ class MetaResponseModel(BaseModel):
 class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable[[pydantic.Basemodel], t.Optional[str]]
+    endpoint: t.Callable[[pydantic.BaseModel], t.Optional[str]]
 
     def __post_init__(self):
         self.slug = self.name.replace(" ", "-").lower()
@@ -239,7 +239,8 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name,
+            user_id=request.user.user_id,
         )
 
     ###########################################################################
