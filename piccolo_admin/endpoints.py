@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
+import pydantic
 from fastapi import FastAPI
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.reference import LazyTableReference
@@ -55,7 +56,7 @@ class MetaResponseModel(BaseModel):
 class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable
+    endpoint: t.Callable[[pydantic.Basemodel], t.Optional[str]]
 
     def __post_init__(self):
         self.slug = self.name.replace(" ", "-").lower()
@@ -238,8 +239,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -276,7 +276,7 @@ class AdminRouter(FastAPI):
             )
 
         try:
-            form_config.endpoint(model_instance, data)  # type: ignore
+            form_config.endpoint(model_instance)  # type: ignore
         except ValidationError as exception:
             return JSONResponse(
                 {"message": json.loads(exception.json())}, status_code=400

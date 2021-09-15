@@ -114,14 +114,14 @@ class FriendsEmailModel(BaseModel):
     content: str
 
 
-def business_email_endpoint(request, data):
+def business_email_endpoint(data):
     sender = "info@example.com"
-    receivers = [data["email"]]
+    receivers = [data.email]
 
     message = f"""From: From CEO <info@example.com>
-    To: To CEO <{data["email"]}>
-    Subject: {data["title"]}
-    {data["content"]}
+    To: To CEO <{data.email}>
+    Subject: {data.title}
+    {data.content}
     """
 
     try:
@@ -134,14 +134,14 @@ def business_email_endpoint(request, data):
     return "Email sent"
 
 
-def friends_example_endpoint(request, data):
+def friends_example_endpoint(data):
     sender = "info@example.com"
-    receivers = [data["email"]]
+    receivers = [data.email]
 
     message = f"""From: From Friend <info@example.com>
-    To: To Friend <{data["email"]}>
-    Subject: {data["title"]}
-    {data["content"]}
+    To: To Friend <{data.email}>
+    Subject: {data.title}
+    {data.content}
     """
 
     try:
