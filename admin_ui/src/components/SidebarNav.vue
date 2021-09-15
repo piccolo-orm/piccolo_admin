@@ -1,23 +1,20 @@
 <template>
     <div class="sidebar">
         <p class="opaque">
-            <router-link
-                class="subtle"
-                to="/"
-            >
+            <router-link class="subtle" to="/">
                 <font-awesome-icon icon="home" />Home
             </router-link>
         </p>
         <p class="opaque">
             <font-awesome-icon icon="table" />Tables
-            <span style="float: right;">
+            <span style="float: right">
                 <font-awesome-icon icon="angle-down" />
             </span>
         </p>
         <TableNav />
-        <p class="opaque">
+        <p class="opaque" v-show="formNames.length > 0">
             <font-awesome-icon icon="cogs" />Forms
-            <span style="float: right;">
+            <span style="float: right">
                 <font-awesome-icon icon="angle-down" />
             </span>
         </p>
@@ -34,6 +31,11 @@ export default Vue.extend({
     components: {
         TableNav,
         FormNav,
+    },
+    computed: {
+        formNames() {
+            return this.$store.state.formNames
+        },
     },
 })
 </script>
