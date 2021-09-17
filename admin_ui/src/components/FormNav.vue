@@ -1,15 +1,12 @@
 <template>
     <ul>
-        <li
-            v-bind:key="formName"
-            v-for="formName in formNames"
-        >
+        <li v-bind:key="formConfig.name" v-for="formConfig in formConfigs">
             <router-link
-                :to="{ name: 'addForm', params: { formName } }"
+                :to="{ name: 'addForm', params: { formSlug: formConfig.slug } }"
                 class="subtle"
             >
                 <font-awesome-icon icon="level-up-alt" />
-                {{ formName | readable }}
+                {{ formConfig.name | readable }}
             </router-link>
         </li>
     </ul>
@@ -21,21 +18,12 @@ import Vue from "vue"
 
 export default Vue.extend({
     computed: {
-        formNames() {
-            return this.$store.state.formNames
-        },
-        currentFormName() {
-            return this.$store.state.currentFormName
-        },
-    },
-    methods: {
-        showListing(formName: string) {
-            this.$store.commit("updateCurrentFormname", formName)
-            this.$router.push({ name: "formAdding", params: { formName } })
+        formConfigs() {
+            return this.$store.state.formConfigs
         },
     },
     async mounted() {
-        await this.$store.dispatch("fetchFormNames")
+        await this.$store.dispatch("fetchFormConfigs")
     },
 })
 </script>

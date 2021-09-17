@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import Vue from 'vue'
+import Router from 'vue-router'
 
 import AddRow from './views/AddRow.vue'
 import EditRow from './views/EditRow.vue'
@@ -8,9 +8,7 @@ import Login from './views/Login.vue'
 import RowListing from './views/RowListing.vue'
 import AddForm from './views/AddForm.vue'
 
-
-Vue.use(Router);
-
+Vue.use(Router)
 
 export default new Router({
     mode: 'hash',
@@ -19,12 +17,18 @@ export default new Router({
         {
             path: '/',
             name: 'home',
-            component: Home,
+            component: Home
         },
         {
             path: '/login/',
             name: 'login',
-            component: Login,
+            component: Login
+        },
+        {
+            path: '/forms/:formSlug/',
+            name: 'addForm',
+            component: AddForm,
+            props: true
         },
         {
             path: '/:tableName/',
@@ -43,12 +47,6 @@ export default new Router({
             name: 'editRow',
             component: EditRow,
             props: true
-        },
-        {
-            path: '/forms/:formName/schema/',
-            name: 'addForm',
-            component: AddForm,
-            props: true
-        },
-    ],
-});
+        }
+    ]
+})

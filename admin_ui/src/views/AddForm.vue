@@ -1,10 +1,6 @@
 <template>
     <DetailViewBase>
-        <FormAdd
-            :formName="formName"
-            :schema="schema"
-            v-if="schema"
-        />
+        <FormAdd :formSlug="formSlug" :schema="schema" v-if="schema" />
     </DetailViewBase>
 </template>
 
@@ -15,7 +11,7 @@ import FormAdd from "../components/FormAdd.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
 export default Vue.extend({
-    props: ["formName"],
+    props: ["formSlug"],
     components: {
         FormAdd,
         DetailViewBase,
@@ -26,8 +22,7 @@ export default Vue.extend({
         },
     },
     async mounted() {
-        this.$store.commit("updateCurrentFormname", this.formName)
-        await this.$store.dispatch("fetchFormSchema", this.formName)
+        await this.$store.dispatch("fetchFormSchema", this.formSlug)
     },
 })
 </script>

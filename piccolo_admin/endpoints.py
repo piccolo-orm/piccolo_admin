@@ -27,7 +27,7 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, ValidationError
-from starlette.exceptions import ExceptionMiddleware
+from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
@@ -54,12 +54,21 @@ class MetaResponseModel(BaseModel):
 
 @dataclass
 class FormConfig:
+    """
+    Used to specify forms, which are passed into ``create_admin``.
+    """
+
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[[pydantic.BaseModel], t.Optional[str]]
 
     def __post_init__(self):
         self.slug = self.name.replace(" ", "-").lower()
+
+
+class FormConfigResponseModel(BaseModel):
+    name: str
+    slug: str
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -143,18 +152,18 @@ class AdminRouter(FastAPI):
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
-            response_model=t.List[str],
+            response_model=t.List[FormConfigResponseModel],
         )
 
         api_app.add_api_route(
-            path="/forms/{name:str}/schema/",
+            path="/forms/{form_slug:str}/schema/",
             endpoint=self.get_single_form_schema,  # type: ignore
             methods=["GET"],
             tags=["Form"],
         )
 
         api_app.add_api_route(
-            path="/forms/{name:str}/",
+            path="/forms/{form_slug:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Form"],
@@ -239,34 +248,37 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
 
-    def get_forms(self, request: Request) -> t.List[str]:
+    def get_forms(self) -> t.List[FormConfigResponseModel]:
         """
         Returns a list of all forms registered with the admin.
         """
-        return [form.name for form in self.forms]
+        return [
+            FormConfigResponseModel(name=form.name, slug=form.slug)
+            for form in self.forms
+        ]
 
-    def get_single_form_schema(
-        self, request: Request, name: str
-    ) -> BaseModel:  # pragma: no cover
-        param = request.path_params["name"]
+    def get_single_form_schema(self, form_slug: str) -> BaseModel:
+        form_schema = None
+
         for form in self.forms:
-            if form.name == param:
+            if form.slug == form_slug:
                 form_schema = form.pydantic_model.schema()
+                break
+
+        if form_schema is None:
+            raise HTTPException(status_code=404, detail="No such form found")
+
         return form_schema
 
     async def post_single_form(
-        self, request: Request
-    ) -> JSONResponse:  # pragma: no cover
-        form_name = request.path_params["name"]
-        form_config = self.form_config_map.get(
-            form_name.replace(" ", "-").lower()
-        )
+        self, request: Request, form_slug: str
+    ) -> JSONResponse:
+        form_config = self.form_config_map.get(form_slug)
         data = await request.json()
 
         try:

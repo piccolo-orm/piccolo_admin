@@ -1,14 +1,11 @@
 <template>
     <div>
-        <h1>{{ formName | readable }}</h1>
+        <h1>{{ formName }}</h1>
 
         <pre>{{ errors }}</pre>
 
-        <form
-            v-if="defaults"
-            v-on:submit.prevent="submitForm($event)"
-        >
-            <NewForm v-bind:schema="defaults" />
+        <form v-if="schema" v-on:submit.prevent="submitForm($event)">
+            <NewForm :schema="schema" />
             <button>Submit</button>
         </form>
     </div>
@@ -24,7 +21,7 @@ const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default Vue.extend({
     props: {
-        formName: String,
+        formSlug: String,
         schema: Object,
     },
     components: {
@@ -32,50 +29,56 @@ export default Vue.extend({
     },
     data() {
         return {
-            defaults: {},
             errors: "",
             formData: {},
         }
+    },
+    computed: {
+        formName() {
+            return this.formSlug.replaceAll("-", " ")
+        },
     },
     methods: {
         async submitForm(event: any) {
             console.log("I was pressed")
             const form = new FormData(event.target)
 
-            const json = {} as any
+            const json = {}
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
                 let value: any = i[1]
 
                 if (value == "null") {
                     value = null
-                    // @ts-ignore
                 } else if (this.schema.properties[key].type == "array") {
                     value = JSON.parse(value)
                 }
                 json[key] = value
             }
-            axios
-                .post(`${BASE_URL}forms/${this.formName}/`, json)
-                .then((response) => {
-                    this.formData = response.data
-                    this.$router.push("/")
-                })
-                .catch((error) => {
-                    const data = error.response.data
-                    var message: APIResponseMessage = {
-                        contents: "Errors in form",
-                        type: "error",
-                    }
-                    this.$store.commit("updateApiResponseMessage", message)
 
-                    if (typeof data != "string") {
-                        this.errors = JSON.stringify(data, null, 2)
-                    } else {
-                        this.errors = data
-                    }
-                    return
-                })
+            try {
+                let response = await axios.post(
+                    `${BASE_URL}forms/${this.formSlug}/`,
+                    json
+                )
+                this.formData = response.data
+                this.$router.push("/")
+            } catch (error) {
+                const data = error.response.data
+                var message: APIResponseMessage = {
+                    contents: "Errors in form",
+                    type: "error",
+                }
+                this.$store.commit("updateApiResponseMessage", message)
+
+                if (typeof data != "string") {
+                    this.errors = JSON.stringify(data, null, 2)
+                } else {
+                    this.errors = data
+                }
+                return
+            }
+
             this.errors = ""
 
             var message: APIResponseMessage = {
@@ -83,13 +86,7 @@ export default Vue.extend({
                 type: "success",
             }
             this.$store.commit("updateApiResponseMessage", message)
-
-            this.$emit("close")
         },
-    },
-    async mounted() {
-        let response = await this.$store.dispatch("getNewForm", this.formName)
-        this.defaults = response.data
     },
 })
 </script>

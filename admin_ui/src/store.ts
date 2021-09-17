@@ -19,7 +19,6 @@ export default new Vuex.Store({
         apiResponseMessage: null as i.APIResponseMessage | null,
         currentPageNumber: 1,
         currentTableName: undefined,
-        currentFormName: undefined,
         darkMode: false,
         filterParams: {},
         pageSize: 15,
@@ -30,21 +29,18 @@ export default new Vuex.Store({
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
-        formNames: [],
-        user: undefined,
+        formConfigs: [] as i.FormConfig[],
+        user: undefined
     },
     mutations: {
         updateTableNames(state, value) {
             state.tableNames = value
         },
-        updateFormNames(state, value) {
-            state.formNames = value
+        updateFormConfigs(state, value) {
+            state.formConfigs = value
         },
         updateCurrentTablename(state, value) {
             state.currentTableName = value
-        },
-        updateCurrentFormname(state, value) {
-            state.currentFormName = value
         },
         updateRows(state, rows) {
             state.rows = rows
@@ -91,13 +87,23 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        async fetchFormConfigs(context) {
+            const response = await axios.get(`${BASE_URL}forms/`)
+            context.commit('updateFormConfigs', response.data)
+        },
+        async fetchFormSchema(context, formName: string) {
+            const response = await axios.get(
+                `${BASE_URL}forms/${formName}/schema/`
+            )
+            context.commit('updateFormSchema', response.data)
+            return response
+        },
+
+        /*********************************************************************/
+
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit('updateTableNames', response.data)
-        },
-        async fetchFormNames(context) {
-            const response = await axios.get(`${BASE_URL}forms/`)
-            context.commit('updateFormNames', response.data)
         },
         async fetchCount(context) {
             const tableName = context.state.currentTableName
@@ -180,12 +186,6 @@ export default new Vuex.Store({
             )
             return response
         },
-        async getNewForm(context, formName: string) {
-            const response = await axios.get(
-                `${BASE_URL}forms/${formName}/schema/`
-            )
-            return response
-        },
         async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
             const response = await axios.get(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/?__readable=true`
@@ -198,13 +198,6 @@ export default new Vuex.Store({
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit('updateSchema', response.data)
-            return response
-        },
-        async fetchFormSchema(context, formName: string) {
-            const response = await axios.get(
-                `${BASE_URL}forms/${formName}/schema/`
-            )
-            context.commit('updateFormSchema', response.data)
             return response
         },
         async createRow(context, config: i.CreateRow) {

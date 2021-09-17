@@ -12,7 +12,7 @@
             </span>
         </p>
         <TableNav />
-        <p class="opaque" v-show="formNames.length > 0">
+        <p class="opaque" v-show="formConfigs.length > 0">
             <font-awesome-icon icon="cogs" />Forms
             <span style="float: right">
                 <font-awesome-icon icon="angle-down" />
@@ -33,8 +33,8 @@ export default Vue.extend({
         FormNav,
     },
     computed: {
-        formNames() {
-            return this.$store.state.formNames
+        formConfigs() {
+            return this.$store.state.formConfigs
         },
     },
 })
