@@ -128,7 +128,7 @@ def business_email_endpoint(data):
         smtpObj = smtplib.SMTP("localhost:1025")
         smtpObj.sendmail(sender, receivers, message)
         print("Successfully sent email")
-    except smtplib.SMTPException:
+    except (smtplib.SMTPException, ConnectionRefusedError):
         print("Error: unable to send email")
 
     return "Email sent"
@@ -148,7 +148,7 @@ def friends_example_endpoint(data):
         smtpObj = smtplib.SMTP("localhost:1025")
         smtpObj.sendmail(sender, receivers, message)
         print("Successfully sent email")
-    except smtplib.SMTPException:
+    except (smtplib.SMTPException, ConnectionRefusedError):
         print("Error: unable to send email")
 
     return "Email sent"
