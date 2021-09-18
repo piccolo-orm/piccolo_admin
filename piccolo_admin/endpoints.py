@@ -97,6 +97,7 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[[Request, pydantic.BaseModel], t.Optional[str]]
+    description: t.Optional[str] = None
 
     def __post_init__(self):
         self.slug = self.name.replace(" ", "-").lower()
@@ -105,6 +106,7 @@ class FormConfig:
 class FormConfigResponseModel(BaseModel):
     name: str
     slug: str
+    description: str
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -294,7 +296,9 @@ class AdminRouter(FastAPI):
         Returns a list of all forms registered with the admin.
         """
         return [
-            FormConfigResponseModel(name=form.name, slug=form.slug)
+            FormConfigResponseModel(
+                name=form.name, slug=form.slug, description=form.description
+            )
             for form in self.forms
         ]
 

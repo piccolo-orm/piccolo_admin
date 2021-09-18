@@ -95,8 +95,16 @@ class TestForms(TestCase):
         self.assertEqual(
             response.json(),
             [
-                {"name": "Business email form", "slug": "business-email-form"},
-                {"name": "Friends email form", "slug": "friends-email-form"},
+                {
+                    "name": "Business email form",
+                    "slug": "business-email-form",
+                    "description": "Send an email for business.",
+                },
+                {
+                    "name": "Friends email form",
+                    "slug": "friends-email-form",
+                    "description": "Send an email to a friend.",
+                },
             ],
         )
 
