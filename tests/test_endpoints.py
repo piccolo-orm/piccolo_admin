@@ -49,7 +49,7 @@ class TestAdminRouter(TestCase):
         response = client.get("/")
         self.assertEqual(response.status_code, 200)
 
-    def test_get_user(self):
+    def test_auth_exception(self):
         client = TestClient(APP)
 
         response = client.get("/api/user/")
@@ -84,7 +84,9 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -116,5 +118,147 @@ class TestForms(TestCase):
                     "content": {"title": "Content", "type": "string"},
                 },
                 "required": ["email", "title", "content"],
+            },
+        )
+        response = client.get("/api/forms/email-form/schema/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content, b'{"detail":"No such form found"}')
+
+    def test_post_form_success(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+        #######################################################################
+        # Post a form
+
+        form_payload = {
+            "email": "director@director.com",
+            "title": "Hello director",
+            "content": "Hello from Piccolo Admin",
+        }
+
+        response = client.post(
+            "/api/forms/business-email-form/",
+            json=form_payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(), {"message": "Successfully submitted"}
+        )
+
+    def test_post_form_fail(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+        #######################################################################
+        # Post a form with errors
+
+        form_payload = {
+            "email": "director",
+            "title": "Hello director",
+            "content": "Hello from Piccolo Admin",
+        }
+
+        response = client.post(
+            "/api/forms/business-email-form/",
+            json=form_payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+
+class TestTables(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        SessionsBase.create_table(if_not_exists=True).run_sync()
+        BaseUser.create_table(if_not_exists=True).run_sync()
+        BaseUser(
+            **self.credentials, active=True, admin=True, superuser=True
+        ).save().run_sync()
+
+    def tearDown(self):
+        SessionsBase.alter().drop_table().run_sync()
+        BaseUser.alter().drop_table().run_sync()
+
+    def test_tables(self):
+        """
+        Make sure the table listing can be retrieved.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        #######################################################################
+        # List all tables
+
+        response = client.get("/api/tables/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            ["movie", "director"],
+        )
+
+    def test_get_user(self):
+        """
+        Make sure the authenticaded user can be retrieved.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        #######################################################################
+        # Auth user
+
+        response = client.get("/api/user/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "username": "Bob",
+                "user_id": "1",
             },
         )

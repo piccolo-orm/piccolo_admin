@@ -37,7 +37,7 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
@@ -107,11 +107,23 @@ class BusinessEmailModel(BaseModel):
     title: str
     content: str
 
+    @validator("email")
+    def validate_email(cls, v):
+        if "@" not in v:
+            raise ValueError("not valid email")
+        return v
+
 
 class FriendsEmailModel(BaseModel):
     email: str
     title: str
     content: str
+
+    @validator("email")
+    def validate_email(cls, v):
+        if "@" not in v:
+            raise ValueError("not valid email")
+        return v
 
 
 def business_email_endpoint(data):
