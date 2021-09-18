@@ -71,6 +71,12 @@ Here's an example of a form which sends email, using FastAPI:
     # For Starlette it is identical, just `app = Starlette(...)`
 
 
-Piccolo Admin will then show a custom form in the UI. To process the form,
-you only need to specify the Pydantic model and function which processes
-your custom form and Piccolo Admin will do the rest, like in the above example.
+Piccolo Admin will then show a custom form in the UI.
+
+.. image:: ./images/forms_sidebar.png
+
+.. image:: ./images/form.png
+
+To process the form, you only need to specify the Pydantic model and function
+which processes your custom form and Piccolo Admin will do the rest, like in
+the above example.
