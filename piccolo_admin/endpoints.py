@@ -56,11 +56,47 @@ class MetaResponseModel(BaseModel):
 class FormConfig:
     """
     Used to specify forms, which are passed into ``create_admin``.
+
+    :param name:
+        This will be displayed in the UI in the sidebar.
+    :param pydantic_model:
+        This determines which fields to display in the form, and is used to
+        deserialise the responses.
+    :param endpoint:
+        Your custom handler, which accepts two arguments - the FastAPI /
+        Starlette request object, in case you want to access the cookies /
+        headers / logged in user (via `request.user`). And secondly an instance
+        of the Pydantic model.
+
+    Here's a full example:
+
+    .. code-block:: python
+
+        class MyModel(pydantic.BaseModel):
+            message: str
+
+        def my_endpoint(request: Request, data: MyModel):
+            print(f"I received {data.message}")
+
+            # If we're not happy with the data raise a ValueError
+            # The message inside the exception will be displayed in the UI.
+            raise ValueError("We were unable to process the form.")
+
+            # If we're happy with the data, just return a string, which
+            # will be displayed in the UI.
+            return "Successful."
+
+        config = FormConfig(
+            name="My Form",
+            pydantic_model=MyModel,
+            endpoint=my_endpoint
+        )
+
     """
 
     name: str
     pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable[[pydantic.BaseModel], t.Optional[str]]
+    endpoint: t.Callable[[Request, pydantic.BaseModel], t.Optional[str]]
 
     def __post_init__(self):
         self.slug = self.name.replace(" ", "-").lower()
@@ -289,17 +325,15 @@ class AdminRouter(FastAPI):
             )
 
         try:
-            form_config.endpoint(model_instance)  # type: ignore
-        except ValidationError as exception:
-            return JSONResponse(
-                {"message": json.loads(exception.json())}, status_code=400
-            )
+            form_config.endpoint(request, model_instance)  # type: ignore
+        except ValueError as exception:
+            return JSONResponse({"message": str(exception)}, status_code=400)
 
         return JSONResponse({"message": "Successfully submitted"})
 
     ###########################################################################
 
-    def get_meta(self, request: Request) -> MetaResponseModel:
+    def get_meta(self) -> MetaResponseModel:
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
@@ -307,7 +341,7 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self, request: Request) -> t.List[str]:
+    def get_table_list(self) -> t.List[str]:
         """
         Returns a list of all tables registered with the admin.
         """

@@ -84,9 +84,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -134,9 +132,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form
@@ -168,9 +164,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form with errors
@@ -217,9 +211,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -228,8 +220,7 @@ class TestTables(TestCase):
         response = client.get("/api/tables/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(),
-            ["movie", "director"],
+            response.json(), ["movie", "director"],
         )
 
     def test_get_user(self):
@@ -245,9 +236,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -256,9 +245,5 @@ class TestTables(TestCase):
         response = client.get("/api/user/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(),
-            {
-                "username": "Bob",
-                "user_id": "1",
-            },
+            response.json(), {"username": "Bob", "user_id": "1"},
         )

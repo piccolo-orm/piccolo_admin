@@ -126,7 +126,7 @@ class FriendsEmailModel(BaseModel):
         return v
 
 
-def business_email_endpoint(data):
+def business_email_endpoint(request, data):
     sender = "info@example.com"
     receivers = [data.email]
 
@@ -146,7 +146,7 @@ def business_email_endpoint(data):
     return "Email sent"
 
 
-def friends_example_endpoint(data):
+def friends_example_endpoint(request, data):
     sender = "info@example.com"
     receivers = [data.email]
 

@@ -3,28 +3,31 @@
 Custom Forms
 ============
 
-Piccolo Admin has ability to turn a Pydantic model into a form in the UI,
-and we can use it for automatic creation of custom forms in Piccolo Admin
-without writing frontend code.
+Piccolo Admin has the ability to turn a Pydantic model into a form in the UI,
+without writing any frontend code.
 
-Example of creating and sending email form in FastAPI:
+Here's an example of a form which sends email, using FastAPI:
 
 .. code-block:: python
 
     import smtplib
+
     from fastapi import FastAPI
     from piccolo_admin.endpoints import (
         create_admin,
         FormConfig,
     )
     from pydantic import BaseModel
+
     from home.tables import Task
+
 
     # Pydantic model for form
     class EmailFormModel(BaseModel):
         email: str
         title: str
         content: str
+
 
     # Send email handler
     def email_endpoint(request, data):
@@ -46,6 +49,7 @@ Example of creating and sending email form in FastAPI:
 
         return "Email sent"
 
+
     app = FastAPI(
         routes=[
             Mount(
@@ -64,9 +68,9 @@ Example of creating and sending email form in FastAPI:
         ],
     )
 
-
-Piccolo Admin will then show a custom form in UI. To process the form,
-you only need to specify the Pydantic model and function which processing
-your custom form and Piccolo Admin will do the rest like in above example.
+    # For Starlette it is identical, just `app = Starlette(...)`
 
 
+Piccolo Admin will then show a custom form in the UI. To process the form,
+you only need to specify the Pydantic model and function which processes
+your custom form and Piccolo Admin will do the rest, like in the above example.
