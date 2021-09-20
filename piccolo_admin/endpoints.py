@@ -67,6 +67,9 @@ class FormConfig:
         Starlette request object, in case you want to access the cookies /
         headers / logged in user (via `request.user`). And secondly an instance
         of the Pydantic model.
+    :param description:
+        An optional description which is shown in the UI to explain to the user
+        what the form is for.
 
     Here's a full example:
 
