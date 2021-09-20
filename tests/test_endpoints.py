@@ -130,6 +130,23 @@ class TestForms(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.content, b'{"detail":"No such form found"}')
 
+        #######################################################################
+        # Now get the FormConfig for a single form
+
+        response = client.get("/api/forms/business-email-form/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "name": "Business email form",
+                "slug": "business-email-form",
+                "description": "Send an email for business.",
+            },
+        )
+        response = client.get("/api/forms/no-such-form/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content, b'{"detail":"No such form found"}')
+
     def test_post_form_success(self):
         client = TestClient(APP)
 

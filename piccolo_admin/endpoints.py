@@ -125,7 +125,7 @@ class AdminRouter(FastAPI):
     def __init__(
         self,
         *tables: t.Type[Table],
-        forms: t.List = [],
+        forms: t.List[FormConfig] = [],
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
         session_expiry: timedelta = timedelta(hours=1),
@@ -194,17 +194,24 @@ class AdminRouter(FastAPI):
         )
 
         api_app.add_api_route(
+            path="/forms/{form_slug:str}/",
+            endpoint=self.get_single_form,  # type: ignore
+            methods=["GET"],
+            tags=["Forms"],
+        )
+
+        api_app.add_api_route(
             path="/forms/{form_slug:str}/schema/",
             endpoint=self.get_single_form_schema,  # type: ignore
             methods=["GET"],
-            tags=["Form"],
+            tags=["Forms"],
         )
 
         api_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
-            tags=["Form"],
+            tags=["Forms"],
         )
 
         api_app.add_api_route(
@@ -302,18 +309,25 @@ class AdminRouter(FastAPI):
             for form in self.forms
         ]
 
-    def get_single_form_schema(self, form_slug: str) -> BaseModel:
-        form_schema = None
-
-        for form in self.forms:
-            if form.slug == form_slug:
-                form_schema = form.pydantic_model.schema()
-                break
-
-        if form_schema is None:
+    def get_single_form(self, form_slug: str) -> FormConfigResponseModel:
+        """
+        Returns the FormConfig for the given form.
+        """
+        form = self.form_config_map.get(form_slug, None)
+        if form is None:
             raise HTTPException(status_code=404, detail="No such form found")
+        else:
+            return FormConfigResponseModel(
+                name=form.name, slug=form.slug, description=form.description,
+            )
 
-        return form_schema
+    def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
+        form_config = self.form_config_map.get(form_slug)
+
+        if form_config is None:
+            raise HTTPException(status_code=404, detail="No such form found")
+        else:
+            return form_config.pydantic_model.schema()
 
     async def post_single_form(
         self, request: Request, form_slug: str
