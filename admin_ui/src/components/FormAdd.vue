@@ -78,7 +78,7 @@ export default Vue.extend({
             } catch (error) {
                 const data = error.response.data
                 var message: APIResponseMessage = {
-                    contents: "Errors in form",
+                    contents: "The form has errors.",
                     type: "error",
                 }
                 this.$store.commit("updateApiResponseMessage", message)
