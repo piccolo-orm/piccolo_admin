@@ -180,13 +180,13 @@ APP = create_admin(
             name="Business email form",
             pydantic_model=BusinessEmailModel,
             endpoint=business_email_endpoint,
-            description="Send an email for business."
+            description="Send an email to a business associate.",
         ),
         FormConfig(
             name="Friends email form",
             pydantic_model=FriendsEmailModel,
             endpoint=friends_example_endpoint,
-            description="Send an email to a friend."
+            description="Send an email to a friend.",
         ),
     ],
     auth_table=User,

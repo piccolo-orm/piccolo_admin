@@ -91,9 +91,13 @@ export default new Vuex.Store({
             const response = await axios.get(`${BASE_URL}forms/`)
             context.commit('updateFormConfigs', response.data)
         },
-        async fetchFormSchema(context, formName: string) {
+        async fetchFormConfig(context, formSlug: string) {
+            const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
+            return response
+        },
+        async fetchFormSchema(context, formSlug: string) {
             const response = await axios.get(
-                `${BASE_URL}forms/${formName}/schema/`
+                `${BASE_URL}forms/${formSlug}/schema/`
             )
             context.commit('updateFormSchema', response.data)
             return response

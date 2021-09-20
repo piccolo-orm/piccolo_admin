@@ -1,6 +1,10 @@
 <template>
     <div>
-        <h1>{{ formName }}</h1>
+        <template v-if="formConfig">
+            <h1>{{ formConfig.name }}</h1>
+
+            <p v-if="formConfig.description">{{ formConfig.description }}</p>
+        </template>
 
         <pre>{{ errors }}</pre>
 
@@ -15,7 +19,7 @@
 import axios from "axios"
 import Vue from "vue"
 import NewForm from "./NewForm.vue"
-import { APIResponseMessage } from "../interfaces"
+import { APIResponseMessage, FormConfig } from "../interfaces"
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
@@ -31,14 +35,22 @@ export default Vue.extend({
         return {
             errors: "",
             formData: {},
+            formConfig: undefined as FormConfig,
         }
     },
-    computed: {
-        formName() {
-            return this.formSlug.replaceAll("-", " ")
+    watch: {
+        async formSlug() {
+            await this.fetchFormConfig()
         },
     },
     methods: {
+        async fetchFormConfig() {
+            const response = await this.$store.dispatch(
+                "fetchFormConfig",
+                this.formSlug
+            )
+            this.formConfig = response.data
+        },
         async submitForm(event: any) {
             console.log("I was pressed")
             const form = new FormData(event.target)
@@ -87,6 +99,9 @@ export default Vue.extend({
             }
             this.$store.commit("updateApiResponseMessage", message)
         },
+    },
+    async mounted() {
+        await this.fetchFormConfig()
     },
 })
 </script>

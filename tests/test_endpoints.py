@@ -98,7 +98,7 @@ class TestForms(TestCase):
                 {
                     "name": "Business email form",
                     "slug": "business-email-form",
-                    "description": "Send an email for business.",
+                    "description": "Send an email to a business associate.",
                 },
                 {
                     "name": "Friends email form",
@@ -140,7 +140,7 @@ class TestForms(TestCase):
             {
                 "name": "Business email form",
                 "slug": "business-email-form",
-                "description": "Send an email for business.",
+                "description": "Send an email to a business associate.",
             },
         )
         response = client.get("/api/forms/no-such-form/")

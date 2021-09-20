@@ -100,4 +100,5 @@ export interface ArrayItems {
 export interface FormConfig {
     name: string
     slug: string
+    description: string
 }
