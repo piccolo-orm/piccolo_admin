@@ -101,9 +101,9 @@ class TestForms(TestCase):
                     "description": "Send an email to a business associate.",
                 },
                 {
-                    "name": "Friends email form",
-                    "slug": "friends-email-form",
-                    "description": "Send an email to a friend.",
+                    "name": "Booking form",
+                    "slug": "booking-form",
+                    "description": "Make a booking for a customer.",
                 },
             ],
         )

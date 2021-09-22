@@ -114,10 +114,10 @@ class BusinessEmailModel(BaseModel):
         return v
 
 
-class FriendsEmailModel(BaseModel):
+class BookingModel(BaseModel):
     email: str
-    title: str
-    content: str
+    name: str
+    notes: str
 
     @validator("email")
     def validate_email(cls, v):
@@ -130,8 +130,8 @@ def business_email_endpoint(request, data):
     sender = "info@example.com"
     receivers = [data.email]
 
-    message = f"""From: From CEO <info@example.com>
-    To: To CEO <{data.email}>
+    message = f"""From: Piccolo Admin <info@example.com>
+    To: Colleague <{data.email}>
     Subject: {data.title}
     {data.content}
     """
@@ -146,14 +146,14 @@ def business_email_endpoint(request, data):
     return "Email sent"
 
 
-def friends_example_endpoint(request, data):
+def booking_endpoint(request, data):
     sender = "info@example.com"
     receivers = [data.email]
 
-    message = f"""From: From Friend <info@example.com>
+    message = f"""From: Bookings <info@example.com>
     To: To Friend <{data.email}>
-    Subject: {data.title}
-    {data.content}
+    Subject: {data.name} booking
+    {data.notes}
     """
 
     try:
@@ -183,10 +183,10 @@ APP = create_admin(
             description="Send an email to a business associate.",
         ),
         FormConfig(
-            name="Friends email form",
-            pydantic_model=FriendsEmailModel,
-            endpoint=friends_example_endpoint,
-            description="Send an email to a friend.",
+            name="Booking form",
+            pydantic_model=BookingModel,
+            endpoint=booking_endpoint,
+            description="Make a booking for a customer.",
         ),
     ],
     auth_table=User,

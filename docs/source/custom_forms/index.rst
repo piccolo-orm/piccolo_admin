@@ -34,8 +34,8 @@ Here's an example of a form which sends email, using FastAPI:
         sender = "info@example.com"
         receivers = data.email
 
-        message = f"""From: From sender <info@example.com>
-        To: To reciever <{data.email}>
+        message = f"""From: Sender <info@example.com>
+        To: Receiver <{data.email}>
         Subject: {data.title}
         {data.content}
         """
@@ -58,7 +58,7 @@ Here's an example of a form which sends email, using FastAPI:
                     tables=[Task],
                     forms=[
                         FormConfig(
-                            name="Email form",
+                            name="Business Email Form",
                             pydantic_model=EmailFormModel,
                             endpoint=email_endpoint,
                         ),
