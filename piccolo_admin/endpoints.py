@@ -66,7 +66,9 @@ class FormConfig:
         Your custom handler, which accepts two arguments - the FastAPI /
         Starlette request object, in case you want to access the cookies /
         headers / logged in user (via `request.user`). And secondly an instance
-        of the Pydantic model.
+        of the Pydantic model. If it returns a string, it will be shown to
+        the user in the UI as the success message. For example ``'Successfully
+        sent email'``.
     :param description:
         An optional description which is shown in the UI to explain to the user
         what the form is for.
