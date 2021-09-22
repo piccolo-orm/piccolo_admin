@@ -175,9 +175,7 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.json(), {"message": "Successfully submitted"}
-        )
+        self.assertEqual(response.json(), {"message": "Email sent"})
 
     def test_post_form_fail(self):
         client = TestClient(APP)

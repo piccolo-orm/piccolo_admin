@@ -338,19 +338,25 @@ class AdminRouter(FastAPI):
         form_config = self.form_config_map.get(form_slug)
         data = await request.json()
 
+        if form_config is None:
+            raise HTTPException(status_code=404, detail="No such form found")
+
         try:
-            model_instance = form_config.pydantic_model(**data)  # type: ignore
+            model_instance = form_config.pydantic_model(**data)
         except ValidationError as exception:
             return JSONResponse(
                 {"message": json.loads(exception.json())}, status_code=400
             )
 
         try:
-            form_config.endpoint(request, model_instance)  # type: ignore
+            response = form_config.endpoint(request, model_instance)
         except ValueError as exception:
             return JSONResponse({"message": str(exception)}, status_code=400)
 
-        return JSONResponse({"message": "Successfully submitted"})
+        message = (
+            response if isinstance(response, str) else "Successfully submitted"
+        )
+        return JSONResponse({"message": message})
 
     ###########################################################################
 

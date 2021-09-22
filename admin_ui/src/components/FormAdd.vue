@@ -69,12 +69,10 @@ export default Vue.extend({
             }
 
             try {
-                let response = await axios.post(
+                var response = await axios.post(
                     `${BASE_URL}forms/${this.formSlug}/`,
                     json
                 )
-                this.formData = response.data
-                this.$router.push("/")
             } catch (error) {
                 const data = error.response.data
                 var message: APIResponseMessage = {
@@ -91,10 +89,13 @@ export default Vue.extend({
                 return
             }
 
-            this.errors = ""
+            this.$router.push("/")
+            let apiMessage = response.data.message
 
             var message: APIResponseMessage = {
-                contents: "Successfully posted form data",
+                contents: apiMessage
+                    ? apiMessage
+                    : "Successfully posted form data",
                 type: "success",
             }
             this.$store.commit("updateApiResponseMessage", message)
