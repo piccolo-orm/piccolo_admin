@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.15.1
+------
+Fixing a bug where setting ``FormConfig.description`` to ``None`` caused a
+serialisation error.
+
 0.15.0
 ------
 Added custom forms (courtesy @sinisaos).
