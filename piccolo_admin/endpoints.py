@@ -111,7 +111,7 @@ class FormConfig:
 class FormConfigResponseModel(BaseModel):
     name: str
     slug: str
-    description: str
+    description: t.Optional[str] = None
 
 
 def handle_auth_exception(request: Request, exc: Exception):
