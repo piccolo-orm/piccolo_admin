@@ -146,7 +146,10 @@ def business_email_endpoint(request, data):
     return "Email sent"
 
 
-def booking_endpoint(request, data):
+async def booking_endpoint(request, data):
+    """
+    Testing that async functions works.
+    """
     sender = "info@example.com"
     receivers = [data.email]
 
@@ -163,7 +166,7 @@ def booking_endpoint(request, data):
     except (smtplib.SMTPException, ConnectionRefusedError):
         print("Error: unable to send email")
 
-    return "Email sent"
+    return "Booking complete"
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
