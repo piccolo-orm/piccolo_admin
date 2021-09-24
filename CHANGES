@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.15.2
+------
+``FormConfig.endpoint`` now works with async functions.
+
 0.15.1
 ------
 Fixing a bug where setting ``FormConfig.description`` to ``None`` caused a
