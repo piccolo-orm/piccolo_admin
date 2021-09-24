@@ -158,7 +158,7 @@
                                 }}
                             </span>
                             <span v-else-if="isJSON(name)">
-                                <pre>{{ row[name] | formatJSON }}</pre>
+                                <pre>{{ row[name] | formatJSON | abbreviate }}</pre>
                             </span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
