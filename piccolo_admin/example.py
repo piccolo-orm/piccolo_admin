@@ -10,6 +10,7 @@ import decimal
 import enum
 import os
 import random
+import smtplib
 import typing as t
 
 import targ
@@ -36,8 +37,9 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
+from pydantic import BaseModel, validator
 
-from piccolo_admin.endpoints import create_admin
+from piccolo_admin.endpoints import FormConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
@@ -100,8 +102,72 @@ class Studio(Table, help_text="A movie studio."):
     facilities = JSON()
 
 
-TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
-    Director,  # type: ignore
+class BusinessEmailModel(BaseModel):
+    email: str
+    title: str
+    content: str
+
+    @validator("email")
+    def validate_email(cls, v):
+        if "@" not in v:
+            raise ValueError("not valid email")
+        return v
+
+
+class BookingModel(BaseModel):
+    email: str
+    name: str
+    notes: str
+
+    @validator("email")
+    def validate_email(cls, v):
+        if "@" not in v:
+            raise ValueError("not valid email")
+        return v
+
+
+def business_email_endpoint(request, data):
+    sender = "info@example.com"
+    receivers = [data.email]
+
+    message = f"""From: Piccolo Admin <info@example.com>
+    To: Colleague <{data.email}>
+    Subject: {data.title}
+    {data.content}
+    """
+
+    try:
+        smtpObj = smtplib.SMTP("localhost:1025")
+        smtpObj.sendmail(sender, receivers, message)
+        print("Successfully sent email")
+    except (smtplib.SMTPException, ConnectionRefusedError):
+        print("Error: unable to send email")
+
+    return "Email sent"
+
+
+def booking_endpoint(request, data):
+    sender = "info@example.com"
+    receivers = [data.email]
+
+    message = f"""From: Bookings <info@example.com>
+    To: To Friend <{data.email}>
+    Subject: {data.name} booking
+    {data.notes}
+    """
+
+    try:
+        smtpObj = smtplib.SMTP("localhost:1025")
+        smtpObj.sendmail(sender, receivers, message)
+        print("Successfully sent email")
+    except (smtplib.SMTPException, ConnectionRefusedError):
+        print("Error: unable to send email")
+
+    return "Email sent"
+
+
+TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
+    Director,
     Movie,
     Studio,
     User,
@@ -109,6 +175,20 @@ TABLE_CLASSES: t.Tuple[t.Type[Table]] = (  # type: ignore
 )
 APP = create_admin(
     [Movie, Director],
+    forms=[
+        FormConfig(
+            name="Business email form",
+            pydantic_model=BusinessEmailModel,
+            endpoint=business_email_endpoint,
+            description="Send an email to a business associate.",
+        ),
+        FormConfig(
+            name="Booking form",
+            pydantic_model=BookingModel,
+            endpoint=booking_endpoint,
+            description="Make a booking for a customer.",
+        ),
+    ],
     auth_table=User,
     session_table=Sessions,
 )
