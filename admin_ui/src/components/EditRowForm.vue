@@ -26,11 +26,17 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect :row="selectedRow" :schema="schema" />
+            <RowFormSelect
+                :row="selectedRow"
+                :schema="schema"
+            />
             <button>Save</button>
         </form>
 
-        <ReferencingTables :rowID="rowID" :tableName="tableName" />
+        <ReferencingTables
+            :rowID="rowID"
+            :tableName="tableName"
+        />
     </div>
 </template>
 
@@ -43,7 +49,7 @@ import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
 
-import { UpdateRow, DeleteRow } from "../interfaces"
+import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
@@ -97,6 +103,12 @@ export default Vue.extend({
                 await this.$store.dispatch("updateRow", config)
             } catch (error) {
                 const data = error.response.data
+
+                var message: APIResponseMessage = {
+                    contents: "The form has errors.",
+                    type: "error",
+                }
+                this.$store.commit("updateApiResponseMessage", message)
 
                 if (typeof data != "string") {
                     this.errors = JSON.stringify(data, null, 2)

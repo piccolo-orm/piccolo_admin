@@ -1,7 +1,22 @@
 <template>
     <div
-        id="message_popup"
-        v-if="visible"
+        id="message_error"
+        v-if="visible && message.includes('error')"
+    >
+        <p class="message">{{ message }}</p>
+        <p class="close">
+            <a
+                class="subtle"
+                href="#"
+                v-on:click.prevent="visible = false"
+            >
+                <font-awesome-icon icon="times" />
+            </a>
+        </p>
+    </div>
+    <div
+        id="message_success"
+        v-else-if="visible"
     >
         <p class="message">{{ message }}</p>
         <p class="close">
@@ -25,7 +40,7 @@ export default Vue.extend({
     data() {
         return {
             visible: false,
-            timeLastAppeared: 0
+            timeLastAppeared: 0,
         }
     },
     computed: {
@@ -36,12 +51,12 @@ export default Vue.extend({
         },
         apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
-        }
+        },
     },
     methods: {
         getTime(): number {
             return new Date().getTime()
-        }
+        },
     },
     watch: {
         visible() {
@@ -58,8 +73,8 @@ export default Vue.extend({
                     app.visible = false
                 }
             }, 3000)
-        }
-    }
+        },
+    },
 })
 </script>
 
@@ -67,7 +82,7 @@ export default Vue.extend({
 <style lang="less">
 @import "../vars.less";
 
-div#message_popup {
+div#message_success {
     display: flex;
     position: fixed;
     bottom: 0;
@@ -75,6 +90,30 @@ div#message_popup {
     padding: 0.5rem 1rem;
     box-sizing: border-box;
     background-color: green;
+
+    p,
+    a {
+        color: white !important;
+    }
+
+    p.message {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    p.close {
+        flex-grow: 0;
+    }
+}
+
+div#message_error {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+    background-color: red;
 
     p,
     a {
