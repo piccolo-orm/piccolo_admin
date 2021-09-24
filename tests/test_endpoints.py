@@ -177,6 +177,24 @@ class TestForms(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"message": "Email sent"})
 
+        #######################################################################
+        # Make sure async endpoints also work.
+
+        form_payload = {
+            "email": "customer@test.com",
+            "name": "Bob Jones",
+            "notes": "1 ticket",
+        }
+
+        response = client.post(
+            "/api/forms/booking-form/",
+            json=form_payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"message": "Booking complete"})
+
     def test_post_form_fail(self):
         client = TestClient(APP)
 

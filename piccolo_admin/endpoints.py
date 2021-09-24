@@ -3,6 +3,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
 
+import inspect
 import json
 import os
 import typing as t
@@ -68,7 +69,7 @@ class FormConfig:
         headers / logged in user (via `request.user`). And secondly an instance
         of the Pydantic model. If it returns a string, it will be shown to
         the user in the UI as the success message. For example ``'Successfully
-        sent email'``.
+        sent email'``. The endpoint can be a normal function or async function.
     :param description:
         An optional description which is shown in the UI to explain to the user
         what the form is for.
@@ -101,7 +102,9 @@ class FormConfig:
 
     name: str
     pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable[[Request, pydantic.BaseModel], t.Optional[str]]
+    endpoint: t.Callable[
+        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
+    ]
     description: t.Optional[str] = None
 
     def __post_init__(self):
@@ -351,7 +354,13 @@ class AdminRouter(FastAPI):
             )
 
         try:
-            response = form_config.endpoint(request, model_instance)
+            endpoint = form_config.endpoint
+            if inspect.iscoroutinefunction(endpoint):
+                response = await endpoint(  # type: ignore
+                    request, model_instance
+                )
+            else:
+                response = endpoint(request, model_instance)
         except ValueError as exception:
             return JSONResponse({"message": str(exception)}, status_code=400)
 
