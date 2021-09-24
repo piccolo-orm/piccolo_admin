@@ -174,7 +174,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
 )
 APP = create_admin(
-    [Movie, Director],
+    [Movie, Director, Studio],
     forms=[
         FormConfig(
             name="Business email form",
