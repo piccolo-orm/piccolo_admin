@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.16.0
+------
+JSON values are now displayed in a nicer format in the UI (courtesy @sinisaos).
+
+The popup banner displayed at the bottom of the page will now turn red when
+showing an error (it was already green in the past). Courtesy @sinisaos.
+
 0.15.2
 ------
 ``FormConfig.endpoint`` now works with async functions.
