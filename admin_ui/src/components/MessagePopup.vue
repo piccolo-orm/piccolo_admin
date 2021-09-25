@@ -1,22 +1,8 @@
 <template>
     <div
-        id="message_error"
-        v-if="visible && message.includes('error')"
-    >
-        <p class="message">{{ message }}</p>
-        <p class="close">
-            <a
-                class="subtle"
-                href="#"
-                v-on:click.prevent="visible = false"
-            >
-                <font-awesome-icon icon="times" />
-            </a>
-        </p>
-    </div>
-    <div
-        id="message_success"
-        v-else-if="visible"
+        :class="{error: apiResponseMessage.type == 'error'}"
+        id="message_popup"
+        v-if="visible"
     >
         <p class="message">{{ message }}</p>
         <p class="close">
@@ -82,7 +68,7 @@ export default Vue.extend({
 <style lang="less">
 @import "../vars.less";
 
-div#message_success {
+div#message_popup {
     display: flex;
     position: fixed;
     bottom: 0;
@@ -105,28 +91,7 @@ div#message_success {
         flex-grow: 0;
     }
 }
-
-div#message_error {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    padding: 0.5rem 1rem;
-    box-sizing: border-box;
-    background-color: red;
-
-    p,
-    a {
-        color: white !important;
-    }
-
-    p.message {
-        flex-grow: 1;
-        text-align: center;
-    }
-
-    p.close {
-        flex-grow: 0;
-    }
+div#message_popup.error {
+    background-color: @red;
 }
 </style>
