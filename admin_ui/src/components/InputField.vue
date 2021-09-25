@@ -1,18 +1,24 @@
 <template>
     <div>
         <template v-if="choices">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
-            <ChoiceSelect
+            <OperatorField
                 :fieldName="getFieldName(title)"
-                :value="value"
+                v-if="isFilter"
+            />
+            <ChoiceSelect
                 :choices="choices"
-                :isNullable="isNullable"
+                :fieldName="getFieldName(title)"
                 :isFilter="isFilter"
+                :isNullable="isNullable"
+                :value="value"
             />
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField
+                :fieldName="getFieldName(title)"
+                v-if="isFilter"
+            />
             <input
                 step="1"
                 type="number"
@@ -52,6 +58,17 @@
                 />
             </div>
 
+            <div v-else-if="format == 'json'">
+                <textarea
+                    :value="JSON.stringify(JSON.parse(value), null, 2)"
+                    autocomplete="off"
+                    ref="textarea"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:style="{ height: textareaHeight }"
+                    v-on:input="setTextareaHeight"
+                />
+            </div>
+
             <input
                 type="text"
                 v-bind:name="getFieldName(title)"
@@ -67,22 +84,20 @@
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
                     value="all"
-                >
-                    All
-                </option>
+                >All</option>
                 <option
                     v-bind:selected="value == null"
                     v-if="isNullable"
                     value="null"
-                >
-                    Null
-                </option>
-                <option v-bind:selected="value == true" value="true">
-                    True
-                </option>
-                <option v-bind:selected="value == false" value="false">
-                    False
-                </option>
+                >Null</option>
+                <option
+                    v-bind:selected="value == true"
+                    value="true"
+                >True</option>
+                <option
+                    v-bind:selected="value == false"
+                    value="false"
+                >False</option>
             </select>
         </template>
 
@@ -122,9 +137,9 @@
                 v-on:updateArray="localValue = $event"
             />
             <input
+                :value="JSON.stringify(localValue)"
                 type="hidden"
                 v-bind:name="getFieldName(title)"
-                :value="JSON.stringify(localValue)"
             />
         </template>
     </div>

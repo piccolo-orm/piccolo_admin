@@ -1,5 +1,6 @@
 <template>
     <div
+        :class="{error: apiResponseMessage.type == 'error'}"
         id="message_popup"
         v-if="visible"
     >
@@ -25,7 +26,7 @@ export default Vue.extend({
     data() {
         return {
             visible: false,
-            timeLastAppeared: 0
+            timeLastAppeared: 0,
         }
     },
     computed: {
@@ -36,12 +37,12 @@ export default Vue.extend({
         },
         apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
-        }
+        },
     },
     methods: {
         getTime(): number {
             return new Date().getTime()
-        }
+        },
     },
     watch: {
         visible() {
@@ -58,8 +59,8 @@ export default Vue.extend({
                     app.visible = false
                 }
             }, 3000)
-        }
-    }
+        },
+    },
 })
 </script>
 
@@ -89,5 +90,8 @@ div#message_popup {
     p.close {
         flex-grow: 0;
     }
+}
+div#message_popup.error {
+    background-color: @red;
 }
 </style>

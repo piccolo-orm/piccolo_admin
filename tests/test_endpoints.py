@@ -261,7 +261,7 @@ class TestTables(TestCase):
         response = client.get("/api/tables/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(), ["movie", "director"],
+            response.json(), ["movie", "director", "studio"],
         )
 
     def test_get_user(self):

@@ -4,8 +4,14 @@
 
         <pre>{{ errors }}</pre>
 
-        <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
+        <form
+            v-if="defaults"
+            v-on:submit.prevent="submitForm($event)"
+        >
+            <RowFormSelect
+                v-bind:row="defaults"
+                v-bind:schema="schema"
+            />
             <button>Create</button>
         </form>
     </div>
@@ -55,6 +61,12 @@ export default {
                 })
             } catch (error) {
                 const data = error.response.data
+
+                var message: APIResponseMessage = {
+                    contents: "The form has errors.",
+                    type: "error",
+                }
+                this.$store.commit("updateApiResponseMessage", message)
 
                 if (typeof data != "string") {
                     this.errors = JSON.stringify(data, null, 2)

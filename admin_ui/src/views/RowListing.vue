@@ -4,12 +4,10 @@
             <div class="left_column">
                 <div class="title_bar">
                     <div class="title">
-                        <h1>
-                            {{ tableName | readable }}
-                        </h1>
+                        <h1>{{ tableName | readable }}</h1>
                         <Tooltip
-                            v-if="schema.help_text"
                             :content="schema.help_text"
+                            v-if="schema.help_text"
                         />
                     </div>
                     <div class="buttons">
@@ -46,17 +44,20 @@
                             v-on:click.prevent="showFilter = !showFilter"
                         >
                             <font-awesome-icon icon="filter" />
-                            <span
-                                >{{
-                                    showFilter ? "Hide" : "Show"
+                            <span>
+                                {{
+                                showFilter ? "Hide" : "Show"
                                 }}
-                                Filters</span
-                            >
+                                Filters
+                            </span>
                         </a>
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
-                <p id="selected_count" v-if="selectedRows.length > 0">
+                <p
+                    id="selected_count"
+                    v-if="selectedRows.length > 0"
+                >
                     <b>{{ selectedRows.length }}</b>
                     selected result(s) on
                     <b>page {{ currentPageNumber }}</b>
@@ -72,17 +73,23 @@
                                 v-on:change="selectAllRows"
                             />
                         </th>
-                        <th v-bind:key="name" v-for="name in cellNames">
+                        <th
+                            v-bind:key="name"
+                            v-for="name in cellNames"
+                        >
                             {{
-                                schema.properties[name]
-                                    ? schema.properties[name].title
-                                    : name
+                            schema.properties[name]
+                            ? schema.properties[name].title
+                            : name
                             }}
                         </th>
                         <th></th>
                     </tr>
 
-                    <tr v-bind:key="row.id" v-for="row in rows">
+                    <tr
+                        v-bind:key="row.id"
+                        v-for="row in rows"
+                    >
                         <td>
                             <input
                                 :value="row.id"
@@ -91,8 +98,14 @@
                                 v-model="selectedRows"
                             />
                         </td>
-                        <td v-bind:key="name" v-for="name in cellNames">
-                            <span class="link" v-if="name == 'id'">
+                        <td
+                            v-bind:key="name"
+                            v-for="name in cellNames"
+                        >
+                            <span
+                                class="link"
+                                v-if="name == 'id'"
+                            >
                                 <router-link
                                     :to="{
                                         name: 'editRow',
@@ -101,12 +114,13 @@
                                             rowID: row[name],
                                         },
                                     }"
-                                    >{{ row[name] }}</router-link
-                                >
+                                >{{ row[name] }}</router-link>
                             </span>
-                            <span v-else-if="choicesLookup[name]">{{
+                            <span v-else-if="choicesLookup[name]">
+                                {{
                                 choicesLookup[name][row[name]]
-                            }}</span>
+                                }}
+                            </span>
                             <span
                                 class="link"
                                 v-else-if="
@@ -121,10 +135,12 @@
                                             rowID: row[name],
                                         },
                                     }"
-                                    >{{ row[name + "_readable"] }}</router-link
-                                >
+                                >{{ row[name + "_readable"] }}</router-link>
                             </span>
-                            <span class="boolean" v-else-if="isBoolean(name)">
+                            <span
+                                class="boolean"
+                                v-else-if="isBoolean(name)"
+                            >
                                 <font-awesome-icon
                                     class="correct"
                                     icon="check"
@@ -136,9 +152,14 @@
                                     v-else
                                 />
                             </span>
-                            <span v-else-if="isInterval(name)">{{
+                            <span v-else-if="isInterval(name)">
+                                {{
                                 row[name] | humanReadable
-                            }}</span>
+                                }}
+                            </span>
+                            <span v-else-if="isJSON(name)">
+                                <pre>{{ row[name] | formatJSON | abbreviate }}</pre>
+                            </span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
 
@@ -174,9 +195,7 @@
                                             class="subtle"
                                             title="Edit Row"
                                         >
-                                            <font-awesome-icon
-                                                icon="edit"
-                                            />Edit
+                                            <font-awesome-icon icon="edit" />Edit
                                         </router-link>
                                     </li>
                                     <li>
@@ -191,9 +210,7 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">
-                    Showing {{ rows.length }} of {{ rowCount }} result(s)
-                </p>
+                <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
 
                 <div class="pagination_wrapper">
                     <Pagination :tableName="tableName" />
@@ -201,7 +218,10 @@
                 </div>
             </div>
 
-            <div class="right_column" v-if="showFilter">
+            <div
+                class="right_column"
+                v-if="showFilter"
+            >
                 <RowFilter
                     :showFilterSidebar="showFilter"
                     @closeSideBar="closeSideBar"
@@ -338,6 +358,9 @@ export default Vue.extend({
         humanReadable(value) {
             return readableFormat(value)
         },
+        formatJSON(value) {
+            return JSON.stringify(JSON.parse(value), null, 2)
+        },
     },
     methods: {
         isForeignKey(name: string) {
@@ -349,6 +372,9 @@ export default Vue.extend({
         },
         isInterval(name: string) {
             return this.schema.properties[name]["format"] == "time-delta"
+        },
+        isJSON(name: string) {
+            return this.schema.properties[name]["format"] == "json"
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
