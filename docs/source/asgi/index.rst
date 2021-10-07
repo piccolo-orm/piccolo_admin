@@ -10,7 +10,7 @@ For example, using Starlette routes:
 .. code-block:: python
 
     from piccolo_admin.endpoints import create_admin
-    from starlette.routing import Router, Route
+    from starlette.routing import Router, Route, Mount
     import uvicorn
 
     from my_project.tables import Director, Movie
