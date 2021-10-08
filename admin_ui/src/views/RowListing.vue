@@ -152,7 +152,11 @@
                                     v-else
                                 />
                             </span>
+
                             <span v-else-if="isInterval(name)">{{ humanReadable(row[name])}}</span>
+                            <span v-else-if="isJSON(name)">
+                                <pre>{{ abbreviate(formatJSON(row[name])) }}</pre>
+                            </span>
                             <span v-else>{{ abbreviate(row[name]) }}</span>
                         </td>
 
@@ -367,6 +371,23 @@ export default defineComponent({
         },
         readable(value: string) {
             return value.split("_").join(" ")
+        formatJSON(value) {
+            return JSON.stringify(JSON.parse(value), null, 2)
+        },
+    },
+    methods: {
+        isForeignKey(name: string) {
+            let property = this.schema.properties[name]
+            return property != undefined ? property.extra.foreign_key : false
+        },
+        isBoolean(name: string) {
+            return this.schema.properties[name]["type"] == "boolean"
+        },
+        isInterval(name: string) {
+            return this.schema.properties[name]["format"] == "time-delta"
+        },
+        isJSON(name: string) {
+            return this.schema.properties[name]["format"] == "json"
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:

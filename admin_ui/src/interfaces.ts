@@ -14,7 +14,6 @@ export interface UpdateRow {
     data: object
 }
 
-
 export interface FetchIdsConfig {
     tableName: string
     limit: number
@@ -25,7 +24,6 @@ export interface FetchRowsConfig {
     tableName: string
     params: object
 }
-
 
 export interface FetchSingleRowConfig {
     tableName: string
@@ -47,12 +45,10 @@ export interface RowCountAPIResponse {
     page_size: number
 }
 
-
 export interface TableReference {
     tableName: string
     columnName: string
 }
-
 
 export interface TableReferencesAPIResponse {
     references: TableReference[]
@@ -72,33 +68,39 @@ export interface Choices {
 /*****************************************************************************/
 
 export interface Schema {
-    title: string;
-    type: string;
-    properties: Properties;
-    help_text: null;
+    title: string
+    type: string
+    properties: Properties
+    help_text: null
 }
 
 export interface Properties {
-    [key: string]: RowConfig;
+    [key: string]: RowConfig
 }
 
 export interface RowConfig {
-    title: string;
-    extra: RowConfigExtra;
-    nullable: boolean;
-    type: string;
-    format?: string;
-    maxLength?: number;
-    items?: ArrayItems;
+    title: string
+    extra: RowConfigExtra
+    nullable: boolean
+    type: string
+    format?: string
+    maxLength?: number
+    items?: ArrayItems
 }
 
 export interface RowConfigExtra {
-    help_text: null | string;
-    choices: Choices | null;
+    help_text: null | string
+    choices: Choices | null
 }
 
 export interface ArrayItems {
-    type: string;
+    type: string
+}
+
+export interface FormConfig {
+    name: string
+    slug: string
+    description: string
 }
 
 export interface FormConfig {

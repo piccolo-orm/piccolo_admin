@@ -1,12 +1,10 @@
 import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
-
 import AddRow from './views/AddRow.vue'
 import EditRow from './views/EditRow.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import RowListing from './views/RowListing.vue'
 import AddForm from './views/AddForm.vue'
-
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -52,5 +50,3 @@ const router = createRouter({
 });
 
 export default router;
-
-

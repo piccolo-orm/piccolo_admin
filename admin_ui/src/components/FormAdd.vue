@@ -7,11 +7,8 @@
         </template>
 
         <pre>{{ errors }}</pre>
-
-        <form
-            v-if="schema"
-            v-on:submit.prevent="submitForm($event)"
-        >
+        
+        <form v-if="schema" v-on:submit.prevent="submitForm($event)">
             <NewForm :schema="schema" />
             <button>Submit</button>
         </form>
@@ -25,6 +22,7 @@ import NewForm from "./NewForm.vue"
 import { APIResponseMessage, FormConfig } from "../interfaces"
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
+
 
 export default defineComponent({
     props: {
@@ -53,11 +51,11 @@ export default defineComponent({
                 this.formSlug
             )
             this.formConfig = response.data
-            console.log(response.data)
         },
         async submitForm(event: any) {
             console.log("I was pressed")
             const form = new FormData(event.target)
+
 
             const json = {} as any
             for (const i of form.entries()) {
@@ -65,12 +63,13 @@ export default defineComponent({
                 let value: any = i[1]
                 if (value == "null") {
                     value = null
-                    // @ts-ignore
+                    // @ts-ignore          
                 } else if (this.schema.properties[key].type == "array") {
                     value = JSON.parse(value)
                 }
                 json[key] = value
             }
+
             try {
                 var response = await axios.post(
                     `${BASE_URL}forms/${this.formSlug}/`,
@@ -83,6 +82,7 @@ export default defineComponent({
                     type: "error",
                 }
                 this.$store.commit("updateApiResponseMessage", message)
+
                 if (typeof data != "string") {
                     this.errors = JSON.stringify(data, null, 2)
                 } else {
@@ -90,8 +90,10 @@ export default defineComponent({
                 }
                 return
             }
+
             this.$router.push("/")
             let apiMessage = response.data.message
+
             var message: APIResponseMessage = {
                 contents: apiMessage
                     ? apiMessage

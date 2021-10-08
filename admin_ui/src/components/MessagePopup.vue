@@ -91,7 +91,6 @@ div#message_popup {
         flex-grow: 0;
     }
 }
-
 div#message_popup.error {
     background-color: @red;
 }

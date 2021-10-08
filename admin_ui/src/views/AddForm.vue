@@ -1,10 +1,6 @@
 <template>
     <DetailViewBase>
-        <FormAdd
-            :formSlug="formSlug"
-            :schema="schema"
-            v-if="schema"
-        />
+        <FormAdd :formSlug="formSlug" :schema="schema" v-if="schema" />
     </DetailViewBase>
 </template>
 

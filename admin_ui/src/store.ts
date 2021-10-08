@@ -17,14 +17,14 @@ export default createStore({
         rowCount: 0,
         rows: [],
         schema: undefined,
+        formSchema: undefined,
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
         showAboutModal: false,
         siteName: 'Piccolo Admin',
         tableNames: [],
-        formSchema: undefined,
         formConfigs: [] as i.FormConfig[],
-        user: undefined,
+        user: undefined
     },
     mutations: {
         updateTableNames(state, value) {
@@ -92,7 +92,6 @@ export default createStore({
     actions: {
         async fetchFormConfigs(context) {
             const response = await axios.get(`${BASE_URL}forms/`)
-            //console.log(response.data)
             context.commit('updateFormConfigs', response.data)
         },
         async fetchFormConfig(context, formSlug: string) {
@@ -108,6 +107,7 @@ export default createStore({
         },
 
         /*********************************************************************/
+          
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit('updateTableNames', response.data)

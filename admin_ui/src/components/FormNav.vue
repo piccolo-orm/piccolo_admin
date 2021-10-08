@@ -1,9 +1,6 @@
 <template>
     <ul>
-        <li
-            v-bind:key="formConfig.name"
-            v-for="formConfig in formConfigs"
-        >
+        <li v-bind:key="formConfig.name" v-for="formConfig in formConfigs">
             <router-link
                 :to="{ name: 'addForm', params: { formSlug: formConfig.slug } }"
                 class="subtle"

@@ -1,6 +1,30 @@
 Changes
 =======
 
+0.16.0
+------
+JSON values are now displayed in a nicer format in the UI (courtesy @sinisaos).
+
+The popup banner displayed at the bottom of the page will now turn red when
+showing an error (it was already green in the past). Courtesy @sinisaos.
+
+0.15.2
+------
+``FormConfig.endpoint`` now works with async functions.
+
+0.15.1
+------
+Fixing a bug where setting ``FormConfig.description`` to ``None`` caused a
+serialisation error.
+
+0.15.0
+------
+Added custom forms (courtesy @sinisaos).
+
+It's very easy to use - just provide a Pydantic model, and a function for
+handling posted data. Piccolo Admin will then auto generate all of the UI
+necessary.
+
 0.14.0
 ------
 Using the ``swagger_ui`` endpoint from Piccolo API for the Swagger docs, so
