@@ -58,6 +58,17 @@
                 />
             </div>
 
+            <div v-else-if="format == 'json'">
+                <textarea
+                    :value="JSON.stringify(JSON.parse(value), null, 2)"
+                    autocomplete="off"
+                    ref="textarea"
+                    v-bind:name="getFieldName(title)"
+                    v-bind:style="{ height: textareaHeight }"
+                    v-on:input="setTextareaHeight"
+                />
+            </div>
+
             <input
                 type="text"
                 v-bind:name="getFieldName(title)"

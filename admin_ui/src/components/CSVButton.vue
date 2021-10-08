@@ -21,7 +21,7 @@ export default defineComponent({
             alert(
                 "Your data will begin downloading. Large data sets may take a while."
             )
-            const params = this.$store.state.filterParams
+            const params: any = this.$store.state.filterParams
             const sortBy = this.$store.state.sortBy
             if (sortBy) {
                 let prefix = sortBy.ascending ? "" : "-"
@@ -35,7 +35,7 @@ export default defineComponent({
                 }
             )
             const data = response.data as i.RowCountAPIResponse
-            const localParams = { ...params }
+            const localParams: any = { ...params }
 
             localParams["__page"] = data.count
             // Set higher __page_size param to have fewer requests to api:

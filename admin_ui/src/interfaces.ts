@@ -100,3 +100,9 @@ export interface RowConfigExtra {
 export interface ArrayItems {
     type: string;
 }
+
+export interface FormConfig {
+    name: string
+    slug: string
+    description: string
+}

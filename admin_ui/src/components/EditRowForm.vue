@@ -48,7 +48,7 @@ import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
 
-import { UpdateRow, DeleteRow } from "../interfaces"
+import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
 
 export default defineComponent({
     props: ["tableName", "rowID"],
@@ -102,6 +102,12 @@ export default defineComponent({
                 await this.$store.dispatch("updateRow", config)
             } catch (error) {
                 const data = error.response.data
+
+                var message: APIResponseMessage = {
+                    contents: "The form has errors.",
+                    type: "error",
+                }
+                this.$store.commit("updateApiResponseMessage", message)
 
                 if (typeof data != "string") {
                     this.errors = JSON.stringify(data, null, 2)

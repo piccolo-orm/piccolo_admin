@@ -1,42 +1,60 @@
 <template>
     <div>
-        <h1>Add {{ readable(tableName) }}</h1>
+        <template v-if="formConfig">
+            <h1>{{ formConfig.name }}</h1>
+
+            <p v-if="formConfig.description">{{ formConfig.description }}</p>
+        </template>
 
         <pre>{{ errors }}</pre>
 
         <form
-            v-if="defaults"
+            v-if="schema"
             v-on:submit.prevent="submitForm($event)"
         >
-            <RowFormSelect
-                v-bind:row="defaults"
-                v-bind:schema="schema"
-            />
-            <button>Create</button>
+            <NewForm :schema="schema" />
+            <button>Submit</button>
         </form>
     </div>
 </template>
 
 <script lang="ts">
+import axios from "axios"
 import { defineComponent } from "vue"
-import RowFormSelect from "./RowFormSelect.vue"
-import { APIResponseMessage } from "../interfaces"
+import NewForm from "./NewForm.vue"
+import { APIResponseMessage, FormConfig } from "../interfaces"
+
+const BASE_URL = process.env.VUE_APP_BASE_URI
 
 export default defineComponent({
     props: {
-        tableName: String,
+        formSlug: String,
         schema: Object,
     },
     components: {
-        RowFormSelect,
+        NewForm,
     },
-    data: function () {
+    data() {
         return {
-            defaults: {},
             errors: "",
+            formData: {},
+            formConfig: undefined as unknown as FormConfig,
         }
     },
+    watch: {
+        async formSlug() {
+            await this.fetchFormConfig()
+        },
+    },
     methods: {
+        async fetchFormConfig() {
+            const response = await this.$store.dispatch(
+                "fetchFormConfig",
+                this.formSlug
+            )
+            this.formConfig = response.data
+            console.log(response.data)
+        },
         async submitForm(event: any) {
             console.log("I was pressed")
             const form = new FormData(event.target)
@@ -45,7 +63,6 @@ export default defineComponent({
             for (const i of form.entries()) {
                 const key = i[0].split(" ").join("_")
                 let value: any = i[1]
-
                 if (value == "null") {
                     value = null
                     // @ts-ignore
@@ -55,19 +72,17 @@ export default defineComponent({
                 json[key] = value
             }
             try {
-                await this.$store.dispatch("createRow", {
-                    tableName: this.tableName,
-                    data: json,
-                })
+                var response = await axios.post(
+                    `${BASE_URL}forms/${this.formSlug}/`,
+                    json
+                )
             } catch (error) {
                 const data = error.response.data
-
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
                     type: "error",
                 }
                 this.$store.commit("updateApiResponseMessage", message)
-
                 if (typeof data != "string") {
                     this.errors = JSON.stringify(data, null, 2)
                 } else {
@@ -75,27 +90,19 @@ export default defineComponent({
                 }
                 return
             }
-            this.errors = ""
-
+            this.$router.push("/")
+            let apiMessage = response.data.message
             var message: APIResponseMessage = {
-                contents: "Successfully added row",
+                contents: apiMessage
+                    ? apiMessage
+                    : "Successfully posted form data",
                 type: "success",
             }
             this.$store.commit("updateApiResponseMessage", message)
-
-            this.$emit("addedRow")
-            this.$emit("close")
-            if (opener) {
-                opener.postMessage("edited row", document.location.origin)
-            }
-        },
-        readable(value: string) {
-            return value.split("_").join(" ")
         },
     },
     async mounted() {
-        let response = await this.$store.dispatch("getNew", this.tableName)
-        this.defaults = response.data
+        await this.fetchFormConfig()
     },
 })
 </script>

@@ -15,16 +15,33 @@
             </span>
         </p>
         <TableNav />
+        <p
+            class="opaque"
+            v-show="formConfigs.length > 0"
+        >
+            <font-awesome-icon icon="cogs" />Forms
+            <span style="float: right">
+                <font-awesome-icon icon="angle-down" />
+            </span>
+        </p>
+        <FormNav />
     </div>
 </template>
 
 <script>
 import { defineComponent } from "vue"
 import TableNav from "./TableNav.vue"
+import FormNav from "./FormNav.vue"
 
 export default defineComponent({
     components: {
         TableNav,
+        FormNav,
+    },
+    computed: {
+        formConfigs() {
+            return this.$store.state.formConfigs
+        },
     },
 })
 </script>

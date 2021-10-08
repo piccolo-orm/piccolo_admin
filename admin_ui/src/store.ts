@@ -22,11 +22,16 @@ export default createStore({
         showAboutModal: false,
         siteName: 'Piccolo Admin',
         tableNames: [],
+        formSchema: undefined,
+        formConfigs: [] as i.FormConfig[],
         user: undefined,
     },
     mutations: {
         updateTableNames(state, value) {
             state.tableNames = value
+        },
+        updateFormConfigs(state, value) {
+            state.formConfigs = value
         },
         updateCurrentTablename(state, value) {
             state.currentTableName = value
@@ -39,6 +44,9 @@ export default createStore({
         },
         updateSchema(state, schema) {
             state.schema = schema
+        },
+        updateFormSchema(state, formSchema) {
+            state.formSchema = formSchema
         },
         updateApiResponseMessage(state, message: i.APIResponseMessage) {
             state.apiResponseMessage = message
@@ -82,6 +90,24 @@ export default createStore({
         },
     },
     actions: {
+        async fetchFormConfigs(context) {
+            const response = await axios.get(`${BASE_URL}forms/`)
+            //console.log(response.data)
+            context.commit('updateFormConfigs', response.data)
+        },
+        async fetchFormConfig(context, formSlug: string) {
+            const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
+            return response
+        },
+        async fetchFormSchema(context, formSlug: string) {
+            const response = await axios.get(
+                `${BASE_URL}forms/${formSlug}/schema/`
+            )
+            context.commit('updateFormSchema', response.data)
+            return response
+        },
+
+        /*********************************************************************/
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit('updateTableNames', response.data)
@@ -127,7 +153,7 @@ export default createStore({
                     }
                 )
                 context.commit('updateRows', response.data.rows)
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error.response)
                 context.commit('updateApiResponseMessage', {
                     contents: `Problem fetching ${tableName} rows.`,
