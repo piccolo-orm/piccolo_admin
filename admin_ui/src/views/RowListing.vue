@@ -354,6 +354,10 @@ export default defineComponent({
                 ? property["format"] == "time-delta"
                 : false
         },
+        isJSON(name: string) {
+            let property = this.schema.properties[name]
+            return property != undefined ? property["format"] == "json" : false
+        },
         abbreviate(value: string) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
@@ -371,23 +375,9 @@ export default defineComponent({
         },
         readable(value: string) {
             return value.split("_").join(" ")
-        formatJSON(value) {
+        },
+        formatJSON(value: string) {
             return JSON.stringify(JSON.parse(value), null, 2)
-        },
-    },
-    methods: {
-        isForeignKey(name: string) {
-            let property = this.schema.properties[name]
-            return property != undefined ? property.extra.foreign_key : false
-        },
-        isBoolean(name: string) {
-            return this.schema.properties[name]["type"] == "boolean"
-        },
-        isInterval(name: string) {
-            return this.schema.properties[name]["format"] == "time-delta"
-        },
-        isJSON(name: string) {
-            return this.schema.properties[name]["format"] == "json"
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:

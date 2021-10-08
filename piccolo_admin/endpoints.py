@@ -103,7 +103,8 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
+        [Request, pydantic.BaseModel],
+        t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
 
@@ -330,71 +331,6 @@ class AdminRouter(FastAPI):
                 name=form.name,
                 slug=form.slug,
                 description=form.description,
-            )
-
-    def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
-        form_config = self.form_config_map.get(form_slug)
-
-        if form_config is None:
-            raise HTTPException(status_code=404, detail="No such form found")
-        else:
-            return form_config.pydantic_model.schema()
-
-    async def post_single_form(
-        self, request: Request, form_slug: str
-    ) -> JSONResponse:
-        form_config = self.form_config_map.get(form_slug)
-        data = await request.json()
-
-        if form_config is None:
-            raise HTTPException(status_code=404, detail="No such form found")
-
-        try:
-            model_instance = form_config.pydantic_model(**data)
-        except ValidationError as exception:
-            return JSONResponse(
-                {"message": json.loads(exception.json())}, status_code=400
-            )
-
-        try:
-            endpoint = form_config.endpoint
-            if inspect.iscoroutinefunction(endpoint):
-                response = await endpoint(  # type: ignore
-                    request, model_instance
-                )
-            else:
-                response = endpoint(request, model_instance)
-        except ValueError as exception:
-            return JSONResponse({"message": str(exception)}, status_code=400)
-
-        message = (
-            response if isinstance(response, str) else "Successfully submitted"
-        )
-        return JSONResponse({"message": message})
-
-    ###########################################################################
-
-    def get_forms(self) -> t.List[FormConfigResponseModel]:
-        """
-        Returns a list of all forms registered with the admin.
-        """
-        return [
-            FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description
-            )
-            for form in self.forms
-        ]
-
-    def get_single_form(self, form_slug: str) -> FormConfigResponseModel:
-        """
-        Returns the FormConfig for the given form.
-        """
-        form = self.form_config_map.get(form_slug, None)
-        if form is None:
-            raise HTTPException(status_code=404, detail="No such form found")
-        else:
-            return FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description,
             )
 
     def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
