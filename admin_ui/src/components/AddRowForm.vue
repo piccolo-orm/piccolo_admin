@@ -47,11 +47,23 @@ export default {
 
                 if (value == "null") {
                     value = null
+                    // @ts-ignore
                 } else if (this.schema.properties[key].type == "array") {
                     // @ts-ignore
                     value = JSON.parse(value)
+                    // @ts-ignore
+                } else if (
+                    this.schema?.properties[key].format == "date-time" &&
+                    value == ""
+                ) {
+                    value = null
+                    // @ts-ignore
+                } else if (
+                    this.schema?.properties[key].extra.foreign_key == true &&
+                    value == ""
+                ) {
+                    value = null
                 }
-
                 json[key] = value
             }
             try {

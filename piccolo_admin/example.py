@@ -90,7 +90,7 @@ class Movie(Table):
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
-    release_date = Timestamp()
+    release_date = Timestamp(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
