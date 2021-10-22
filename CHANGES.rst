@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.16.1
+------
+Fixed bugs with nullable ``ForeignKey`` and ``Timestamp`` columns - the UI
+would try sending back an empty string, instead of a ``null`` value. Courtesy
+@sinisaos.
+
 0.16.0
 ------
 JSON values are now displayed in a nicer format in the UI (courtesy @sinisaos).
