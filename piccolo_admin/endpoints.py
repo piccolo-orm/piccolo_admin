@@ -486,7 +486,7 @@ def get_all_tables(
 
 
 def create_admin(
-    tables: t.Sequence[t.Type[Table]],
+    tables: t.Sequence[t.Union[t.Type[Table], TableConfig]],
     forms: t.List = [],
     auth_table: t.Type[BaseUser] = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
@@ -546,7 +546,10 @@ def create_admin(
     """
 
     if auto_include_related:
-        tables = get_all_tables(tables)
+        table_classes = [
+            i.table_class if isinstance(i, TableConfig) else i for i in tables
+        ]
+        tables = get_all_tables(table_classes)
 
     return ExceptionMiddleware(
         CSRFMiddleware(
