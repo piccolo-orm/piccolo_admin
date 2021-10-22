@@ -76,7 +76,8 @@ class TableConfig:
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
             raise ValueError(
-                "Only specify ``include_columns`` or ``exclude_columns``."
+                "Only specify ``visible_columns`` or "
+                "``exclude_visible_columns``."
             )
 
     def get_visible_columns(self) -> t.Tuple[Column, ...]:
