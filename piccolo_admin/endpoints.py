@@ -70,8 +70,8 @@ class TableConfig:
     """
 
     table_class: t.Type[Table]
-    visible_columns: t.Optional[t.Tuple[Column, ...]] = None
-    exclude_visible_columns: t.Optional[t.Tuple[Column, ...]] = None
+    visible_columns: t.Optional[t.List[Column]] = None
+    exclude_visible_columns: t.Optional[t.List[Column]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -80,19 +80,22 @@ class TableConfig:
                 "``exclude_visible_columns``."
             )
 
-    def get_visible_columns(self) -> t.Tuple[Column, ...]:
+    def get_visible_columns(self) -> t.List[Column]:
         if self.visible_columns and not self.exclude_visible_columns:
             return self.visible_columns
 
         if self.exclude_visible_columns and not self.visible_columns:
             column_names = (i._meta.name for i in self.exclude_visible_columns)
-            return tuple(
+            return [
                 i
                 for i in self.table_class._meta.columns
                 if i._meta.name not in column_names
-            )
+            ]
 
-        return tuple(self.table_class._meta.columns)
+        return self.table_class._meta.columns
+
+    def get_visible_column_names(self) -> t.Tuple[str, ...]:
+        return tuple(i._meta.name for i in self.get_visible_columns())
 
 
 @dataclass
@@ -222,6 +225,7 @@ class AdminRouter(FastAPI):
 
         for table_config in table_configs:
             table_class = table_config.table_class
+            visible_column_names = table_config.get_visible_column_names()
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -229,7 +233,9 @@ class AdminRouter(FastAPI):
                     table=table_class,
                     read_only=read_only,
                     page_size=page_size,
-                    visible_columns=table_config.get_visible_columns(),
+                    schema_extra={
+                        "visible_columns": visible_column_names
+                    },
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
