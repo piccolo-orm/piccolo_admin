@@ -26,17 +26,11 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect
-                :row="selectedRow"
-                :schema="schema"
-            />
+            <RowFormSelect :row="selectedRow" :schema="schema" />
             <button>Save</button>
         </form>
 
-        <ReferencingTables
-            :rowID="rowID"
-            :tableName="tableName"
-        />
+        <ReferencingTables :rowID="rowID" :tableName="tableName" />
     </div>
 </template>
 
@@ -86,17 +80,14 @@ export default Vue.extend({
 
                 if (value == "null") {
                     value = null
-                    // @ts-ignore
                 } else if (this.schema.properties[key].type == "array") {
                     // @ts-ignore
                     value = JSON.parse(value)
-                    // @ts-ignore
                 } else if (
                     this.schema?.properties[key].format == "date-time" &&
                     value == ""
                 ) {
                     value = null
-                    // @ts-ignore
                 } else if (
                     this.schema?.properties[key].extra.foreign_key == true &&
                     value == ""
