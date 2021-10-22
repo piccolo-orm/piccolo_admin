@@ -81,16 +81,10 @@ class TableConfig:
             )
 
     def get_visible_columns(self) -> t.Tuple[Column, ...]:
-        if (
-            self.visible_columns is None
-            and self.exclude_visible_columns is None
-        ):
-            return tuple(self.table_class._meta.columns)
-
-        if self.visible_columns:
+        if self.visible_columns and not self.exclude_visible_columns:
             return self.visible_columns
 
-        if self.exclude_visible_columns:
+        if self.exclude_visible_columns and not self.visible_columns:
             column_names = (i._meta.name for i in self.exclude_visible_columns)
             return tuple(
                 i
@@ -98,11 +92,7 @@ class TableConfig:
                 if i._meta.name not in column_names
             )
 
-        return (
-            self.visible_columns
-            if self.visible_columns
-            else tuple(self.table_class._meta.columns)
-        )
+        return tuple(self.table_class._meta.columns)
 
 
 @dataclass
