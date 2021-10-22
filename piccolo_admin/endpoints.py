@@ -234,7 +234,7 @@ class AdminRouter(FastAPI):
                     read_only=read_only,
                     page_size=page_size,
                     schema_extra={
-                        "visible_columns": visible_column_names
+                        "visible_column_names": visible_column_names
                     },
                 ),
                 fastapi_kwargs=FastAPIKwargs(
