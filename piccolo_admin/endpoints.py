@@ -37,6 +37,7 @@ from starlette.staticfiles import StaticFiles
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 if t.TYPE_CHECKING:  # pragma: no cover
+    from piccolo.columns.base import Column
     from piccolo.table import Table
 
 
@@ -51,6 +52,56 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+
+
+@dataclass
+class TableConfig:
+    """
+    Gives the user more control over how a ``Table`` appears in the UI.
+
+    :param visible_columns:
+        If specified, only these columns will be shown in the list view of the
+        UI. This is useful when you have a lot of columns.
+    :param exclude_visible_columns:
+        You can specify this instead of ``visible_columns``, in which case all
+        of the ``Table`` columns except the ones specified will be shown in the
+        list view.
+
+    """
+
+    table_class: t.Type[Table]
+    visible_columns: t.Optional[t.Tuple[Column, ...]] = None
+    exclude_visible_columns: t.Optional[t.Tuple[Column, ...]] = None
+
+    def __post_init__(self):
+        if self.visible_columns and self.exclude_visible_columns:
+            raise ValueError(
+                "Only specify ``include_columns`` or ``exclude_columns``."
+            )
+
+    def get_visible_columns(self) -> t.Tuple[Column, ...]:
+        if (
+            self.visible_columns is None
+            and self.exclude_visible_columns is None
+        ):
+            return tuple(self.table_class._meta.columns)
+
+        if self.visible_columns:
+            return self.visible_columns
+
+        if self.exclude_visible_columns:
+            column_names = (i._meta.name for i in self.exclude_visible_columns)
+            return tuple(
+                i
+                for i in self.table_class._meta.columns
+                if i._meta.name not in column_names
+            )
+
+        return (
+            self.visible_columns
+            if self.visible_columns
+            else tuple(self.table_class._meta.columns)
+        )
 
 
 @dataclass
@@ -103,8 +154,7 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel],
-        t.Union[str, None, t.Coroutine],
+        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
 
@@ -133,7 +183,7 @@ class AdminRouter(FastAPI):
 
     def __init__(
         self,
-        *tables: t.Type[Table],
+        *tables: t.Union[t.Type[Table], TableConfig],
         forms: t.List[FormConfig] = [],
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
@@ -150,9 +200,24 @@ class AdminRouter(FastAPI):
             title=site_name, description="Piccolo API documentation"
         )
 
+        #######################################################################
+        # Convert any table arguments which are plain ``Table`` classes into
+        # ``TableConfig`` instances.
+
+        table_configs: t.List[TableConfig] = []
+
+        for table in tables:
+            if isinstance(table, TableConfig):
+                table_configs.append(table)
+            else:
+                table_configs.append(TableConfig(table_class=table))
+
+        self.table_configs = table_configs
+
+        #######################################################################
+
         self.auth_table = auth_table
         self.site_name = site_name
-        self.tables = tables
         self.forms = forms
         self.form_config_map = {form.slug: form for form in self.forms}
 
@@ -164,16 +229,20 @@ class AdminRouter(FastAPI):
         api_app = FastAPI(docs_url=None)
         api_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
-        for table in tables:
+        for table_config in table_configs:
+            table_class = table_config.table_class
             FastAPIWrapper(
-                root_url=f"/tables/{table._meta.tablename}/",
+                root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
                 piccolo_crud=PiccoloCRUD(
-                    table=table, read_only=read_only, page_size=page_size
+                    table=table_class,
+                    read_only=read_only,
+                    page_size=page_size,
+                    visible_columns=table_config.get_visible_columns(),
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
-                        "tags": [f"{table._meta.tablename.capitalize()}"]
+                        "tags": [f"{table_class._meta.tablename.capitalize()}"]
                     },
                 ),
             )
@@ -302,8 +371,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -328,9 +396,7 @@ class AdminRouter(FastAPI):
             raise HTTPException(status_code=404, detail="No such form found")
         else:
             return FormConfigResponseModel(
-                name=form.name,
-                slug=form.slug,
-                description=form.description,
+                name=form.name, slug=form.slug, description=form.description,
             )
 
     def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
@@ -387,9 +453,7 @@ class AdminRouter(FastAPI):
         """
         Returns a list of all tables registered with the admin.
         """
-        return [i._meta.tablename for i in self.tables]
-
-    ###########################################################################
+        return [i.table_class._meta.tablename for i in self.table_configs]
 
 
 def get_all_tables(
