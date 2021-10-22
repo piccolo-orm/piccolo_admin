@@ -103,7 +103,8 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
+        [Request, pydantic.BaseModel],
+        t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
 
@@ -301,7 +302,8 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name,
+            user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -326,7 +328,9 @@ class AdminRouter(FastAPI):
             raise HTTPException(status_code=404, detail="No such form found")
         else:
             return FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description,
+                name=form.name,
+                slug=form.slug,
+                description=form.description,
             )
 
     def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
