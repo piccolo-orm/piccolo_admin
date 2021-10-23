@@ -1,32 +1,51 @@
 from unittest import TestCase
 
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns.column_types import ForeignKey, Varchar
+from piccolo.columns.column_types import Text, Timestamp, Varchar
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import get_all_tables
+from piccolo_admin.endpoints import TableConfig
 from piccolo_admin.example import APP
 from piccolo_admin.version import __VERSION__
 
 
-class TableA(Table):
+class Post(Table):
     name = Varchar(length=100)
+    content = Text()
+    created = Timestamp()
 
 
-class TableB(Table):
-    table_a = ForeignKey(TableA)
+class TestTableConfig(TestCase):
+    def test_visible_columns(self):
+        post_table = TableConfig(
+            table_class=Post,
+            visible_columns=[Post._meta.primary_key, Post.name],
+        )
+        self.assertEqual(
+            post_table.get_visible_column_names(),
+            ("id", "name"),
+        )
 
+    def test_exclude_visible_columns(self):
+        post_table = TableConfig(
+            table_class=Post,
+            exclude_visible_columns=[Post._meta.primary_key, Post.name],
+        )
+        self.assertEqual(
+            tuple(i._meta.name for i in post_table.get_visible_columns()),
+            ("content", "created"),
+        )
 
-class TableC(Table):
-    table_b = ForeignKey(TableB)
-
-
-class TestGetAllTables(TestCase):
-    def test_all_returned(self):
-        tables = get_all_tables([TableC])
-        self.assertEqual(tables, [TableC, TableB, TableA])
+    def test_visible_exclude_columns_error(self):
+        with self.assertRaises(ValueError):
+            post_table = TableConfig(
+                table_class=Post,
+                visible_columns=[Post._meta.primary_key, Post.name],
+                exclude_visible_columns=[Post._meta.primary_key],
+            )
+            post_table.get_visible_columns()
 
 
 class TestAdminRouter(TestCase):
