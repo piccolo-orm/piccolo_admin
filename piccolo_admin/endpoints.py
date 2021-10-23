@@ -478,6 +478,9 @@ def get_all_tables(
                 else reference
             )
 
+            if table not in output:
+                pass
+
     for table in tables:
         if table not in output:
             output.append(table)
