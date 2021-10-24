@@ -148,8 +148,7 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel],
-        t.Union[str, None, t.Coroutine],
+        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
 
@@ -369,8 +368,7 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name,
-            user_id=request.user.user_id,
+            username=request.user.display_name, user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -395,9 +393,7 @@ class AdminRouter(FastAPI):
             raise HTTPException(status_code=404, detail="No such form found")
         else:
             return FormConfigResponseModel(
-                name=form.name,
-                slug=form.slug,
-                description=form.description,
+                name=form.name, slug=form.slug, description=form.description,
             )
 
     def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
@@ -458,15 +454,14 @@ class AdminRouter(FastAPI):
 
 
 def get_all_tables(
-    tables: t.Sequence[t.Union[t.Type[Table], TableConfig]],
-) -> t.Sequence[t.Union[t.Type[Table], TableConfig]]:
+    tables: t.Sequence[t.Type[Table]],
+) -> t.Sequence[t.Type[Table]]:
     """
     Fetch any related tables, and include them.
     """
-    output: t.List[t.Union[t.Type[Table], TableConfig]] = []
+    output: t.List[t.Type[Table]] = []
 
-    def get_references(table: t.Union[t.Type[Table], TableConfig]):
-        table = table.table_class if isinstance(table, TableConfig) else table
+    def get_references(table: t.Type[Table]):
         references: t.List[t.Union[t.Type[Table], t.Any]] = [
             i._foreign_key_meta.references
             for i in table._meta.foreign_key_columns
@@ -479,7 +474,8 @@ def get_all_tables(
             )
 
             if table not in output:
-                pass
+                output.append(table)
+                get_references(table)
 
     for table in tables:
         if table not in output:
@@ -550,7 +546,27 @@ def create_admin(
     """
 
     if auto_include_related:
-        tables = get_all_tables(tables)
+        table_config_map: t.Dict[t.Type[Table], t.Optional[TableConfig]] = {}
+
+        for i in tables:
+            if isinstance(i, TableConfig):
+                table_config_map[i.table_class] = i
+            else:
+                table_config_map[i] = None
+
+        all_table_classes = get_all_tables(tuple(table_config_map.keys()))
+
+        all_table_classes_with_configs: t.List[
+            t.Union[t.Type[Table], TableConfig]
+        ] = []
+        for i in all_table_classes:
+            table_config = table_config_map.get(i)
+            if table_config:
+                all_table_classes_with_configs.append(table_config)
+            else:
+                all_table_classes_with_configs.append(i)
+
+        tables = all_table_classes_with_configs
 
     return ExceptionMiddleware(
         CSRFMiddleware(

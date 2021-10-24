@@ -1,14 +1,32 @@
 from unittest import TestCase
 
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns.column_types import Text, Timestamp, Varchar
+from piccolo.columns.column_types import ForeignKey, Text, Timestamp, Varchar
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import TableConfig
+from piccolo_admin.endpoints import TableConfig, get_all_tables
 from piccolo_admin.example import APP
 from piccolo_admin.version import __VERSION__
+
+
+class TableA(Table):
+    name = Varchar(length=100)
+
+
+class TableB(Table):
+    table_a = ForeignKey(TableA)
+
+
+class TableC(Table):
+    table_b = ForeignKey(TableB)
+
+
+class TestGetAllTables(TestCase):
+    def test_all_returned(self):
+        tables = get_all_tables([TableC])
+        self.assertEqual(tables, [TableC, TableB, TableA])
 
 
 class Post(Table):
@@ -24,8 +42,7 @@ class TestTableConfig(TestCase):
             visible_columns=[Post._meta.primary_key, Post.name],
         )
         self.assertEqual(
-            post_table.get_visible_column_names(),
-            ("id", "name"),
+            post_table.get_visible_column_names(), ("id", "name"),
         )
 
     def test_exclude_visible_columns(self):
@@ -103,9 +120,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -178,9 +193,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form
@@ -228,9 +241,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form with errors
@@ -277,9 +288,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -288,8 +297,7 @@ class TestTables(TestCase):
         response = client.get("/api/tables/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(),
-            ["movie", "director", "studio"],
+            response.json(), ["movie", "director", "studio"],
         )
 
     def test_get_user(self):
@@ -305,9 +313,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
+            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -316,6 +322,6 @@ class TestTables(TestCase):
         response = client.get("/api/user/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(),
-            {"username": "Bob", "user_id": "1"},
+            response.json(), {"username": "Bob", "user_id": "1"},
         )
+

@@ -177,7 +177,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
 )
 
-table_movie = TableConfig(
+movie_config = TableConfig(
     table_class=Movie,
     visible_columns=[
         Movie._meta.primary_key,
@@ -187,20 +187,13 @@ table_movie = TableConfig(
     ],
 )
 
-table_director = TableConfig(
+director_config = TableConfig(
     table_class=Director,
-    visible_columns=[
-        Director._meta.primary_key,
-        Director.name,
-    ],
+    visible_columns=[Director._meta.primary_key, Director.name],
 )
 
 APP = create_admin(
-    [
-        table_movie,
-        table_director,
-        Studio,
-    ],
+    [movie_config, director_config, Studio],
     forms=[
         FormConfig(
             name="Business email form",
