@@ -88,7 +88,18 @@ export default defineComponent({
                 if (value == "null") {
                     value = null
                 } else if (this.schema.properties[key].type == "array") {
+                    // @ts-ignore
                     value = JSON.parse(value)
+                } else if (
+                    this.schema?.properties[key].format == "date-time" &&
+                    value == ""
+                ) {
+                    value = null
+                } else if (
+                    this.schema?.properties[key].extra.foreign_key == true &&
+                    value == ""
+                ) {
+                    value = null
                 }
                 json[key] = value
             }

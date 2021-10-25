@@ -296,7 +296,11 @@ export default defineComponent({
                     keys.push(key)
                 }
             }
-            return keys
+            // display Piccolo ORM visible_columns
+            const visibleColumns = keys.filter((column) =>
+                this.schema.visible_column_names.includes(column)
+            )
+            return visibleColumns
         },
         rows() {
             return this.$store.state.rows
