@@ -26,17 +26,11 @@
         <pre>{{ errors }}</pre>
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect
-                :row="selectedRow"
-                :schema="schema"
-            />
+            <RowFormSelect :row="selectedRow" :schema="schema" />
             <button>Save</button>
         </form>
 
-        <ReferencingTables
-            :rowID="rowID"
-            :tableName="tableName"
-        />
+        <ReferencingTables :rowID="rowID" :tableName="tableName" />
     </div>
 </template>
 

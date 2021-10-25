@@ -1,6 +1,19 @@
 Changes
 =======
 
+0.17.0
+------
+Added ``TableConfig``, which allows more fine grained control over how the
+UI behaves for a given ``Table``. Currently it allows you to specify which
+columns are visible on the list page, but more options will be added in the
+future. Courtesy @sinisaos.
+
+0.16.1
+------
+Fixed bugs with nullable ``ForeignKey`` and ``Timestamp`` columns - the UI
+would try sending back an empty string, instead of a ``null`` value. Courtesy
+@sinisaos.
+
 0.16.0
 ------
 JSON values are now displayed in a nicer format in the UI (courtesy @sinisaos).
