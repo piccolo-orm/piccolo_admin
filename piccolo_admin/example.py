@@ -39,7 +39,7 @@ from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
-from piccolo_admin.endpoints import FormConfig, create_admin
+from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
@@ -90,7 +90,7 @@ class Movie(Table):
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
-    release_date = Timestamp()
+    release_date = Timestamp(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
@@ -176,8 +176,24 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     User,
     Sessions,
 )
+
+movie_config = TableConfig(
+    table_class=Movie,
+    visible_columns=[
+        Movie._meta.primary_key,
+        Movie.name,
+        Movie.rating,
+        Movie.director,
+    ],
+)
+
+director_config = TableConfig(
+    table_class=Director,
+    visible_columns=[Director._meta.primary_key, Director.name],
+)
+
 APP = create_admin(
-    [Movie, Director, Studio],
+    [movie_config, director_config, Studio],
     forms=[
         FormConfig(
             name="Business email form",
