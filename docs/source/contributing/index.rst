@@ -39,6 +39,33 @@ The UI needs an API to interact with - the easiest way to do this is to use the 
 
 You will need to configure a local webserver as a proxy - see extra/piccolo_admin.
 
+-------------------------------------------------------------------------------
+
+Python code style
+-----------------
+
+Piccolo uses `Black <https://black.readthedocs.io/en/stable/>`_  for
+formatting, preferably with a max line length of 79, to keep it consistent
+with `PEP8 <python.org/dev/peps/pep-0008/>`_ .
+
+You can configure `VSCode <https://code.visualstudio.com/>`_ by modifying
+``settings.json`` as follows:
+
+.. code-block:: json
+
+    {
+        "python.linting.enabled": true,
+        "python.formatting.provider": "black",
+        "python.formatting.blackArgs": [
+            "--line-length",
+            "79"
+        ],
+        "editor.formatOnSave": true
+    }
+
+Type hints are used throughout the project.
+
+-------------------------------------------------------------------------------
 
 Storybook
 ---------
@@ -50,6 +77,7 @@ for viewing UI components in isolation. To launch it:
 
     npm run storybook
 
+-------------------------------------------------------------------------------
 
 Cypress
 -------
