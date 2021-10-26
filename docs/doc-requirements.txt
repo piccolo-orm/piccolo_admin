@@ -1,7 +1,7 @@
-Sphinx==3.3.1
-sphinx-rtd-theme==0.5.0
+Sphinx==4.2.0
+sphinx-rtd-theme==1.0.0
 livereload==2.6.3
-sphinx-autodoc-typehints==1.11.1
+sphinx-autodoc-typehints==1.12.0
 
 # Also include the main requirements, so it will build on ReadTheDocs.
 -r ../requirements/requirements.txt
