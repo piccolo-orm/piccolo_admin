@@ -66,18 +66,33 @@ class TableConfig:
         You can specify this instead of ``visible_columns``, in which case all
         of the ``Table`` columns except the ones specified will be shown in the
         list view.
+    :param filter_columns:
+        If specified, only these columns will be shown in the filter sidebar
+        of the UI. This is useful when you have a lot of columns.
+    :param exclude_filter_columns:
+        You can specify this instead of ``filter_columns``, in which case all
+        of the ``Table`` columns except the ones specified will be shown in the
+        filter sidebar.
 
     """
 
     table_class: t.Type[Table]
     visible_columns: t.Optional[t.List[Column]] = None
     exclude_visible_columns: t.Optional[t.List[Column]] = None
+    filter_columns: t.Optional[t.List[Column]] = None
+    exclude_filter_columns: t.Optional[t.List[Column]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
             raise ValueError(
                 "Only specify ``visible_columns`` or "
                 "``exclude_visible_columns``."
+            )
+
+        if self.filter_columns and self.exclude_filter_columns:
+            raise ValueError(
+                "Only specify ``filter_columns`` or "
+                "``exclude_filter_columns``."
             )
 
     def get_visible_columns(self) -> t.List[Column]:
@@ -96,6 +111,23 @@ class TableConfig:
 
     def get_visible_column_names(self) -> t.Tuple[str, ...]:
         return tuple(i._meta.name for i in self.get_visible_columns())
+
+    def get_filter_columns(self) -> t.List[Column]:
+        if self.filter_columns and not self.exclude_filter_columns:
+            return self.filter_columns
+
+        if self.exclude_filter_columns and not self.filter_columns:
+            column_names = (i._meta.name for i in self.exclude_filter_columns)
+            return [
+                i
+                for i in self.table_class._meta.columns
+                if i._meta.name not in column_names
+            ]
+
+        return self.table_class._meta.columns
+
+    def get_filter_column_names(self) -> t.Tuple[str, ...]:
+        return tuple(i._meta.name for i in self.get_filter_columns())
 
 
 @dataclass
@@ -148,7 +180,8 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel], t.Union[str, None, t.Coroutine],
+        [Request, pydantic.BaseModel],
+        t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
 
@@ -226,6 +259,7 @@ class AdminRouter(FastAPI):
         for table_config in table_configs:
             table_class = table_config.table_class
             visible_column_names = table_config.get_visible_column_names()
+            filter_column_names = table_config.get_filter_column_names()
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -234,7 +268,8 @@ class AdminRouter(FastAPI):
                     read_only=read_only,
                     page_size=page_size,
                     schema_extra={
-                        "visible_column_names": visible_column_names
+                        "visible_column_names": visible_column_names,
+                        "filter_column_names": filter_column_names,
                     },
                 ),
                 fastapi_kwargs=FastAPIKwargs(
@@ -368,7 +403,8 @@ class AdminRouter(FastAPI):
 
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
-            username=request.user.display_name, user_id=request.user.user_id,
+            username=request.user.display_name,
+            user_id=request.user.user_id,
         )
 
     ###########################################################################
@@ -393,7 +429,9 @@ class AdminRouter(FastAPI):
             raise HTTPException(status_code=404, detail="No such form found")
         else:
             return FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description,
+                name=form.name,
+                slug=form.slug,
+                description=form.description,
             )
 
     def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:

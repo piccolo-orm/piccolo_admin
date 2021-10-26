@@ -4,10 +4,15 @@
             v-bind:key="property.title"
             v-for="(property, keyName) in schema.properties"
         >
-            <template v-if="property.extra.foreign_key">
+            <template
+                v-if="property.extra.foreign_key && schema.filter_column_names.includes(keyName)"
+            >
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
 
                     <router-link
                         :to="{
@@ -39,18 +44,24 @@
                 <KeySearch
                     v-bind:fieldName="property.title.toLowerCase()"
                     v-bind:key="getValue(property.title)"
-                    v-bind:tableName="property.extra.to"
-                    v-bind:rowID="getKeySelectID(property.title)"
                     v-bind:readable="getValue(property.title)"
+                    v-bind:rowID="getKeySelectID(property.title)"
+                    v-bind:tableName="property.extra.to"
                 />
             </template>
-            <template v-else>
+            <template
+                v-else-if="schema.filter_column_names.includes(keyName) && property.format !== 'json'"
+            >
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span
+                        class="required"
+                        v-if="isRequired(keyName)"
+                    >*</span>
                 </label>
 
                 <InputField
+                    v-bind:choices="property.extra.choices"
                     v-bind:format="property.format"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
@@ -59,7 +70,6 @@
                     v-bind:title="property.title"
                     v-bind:type="property.type || property.anyOf[0].type"
                     v-bind:value="getValue(property.title)"
-                    v-bind:choices="property.extra.choices"
                 />
             </template>
         </div>

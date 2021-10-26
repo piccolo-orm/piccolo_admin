@@ -13,7 +13,12 @@ Alternatively, you can pass in ``TableConfig`` instances (or mix and match
 them).
 
 By passing in a ``TableConfig`` you have extra control over how the UI behaves
-for that table. For example, we can set which columns are visible in the list
+for that table. 
+
+visible_columns
+---------------
+
+For example, we can set which columns are visible in the list
 view:
 
 .. code-block:: python
@@ -33,7 +38,28 @@ columns are visible):
 
 .. image:: ./images/with_table_config.jpg
 
-This is really useful when you have a ``Table`` with lots of columns.
+filter_columns
+--------------
+
+For example, we can set which columns are visible in the filter
+sidebar:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(Movie, filter_columns=[
+        Movie.name, Movie.rating, Movie.director,
+    ])
+
+    create_admin(Director, movie_config)
+
+Here is the UI when just passing in a ``Table``:
+
+Here is the UI when just passing in a ``TableConfig`` instance instead (less
+columns are visible in filter sidebar):
+
+``TableConfig`` features is really useful when you have a ``Table`` with lots of columns.
 
 In the future, ``TableConfig`` will be extended to allow finer grained control
 over the UI.

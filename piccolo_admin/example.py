@@ -185,11 +185,20 @@ movie_config = TableConfig(
         Movie.rating,
         Movie.director,
     ],
+    filter_columns=[
+        Movie.name,
+        Movie.rating,
+        Movie.director,
+    ],
 )
 
 director_config = TableConfig(
     table_class=Director,
-    visible_columns=[Director._meta.primary_key, Director.name],
+    visible_columns=[
+        Director._meta.primary_key,
+        Director.name,
+        Director.gender,
+    ],
 )
 
 APP = create_admin(
