@@ -13,13 +13,16 @@ Alternatively, you can pass in ``TableConfig`` instances (or mix and match
 them).
 
 By passing in a ``TableConfig`` you have extra control over how the UI behaves
-for that table. 
+for that table. This is particularly useful when you have a ``Table`` with lots
+of columns.
+
+In the future, ``TableConfig`` will be extended to allow finer grained control
+over the UI.
 
 visible_columns
 ---------------
 
-For example, we can set which columns are visible in the list
-view:
+We can set which columns are visible in the list view:
 
 .. code-block:: python
 
@@ -31,24 +34,23 @@ view:
 
 Here is the UI when just passing in a ``Table``:
 
-.. image:: ./images/without_table_config.jpg
+.. image:: ./images/without_visible_columns.jpg
 
-Here is the UI when just passing in a ``TableConfig`` instance instead (less
+Here is the UI when just passing in a ``TableConfig`` instance instead (fewer
 columns are visible):
 
-.. image:: ./images/with_table_config.jpg
+.. image:: ./images/with_visible_columns.jpg
 
-filter_columns
---------------
+visible_filters
+---------------
 
-For example, we can set which columns are visible in the filter
-sidebar:
+We can set which columns are visible in the filter sidebar:
 
 .. code-block:: python
 
     from piccolo_admin.endpoints import TableConfig
 
-    movie_config = TableConfig(Movie, filter_columns=[
+    movie_config = TableConfig(Movie, visible_filters=[
         Movie.name, Movie.rating, Movie.director,
     ])
 
@@ -56,13 +58,12 @@ sidebar:
 
 Here is the UI when just passing in a ``Table``:
 
-Here is the UI when just passing in a ``TableConfig`` instance instead (less
-columns are visible in filter sidebar):
+.. image:: ./images/without_visible_filters.jpg
 
-``TableConfig`` features is really useful when you have a ``Table`` with lots of columns.
+Here is the UI when just passing in a ``TableConfig`` instance instead (fewer
+filters are visible in the sidebar):
 
-In the future, ``TableConfig`` will be extended to allow finer grained control
-over the UI.
+.. image:: ./images/with_visible_filters.jpg
 
 Source
 ------

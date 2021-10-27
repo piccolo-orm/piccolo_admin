@@ -66,11 +66,11 @@ class TableConfig:
         You can specify this instead of ``visible_columns``, in which case all
         of the ``Table`` columns except the ones specified will be shown in the
         list view.
-    :param filter_columns:
+    :param visible_filters:
         If specified, only these columns will be shown in the filter sidebar
         of the UI. This is useful when you have a lot of columns.
-    :param exclude_filter_columns:
-        You can specify this instead of ``filter_columns``, in which case all
+    :param exclude_visible_filters:
+        You can specify this instead of ``visible_filters``, in which case all
         of the ``Table`` columns except the ones specified will be shown in the
         filter sidebar.
 
@@ -79,8 +79,8 @@ class TableConfig:
     table_class: t.Type[Table]
     visible_columns: t.Optional[t.List[Column]] = None
     exclude_visible_columns: t.Optional[t.List[Column]] = None
-    filter_columns: t.Optional[t.List[Column]] = None
-    exclude_filter_columns: t.Optional[t.List[Column]] = None
+    visible_filters: t.Optional[t.List[Column]] = None
+    exclude_visible_filters: t.Optional[t.List[Column]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -89,45 +89,46 @@ class TableConfig:
                 "``exclude_visible_columns``."
             )
 
-        if self.filter_columns and self.exclude_filter_columns:
+        if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
-                "Only specify ``filter_columns`` or "
-                "``exclude_filter_columns``."
+                "Only specify ``visible_filters`` or "
+                "``exclude_visible_filters``."
             )
 
+    def _get_columns(
+        self,
+        include_columns: t.Optional[t.List[Column]],
+        exclude_columns: t.Optional[t.List[Column]],
+        all_columns: t.List[Column],
+    ) -> t.List[Column]:
+        if include_columns and not exclude_columns:
+            return include_columns
+
+        if exclude_columns and not include_columns:
+            column_names = (i._meta.name for i in exclude_columns)
+            return [i for i in all_columns if i._meta.name not in column_names]
+
+        return all_columns
+
     def get_visible_columns(self) -> t.List[Column]:
-        if self.visible_columns and not self.exclude_visible_columns:
-            return self.visible_columns
-
-        if self.exclude_visible_columns and not self.visible_columns:
-            column_names = (i._meta.name for i in self.exclude_visible_columns)
-            return [
-                i
-                for i in self.table_class._meta.columns
-                if i._meta.name not in column_names
-            ]
-
-        return self.table_class._meta.columns
+        return self._get_columns(
+            include_columns=self.visible_columns,
+            exclude_columns=self.exclude_visible_columns,
+            all_columns=self.table_class._meta.columns,
+        )
 
     def get_visible_column_names(self) -> t.Tuple[str, ...]:
         return tuple(i._meta.name for i in self.get_visible_columns())
 
-    def get_filter_columns(self) -> t.List[Column]:
-        if self.filter_columns and not self.exclude_filter_columns:
-            return self.filter_columns
+    def get_visible_filters(self) -> t.List[Column]:
+        return self._get_columns(
+            include_columns=self.visible_filters,
+            exclude_columns=self.exclude_visible_filters,
+            all_columns=self.table_class._meta.columns,
+        )
 
-        if self.exclude_filter_columns and not self.filter_columns:
-            column_names = (i._meta.name for i in self.exclude_filter_columns)
-            return [
-                i
-                for i in self.table_class._meta.columns
-                if i._meta.name not in column_names
-            ]
-
-        return self.table_class._meta.columns
-
-    def get_filter_column_names(self) -> t.Tuple[str, ...]:
-        return tuple(i._meta.name for i in self.get_filter_columns())
+    def get_visible_filter_names(self) -> t.Tuple[str, ...]:
+        return tuple(i._meta.name for i in self.get_visible_filters())
 
 
 @dataclass
@@ -259,7 +260,7 @@ class AdminRouter(FastAPI):
         for table_config in table_configs:
             table_class = table_config.table_class
             visible_column_names = table_config.get_visible_column_names()
-            filter_column_names = table_config.get_filter_column_names()
+            visible_filter_names = table_config.get_visible_filter_names()
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -269,7 +270,7 @@ class AdminRouter(FastAPI):
                     page_size=page_size,
                     schema_extra={
                         "visible_column_names": visible_column_names,
-                        "filter_column_names": filter_column_names,
+                        "visible_filter_names": visible_filter_names,
                     },
                 ),
                 fastapi_kwargs=FastAPIKwargs(

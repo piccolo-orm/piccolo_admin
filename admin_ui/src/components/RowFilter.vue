@@ -7,7 +7,7 @@
         </a>
 
         <form ref="form" v-on:submit.prevent="submitForm($event)">
-            <RowFormSearch v-bind:isFilter="true" v-bind:schema="schema" />
+            <RowFormSearch v-bind:schema="schema" />
             <button>Apply</button>
         </form>
         <button v-on:click.prevent="clearFilters">Clear filters</button>
@@ -30,9 +30,6 @@ export default Vue.extend({
     computed: {
         schema() {
             return this.$store.state.schema
-        },
-        tableName() {
-            return this.$store.state.currentTableName
         },
     },
     methods: {

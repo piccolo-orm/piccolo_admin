@@ -72,34 +72,34 @@ class TestTableConfig(TestCase):
             )
             post_table.get_visible_columns()
 
-    def test_filter_columns(self):
+    def test_visible_filters(self):
         post_table = TableConfig(
             table_class=Post,
-            filter_columns=[Post.name, Post.rating],
+            visible_filters=[Post.name, Post.rating],
         )
         self.assertEqual(
-            post_table.get_filter_column_names(),
+            post_table.get_visible_filter_names(),
             ("name", "rating"),
         )
 
-    def test_exclude_filter_columns(self):
+    def test_exclude_visible_filters(self):
         post_table = TableConfig(
             table_class=Post,
-            exclude_filter_columns=[Post._meta.primary_key, Post.name],
+            exclude_visible_filters=[Post._meta.primary_key, Post.name],
         )
         self.assertEqual(
-            tuple(i._meta.name for i in post_table.get_filter_columns()),
+            tuple(i._meta.name for i in post_table.get_visible_filters()),
             ("content", "created", "rating"),
         )
 
-    def test_filter_exclude_columns_error(self):
+    def test_visible_filters_error(self):
         with self.assertRaises(ValueError):
             post_table = TableConfig(
                 table_class=Post,
-                filter_columns=[Post.name],
-                exclude_filter_columns=[Post.name, Post.rating],
+                visible_filters=[Post.name],
+                exclude_visible_filters=[Post.name, Post.rating],
             )
-            post_table.get_filter_columns()
+            post_table.get_visible_filters()
 
 
 class TestAdminRouter(TestCase):

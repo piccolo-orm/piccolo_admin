@@ -185,7 +185,7 @@ movie_config = TableConfig(
         Movie.rating,
         Movie.director,
     ],
-    filter_columns=[
+    visible_filters=[
         Movie.name,
         Movie.rating,
         Movie.director,
