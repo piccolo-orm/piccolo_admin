@@ -1,7 +1,13 @@
 from unittest import TestCase
 
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns.column_types import ForeignKey, Text, Timestamp, Varchar
+from piccolo.columns.column_types import (
+    ForeignKey,
+    Integer,
+    Text,
+    Timestamp,
+    Varchar,
+)
 from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
@@ -33,6 +39,7 @@ class Post(Table):
     name = Varchar(length=100)
     content = Text()
     created = Timestamp()
+    rating = Integer()
 
 
 class TestTableConfig(TestCase):
@@ -42,7 +49,8 @@ class TestTableConfig(TestCase):
             visible_columns=[Post._meta.primary_key, Post.name],
         )
         self.assertEqual(
-            post_table.get_visible_column_names(), ("id", "name"),
+            post_table.get_visible_column_names(),
+            ("id", "name"),
         )
 
     def test_exclude_visible_columns(self):
@@ -52,7 +60,7 @@ class TestTableConfig(TestCase):
         )
         self.assertEqual(
             tuple(i._meta.name for i in post_table.get_visible_columns()),
-            ("content", "created"),
+            ("content", "created", "rating"),
         )
 
     def test_visible_exclude_columns_error(self):
@@ -63,6 +71,35 @@ class TestTableConfig(TestCase):
                 exclude_visible_columns=[Post._meta.primary_key],
             )
             post_table.get_visible_columns()
+
+    def test_visible_filters(self):
+        post_table = TableConfig(
+            table_class=Post,
+            visible_filters=[Post.name, Post.rating],
+        )
+        self.assertEqual(
+            post_table.get_visible_filter_names(),
+            ("name", "rating"),
+        )
+
+    def test_exclude_visible_filters(self):
+        post_table = TableConfig(
+            table_class=Post,
+            exclude_visible_filters=[Post._meta.primary_key, Post.name],
+        )
+        self.assertEqual(
+            tuple(i._meta.name for i in post_table.get_visible_filters()),
+            ("content", "created", "rating"),
+        )
+
+    def test_visible_filters_error(self):
+        with self.assertRaises(ValueError):
+            post_table = TableConfig(
+                table_class=Post,
+                visible_filters=[Post.name],
+                exclude_visible_filters=[Post.name, Post.rating],
+            )
+            post_table.get_visible_filters()
 
 
 class TestAdminRouter(TestCase):
@@ -120,7 +157,9 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -193,7 +232,9 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form
@@ -241,7 +282,9 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
         #######################################################################
         # Post a form with errors
@@ -288,7 +331,9 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -297,7 +342,8 @@ class TestTables(TestCase):
         response = client.get("/api/tables/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(), ["movie", "director", "studio"],
+            response.json(),
+            ["movie", "director", "studio"],
         )
 
     def test_get_user(self):
@@ -313,7 +359,9 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/", json=payload, headers={"X-CSRFToken": csrftoken},
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
         )
 
         #######################################################################
@@ -322,5 +370,6 @@ class TestTables(TestCase):
         response = client.get("/api/user/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(), {"username": "Bob", "user_id": "1"},
+            response.json(),
+            {"username": "Bob", "user_id": "1"},
         )
