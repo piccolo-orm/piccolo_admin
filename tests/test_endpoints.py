@@ -324,4 +324,3 @@ class TestTables(TestCase):
         self.assertEqual(
             response.json(), {"username": "Bob", "user_id": "1"},
         )
-
