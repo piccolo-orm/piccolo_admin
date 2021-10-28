@@ -8,8 +8,14 @@
                         showSidebar = showSidebar ? false : true
                     "
                 >
-                    <font-awesome-icon icon="bars" />
-                </a>
+                    <font-awesome-icon
+                        icon="bars"
+                        v-if="!showSidebar"
+                    />
+                    <font-awesome-icon
+                        icon="times"
+                        v-else
+                    />
             </span>
 
             <h1>
