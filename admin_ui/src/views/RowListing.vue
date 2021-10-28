@@ -45,19 +45,14 @@
                         >
                             <font-awesome-icon icon="filter" />
                             <span>
-                                {{
-                                showFilter ? "Hide" : "Show"
-                                }}
+                                {{ showFilter ? "Hide" : "Show" }}
                                 Filters
                             </span>
                         </a>
                         <CSVButton :tableName="tableName" />
                     </div>
                 </div>
-                <p
-                    id="selected_count"
-                    v-if="selectedRows.length > 0"
-                >
+                <p id="selected_count" v-if="selectedRows.length > 0">
                     <b>{{ selectedRows.length }}</b>
                     selected result(s) on
                     <b>page {{ currentPageNumber }}</b>
@@ -73,23 +68,17 @@
                                 v-on:change="selectAllRows"
                             />
                         </th>
-                        <th
-                            v-bind:key="name"
-                            v-for="name in cellNames"
-                        >
+                        <th v-bind:key="name" v-for="name in cellNames">
                             {{
-                            schema.properties[name]
-                            ? schema.properties[name].title
-                            : name
+                                schema.properties[name]
+                                    ? schema.properties[name].title
+                                    : name
                             }}
                         </th>
                         <th></th>
                     </tr>
 
-                    <tr
-                        v-bind:key="row.id"
-                        v-for="row in rows"
-                    >
+                    <tr v-bind:key="row.id" v-for="row in rows">
                         <td>
                             <input
                                 :value="row.id"
@@ -98,14 +87,8 @@
                                 v-model="selectedRows"
                             />
                         </td>
-                        <td
-                            v-bind:key="name"
-                            v-for="name in cellNames"
-                        >
-                            <span
-                                class="link"
-                                v-if="name == 'id'"
-                            >
+                        <td v-bind:key="name" v-for="name in cellNames">
+                            <span class="link" v-if="name == 'id'">
                                 <router-link
                                     :to="{
                                         name: 'editRow',
@@ -114,12 +97,11 @@
                                             rowID: row[name],
                                         },
                                     }"
-                                >{{ row[name] }}</router-link>
+                                    >{{ row[name] }}</router-link
+                                >
                             </span>
                             <span v-else-if="choicesLookup[name]">
-                                {{
-                                choicesLookup[name][row[name]]
-                                }}
+                                {{ choicesLookup[name][row[name]] }}
                             </span>
                             <span
                                 class="link"
@@ -135,12 +117,10 @@
                                             rowID: row[name],
                                         },
                                     }"
-                                >{{ row[name + "_readable"] }}</router-link>
+                                    >{{ row[name + "_readable"] }}</router-link
+                                >
                             </span>
-                            <span
-                                class="boolean"
-                                v-else-if="isBoolean(name)"
-                            >
+                            <span class="boolean" v-else-if="isBoolean(name)">
                                 <font-awesome-icon
                                     class="correct"
                                     icon="check"
@@ -153,12 +133,12 @@
                                 />
                             </span>
                             <span v-else-if="isInterval(name)">
-                                {{
-                                row[name] | humanReadable
-                                }}
+                                {{ row[name] | humanReadable }}
                             </span>
                             <span v-else-if="isJSON(name)">
-                                <pre>{{ row[name] | formatJSON | abbreviate }}</pre>
+                                <pre>{{
+                                    row[name] | formatJSON | abbreviate
+                                }}</pre>
                             </span>
                             <span v-else>{{ row[name] | abbreviate }}</span>
                         </td>
@@ -195,7 +175,9 @@
                                             class="subtle"
                                             title="Edit Row"
                                         >
-                                            <font-awesome-icon icon="edit" />Edit
+                                            <font-awesome-icon
+                                                icon="edit"
+                                            />Edit
                                         </router-link>
                                     </li>
                                     <li>
@@ -210,7 +192,9 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">Showing {{ rows.length }} of {{ rowCount }} result(s)</p>
+                <p id="result_count">
+                    Showing {{ rows.length }} of {{ rowCount }} result(s)
+                </p>
 
                 <div class="pagination_wrapper">
                     <Pagination :tableName="tableName" />
@@ -218,10 +202,7 @@
                 </div>
             </div>
 
-            <div
-                class="right_column"
-                v-if="showFilter"
-            >
+            <div class="right_column" v-if="showFilter">
                 <RowFilter
                     :showFilterSidebar="showFilter"
                     @closeSideBar="closeSideBar"
@@ -261,7 +242,6 @@ import ChangePageSize from "../components/ChangePageSize.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
-import TableNav from "../components/TableNav.vue"
 import Tooltip from "../components/Tooltip.vue"
 import { Choice, Choices, Schema } from "../interfaces"
 
@@ -288,7 +268,6 @@ export default Vue.extend({
         ChangePageSize,
         RowFilter,
         RowSortModal,
-        TableNav,
         Tooltip,
     },
     computed: {

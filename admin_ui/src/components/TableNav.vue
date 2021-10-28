@@ -1,16 +1,13 @@
 <template>
-    <ul>
-        <li
-            v-bind:key="tableName"
-            v-for="tableName in tableNames"
-        >
+    <ul class="table_list">
+        <li v-bind:key="tableName" v-for="tableName in tableNames">
             <router-link
                 :to="{ name: 'rowListing', params: { tableName } }"
                 class="subtle"
-                v-bind:class="{active: isActive(tableName)}"
+                v-bind:class="{ active: isActive(tableName) }"
             >
                 <font-awesome-icon icon="level-up-alt" />
-                {{ tableName | readable }}
+                <span>{{ tableName | readable }}</span>
             </router-link>
         </li>
     </ul>
@@ -27,7 +24,7 @@ export default Vue.extend({
         },
         currentTableName() {
             return this.$store.state.currentTableName
-        }
+        },
     },
     methods: {
         showListing(tableName: string) {
@@ -36,32 +33,15 @@ export default Vue.extend({
         },
         isActive(tableName: string): boolean {
             return this.currentTableName === tableName
-        }
+        },
     },
     filters: {
         readable(value) {
             return value.split("_").join(" ")
-        }
+        },
     },
     async mounted() {
         await this.$store.dispatch("fetchTableNames")
-    }
+    },
 })
 </script>
-
-
-<style scoped lang="less">
-ul {
-    padding: 0;
-
-    li {
-        list-style: none;
-        text-indent: 0.5rem;
-        text-transform: capitalize;
-
-        svg {
-            transform: rotate(90deg);
-        }
-    }
-}
-</style>

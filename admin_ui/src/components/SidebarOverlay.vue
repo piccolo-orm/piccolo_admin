@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="opaque"
-        id="sidebar_overlay"
-    >
+    <div class="opaque" id="sidebar_overlay">
         <SidebarNav />
     </div>
 </template>
@@ -12,8 +9,8 @@ import SidebarNav from "./SidebarNav.vue"
 
 export default {
     components: {
-        SidebarNav
-    }
+        SidebarNav,
+    },
 }
 </script>
 
@@ -24,6 +21,7 @@ div#sidebar_overlay {
     position: absolute;
     top: 3.6rem;
     left: 0;
+    max-width: 15rem;
     min-width: 10rem;
     bottom: 0;
     border-right: 1px solid @border_color;
