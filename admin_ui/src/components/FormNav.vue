@@ -6,7 +6,7 @@
                 class="subtle"
             >
                 <font-awesome-icon icon="level-up-alt" />
-                {{ formConfig.name | readable }}
+                <span>{{ formConfig.name | readable }}</span>
             </router-link>
         </li>
     </ul>
@@ -27,20 +27,3 @@ export default Vue.extend({
     },
 })
 </script>
-
-
-<style scoped lang="less">
-ul {
-    padding: 0;
-
-    li {
-        list-style: none;
-        text-indent: 0.5rem;
-        text-transform: capitalize;
-
-        svg {
-            transform: rotate(90deg);
-        }
-    }
-}
-</style>
