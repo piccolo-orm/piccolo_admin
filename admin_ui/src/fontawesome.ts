@@ -20,6 +20,7 @@ import {
     faMoon,
     faPlus,
     faQuestionCircle,
+    faSearch,
     faSignOutAlt,
     faSort,
     faSun,
@@ -27,7 +28,7 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
+    faUser
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -49,6 +50,7 @@ library.add(
     faMoon,
     faPlus,
     faQuestionCircle,
+    faSearch,
     faSignOutAlt,
     faSort,
     faSun,
@@ -56,6 +58,6 @@ library.add(
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
+    faUser
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
