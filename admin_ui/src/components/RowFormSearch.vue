@@ -11,6 +11,7 @@
                     </label>
                     <KeySearch
                         v-bind:fieldName="property.title.toLowerCase()"
+                        v-bind:isFilter="true"
                         v-bind:key="getValue(property.title)"
                         v-bind:readable="getValue(property.title)"
                         v-bind:rowID="getKeySelectID(property.title)"
