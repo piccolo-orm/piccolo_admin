@@ -18,7 +18,6 @@ export interface FetchIdsConfig {
     tableName: string
     limit: number
     search: string
-    offset?: number
 }
 
 export interface FetchRowsConfig {

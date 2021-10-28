@@ -176,10 +176,6 @@ export default new Vuex.Store({
                 params['limit'] = config.limit
             }
 
-            if (config.offset) {
-                params['offset'] = config.offset
-            }
-
             const response = await axios.get(
                 `${BASE_URL}tables/${config.tableName}/ids/`,
                 {

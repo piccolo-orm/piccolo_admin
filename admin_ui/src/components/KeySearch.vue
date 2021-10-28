@@ -1,56 +1,38 @@
 <template>
-    <div class="key_search">
+    <div>
         <input
             autocomplete="off"
-            :placeholder="isFilter ? 'All' : 'None'"
+            placeholder="Type here to search"
             type="text"
             v-model="selectedValue"
-            v-on:focus="showResults = true"
+            v-on:focus="
+                resetResult()
+                showResults = true
+            "
             v-on:keydown.enter.prevent
+            v-on:change="checkNull"
         />
-
-        <Modal
-            v-show="showResults"
-            @close="showResults = false"
-            title="Select a result"
+        <div
+            class="results"
+            v-if="
+                selectedValue != undefined &&
+                showResults &&
+                Object.keys(ids).length > 0
+            "
         >
-            <div class="results">
-                <div class="input_wrapper">
-                    <font-awesome-icon icon="search" />
-                    <input
-                        autocomplete="off"
-                        placeholder="Type here to filter"
-                        v-model="searchTerm"
-                    />
-                </div>
-
-                <ul>
-                    <li
-                        v-on:click="
-                            selectResult(null)
-                            showResults = false
-                        "
-                    >
-                        None
-                    </li>
-                    <li
-                        :key="id[0]"
-                        v-for="id in ids"
-                        v-on:click="
-                            selectResult(...id)
-                            showResults = false
-                        "
-                    >
-                        {{ id[1] }}
-                    </li>
-                </ul>
-
-                <p class="extra" v-if="!limitReached">
-                    <a href="#" @click.prevent="loadMore">Load more</a>
-                </p>
-            </div>
-        </Modal>
-
+            <ul>
+                <li
+                    :key="id[0]"
+                    v-for="id in ids"
+                    v-on:click="
+                        selectResult(...id)
+                        showResults = false
+                    "
+                >
+                    {{ id[1] }}
+                </li>
+            </ul>
+        </div>
         <input
             :value="hiddenSelectedValue"
             type="hidden"
@@ -61,9 +43,6 @@
 
 <script lang="ts">
 import { FetchIdsConfig } from "../interfaces"
-import Modal from "./Modal.vue"
-
-const PAGE_SIZE = 15
 
 export default {
     props: {
@@ -71,10 +50,6 @@ export default {
         tableName: String,
         rowID: undefined,
         readable: undefined,
-        isFilter: {
-            type: Boolean,
-            default: false,
-        },
     },
     data() {
         return {
@@ -82,26 +57,19 @@ export default {
             selectedValue: undefined,
             hiddenSelectedValue: undefined,
             showResults: false,
-            offset: 0,
-            limitReached: false,
-            searchTerm: "",
         }
-    },
-    components: {
-        Modal,
     },
     methods: {
         async fetchData() {
             const config: FetchIdsConfig = {
                 tableName: this.tableName,
-                search: this.searchTerm,
-                limit: PAGE_SIZE,
-                offset: this.offset,
+                search: this.selectedValue,
+                limit: 15,
             }
             const response = await this.$store.dispatch("fetchIds", config)
             // The response is a mapping of id to readable. We convert into
             // an array of arrays like [[1, 'Bob'], ...], then sort them.
-            const ids = Object.entries(response.data).sort((i, j) => {
+            this.ids = Object.entries(response.data).sort((i, j) => {
                 if (i[1] > j[1]) {
                     return 1
                 }
@@ -110,20 +78,22 @@ export default {
                 }
                 return 0
             })
-
-            if (ids.length < PAGE_SIZE) {
-                this.limitReached = true
-            }
-
-            this.ids.push(...ids)
-        },
-        async loadMore() {
-            this.offset += PAGE_SIZE
-            await this.fetchData()
         },
         selectResult(id, readable) {
             this.selectedValue = readable
             this.hiddenSelectedValue = id
+        },
+        // explicit value cleaning
+        resetResult() {
+            this.selectedValue = undefined
+            this.hiddenSelectedValue = undefined
+        },
+        checkNull(event) {
+            // The work around for setting a value of Null, is to type it in.
+            if (event.target.value.toUpperCase() == "NULL") {
+                console.log("Setting as null")
+                this.hiddenSelectedValue = null
+            }
         },
     },
     watch: {
@@ -145,55 +115,21 @@ export default {
 <style lang="less" scoped>
 @import "../vars.less";
 
-div.key_search {
-    input {
-        margin-bottom: 0;
-    }
+.results {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    cursor: pointer;
 
-    div.results {
-        div.input_wrapper {
+    ul {
+        margin: 0;
+        padding: 0;
+
+        li {
             box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 0.5rem;
-
-            svg {
-                margin-right: 0.5rem;
-            }
-
-            input {
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-                padding: 0.5rem;
-            }
-        }
-
-        ul {
-            padding: 0;
-            cursor: pointer;
-            margin: 0;
-
-            li {
-                // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                box-sizing: border-box;
-                color: @light_blue;
-                font-size: 0.8rem;
-                padding: 0.5rem;
-                list-style: none;
-            }
-        }
-
-        p.extra {
-            box-sizing: border-box;
-            font-size: 0.8rem;
-            margin: 0;
-            padding: 0.5rem;
+            padding: 0.2rem;
+            list-style: none;
         }
     }
-
-    margin-bottom: 0.5rem;
 }
 
 .light_mode {
@@ -201,6 +137,7 @@ div.key_search {
     color: @dark_grey;
 
     .results {
+        background-color: darken(white, 5%);
         color: @dark_grey;
 
         li:hover {
@@ -214,6 +151,7 @@ div.key_search {
     color: @off_white;
 
     .results {
+        background-color: darken(@dark_grey, 4%);
         color: @off_white;
 
         li:hover {
