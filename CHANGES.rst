@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.18.1
+------
+Fixed a bug where a filter for a column with choices would default to
+``'Null'`` instead of ``'All'``.
+
 0.18.0
 ------
 Added a ``visible_filters`` option to ``TableConfig``, allowing the user to
