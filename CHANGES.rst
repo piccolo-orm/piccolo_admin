@@ -1,6 +1,18 @@
 Changes
 =======
 
+0.18.0
+------
+Added a ``visible_filters`` option to ``TableConfig``, allowing the user to
+specify which filters are shown in the filter sidebar. This is useful if you
+have a lot of columns. Courtesy @sinisaos.
+
+Improved the navigation sidebar UI - each section can now be hidden, and the
+appearance has been improved when table names are very long. Courtesy
+@sinisaos.
+
+Added docs for Javascript formatting to help new contributors.
+
 0.17.0
 ------
 Added ``TableConfig``, which allows more fine grained control over how the
