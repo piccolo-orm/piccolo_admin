@@ -41,8 +41,11 @@ You will need to configure a local webserver as a proxy - see extra/piccolo_admi
 
 -------------------------------------------------------------------------------
 
-Python code style
------------------
+Code style
+----------
+
+Python
+~~~~~~
 
 Piccolo uses `Black <https://black.readthedocs.io/en/stable/>`_  for
 formatting, preferably with a max line length of 79, to keep it consistent
@@ -51,7 +54,7 @@ with `PEP8 <python.org/dev/peps/pep-0008/>`_ .
 You can configure `VSCode <https://code.visualstudio.com/>`_ by modifying
 ``settings.json`` as follows:
 
-.. code-block:: json
+.. code-block:: javascript
 
     {
         "python.linting.enabled": true,
@@ -64,6 +67,36 @@ You can configure `VSCode <https://code.visualstudio.com/>`_ by modifying
     }
 
 Type hints are used throughout the project.
+
+Front end
+~~~~~~~~~
+
+We use VSCode for front end development, as it has the excellent Vetur
+extension.
+
+Add the following to your VSCode ``settings.json``:
+
+.. code-block:: javascript
+
+   {
+        // Standalone LESS and Typescript files
+        "prettier.semi": false,
+        "prettier.singleQuote": false,
+        "prettier.tabWidth": 4,
+        "prettier.trailingComma": "none",
+
+        // Vetur
+        "vetur.format.enable": true,
+        "vetur.format.options.tabSize": 4,
+        "vetur.format.options.useTabs": false,
+        "vetur.format.defaultFormatterOptions": {
+            "prettier": {
+                "semi": false,
+                "singleQuote": false,
+                "trailingComma": "none",
+            },
+        },
+    }
 
 -------------------------------------------------------------------------------
 
