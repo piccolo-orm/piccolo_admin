@@ -85,7 +85,7 @@ Add the following to your VSCode ``settings.json``:
         "prettier.tabWidth": 4,
         "prettier.trailingComma": "none",
 
-        // Vetur
+        // Vetur - handles Vue files
         "vetur.format.enable": true,
         "vetur.format.options.tabSize": 4,
         "vetur.format.options.useTabs": false,
