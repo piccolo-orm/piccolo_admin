@@ -147,14 +147,30 @@ div.results {
         margin: 0;
 
         li {
-            box-sizing: border-box;
-            font-size: 0.8rem;
-            padding: 0.5rem;
             list-style: none;
 
             a {
+                box-sizing: border-box;
+                font-size: 0.8rem;
+                padding: 0.5rem;
+                display: block;
                 text-decoration: none;
             }
+        }
+    }
+}
+
+.light_mode {
+    ul.results_list {
+        li:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    }
+}
+.dark_mode {
+    ul.results_list {
+        li:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
     }
 }
