@@ -5,6 +5,7 @@
             <input
                 autocomplete="off"
                 placeholder="Type here to filter"
+                type="search"
                 v-model="searchTerm"
             />
         </div>
@@ -66,7 +67,7 @@ export default {
     },
     methods: {
         async fetchData() {
-            // We fetch one more row, so we know if we're hit the limit or not.
+            // We fetch one more row, so we know if we've hit the limit or not.
             const config: FetchIdsConfig = {
                 tableName: this.tableName,
                 search: this.searchTerm,
@@ -77,9 +78,7 @@ export default {
             const response = await this.$store.dispatch("fetchIds", config)
             const ids = Object.entries(response.data)
 
-            if (ids.length <= PAGE_SIZE) {
-                this.limitReached = true
-            }
+            this.limitReached = ids.length <= PAGE_SIZE
 
             return ids.slice(0, PAGE_SIZE)
         },
@@ -102,12 +101,10 @@ export default {
     },
     watch: {
         async tableName() {
-            this.limitReached = false
             this.offset = 0
             this.ids = await this.fetchData()
         },
         async searchTerm() {
-            this.limitReached = false
             this.offset = 0
             this.ids = await this.fetchData()
         }
