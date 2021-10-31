@@ -25,7 +25,10 @@
                     </a>
                 </li>
                 <li v-if="!limitReached">
-                    <a href="#" @click.prevent="loadMore">Load more</a>
+                    <a href="#" @click.prevent="loadMore"
+                        ><font-awesome-icon icon="arrow-circle-down" /> Load
+                        more</a
+                    >
                 </li>
             </ul>
         </div>

@@ -1,11 +1,12 @@
-import Vue from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import Vue from "vue"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { library } from "@fortawesome/fontawesome-svg-core"
 import {
     faAngleDown,
     faAngleLeft,
     faAngleRight,
     faAngleUp,
+    faArrowCircleDown,
     faBars,
     faCheck,
     faCogs,
@@ -29,13 +30,14 @@ import {
     faTools,
     faTrashAlt,
     faUser
-} from '@fortawesome/free-solid-svg-icons'
+} from "@fortawesome/free-solid-svg-icons"
 
 library.add(
     faAngleDown,
     faAngleLeft,
     faAngleRight,
     faAngleUp,
+    faArrowCircleDown,
     faBars,
     faCheck,
     faCogs,
@@ -60,4 +62,4 @@ library.add(
     faTrashAlt,
     faUser
 )
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component("font-awesome-icon", FontAwesomeIcon)
