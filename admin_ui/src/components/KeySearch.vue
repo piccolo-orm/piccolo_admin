@@ -18,6 +18,7 @@
 
         <KeySearchModal
             v-show="showModal"
+            :isFilter="isFilter"
             :tableName="tableName"
             @close="showModal = false"
             @update="handleUpdate($event)"

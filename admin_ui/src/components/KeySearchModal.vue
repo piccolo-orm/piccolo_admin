@@ -10,6 +10,7 @@
         </div>
 
         <ul>
+            <li v-if="isFilter" v-on:click="selectResult(null, '')">All</li>
             <li v-on:click="selectResult(null, 'Null')">None</li>
             <li :key="id[0]" v-for="id in ids" v-on:click="selectResult(...id)">
                 {{ id[1] }}
@@ -30,7 +31,11 @@ const PAGE_SIZE = 15
 
 export default {
     props: {
-        tableName: String
+        tableName: String,
+        isFilter: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
