@@ -9,22 +9,26 @@
             />
         </div>
 
-        <ul>
-            <li v-if="isFilter">
-                <a href="#" @click.prevent="selectResult(null, '')">All</a>
-            </li>
-            <li>
-                <a href="#" @click.prevent="selectResult(null, 'Null')">None</a>
-            </li>
-            <li :key="id[0]" v-for="id in ids">
-                <a href="#" @click.prevent="selectResult(...id)">
-                    {{ id[1] }}
-                </a>
-            </li>
-            <li v-if="!limitReached">
-                <a href="#" @click.prevent="loadMore">Load more</a>
-            </li>
-        </ul>
+        <div class="results">
+            <ul class="results_list">
+                <li v-if="isFilter">
+                    <a href="#" @click.prevent="selectResult(null, '')">All</a>
+                </li>
+                <li>
+                    <a href="#" @click.prevent="selectResult(null, 'Null')"
+                        >None</a
+                    >
+                </li>
+                <li :key="id[0]" v-for="id in ids">
+                    <a href="#" @click.prevent="selectResult(...id)">
+                        {{ id[1] }}
+                    </a>
+                </li>
+                <li v-if="!limitReached">
+                    <a href="#" @click.prevent="loadMore">Load more</a>
+                </li>
+            </ul>
+        </div>
     </Modal>
 </template>
 
@@ -72,10 +76,18 @@ export default {
 
             return ids.slice(0, PAGE_SIZE)
         },
+        scrollResultsToBottom() {
+            setTimeout(() => {
+                const listElement =
+                    document.getElementsByClassName("results_list")[0]
+                listElement.scrollIntoView(false)
+            }, 0)
+        },
         async loadMore() {
             this.offset += PAGE_SIZE
             const ids = await this.fetchData()
             this.ids.push(...ids)
+            this.scrollResultsToBottom()
         },
         selectResult(id, readable) {
             this.$emit("update", { id, readable })
@@ -122,21 +134,24 @@ div.input_wrapper {
     }
 }
 
-ul {
-    padding: 0;
-    cursor: pointer;
-    margin: 0;
+div.results {
     max-height: 20rem;
     overflow: auto;
 
-    li {
-        box-sizing: border-box;
-        font-size: 0.8rem;
-        padding: 0.5rem;
-        list-style: none;
+    ul.results_list {
+        padding: 0;
+        cursor: pointer;
+        margin: 0;
 
-        a {
-            text-decoration: none;
+        li {
+            box-sizing: border-box;
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            list-style: none;
+
+            a {
+                text-decoration: none;
+            }
         }
     }
 }
