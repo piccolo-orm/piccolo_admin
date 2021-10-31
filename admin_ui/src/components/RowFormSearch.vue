@@ -16,6 +16,7 @@
                         v-bind:readable="getValue(property.title)"
                         v-bind:rowID="getKeySelectID(property.title)"
                         v-bind:tableName="property.extra.to"
+                        v-bind:isNullable="property.nullable"
                     />
                 </template>
                 <template v-else-if="property.format !== 'json'">
@@ -49,11 +50,11 @@ import InputField from "./InputField.vue"
 export default Vue.extend({
     props: {
         row: Object,
-        schema: Object,
+        schema: Object
     },
     components: {
         InputField,
-        KeySearch,
+        KeySearch
     },
     methods: {
         getValue(propertyTitle: string) {
@@ -70,7 +71,7 @@ export default Vue.extend({
                 !this.isFilter &&
                 (this.schema.required || []).indexOf(keyName) != -1
             )
-        },
-    },
+        }
+    }
 })
 </script>

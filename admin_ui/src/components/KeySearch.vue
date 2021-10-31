@@ -38,6 +38,10 @@ export default {
         isFilter: {
             type: Boolean,
             default: false
+        },
+        isNullable: {
+            type: Boolean,
+            default: false
         }
     },
     data() {

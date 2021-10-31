@@ -14,7 +14,7 @@
                 <li v-if="isFilter">
                     <a href="#" @click.prevent="selectResult(null, '')">All</a>
                 </li>
-                <li>
+                <li v-if="isNullable">
                     <a href="#" @click.prevent="selectResult(null, 'Null')"
                         >None</a
                     >
@@ -47,6 +47,10 @@ export default {
         isFilter: {
             type: Boolean,
             default: false
+        },
+        isNullable: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
