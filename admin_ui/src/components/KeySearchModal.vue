@@ -27,7 +27,7 @@
 import { FetchIdsConfig } from "../interfaces"
 import Modal from "./Modal.vue"
 
-const PAGE_SIZE = 15
+const PAGE_SIZE = 5
 
 export default {
     props: {
@@ -40,9 +40,6 @@ export default {
     data() {
         return {
             ids: [],
-            selectedValue: undefined,
-            hiddenSelectedValue: undefined,
-            showResults: false,
             offset: 0,
             limitReached: false,
             searchTerm: ""
@@ -53,30 +50,22 @@ export default {
     },
     methods: {
         async fetchData() {
+            // We fetch one more row, so we know if we're hit the limit or not.
             const config: FetchIdsConfig = {
                 tableName: this.tableName,
                 search: this.searchTerm,
-                limit: PAGE_SIZE,
+                limit: PAGE_SIZE + 1,
                 offset: this.offset
             }
-            const response = await this.$store.dispatch("fetchIds", config)
-            // The response is a mapping of id to readable. We convert into
-            // an array of arrays like [[1, 'Bob'], ...], then sort them.
-            const ids = Object.entries(response.data).sort((i, j) => {
-                if (i[1] > j[1]) {
-                    return 1
-                }
-                if (i[1] < j[1]) {
-                    return -1
-                }
-                return 0
-            })
 
-            if (ids.length < PAGE_SIZE) {
+            const response = await this.$store.dispatch("fetchIds", config)
+            const ids = Object.entries(response.data)
+
+            if (ids.length <= PAGE_SIZE) {
                 this.limitReached = true
             }
 
-            return ids
+            return ids.slice(0, PAGE_SIZE)
         },
         async loadMore() {
             this.offset += PAGE_SIZE
@@ -84,18 +73,19 @@ export default {
             this.ids.push(...ids)
         },
         selectResult(id, readable) {
-            this.selectedValue = readable
-            this.hiddenSelectedValue = id
-
             this.$emit("update", { id, readable })
         }
     },
     watch: {
         async tableName() {
-            await this.fetchData()
+            this.limitReached = false
+            this.offset = 0
+            this.ids = await this.fetchData()
         },
-        async selectedValue() {
-            await this.fetchData()
+        async searchTerm() {
+            this.limitReached = false
+            this.offset = 0
+            this.ids = await this.fetchData()
         }
     },
     async mounted() {
