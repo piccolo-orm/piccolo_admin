@@ -10,16 +10,21 @@
         </div>
 
         <ul>
-            <li v-if="isFilter" v-on:click="selectResult(null, '')">All</li>
-            <li v-on:click="selectResult(null, 'Null')">None</li>
-            <li :key="id[0]" v-for="id in ids" v-on:click="selectResult(...id)">
-                {{ id[1] }}
+            <li v-if="isFilter">
+                <a href="#" @click.prevent="selectResult(null, '')">All</a>
+            </li>
+            <li>
+                <a href="#" @click.prevent="selectResult(null, 'Null')">None</a>
+            </li>
+            <li :key="id[0]" v-for="id in ids">
+                <a href="#" @click.prevent="selectResult(...id)">
+                    {{ id[1] }}
+                </a>
+            </li>
+            <li v-if="!limitReached">
+                <a href="#" @click.prevent="loadMore">Load more</a>
             </li>
         </ul>
-
-        <p class="extra" v-if="!limitReached">
-            <a href="#" @click.prevent="loadMore">Load more</a>
-        </p>
     </Modal>
 </template>
 
@@ -121,20 +126,18 @@ ul {
     padding: 0;
     cursor: pointer;
     margin: 0;
+    max-height: 20rem;
+    overflow: auto;
 
     li {
         box-sizing: border-box;
-        color: @light_blue;
         font-size: 0.8rem;
         padding: 0.5rem;
         list-style: none;
-    }
-}
 
-p.extra {
-    box-sizing: border-box;
-    font-size: 0.8rem;
-    margin: 0;
-    padding: 0.5rem;
+        a {
+            text-decoration: none;
+        }
+    }
 }
 </style>
