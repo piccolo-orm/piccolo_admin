@@ -20,6 +20,7 @@
             v-show="showModal"
             :tableName="tableName"
             @close="showModal = false"
+            @update="handleUpdate($event)"
         />
     </div>
 </template>
@@ -44,6 +45,13 @@ export default {
             selectedValue: undefined,
             hiddenSelectedValue: undefined,
             showModal: false
+        }
+    },
+    methods: {
+        handleUpdate(event) {
+            this.selectedValue = event.readable
+            this.hiddenSelectedValue = event.id
+            this.showModal = false
         }
     },
     components: {

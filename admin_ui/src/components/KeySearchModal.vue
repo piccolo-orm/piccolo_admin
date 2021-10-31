@@ -10,22 +10,8 @@
         </div>
 
         <ul>
-            <li
-                v-on:click="
-                    selectResult(null)
-                    $emit('close')
-                "
-            >
-                None
-            </li>
-            <li
-                :key="id[0]"
-                v-for="id in ids"
-                v-on:click="
-                    selectResult(...id)
-                    $emit('close')
-                "
-            >
+            <li v-on:click="selectResult(null, 'Null')">None</li>
+            <li :key="id[0]" v-for="id in ids" v-on:click="selectResult(...id)">
                 {{ id[1] }}
             </li>
         </ul>
@@ -95,6 +81,8 @@ export default {
         selectResult(id, readable) {
             this.selectedValue = readable
             this.hiddenSelectedValue = id
+
+            this.$emit("update", { id, readable })
         }
     },
     watch: {
