@@ -189,6 +189,8 @@ movie_config = TableConfig(
         Movie.name,
         Movie.rating,
         Movie.director,
+        Movie.duration,
+        Movie.genre,
     ],
 )
 

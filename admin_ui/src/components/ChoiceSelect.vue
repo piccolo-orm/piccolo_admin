@@ -25,27 +25,32 @@ export default Vue.extend({
     props: {
         fieldName: {
             type: String,
-            default: "",
+            default: ""
         },
         value: {
             type: undefined,
-            default: undefined,
+            default: undefined
         },
         choices: {
             type: Object as PropType<Choices>,
             default: () => {
                 return {}
-            },
+            }
         },
         isNullable: {
             type: Boolean,
-            default: false,
+            default: false
         },
         isFilter: {
             type: Boolean,
-            default: false,
-        },
+            default: false
+        }
     },
+    mounted() {
+        if (this.isFilter) {
+            this.value = "all"
+        }
+    }
 })
 </script>
 
