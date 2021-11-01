@@ -1,5 +1,8 @@
 <template>
-    <Modal @close="$emit('close')" title="Select a result">
+    <Modal
+        @close="$emit('close')"
+        :title="`Select a row from ${readableTableName}`"
+    >
         <div class="input_wrapper">
             <font-awesome-icon icon="search" />
             <input
@@ -39,6 +42,7 @@
 <script lang="ts">
 import { FetchIdsConfig } from "../interfaces"
 import Modal from "./Modal.vue"
+import { titleCase } from "../utils"
 
 const PAGE_SIZE = 5
 
@@ -65,6 +69,11 @@ export default {
     },
     components: {
         Modal
+    },
+    computed: {
+        readableTableName() {
+            return titleCase(this.tableName.split("_").join(" "))
+        }
     },
     methods: {
         async fetchData() {
