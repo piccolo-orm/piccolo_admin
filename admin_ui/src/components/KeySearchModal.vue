@@ -59,7 +59,8 @@ export default {
             ids: [],
             offset: 0,
             limitReached: false,
-            searchTerm: ""
+            searchTerm: "",
+            debounceTimer: null
         }
     },
     components: {
@@ -105,8 +106,17 @@ export default {
             this.ids = await this.fetchData()
         },
         async searchTerm() {
-            this.offset = 0
-            this.ids = await this.fetchData()
+            // We debounce it, to reduce the number of API calls.
+            if (this.debounceTimer) {
+                clearTimeout(this.debounceTimer)
+            }
+
+            let app = this
+
+            this.debounceTimer = setTimeout(async () => {
+                app.offset = 0
+                app.ids = await app.fetchData()
+            }, 300)
         }
     },
     async mounted() {
