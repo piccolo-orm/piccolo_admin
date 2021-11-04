@@ -4,9 +4,13 @@ Welcome to Piccolo Admin's documentation
 `Piccolo Admin <https://github.com/piccolo-orm/piccolo_admin>`_ provides a simple yet powerful admin interface on top of Piccolo tables
 - allowing you to easily add / edit / filter your data.
 
-`Try it online <https://demo1.piccolo-orm.com/#/login?nextURL=%2F>`_ (username: piccolo, password: piccolo123).
-
 .. image:: https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png
+
+It was created at a design agency to serve the needs of customers who demand a high quality, beautiful admin interface for their websites. Our goal is to create a world class admin interface, akin to Wordpress or Django.
+
+It's built using the latest technologies, with Vue JS on the front end, and a modern REST backend.
+
+`Try it online <https://demo1.piccolo-orm.com/#/login?nextURL=%2F>`_ (username: piccolo, password: piccolo123).
 
 .. toctree::
    :maxdepth: 1
