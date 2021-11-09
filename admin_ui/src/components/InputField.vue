@@ -1,10 +1,7 @@
 <template>
     <div>
         <template v-if="choices">
-            <OperatorField
-                :fieldName="getFieldName(title)"
-                v-if="isFilter"
-            />
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <ChoiceSelect
                 :choices="choices"
                 :fieldName="getFieldName(title)"
@@ -15,10 +12,7 @@
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField
-                :fieldName="getFieldName(title)"
-                v-if="isFilter"
-            />
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <input
                 step="1"
                 type="number"
@@ -34,16 +28,12 @@
                     :fieldName="getFieldName(title)"
                     v-if="isFilter"
                 />
-                <!--
-                `disableMobile` is very poorly named - setting it to 'true'
-                enables the picker on mobile devices. It doesn't work great on
-                iOS, so an alternative picker is needed.
-                -->
-                <flat-pickr
-                    v-bind:config="{ enableTime: true, disableMobile: 'true' }"
+                <datetime
+                    type="datetime"
                     v-bind:name="getFieldName(title)"
                     v-model="localValue"
-                ></flat-pickr>
+                    format="yyyy-dd-MM HH:mm"
+                ></datetime>
             </template>
 
             <div v-else-if="format == 'text-area' && isFilter == false">
@@ -84,20 +74,22 @@
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
                     value="all"
-                >All</option>
+                >
+                    All
+                </option>
                 <option
                     v-bind:selected="value == null"
                     v-if="isNullable"
                     value="null"
-                >Null</option>
-                <option
-                    v-bind:selected="value == true"
-                    value="true"
-                >True</option>
-                <option
-                    v-bind:selected="value == false"
-                    value="false"
-                >False</option>
+                >
+                    Null
+                </option>
+                <option v-bind:selected="value == true" value="true">
+                    True
+                </option>
+                <option v-bind:selected="value == false" value="false">
+                    False
+                </option>
             </select>
         </template>
 
@@ -148,7 +140,8 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 
-import flatPickr from "vue-flatpickr-component"
+import { Datetime } from "vue-datetime"
+import "vue-datetime/dist/vue-datetime.css"
 
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
@@ -160,49 +153,49 @@ export default Vue.extend({
     props: {
         title: {
             type: String,
-            default: "",
+            default: ""
         },
         type: {
             type: String,
-            default: "string",
+            default: "string"
         },
         value: {
             type: undefined,
-            default: undefined,
+            default: undefined
         },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
         format: String,
         isFilter: {
             type: Boolean,
-            default: true,
+            default: true
         },
         isNullable: {
             type: Boolean,
-            default: false,
+            default: false
         },
         choices: {
             type: Object as PropType<Choices>,
-            default: null,
-        },
+            default: null
+        }
     },
     components: {
-        flatPickr,
+        datetime: Datetime,
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
-        OperatorField,
+        OperatorField
     },
     data() {
         return {
             localValue: undefined,
-            textareaHeight: "50px",
+            textareaHeight: "50px"
         }
     },
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
-        },
+        }
     },
     methods: {
         getFieldName(name: string) {
@@ -218,13 +211,13 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
-        },
+        }
     },
     watch: {
         value() {
             this.localValue = this.value
             this.setTextareaHeight()
-        },
+        }
     },
     mounted() {
         this.localValue = this.value
@@ -233,7 +226,7 @@ export default Vue.extend({
         setTimeout(function () {
             app.setTextareaHeight()
         }, 0)
-    },
+    }
 })
 </script>
 
@@ -241,10 +234,5 @@ export default Vue.extend({
 pre {
     white-space: pre-wrap;
     word-break: break-all;
-}
-input.flatpicker-input {
-    box-sizing: border-box;
-    padding: 0.5rem;
-    width: 100%;
 }
 </style>

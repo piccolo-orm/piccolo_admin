@@ -3,9 +3,7 @@
         <option v-bind:selected="value == 'all'" v-if="isFilter" value="all">
             All
         </option>
-        <option v-bind:selected="value == null" v-if="isNullable" value="null">
-            Null
-        </option>
+        <option v-if="isNullable" value="null">Null</option>
         <option
             v-for="(item, key) in choices"
             :key="key"
@@ -44,11 +42,6 @@ export default Vue.extend({
         isFilter: {
             type: Boolean,
             default: false
-        }
-    },
-    mounted() {
-        if (this.isFilter) {
-            this.value = "all"
         }
     }
 })
