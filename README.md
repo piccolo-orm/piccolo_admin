@@ -1,4 +1,4 @@
-![Logo](docs/logo_hero.png "Piccolo Admin Logo")
+![Logo](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/logo_hero.png "Piccolo Admin Logo")
 
 # Piccolo Admin
 
