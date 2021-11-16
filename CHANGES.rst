@@ -8,7 +8,7 @@ Fixed a bug where resetting the filters in the sidebar would set them to
 
 0.18.1
 ------
-Update description.
+Updated description.
 
 0.18.0
 ------
