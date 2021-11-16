@@ -5,7 +5,9 @@
             :selected="operator.value == 'e'"
             :value="operator.value"
             v-for="operator in operators"
-        >{{ operator.label }}</option>
+        >
+            {{ operator.label }}
+        </option>
     </select>
 </template>
 
@@ -18,16 +20,16 @@ export default {
         return {
             operators: [
                 {
+                    label: "Equals",
+                    value: "e"
+                },
+                {
                     label: "Less Than",
                     value: "lt"
                 },
                 {
                     label: "Less Than or Equal To",
                     value: "lte"
-                },
-                {
-                    label: "Equals",
-                    value: "e"
                 },
                 {
                     label: "Greater Than or Equal To",
