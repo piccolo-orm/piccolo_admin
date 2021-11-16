@@ -8,7 +8,8 @@ Fixed a bug where resetting the filters in the sidebar would set them to
 
 0.18.1
 ------
-Updated description.
+Fixed a bug where a filter for a column with choices would default to
+``'Null'`` instead of ``'All'``.
 
 0.18.0
 ------
