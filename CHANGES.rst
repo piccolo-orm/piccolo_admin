@@ -1,10 +1,14 @@
 Changes
 =======
 
-0.18.1
+0.18.2
 ------
 Fixed a bug where resetting the filters in the sidebar would set them to
 ``less than``. Now they reset to ``equals``. Courtesy @sinisaos.
+
+0.18.1
+------
+Update description.
 
 0.18.0
 ------
