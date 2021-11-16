@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.18.1
+------
+Fixed a bug where resetting the filters in the sidebar would set them to
+``less than``. Now they reset to ``equals``. Courtesy @sinisaos.
+
 0.18.0
 ------
 Added a ``visible_filters`` option to ``TableConfig``, allowing the user to
