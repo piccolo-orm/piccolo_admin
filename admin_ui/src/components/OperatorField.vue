@@ -8,10 +8,11 @@
         >
             {{ operator.label }}
         </option>
+        <option v-if="isNullable(fieldName)" value="null">Null</option>
     </select>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     props: {
         fieldName: String
@@ -40,6 +41,17 @@ export default {
                     value: "gt"
                 }
             ]
+        }
+    },
+    computed: {
+        schema() {
+            return this.$store.state.schema
+        }
+    },
+    methods: {
+        isNullable(name: string) {
+            let property = this.schema.properties[name]
+            return property != undefined ? property.nullable : false
         }
     }
 }

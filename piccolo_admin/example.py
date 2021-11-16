@@ -85,7 +85,7 @@ class Movie(Table):
 
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
-    duration = Interval()
+    duration = Interval(null=True)
     director = ForeignKey(references=Director)
     oscar_nominations = Integer()
     won_oscar = Boolean()
