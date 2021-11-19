@@ -30,7 +30,8 @@ export default new Vuex.Store({
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
         formConfigs: [] as i.FormConfig[],
-        user: undefined
+        user: undefined,
+        loadingStatus: false
     },
     mutations: {
         updateTableNames(state, value) {
@@ -84,6 +85,9 @@ export default new Vuex.Store({
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
             localStorage.setItem('darkMode', String(enabled))
+        },
+        updateLoadingStatus(state, value) {
+            state.loadingStatus = value
         }
     },
     actions: {
@@ -144,6 +148,7 @@ export default new Vuex.Store({
             params['__page'] = context.state.currentPageNumber
 
             try {
+                context.commit('updateLoadingStatus', true)
                 const response = await axios.get(
                     `${BASE_URL}tables/${tableName}/?__readable=true`,
                     {
@@ -151,6 +156,7 @@ export default new Vuex.Store({
                     }
                 )
                 context.commit('updateRows', response.data.rows)
+                context.commit('updateLoadingStatus', false)
             } catch (error) {
                 console.log(error.response)
                 context.commit('updateApiResponseMessage', {

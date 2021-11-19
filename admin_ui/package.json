@@ -28,6 +28,7 @@
     "vue-json-excel": "^0.3.0",
     "vue-property-decorator": "^8.5.1",
     "vue-router": "^3.5.1",
+    "vue-simple-spinner": "^1.2.10",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
