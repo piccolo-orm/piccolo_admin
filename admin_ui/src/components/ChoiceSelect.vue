@@ -46,9 +46,17 @@ export default Vue.extend({
             default: false
         }
     },
+    data() {
+        return {
+            localValue: ""
+        }
+    },
     mounted() {
-        if (this.isFilter) {
-            this.value = "all"
+        this.localValue = this.isFilter ? "all" : this.value
+    },
+    watch: {
+        value(newValue) {
+            this.localValue = newValue
         }
     }
 })
