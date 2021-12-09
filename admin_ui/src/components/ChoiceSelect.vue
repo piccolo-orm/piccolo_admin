@@ -1,5 +1,5 @@
 <template>
-    <select v-bind:name="fieldName">
+    <select v-bind:name="fieldName" v-model="localValue">
         <option v-bind:selected="value == 'all'" v-if="isFilter" value="all">
             All
         </option>
