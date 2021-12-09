@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.19.1
+------
+Fixed a bug where a filter for a column with choices defined would default to
+``Null`` instead of ``All``.
+
 0.19.0
 ------
 Added new UI for the foreign key selector.
