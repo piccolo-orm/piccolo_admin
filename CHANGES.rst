@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.19.0
+------
+Added new UI for the foreign key selector.
+
 0.18.2
 ------
 Fixed a bug where resetting the filters in the sidebar would set them to
