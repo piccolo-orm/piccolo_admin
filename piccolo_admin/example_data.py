@@ -259,7 +259,7 @@ MOVIES = [
         "genre": 1,
     },
     {
-        "name": "The Lord of the Rings - The Return of the King",
+        "name": "The Lord of the Rings: The Return of the King",
         "rating": 93.0,
         "duration": datetime.timedelta(minutes=201),
         "director": 1,
