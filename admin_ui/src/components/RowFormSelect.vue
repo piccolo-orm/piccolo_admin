@@ -16,7 +16,7 @@
                     <router-link
                         :to="{
                             name: 'addRow',
-                            params: { tableName: property.extra.to },
+                            params: { tableName: property.extra.to }
                         }"
                         class="add"
                         target="_blank"
@@ -30,8 +30,8 @@
                             name: 'editRow',
                             params: {
                                 tableName: property.extra.to,
-                                rowID: getKeySelectID(property.title),
-                            },
+                                rowID: getKeySelectID(property.title)
+                            }
                         }"
                         class="add"
                         target="_blank"
@@ -46,6 +46,7 @@
                     v-bind:tableName="property.extra.to"
                     v-bind:rowID="getValue(property.title)"
                     v-bind:readable="getValue(property.title + '_readable')"
+                    v-bind:isNullable="property.nullable"
                 />
             </template>
             <template v-else>
@@ -86,19 +87,19 @@ export default Vue.extend({
         schema: Object,
         isFilter: {
             type: Boolean,
-            default: false,
-        },
+            default: false
+        }
     },
     components: {
         InputField,
         KeySearch,
-        Tooltip,
+        Tooltip
     },
     data() {
         return {
             keySelectIDs: {},
             baseIndex: 1,
-            windowListener: undefined,
+            windowListener: undefined
         }
     },
     methods: {
@@ -126,7 +127,7 @@ export default Vue.extend({
                 !this.isFilter &&
                 (this.schema.required || []).indexOf(keyName) != -1
             )
-        },
+        }
     },
     mounted() {
         window.addEventListener("message", receiveMessage, false)
@@ -145,7 +146,7 @@ export default Vue.extend({
         if (this.windowListener) {
             window.removeEventListener("message", this.windowListener)
         }
-    },
+    }
 })
 </script>
 
