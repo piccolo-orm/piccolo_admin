@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
-import pydantic
 from fastapi import FastAPI
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.reference import LazyTableReference
@@ -181,7 +180,7 @@ class FormConfig:
     name: str
     pydantic_model: t.Type[BaseModel]
     endpoint: t.Callable[
-        [Request, pydantic.BaseModel],
+        [Request, BaseModel],
         t.Union[str, None, t.Coroutine],
     ]
     description: t.Optional[str] = None
