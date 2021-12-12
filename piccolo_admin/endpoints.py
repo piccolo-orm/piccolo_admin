@@ -526,7 +526,7 @@ def get_all_tables(
 
 def create_admin(
     tables: t.Sequence[t.Union[t.Type[Table], TableConfig]],
-    forms: t.List = [],
+    forms: t.List[FormConfig] = [],
     auth_table: t.Type[BaseUser] = BaseUser,
     session_table: t.Type[SessionsBase] = SessionsBase,
     session_expiry: timedelta = timedelta(hours=1),
@@ -543,33 +543,36 @@ def create_admin(
     """
     :param tables:
         Each of the tables will be added to the admin.
+    :param forms:
+        For each ``FormConfig`` specified, a form will automatically be
+        rendered in the user interface, accessible via the sidebar.
     :param auth_table:
-        Either a BaseUser, or BaseUser subclass table, which is used for
-        fetching users.
+        Either a ``BaseUser``, or ``BaseUser`` subclass table, which is used
+        for fetching users.
     :param session_table:
-        Either a SessionBase, or SessionBase subclass table, which is used
-        for storing and querying session tokens.
+        Either a ``SessionBase``, or ``SessionBase`` subclass table, which is
+        used for storing and querying session tokens.
     :param session_expiry:
         How long a session is valid for.
     :param max_session_expiry:
         The maximum time a session is valid for, taking into account any
-        refreshes using `increase_expiry`.
+        refreshes using ``increase_expiry``.
     :param increase_expiry:
-        If set, the `session_expiry` will be increased by this amount if it's
+        If set, the ``session_expiry`` will be increased by this amount if it's
         close to expiry.
     :param page_size:
         The admin API paginates content - this sets the default number of
         results on each page.
     :param read_only:
-        If True, all non auth endpoints only respond to GET requests - the
+        If ``True``, all non auth endpoints only respond to GET requests - the
         admin can still be viewed, and the data can be filtered. Useful for
         creating online demos.
     :param rate_limit_provider:
         Rate limiting middleware is used to protect the login endpoint
-        against brute force attack. If not set, an InMemoryLimitProvider
+        against brute force attack. If not set, an ``InMemoryLimitProvider``
         will be configured with reasonable defaults.
     :param production:
-        If True, the admin will enforce stronger security - for example,
+        If ``True``, the admin will enforce stronger security - for example,
         the cookies used will be secure, meaning they are only sent over
         HTTPS.
     :param site_name:
@@ -581,7 +584,8 @@ def create_admin(
     :param allowed_hosts:
         This is used by the CSRF middleware as an additional layer of
         protection when the admin is run under HTTPS. It must be a sequence of
-        strings, such as ['my_site.com'].
+        strings, such as ``['my_site.com']``.
+
     """
 
     if auto_include_related:
