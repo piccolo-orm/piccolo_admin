@@ -45,6 +45,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Database :: Front-Ends",
-        "Topic :: Internet :: WWW/HTTP :: Content Management System"
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System"  # noqa: E501
     ],
 )
