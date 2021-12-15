@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.19.2
+------
+The ``textarea`` and ``button`` elements were using the browser's default font,
+instead of our custom font.
+
+Improved the docstring for ``create_admin``.
+
 0.19.1
 ------
 Fixed a bug where a filter for a column with choices defined would default to
