@@ -1,8 +1,5 @@
 <template>
-    <div v-if="loadingStatus" class="loading-spinner">
-        <vue-spinner size="medium" message="Loading data" />
-    </div>
-    <div v-else class="base_view">
+    <div class="base_view">
         <NavBar :username="username" :siteName="siteName" />
         <div class="wrapper">
             <div class="sidebar_wrapper">
@@ -16,15 +13,13 @@
 
 <script lang="ts">
 import Vue from "vue"
-import Spinner from "vue-simple-spinner"
 import NavBar from "../components/NavBar.vue"
 import SidebarNav from "../components/SidebarNav.vue"
 
 export default Vue.extend({
     components: {
         NavBar,
-        SidebarNav,
-        vueSpinner: Spinner
+        SidebarNav
     },
     computed: {
         username() {
@@ -33,9 +28,6 @@ export default Vue.extend({
         },
         siteName() {
             return this.$store.state.metaModule.siteName
-        },
-        loadingStatus() {
-            return this.$store.state.loadingStatus
         }
     }
 })

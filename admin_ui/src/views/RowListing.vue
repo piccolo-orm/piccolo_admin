@@ -59,8 +59,11 @@
                 </p>
 
                 <p v-if="rows.length == 0">No results found</p>
+                <p v-if="loadingStatus" class="loading-spinner">
+                    <vue-spinner size="medium" message="Loading data" />
+                </p>
                 <table v-else>
-                    <tr>
+                    <tr v-if="rows.length > 0">
                         <th>
                             <input
                                 type="checkbox"
@@ -192,11 +195,11 @@
                         </td>
                     </tr>
                 </table>
-                <p id="result_count">
+                <p v-if="rows.length > 0" id="result_count">
                     Showing {{ rows.length }} of {{ rowCount }} result(s)
                 </p>
 
-                <div class="pagination_wrapper">
+                <div v-if="rows.length > 0" class="pagination_wrapper">
                     <Pagination :tableName="tableName" />
                     <ChangePageSize />
                 </div>
@@ -230,6 +233,7 @@
 
 <script lang="ts">
 import Vue from "vue"
+import Spinner from "vue-simple-spinner"
 import { readableInterval } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
@@ -268,7 +272,8 @@ export default Vue.extend({
         ChangePageSize,
         RowFilter,
         RowSortModal,
-        Tooltip
+        Tooltip,
+        vueSpinner: Spinner
     },
     computed: {
         cellNames() {
@@ -295,6 +300,9 @@ export default Vue.extend({
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
+        },
+        loadingStatus() {
+            return this.$store.state.loadingStatus
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
