@@ -1,15 +1,19 @@
 <template>
     <div id="overlay">
         <div class="modal opaque">
-            <p class="close">
-                <a
-                    class="subtle"
-                    href="#"
-                    v-on:click.prevent="$emit('close')"
-                >
-                    <font-awesome-icon icon="times" />
-                </a>
-            </p>
+            <div class="heading">
+                <h1>{{ title }}</h1>
+
+                <p class="close">
+                    <a
+                        class="subtle"
+                        href="#"
+                        v-on:click.prevent="$emit('close')"
+                    >
+                        <font-awesome-icon icon="times" />
+                    </a>
+                </p>
+            </div>
 
             <slot></slot>
         </div>
@@ -17,7 +21,14 @@
 </template>
 
 <script>
-export default {}
+export default {
+    props: {
+        title: {
+            type: String,
+            default: "",
+        },
+    },
+}
 </script>
 
 <style scoped lang="less">
@@ -44,8 +55,15 @@ div#overlay {
             display: block;
         }
 
-        p.close {
-            text-align: right;
+        div.heading {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            h1 {
+                flex-grow: 1;
+                font-size: 1.2rem;
+            }
         }
     }
 }

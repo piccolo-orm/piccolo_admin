@@ -1,6 +1,22 @@
 Changes
 =======
 
+0.19.2
+------
+The ``textarea`` and ``button`` elements were using the browser's default font,
+instead of our custom font.
+
+Improved the docstring for ``create_admin``.
+
+0.19.1
+------
+Fixed a bug where a filter for a column with choices defined would default to
+``Null`` instead of ``All``.
+
+0.19.0
+------
+Added new UI for the foreign key selector.
+
 0.18.2
 ------
 Fixed a bug where resetting the filters in the sidebar would set them to
@@ -8,7 +24,8 @@ Fixed a bug where resetting the filters in the sidebar would set them to
 
 0.18.1
 ------
-Updated description.
+Fixed a bug where a filter for a column with choices would default to
+``'Null'`` instead of ``'All'``.
 
 0.18.0
 ------

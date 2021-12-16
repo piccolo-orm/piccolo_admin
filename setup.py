@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from setuptools import find_packages, setup
 
 from piccolo_admin.version import __VERSION__ as VERSION
-
 
 directory = os.path.abspath(os.path.dirname(__file__))
 
@@ -43,7 +43,10 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
-        "Topic :: Database",
+        "Topic :: Database :: Front-Ends",
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System"  # noqa: E501
     ],
 )

@@ -20,7 +20,7 @@
                         <router-link
                             :to="{
                                 name: 'addRow',
-                                params: { tableName: tableName },
+                                params: { tableName: tableName }
                             }"
                             class="button"
                             v-on:click.prevent="showAddRow = true"
@@ -94,8 +94,8 @@
                                         name: 'editRow',
                                         params: {
                                             tableName: tableName,
-                                            rowID: row[name],
-                                        },
+                                            rowID: row[name]
+                                        }
                                     }"
                                     >{{ row[name] }}</router-link
                                 >
@@ -114,8 +114,8 @@
                                         name: 'editRow',
                                         params: {
                                             tableName: getTableName(name),
-                                            rowID: row[name],
-                                        },
+                                            rowID: row[name]
+                                        }
                                     }"
                                     >{{ row[name + "_readable"] }}</router-link
                                 >
@@ -169,8 +169,8 @@
                                                 name: 'editRow',
                                                 params: {
                                                     tableName: tableName,
-                                                    rowID: row.id,
-                                                },
+                                                    rowID: row.id
+                                                }
                                             }"
                                             class="subtle"
                                             title="Edit Row"
@@ -230,7 +230,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import { readableFormat } from "../utils"
+import { readableInterval } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
@@ -254,7 +254,7 @@ export default Vue.extend({
             showAddRow: false,
             showFilter: false,
             showSort: false,
-            visibleDropdown: null,
+            visibleDropdown: null
         }
     },
     components: {
@@ -268,7 +268,7 @@ export default Vue.extend({
         ChangePageSize,
         RowFilter,
         RowSortModal,
-        Tooltip,
+        Tooltip
     },
     computed: {
         cellNames() {
@@ -323,7 +323,7 @@ export default Vue.extend({
                 }
             }
             return output
-        },
+        }
     },
     filters: {
         abbreviate(value) {
@@ -339,11 +339,11 @@ export default Vue.extend({
             return string
         },
         humanReadable(value) {
-            return readableFormat(value)
+            return readableInterval(value)
         },
         formatJSON(value) {
             return JSON.stringify(JSON.parse(value), null, 2)
-        },
+        }
     },
     methods: {
         isForeignKey(name: string) {
@@ -386,7 +386,7 @@ export default Vue.extend({
                 console.log("Deleting!")
                 await this.$store.dispatch("deleteRow", {
                     tableName: this.tableName,
-                    rowID,
+                    rowID
                 })
                 await this.fetchRows()
             }
@@ -397,7 +397,7 @@ export default Vue.extend({
                 for (let i = 0; i < this.selectedRows.length; i++) {
                     await this.$store.dispatch("deleteRow", {
                         tableName: this.tableName,
-                        rowID: this.selectedRows[i],
+                        rowID: this.selectedRows[i]
                     })
                 }
                 await this.fetchRows()
@@ -408,7 +408,7 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
-        },
+        }
     },
     watch: {
         "$route.params.tableName": async function () {
@@ -425,7 +425,7 @@ export default Vue.extend({
         },
         rows() {
             this.resetRowCheckbox()
-        },
+        }
     },
     async mounted() {
         this.$store.commit("updateCurrentTablename", this.tableName)
@@ -436,7 +436,7 @@ export default Vue.extend({
         )
 
         await Promise.all([this.fetchRows(), this.fetchSchema()])
-    },
+    }
 })
 </script>
 
