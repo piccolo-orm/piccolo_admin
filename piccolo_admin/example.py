@@ -104,7 +104,7 @@ class Studio(Table, help_text="A movie studio."):
 
 class BusinessEmailModel(BaseModel):
     email: str
-    title: str
+    title: str = 'Enquiry'
     content: str
 
     @validator("email")
@@ -117,7 +117,7 @@ class BusinessEmailModel(BaseModel):
 class BookingModel(BaseModel):
     email: str
     name: str
-    notes: str
+    notes: str = 'N/A'
 
     @validator("email")
     def validate_email(cls, v):

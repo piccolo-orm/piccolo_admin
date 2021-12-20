@@ -10,6 +10,7 @@
                 v-bind:key="keyName"
                 v-bind:title="property.title"
                 v-bind:type="property.type || property.anyOf[0].type"
+                v-bind:value="property.default"
             />
         </div>
     </div>
