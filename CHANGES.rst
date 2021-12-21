@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.19.3
+------
+Improved the UI when the network is slow (courtesy @sinisaos).
+
+With ``FormConfig``, if the Pydantic model has a default value provided, this
+is rendered in the form UI (thanks to @simplynail for this idea).
+
+
 0.19.2
 ------
 The ``textarea`` and ``button`` elements were using the browser's default font,
