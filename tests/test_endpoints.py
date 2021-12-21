@@ -195,10 +195,14 @@ class TestForms(TestCase):
                 "type": "object",
                 "properties": {
                     "email": {"title": "Email", "type": "string"},
-                    "title": {"title": "Title", "type": "string"},
+                    "title": {
+                        "default": "Enquiry",
+                        "title": "Title",
+                        "type": "string",
+                    },
                     "content": {"title": "Content", "type": "string"},
                 },
-                "required": ["email", "title", "content"],
+                "required": ["email", "content"],
             },
         )
         response = client.get("/api/forms/email-form/schema/")

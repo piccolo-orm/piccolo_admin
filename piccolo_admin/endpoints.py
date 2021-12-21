@@ -156,7 +156,7 @@ class FormConfig:
     .. code-block:: python
 
         class MyModel(pydantic.BaseModel):
-            message: str
+            message: str = "hello world"
 
         def my_endpoint(request: Request, data: MyModel):
             print(f"I received {data.message}")
