@@ -68,7 +68,7 @@ export default new Vuex.Store({
             state.sortBy = null
             state.filterParams = {}
             state.currentPageNumber = 1
-            state.rows = []
+            state.rows = null
         },
         updateFilterParams(state, config: object) {
             state.filterParams = config
@@ -127,6 +127,7 @@ export default new Vuex.Store({
             return data
         },
         async fetchRows(context) {
+            context.commit('updateLoadingStatus', true)
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
@@ -148,7 +149,6 @@ export default new Vuex.Store({
             params['__page'] = context.state.currentPageNumber
 
             try {
-                context.commit('updateLoadingStatus', true)
                 const response = await axios.get(
                     `${BASE_URL}tables/${tableName}/?__readable=true`,
                     {
@@ -156,7 +156,6 @@ export default new Vuex.Store({
                     }
                 )
                 context.commit('updateRows', response.data.rows)
-                context.commit('updateLoadingStatus', false)
             } catch (error) {
                 console.log(error.response)
                 context.commit('updateApiResponseMessage', {
@@ -164,6 +163,7 @@ export default new Vuex.Store({
                     type: 'error'
                 })
             }
+            context.commit('updateLoadingStatus', false)
         },
         async fetchTableReferences(context, tableName: string) {
             const response = await axios.get(
