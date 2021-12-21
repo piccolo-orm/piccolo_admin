@@ -63,7 +63,7 @@
                     <vue-spinner size="medium" message="Loading data" />
                 </p>
                 <table v-else>
-                    <tr v-if="rows.length > 0">
+                    <tr>
                         <th>
                             <input
                                 type="checkbox"
@@ -195,11 +195,11 @@
                         </td>
                     </tr>
                 </table>
-                <p v-if="rows.length > 0" id="result_count">
+                <p id="result_count">
                     Showing {{ rows.length }} of {{ rowCount }} result(s)
                 </p>
 
-                <div v-if="rows.length > 0" class="pagination_wrapper">
+                <div class="pagination_wrapper">
                     <Pagination :tableName="tableName" />
                     <ChangePageSize />
                 </div>
