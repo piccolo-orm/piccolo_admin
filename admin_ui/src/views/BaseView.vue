@@ -19,7 +19,7 @@ import SidebarNav from "../components/SidebarNav.vue"
 export default Vue.extend({
     components: {
         NavBar,
-        SidebarNav,
+        SidebarNav
     },
     computed: {
         username() {
@@ -28,8 +28,8 @@ export default Vue.extend({
         },
         siteName() {
             return this.$store.state.metaModule.siteName
-        },
-    },
+        }
+    }
 })
 </script>
 

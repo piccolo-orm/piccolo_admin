@@ -58,147 +58,160 @@
                     <b>page {{ currentPageNumber }}</b>
                 </p>
 
-                <p v-if="rows.length == 0">No results found</p>
-                <table v-else>
-                    <tr>
-                        <th>
-                            <input
-                                type="checkbox"
-                                v-model="allSelected"
-                                v-on:change="selectAllRows"
-                            />
-                        </th>
-                        <th v-bind:key="name" v-for="name in cellNames">
-                            {{
-                                schema.properties[name]
-                                    ? schema.properties[name].title
-                                    : name
-                            }}
-                        </th>
-                        <th></th>
-                    </tr>
+                <div class="table_wrapper">
+                    <transition name="fade">
+                        <p v-show="loadingStatus" id="loading_indicator">Loading ...</p>
+                    </transition>
 
-                    <tr v-bind:key="row.id" v-for="row in rows">
-                        <td>
-                            <input
-                                :value="row.id"
-                                @click="selectRow"
-                                type="checkbox"
-                                v-model="selectedRows"
-                            />
-                        </td>
-                        <td v-bind:key="name" v-for="name in cellNames">
-                            <span class="link" v-if="name == 'id'">
-                                <router-link
-                                    :to="{
-                                        name: 'editRow',
-                                        params: {
-                                            tableName: tableName,
-                                            rowID: row[name]
-                                        }
-                                    }"
-                                    >{{ row[name] }}</router-link
-                                >
-                            </span>
-                            <span v-else-if="choicesLookup[name]">
-                                {{ choicesLookup[name][row[name]] }}
-                            </span>
-                            <span
-                                class="link"
-                                v-else-if="
-                                    isForeignKey(name) & (row[name] !== null)
-                                "
-                            >
-                                <router-link
-                                    :to="{
-                                        name: 'editRow',
-                                        params: {
-                                            tableName: getTableName(name),
-                                            rowID: row[name]
-                                        }
-                                    }"
-                                    >{{ row[name + "_readable"] }}</router-link
-                                >
-                            </span>
-                            <span class="boolean" v-else-if="isBoolean(name)">
-                                <font-awesome-icon
-                                    class="correct"
-                                    icon="check"
-                                    v-if="row[name] === true"
-                                />
-                                <font-awesome-icon
-                                    class="incorrect"
-                                    icon="times"
-                                    v-else
-                                />
-                            </span>
-                            <span v-else-if="isInterval(name)">
-                                {{ row[name] | humanReadable }}
-                            </span>
-                            <span v-else-if="isJSON(name)">
-                                <pre>{{
-                                    row[name] | formatJSON | abbreviate
-                                }}</pre>
-                            </span>
-                            <span v-else>{{ row[name] | abbreviate }}</span>
-                        </td>
+                    <transition name="fade">
+                        <div v-if="!loadingStatus && rows != undefined">
+                            <p v-if="rows.length == 0">No results found</p>
+                            <template v-else>
+                                <table>
+                                    <tr>
+                                        <th>
+                                            <input
+                                                type="checkbox"
+                                                v-model="allSelected"
+                                                v-on:change="selectAllRows"
+                                            />
+                                        </th>
+                                        <th v-bind:key="name" v-for="name in cellNames">
+                                            {{
+                                                schema.properties[name]
+                                                    ? schema.properties[name].title
+                                                    : name
+                                            }}
+                                        </th>
+                                        <th></th>
+                                    </tr>
 
-                        <td>
-                            <span
-                                style="
-                                    position: relative;
-                                    display: block;
-                                    text-align: right;
-                                "
-                            >
-                                <a
-                                    class="subtle"
-                                    href="#"
-                                    v-on:click.prevent="
-                                        visibleDropdown = visibleDropdown
-                                            ? undefined
-                                            : row.id
-                                    "
-                                >
-                                    <font-awesome-icon icon="ellipsis-v" />
-                                </a>
-                                <DropDownMenu v-if="visibleDropdown == row.id">
-                                    <li>
-                                        <router-link
-                                            :to="{
-                                                name: 'editRow',
-                                                params: {
-                                                    tableName: tableName,
-                                                    rowID: row.id
-                                                }
-                                            }"
-                                            class="subtle"
-                                            title="Edit Row"
-                                        >
-                                            <font-awesome-icon
-                                                icon="edit"
-                                            />Edit
-                                        </router-link>
-                                    </li>
-                                    <li>
-                                        <DeleteButton
-                                            :includeTitle="true"
-                                            class="subtle delete"
-                                            v-on:triggered="deleteRow(row.id)"
-                                        />
-                                    </li>
-                                </DropDownMenu>
-                            </span>
-                        </td>
-                    </tr>
-                </table>
-                <p id="result_count">
-                    Showing {{ rows.length }} of {{ rowCount }} result(s)
-                </p>
+                                    <tr v-bind:key="row.id" v-for="row in rows">
+                                        <td>
+                                            <input
+                                                :value="row.id"
+                                                @click="selectRow"
+                                                type="checkbox"
+                                                v-model="selectedRows"
+                                            />
+                                        </td>
+                                        <td v-bind:key="name" v-for="name in cellNames">
+                                            <span class="link" v-if="name == 'id'">
+                                                <router-link
+                                                    :to="{
+                                                        name: 'editRow',
+                                                        params: {
+                                                            tableName: tableName,
+                                                            rowID: row[name]
+                                                        }
+                                                    }"
+                                                    >{{ row[name] }}</router-link
+                                                >
+                                            </span>
+                                            <span v-else-if="choicesLookup[name]">
+                                                {{ choicesLookup[name][row[name]] }}
+                                            </span>
+                                            <span
+                                                class="link"
+                                                v-else-if="
+                                                    isForeignKey(name) & (row[name] !== null)
+                                                "
+                                            >
+                                                <router-link
+                                                    :to="{
+                                                        name: 'editRow',
+                                                        params: {
+                                                            tableName: getTableName(name),
+                                                            rowID: row[name]
+                                                        }
+                                                    }"
+                                                    >{{ row[name + "_readable"] }}</router-link
+                                                >
+                                            </span>
+                                            <span class="boolean" v-else-if="isBoolean(name)">
+                                                <font-awesome-icon
+                                                    class="correct"
+                                                    icon="check"
+                                                    v-if="row[name] === true"
+                                                />
+                                                <font-awesome-icon
+                                                    class="incorrect"
+                                                    icon="times"
+                                                    v-else
+                                                />
+                                            </span>
+                                            <span v-else-if="isInterval(name)">
+                                                {{ row[name] | humanReadable }}
+                                            </span>
+                                            <span v-else-if="isJSON(name)">
+                                                <pre>{{
+                                                    row[name] | formatJSON | abbreviate
+                                                }}</pre>
+                                            </span>
+                                            <span v-else>{{ row[name] | abbreviate }}</span>
+                                        </td>
 
-                <div class="pagination_wrapper">
-                    <Pagination :tableName="tableName" />
-                    <ChangePageSize />
+                                        <td>
+                                            <span
+                                                style="
+                                                    position: relative;
+                                                    display: block;
+                                                    text-align: right;
+                                                "
+                                            >
+                                                <a
+                                                    class="subtle"
+                                                    href="#"
+                                                    v-on:click.prevent="
+                                                        visibleDropdown = visibleDropdown
+                                                            ? undefined
+                                                            : row.id
+                                                    "
+                                                >
+                                                    <font-awesome-icon icon="ellipsis-v" />
+                                                </a>
+                                                <DropDownMenu v-if="visibleDropdown == row.id">
+                                                    <li>
+                                                        <router-link
+                                                            :to="{
+                                                                name: 'editRow',
+                                                                params: {
+                                                                    tableName: tableName,
+                                                                    rowID: row.id
+                                                                }
+                                                            }"
+                                                            class="subtle"
+                                                            title="Edit Row"
+                                                        >
+                                                            <font-awesome-icon
+                                                                icon="edit"
+                                                            />Edit
+                                                        </router-link>
+                                                    </li>
+                                                    <li>
+                                                        <DeleteButton
+                                                            :includeTitle="true"
+                                                            class="subtle delete"
+                                                            v-on:triggered="deleteRow(row.id)"
+                                                        />
+                                                    </li>
+                                                </DropDownMenu>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <p id="result_count">
+                                    Showing {{ rows.length }} of {{ rowCount }} result(s)
+                                </p>
+
+                                <div class="pagination_wrapper">
+                                    <Pagination :tableName="tableName" />
+                                    <ChangePageSize />
+                                </div>
+                            </template>
+                        </div>
+                    </transition>
                 </div>
             </div>
 
@@ -295,6 +308,9 @@ export default Vue.extend({
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
+        },
+        loadingStatus() {
+            return this.$store.state.loadingStatus
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
@@ -527,83 +543,102 @@ div.wrapper {
         width: 100%;
         padding: 0.5rem 0.8rem;
 
-        table {
-            border-collapse: collapse;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: -1px 0px 2px 1px rgba(0, 0, 0, 0.1);
-            width: 100%;
+        div.table_wrapper {
+            position: relative;
 
-            tr {
-                text-align: left;
+            p#loading_indicator {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
 
-                span.boolean {
-                    padding-left: 0.5rem;
+            .fade-enter-active, .fade-leave-active {
+                transition: opacity 0.8s;
+            }
 
-                    svg.correct {
-                        color: @green;
+            .fade-enter, .fade-leave-to {
+                opacity: 0;
+                transition: opacity 0s;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: -1px 0px 2px 1px rgba(0, 0, 0, 0.1);
+                width: 100%;
+
+                tr {
+                    text-align: left;
+
+                    span.boolean {
+                        padding-left: 0.5rem;
+
+                        svg.correct {
+                            color: @green;
+                        }
+                        svg.incorrect {
+                            color: @red;
+                        }
                     }
-                    svg.incorrect {
-                        color: @red;
+                }
+                td {
+                    font-size: 0.9em;
+                }
+                th {
+                    font-size: 0.7em;
+                    text-transform: uppercase;
+
+                    &:last-child {
+                        text-align: right;
+                    }
+                }
+                td,
+                th {
+                    padding: 0.7rem;
+                }
+                td {
+                    &.last-child {
+                        text-align: right;
+                        width: auto;
+                    }
+
+                    a {
+                        text-decoration: none;
+
+                        &.delete:hover {
+                            color: @red;
+                        }
+                    }
+
+                    ul {
+                        padding: 0;
+                        text-align: right;
+                        min-width: 4rem;
+
+                        li {
+                            display: inline-block;
+                            margin-left: 0.5rem;
+                        }
                     }
                 }
             }
-            td {
-                font-size: 0.9em;
-            }
-            th {
-                font-size: 0.7em;
+
+            p#result_count,
+            p#selected_count {
+                font-size: 0.6em;
                 text-transform: uppercase;
-
-                &:last-child {
-                    text-align: right;
-                }
             }
-            td,
-            th {
-                padding: 0.7rem;
-            }
-            td {
-                &.last-child {
-                    text-align: right;
-                    width: auto;
-                }
 
-                a {
-                    text-decoration: none;
+            div.pagination_wrapper {
+                display: flex;
+                flex-direction: row;
 
-                    &.delete:hover {
-                        color: @red;
+                div {
+                    flex-grow: 1;
+
+                    &:last-child {
+                        flex-grow: 0;
                     }
-                }
-
-                ul {
-                    padding: 0;
-                    text-align: right;
-                    min-width: 4rem;
-
-                    li {
-                        display: inline-block;
-                        margin-left: 0.5rem;
-                    }
-                }
-            }
-        }
-
-        p#result_count,
-        p#selected_count {
-            font-size: 0.6em;
-            text-transform: uppercase;
-        }
-
-        div.pagination_wrapper {
-            display: flex;
-            flex-direction: row;
-
-            div {
-                flex-grow: 1;
-
-                &:last-child {
-                    flex-grow: 0;
                 }
             }
         }

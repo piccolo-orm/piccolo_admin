@@ -30,7 +30,8 @@ export default new Vuex.Store({
         sortBy: null as i.SortByConfig | null,
         tableNames: [],
         formConfigs: [] as i.FormConfig[],
-        user: undefined
+        user: undefined,
+        loadingStatus: false
     },
     mutations: {
         updateTableNames(state, value) {
@@ -67,7 +68,7 @@ export default new Vuex.Store({
             state.sortBy = null
             state.filterParams = {}
             state.currentPageNumber = 1
-            state.rows = []
+            state.rows = null
         },
         updateFilterParams(state, config: object) {
             state.filterParams = config
@@ -84,6 +85,9 @@ export default new Vuex.Store({
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
             localStorage.setItem('darkMode', String(enabled))
+        },
+        updateLoadingStatus(state, value) {
+            state.loadingStatus = value
         }
     },
     actions: {
@@ -123,6 +127,7 @@ export default new Vuex.Store({
             return data
         },
         async fetchRows(context) {
+            context.commit('updateLoadingStatus', true)
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
@@ -158,6 +163,7 @@ export default new Vuex.Store({
                     type: 'error'
                 })
             }
+            context.commit('updateLoadingStatus', false)
         },
         async fetchTableReferences(context, tableName: string) {
             const response = await axios.get(

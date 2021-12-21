@@ -113,6 +113,7 @@ span.tooltip {
     color: @light_blue;
     display: inline-block;
     font-size: 0.9rem;
+    z-index: 100;
 
     div.popup {
         display: block;
