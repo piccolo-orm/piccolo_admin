@@ -26,6 +26,7 @@ div#sidebar_overlay {
     bottom: 0;
     border-right: 1px solid @border_color;
     border-top: 1px solid @border_color;
+    z-index: 1000;
 
     @media (min-width: @mobile_width) {
         display: none;
