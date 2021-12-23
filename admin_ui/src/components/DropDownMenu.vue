@@ -23,7 +23,7 @@ ul {
     right: 0;
     width: 15rem;
     margin-top: 0.5rem;
-    z-index: 100;
+    z-index: 2000;
 
     li {
         margin: 0 !important;

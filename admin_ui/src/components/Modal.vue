@@ -25,9 +25,9 @@ export default {
     props: {
         title: {
             type: String,
-            default: "",
-        },
-    },
+            default: ""
+        }
+    }
 }
 </script>
 
@@ -40,6 +40,7 @@ div#overlay {
     right: 0;
     background-color: rgba(0, 0, 0, 0.7);
     overflow: auto;
+    z-index: 2000;
 
     div.modal {
         border-radius: 0.5rem;
