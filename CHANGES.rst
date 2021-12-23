@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.19.5
+------
+More z-index refinements (thanks @sinisaos).
+
 0.19.4
 ------
 Fixed a bug with the z-index of the sidebar on mobile. Thanks to @sinisaos for
