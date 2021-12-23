@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.19.4
+------
+Fixed a bug with the z-index of the sidebar on mobile. Thanks to @sinisaos for
+discovering this issue.
+
 0.19.3
 ------
 Improved the UI when the network is slow (courtesy @sinisaos).
