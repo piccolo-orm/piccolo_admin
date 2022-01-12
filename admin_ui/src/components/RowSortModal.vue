@@ -7,7 +7,7 @@
                 name="property"
                 v-model="propertyName"
             >
-                <option value="id">id</option>
+                <option :value="schema.primary_key_name">{{ schema.primary_key_name }}</option>
 
                 <option
                     :key="key"
@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             ascending: "descending",
-            propertyName: "id",
+            propertyName: this.schema.primary_key_name,
         }
     },
     components: {

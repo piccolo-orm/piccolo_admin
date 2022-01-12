@@ -86,17 +86,17 @@
                                         <th></th>
                                     </tr>
 
-                                    <tr v-bind:key="row.id" v-for="row in rows">
+                                    <tr v-bind:key="row[pkName]" v-for="row in rows">
                                         <td>
                                             <input
-                                                :value="row.id"
+                                                :value="row[pkName]"
                                                 @click="selectRow"
                                                 type="checkbox"
                                                 v-model="selectedRows"
                                             />
                                         </td>
                                         <td v-bind:key="name" v-for="name in cellNames">
-                                            <span class="link" v-if="name == 'id'">
+                                            <span class="link" v-if="name == pkName">
                                                 <router-link
                                                     :to="{
                                                         name: 'editRow',
@@ -165,19 +165,19 @@
                                                     v-on:click.prevent="
                                                         visibleDropdown = visibleDropdown
                                                             ? undefined
-                                                            : row.id
+                                                            : row[pkName]
                                                     "
                                                 >
                                                     <font-awesome-icon icon="ellipsis-v" />
                                                 </a>
-                                                <DropDownMenu v-if="visibleDropdown == row.id">
+                                                <DropDownMenu v-if="visibleDropdown == row[pkName]">
                                                     <li>
                                                         <router-link
                                                             :to="{
                                                                 name: 'editRow',
                                                                 params: {
                                                                     tableName: tableName,
-                                                                    rowID: row.id
+                                                                    rowID: row[pkName]
                                                                 }
                                                             }"
                                                             class="subtle"
@@ -192,7 +192,7 @@
                                                         <DeleteButton
                                                             :includeTitle="true"
                                                             class="subtle delete"
-                                                            v-on:triggered="deleteRow(row.id)"
+                                                            v-on:triggered="deleteRow(row[pkName])"
                                                         />
                                                     </li>
                                                 </DropDownMenu>
@@ -312,6 +312,9 @@ export default Vue.extend({
         loadingStatus() {
             return this.$store.state.loadingStatus
         },
+        pkName() {
+            return this.schema?.primary_key_name || 'id'
+        },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
         // For example {'genre': {1: 'Sci-Fi'}}
@@ -392,7 +395,7 @@ export default Vue.extend({
         selectAllRows() {
             // Select all checkboxes and add row ids to selected array:
             if (this.allSelected) {
-                this.selectedRows = this.rows.map((row) => row.id)
+                this.selectedRows = this.rows.map((row) => row[this.pkName])
             } else {
                 this.selectedRows = []
             }
