@@ -73,6 +73,12 @@ class Director(Table, help_text="The main director for a movie."):
         return Readable(template="%s", columns=[cls.name])
 
 
+class Studio(Table, help_text="A movie studio."):
+    pk = UUID(primary_key=True)
+    name = Varchar()
+    facilities = JSON()
+
+
 class Movie(Table):
     class Genre(int, enum.Enum):
         fantasy = 1
@@ -96,12 +102,7 @@ class Movie(Table):
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
     genre = SmallInt(choices=Genre, null=True)
-
-
-class Studio(Table, help_text="A movie studio."):
-    pk = UUID(primary_key=True)
-    name = Varchar()
-    facilities = JSON()
+    studio = ForeignKey(Studio)
 
 
 class BusinessEmailModel(BaseModel):
@@ -186,6 +187,7 @@ movie_config = TableConfig(
         Movie.name,
         Movie.rating,
         Movie.director,
+        Movie.studio
     ],
     visible_filters=[
         Movie.name,
