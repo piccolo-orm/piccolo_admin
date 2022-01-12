@@ -19,6 +19,7 @@ from hypercorn.config import Config
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns import (
     JSON,
+    UUID,
     Array,
     BigInt,
     Boolean,
@@ -98,6 +99,7 @@ class Movie(Table):
 
 
 class Studio(Table, help_text="A movie studio."):
+    pk = UUID(primary_key=True)
     name = Varchar()
     facilities = JSON()
 
