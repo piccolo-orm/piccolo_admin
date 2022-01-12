@@ -313,7 +313,7 @@ export default Vue.extend({
             return this.$store.state.loadingStatus
         },
         pkName() {
-            return this.schema ? this.schema['primary_key_name'] : undefined
+            return this.schema?.primary_key_name || 'id'
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
