@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.19.6
+------
+Fixes for ``Table`` classes which have custom primary key columns.
+
 0.19.5
 ------
 More z-index refinements (thanks @sinisaos).
