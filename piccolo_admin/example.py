@@ -41,7 +41,13 @@ from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
+from piccolo_admin.example_data import (
+    DIRECTORS,
+    MOVIE_WORDS,
+    MOVIES,
+    REVIEWS,
+    STUDIOS,
+)
 
 
 class Sessions(SessionsBase):
@@ -75,7 +81,7 @@ class Director(Table, help_text="The main director for a movie."):
 
 class Studio(Table, help_text="A movie studio."):
     pk = UUID(primary_key=True)
-    name = Varchar()
+    name = Varchar(unique=True)
     facilities = JSON()
 
 
@@ -90,7 +96,7 @@ class Movie(Table):
         romance = 7
         musical = 8
 
-    name = Varchar(length=300)
+    name = Varchar(length=300, unique=True)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
     director = ForeignKey(references=Director)
@@ -103,6 +109,21 @@ class Movie(Table):
     barcode = BigInt(default=0)
     genre = SmallInt(choices=Genre, null=True)
     studio = ForeignKey(Studio)
+
+    @classmethod
+    def get_readable(cls):
+        return Readable(template="%s", columns=[cls.name])
+
+
+class Review(Table):
+    reviewer = Varchar()
+    content = Text()
+    rating = Integer()
+    movie = ForeignKey(Movie, target_column=Movie.name)
+
+    @classmethod
+    def get_readable(cls):
+        return Readable(template="%s %s", columns=[cls.reviewer, cls.rating])
 
 
 class BusinessEmailModel(BaseModel):
@@ -176,6 +197,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
     Movie,
     Studio,
+    Review,
     User,
     Sessions,
 )
@@ -208,7 +230,7 @@ director_config = TableConfig(
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio],
+    [movie_config, director_config, Studio, Review],
     forms=[
         FormConfig(
             name="Business email form",
@@ -261,6 +283,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()  # type: ignore # noqa: E501
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()  # type: ignore
     Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()  # type: ignore
+    Review.insert(*[Review(**r) for r in REVIEWS]).run_sync()  # type: ignore
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the
