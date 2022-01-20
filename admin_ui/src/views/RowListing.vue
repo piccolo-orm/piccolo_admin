@@ -114,7 +114,7 @@
                                             <span
                                                 class="link"
                                                 v-else-if="
-                                                    isForeignKey(name) & (row[name] !== null)
+                                                    isForeignKey(name) & (row[pkName] !== null)
                                                 "
                                             >
                                                 <router-link
@@ -122,7 +122,7 @@
                                                         name: 'editRow',
                                                         params: {
                                                             tableName: getTableName(name),
-                                                            rowID: row[name]
+                                                            rowID: row[pkName]
                                                         }
                                                     }"
                                                     >{{ row[name + "_readable"] }}</router-link
