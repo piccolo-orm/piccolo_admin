@@ -38,7 +38,7 @@ In a few lines of code we are able to:
 
 ## ASGI
 
-Since the admin is an ASGI app, you can either run it standalone like in the demo, or integrate it with a larger ASGI app.
+Since the admin is an ASGI app, you can either run it standalone like in the demo, or integrate it with a larger ASGI app such as FastAPI and Starlette.
 
 For example, using Starlette routes:
 
