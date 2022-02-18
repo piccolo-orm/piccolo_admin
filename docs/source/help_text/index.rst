@@ -33,7 +33,10 @@ It isn't immediately clear what ``box_office`` means. We can add a
 
     class Movie(Table):
         name = Varchar(length=300)
-        box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
+        box_office = Numeric(
+            digits=(5, 1),
+            help_text="In millions of US dollars."
+        )
 
 
 Piccolo Admin will then show a tooltip next to this field.
@@ -51,7 +54,10 @@ You can also provide help text about the table itself.
 
     class Movie(Table, help_text="Movies which were released in the cinema."):
         name = Varchar(length=300)
-        box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
+        box_office = Numeric(
+            digits=(5, 1),
+            help_text="In millions of US dollars."
+        )
 
 Piccolo Admin will then show a tooltip next to the table name in the row listing
 page.
