@@ -1,9 +1,12 @@
 ASGI
 ====
 
-Since the admin is an `ASGI app <https://piccolo-orm.com/blog/introduction-to-asgi/>`_, you can either run it standalone like in the demo, or integrate it with a larger ASGI app.
+Since the admin is an `ASGI app <https://piccolo-orm.com/blog/introduction-to-asgi/>`_,
+you can either run it standalone like in the demo, or integrate it with a
+larger ASGI app.
 
-.. hint:: Piccolo can help you `create a new ASGI app <https://piccolo-orm.readthedocs.io/en/latest/piccolo/asgi/index.html>`_ - using ``piccolo asgi new``.
+.. hint:: Piccolo can help you `create a new ASGI app <https://piccolo-orm.readthedocs.io/en/latest/piccolo/asgi/index.html>`_
+   using ``piccolo asgi new``.
 
 For example, using Starlette routes:
 
@@ -16,8 +19,8 @@ For example, using Starlette routes:
     from my_project.tables import Director, Movie
 
 
-    # The `allowed_hosts` argument is required when running under HTTPS. It's used
-    # for additional CSRF defence.
+    # The `allowed_hosts` argument is required when running under HTTPS. It's
+    # used for additional CSRF defence.
     admin = create_admin([Director, Movie], allowed_hosts=['my_site.com'])
 
 
@@ -52,7 +55,7 @@ Here's a complete example of a FastAPI app using Piccolo admin.
                     tables=[Director, Movie],
                     # Specify a different site name in the
                     # admin UI (default Piccolo Admin)
-                    site_name = "Mysite Admin",
+                    site_name = "My Site Admin",
                     # Required when running under HTTPS:
                     # allowed_hosts=['my_site.com']
                 ),

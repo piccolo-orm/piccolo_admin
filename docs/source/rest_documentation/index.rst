@@ -1,5 +1,5 @@
-API documentation
-=================
+REST Documentation
+==================
 
 During development it is useful to have API documentation, showing all of the
 supported endpoints and parameters.
