@@ -16,9 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-autoclass_content = "both"
-autodoc_typehints = "signature"
-autodoc_typehints_format = "short"
+extensions = []
 
 # -- Project information -----------------------------------------------------
 
@@ -37,16 +35,21 @@ release = piccolo_admin.version.__VERSION__
 
 master_doc = "index"
 
-extensions = ["sphinx.ext.autodoc"]
-
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
-
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "piccolo_theme"
 
+# -- Autodoc -----------------------------------------------------------------
+
+extensions += ["sphinx.ext.autodoc"]
+autodoc_typehints = "signature"
+autodoc_typehints_format = "short"
+autoclass_content = "both"
+
 # -- Intersphinx -------------------------------------------------------------
 
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "piccolo": ("https://piccolo-orm.readthedocs.io/en/latest/", None)
+}
 extensions += ["sphinx.ext.intersphinx"]
