@@ -16,3 +16,4 @@ coverage.xml
 htmlcov/
 .env/
 .venv/
+docs/ebug
