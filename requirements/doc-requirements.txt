@@ -1,6 +1,3 @@
 Sphinx==4.4.0
 piccolo-theme>=0.2.2
 livereload==2.6.3
-
-# Also include the main requirements, so it will build on ReadTheDocs.
--r ../requirements/requirements.txt
