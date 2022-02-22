@@ -58,6 +58,8 @@ class TableConfig:
     """
     Gives the user more control over how a ``Table`` appears in the UI.
 
+    :param table_class:
+        The ``Table`` class to configure.
     :param visible_columns:
         If specified, only these columns will be shown in the list view of the
         UI. This is useful when you have a lot of columns.
