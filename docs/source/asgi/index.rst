@@ -10,28 +10,7 @@ larger ASGI app.
 
 For example, using Starlette routes:
 
-.. code-block:: python
-
-    from piccolo_admin.endpoints import create_admin
-    from starlette.routing import Router, Route, Mount
-    import uvicorn
-
-    from my_project.tables import Director, Movie
-
-
-    # The `allowed_hosts` argument is required when running under HTTPS. It's
-    # used for additional CSRF defence.
-    admin = create_admin([Director, Movie], allowed_hosts=['my_site.com'])
-
-
-    router = Router([
-        Route(path="/", endpoint=Hello),
-        Mount(path="/admin/", app=admin),
-    ])
-
-
-    if __name__ == '__main__':
-        uvicorn.run(router)
+.. literalinclude:: ./examples/starlette/app.py
 
 -------------------------------------------------------------------------------
 
@@ -40,41 +19,7 @@ FastAPI example
 
 Here's a complete example of a FastAPI app using Piccolo admin.
 
-.. code-block:: python
-
-    # app.py
-    from fastapi import FastAPI
-    from piccolo.engine import engine_finder
-    from piccolo_admin.endpoints import create_admin
-    from starlette.routing import Mount
-    from my_project.tables import Director, Movie
-
-    app = FastAPI(
-        routes=[
-            Mount(
-                "/admin/",
-                create_admin(
-                    tables=[Director, Movie],
-                    # Specify a different site name in the
-                    # admin UI (default Piccolo Admin)
-                    site_name = "My Site Admin",
-                    # Required when running under HTTPS:
-                    # allowed_hosts=['my_site.com']
-                ),
-            ),
-        ],
-    )
-
-    @app.on_event("startup")
-    async def open_database_connection_pool():
-        engine = engine_finder()
-        await engine.start_connnection_pool()
-
-
-    @app.on_event("shutdown")
-    async def close_database_connection_pool():
-        engine = engine_finder()
-        await engine.close_connnection_pool()
+.. literalinclude:: ./examples/fastapi/app.py
 
 To run ``app.py`` use:
 
