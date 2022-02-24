@@ -528,8 +528,8 @@ def get_all_tables(
 def create_admin(
     tables: t.Sequence[t.Union[t.Type[Table], TableConfig]],
     forms: t.List[FormConfig] = [],
-    auth_table: t.Type[BaseUser] = BaseUser,
-    session_table: t.Type[SessionsBase] = SessionsBase,
+    auth_table: t.Optional[t.Type[BaseUser]] = None,
+    session_table: t.Optional[t.Type[SessionsBase]] = None,
     session_expiry: timedelta = timedelta(hours=1),
     max_session_expiry: timedelta = timedelta(days=7),
     increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
@@ -549,10 +549,11 @@ def create_admin(
         rendered in the user interface, accessible via the sidebar.
     :param auth_table:
         Either a ``BaseUser``, or ``BaseUser`` subclass table, which is used
-        for fetching users.
+        for fetching users. Defaults to ``BaseUser`` if none if specified.
     :param session_table:
-        Either a ``SessionBase``, or ``SessionBase`` subclass table, which is
-        used for storing and querying session tokens.
+        Either a ``SessionsBase``, or ``SessionsBase`` subclass table, which is
+        used for storing and querying session tokens. Defaults to
+        ``SessionsBase`` if none if specified.
     :param session_expiry:
         How long a session is valid for.
     :param max_session_expiry:
@@ -588,6 +589,8 @@ def create_admin(
         strings, such as ``['my_site.com']``.
 
     """
+    auth_table = auth_table or BaseUser
+    session_table = session_table or SessionsBase
 
     if auto_include_related:
         table_config_map: t.Dict[t.Type[Table], t.Optional[TableConfig]] = {}

@@ -48,8 +48,9 @@ autoclass_content = "both"
 
 # -- Intersphinx -------------------------------------------------------------
 
+extensions += ["sphinx.ext.intersphinx"]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "piccolo": ("https://piccolo-orm.readthedocs.io/en/latest/", None)
+    "piccolo": ("https://piccolo-orm.readthedocs.io/en/latest/", None),
+    "piccolo_api": ("https://piccolo-api.readthedocs.io/en/latest/", None),
 }
-extensions += ["sphinx.ext.intersphinx"]

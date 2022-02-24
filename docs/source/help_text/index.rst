@@ -41,6 +41,8 @@ It isn't immediately clear what ``box_office`` means. We can add a
 
 Piccolo Admin will then show a tooltip next to this field.
 
+-------------------------------------------------------------------------------
+
 Tables
 ------
 
