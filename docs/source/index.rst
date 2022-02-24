@@ -1,5 +1,5 @@
-Welcome to Piccolo Admin's documentation
-========================================
+Piccolo Admin
+=============
 
 `Piccolo Admin <https://github.com/piccolo-orm/piccolo_admin>`_ provides a
 simple yet powerful admin interface on top of Piccolo tables - allowing you to
