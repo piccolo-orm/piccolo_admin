@@ -19,6 +19,7 @@ project file, then run migrations:
 To learn more about the Piccolo project files, check out the
 Piccolo ORM `docs <https://piccolo-orm.readthedocs.io/en/latest/piccolo/projects_and_apps/piccolo_apps.html>`_.
 
+-------------------------------------------------------------------------------
 
 Creating users
 --------------

@@ -9,6 +9,8 @@ Install ``piccolo_admin``, ideally inside a `virtualenv <https://docs.python-gui
 
     pip install piccolo_admin
 
+-------------------------------------------------------------------------------
+
 Local demo
 ----------
 

@@ -33,6 +33,8 @@ For example, using Starlette routes:
     if __name__ == '__main__':
         uvicorn.run(router)
 
+-------------------------------------------------------------------------------
+
 FastAPI example
 ---------------
 
@@ -82,6 +84,8 @@ To run ``app.py`` use:
 
 Now you can go to `<localhost:8000/admin>`_ and log in as an admin user
 (see :ref:`Authentication` for how to create users).
+
+-------------------------------------------------------------------------------
 
 Source
 ------

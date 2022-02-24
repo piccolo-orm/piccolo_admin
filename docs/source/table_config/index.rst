@@ -19,6 +19,8 @@ of columns.
 In the future, ``TableConfig`` will be extended to allow finer grained control
 over the UI.
 
+-------------------------------------------------------------------------------
+
 visible_columns
 ---------------
 
@@ -40,6 +42,8 @@ Here is the UI when just passing in a ``TableConfig`` instance instead (fewer
 columns are visible):
 
 .. image:: ./images/with_visible_columns.jpg
+
+-------------------------------------------------------------------------------
 
 visible_filters
 ---------------
@@ -64,6 +68,8 @@ Here is the UI when just passing in a ``TableConfig`` instance instead (fewer
 filters are visible in the sidebar):
 
 .. image:: ./images/with_visible_filters.jpg
+
+-------------------------------------------------------------------------------
 
 Source
 ------
