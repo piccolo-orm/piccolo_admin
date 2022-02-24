@@ -1,7 +1,7 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
-from __future__ import annotations
+# from __future__ import annotations
 
 import inspect
 import json
@@ -13,7 +13,9 @@ from functools import partial
 
 from fastapi import FastAPI
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
+from piccolo.table import Table
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
@@ -34,11 +36,6 @@ from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
-
-if t.TYPE_CHECKING:  # pragma: no cover
-    from piccolo.columns.base import Column
-    from piccolo.table import Table
-
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
@@ -160,6 +157,7 @@ class FormConfig:
         class MyModel(pydantic.BaseModel):
             message: str = "hello world"
 
+
         def my_endpoint(request: Request, data: MyModel):
             print(f"I received {data.message}")
 
@@ -170,6 +168,7 @@ class FormConfig:
             # If we're happy with the data, just return a string, which
             # will be displayed in the UI.
             return "Successful."
+
 
         config = FormConfig(
             name="My Form",
