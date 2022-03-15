@@ -7,7 +7,7 @@ import inspect
 import json
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import partial
 
@@ -71,6 +71,10 @@ class TableConfig:
         You can specify this instead of ``visible_filters``, in which case all
         of the ``Table`` columns except the ones specified will be shown in the
         filter sidebar.
+    :param rich_text_columns:
+        You can specify ``rich_text_columns`` if you want a WYSIWYG editor
+        on Piccolo ``Text`` columns. If you do not specify any column all
+        ``Text`` column will be displayed as standard HTML textarea tag in UI
 
     """
 
@@ -79,6 +83,7 @@ class TableConfig:
     exclude_visible_columns: t.Optional[t.List[Column]] = None
     visible_filters: t.Optional[t.List[Column]] = None
     exclude_visible_filters: t.Optional[t.List[Column]] = None
+    rich_text_columns: t.List[Column] = field(default_factory=list)
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -127,6 +132,9 @@ class TableConfig:
 
     def get_visible_filter_names(self) -> t.Tuple[str, ...]:
         return tuple(i._meta.name for i in self.get_visible_filters())
+
+    def get_rich_text_columns_names(self) -> t.Tuple[str, ...]:
+        return tuple(i._meta.name for i in self.rich_text_columns)
 
 
 @dataclass
@@ -261,6 +269,9 @@ class AdminRouter(FastAPI):
             table_class = table_config.table_class
             visible_column_names = table_config.get_visible_column_names()
             visible_filter_names = table_config.get_visible_filter_names()
+            rich_text_columns_names = (
+                table_config.get_rich_text_columns_names()
+            )
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -271,6 +282,7 @@ class AdminRouter(FastAPI):
                     schema_extra={
                         "visible_column_names": visible_column_names,
                         "visible_filter_names": visible_filter_names,
+                        "rich_text_columns": rich_text_columns_names,
                     },
                 ),
                 fastapi_kwargs=FastAPIKwargs(

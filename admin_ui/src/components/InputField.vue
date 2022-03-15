@@ -1,10 +1,7 @@
 <template>
     <div>
         <template v-if="choices">
-            <OperatorField
-                :fieldName="getFieldName(title)"
-                v-if="isFilter"
-            />
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <ChoiceSelect
                 :choices="choices"
                 :fieldName="getFieldName(title)"
@@ -15,10 +12,7 @@
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField
-                :fieldName="getFieldName(title)"
-                v-if="isFilter"
-            />
+            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <input
                 step="1"
                 type="number"
@@ -48,6 +42,11 @@
 
             <div v-else-if="format == 'text-area' && isFilter == false">
                 <textarea
+                    v-if="
+                        !schema.rich_text_columns.includes(
+                            getFieldName(title).toLowerCase()
+                        )
+                    "
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="getFieldName(title)"
@@ -56,6 +55,18 @@
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
                 />
+                <vue-editor
+                    v-else
+                    v-model="localValue"
+                    v-bind:name="getFieldName(title)"
+                    :editor-toolbar="customToolbar"
+                />
+
+                <textarea
+                    id="editor"
+                    v-model.lazy="localValue"
+                    v-bind:name="getFieldName(title)"
+                ></textarea>
             </div>
 
             <div v-else-if="format == 'json'">
@@ -84,20 +95,22 @@
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
                     value="all"
-                >All</option>
+                >
+                    All
+                </option>
                 <option
                     v-bind:selected="value == null"
                     v-if="isNullable"
                     value="null"
-                >Null</option>
-                <option
-                    v-bind:selected="value == true"
-                    value="true"
-                >True</option>
-                <option
-                    v-bind:selected="value == false"
-                    value="false"
-                >False</option>
+                >
+                    Null
+                </option>
+                <option v-bind:selected="value == true" value="true">
+                    True
+                </option>
+                <option v-bind:selected="value == false" value="false">
+                    False
+                </option>
             </select>
         </template>
 
@@ -155,36 +168,37 @@ import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
 import { Choices } from "../interfaces"
+import { VueEditor } from "vue2-editor"
 
 export default Vue.extend({
     props: {
         title: {
             type: String,
-            default: "",
+            default: ""
         },
         type: {
             type: String,
-            default: "string",
+            default: "string"
         },
         value: {
             type: undefined,
-            default: undefined,
+            default: undefined
         },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
         format: String,
         isFilter: {
             type: Boolean,
-            default: true,
+            default: true
         },
         isNullable: {
             type: Boolean,
-            default: false,
+            default: false
         },
         choices: {
             type: Object as PropType<Choices>,
-            default: null,
-        },
+            default: null
+        }
     },
     components: {
         flatPickr,
@@ -192,17 +206,33 @@ export default Vue.extend({
         ChoiceSelect,
         DurationWidget,
         OperatorField,
+        VueEditor
     },
     data() {
         return {
             localValue: undefined,
             textareaHeight: "50px",
+            customToolbar: [
+                ["bold", "italic", "underline", "strike", "blockquote"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [
+                    { align: "" },
+                    { align: "center" },
+                    { align: "right" },
+                    { align: "justify" }
+                ],
+                ["link", "image", "code-block"]
+            ]
         }
     },
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
         },
+        schema() {
+            return this.$store.state.schema
+        }
     },
     methods: {
         getFieldName(name: string) {
@@ -218,13 +248,13 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
-        },
+        }
     },
     watch: {
         value() {
             this.localValue = this.value
             this.setTextareaHeight()
-        },
+        }
     },
     mounted() {
         this.localValue = this.value
@@ -233,7 +263,7 @@ export default Vue.extend({
         setTimeout(function () {
             app.setTextareaHeight()
         }, 0)
-    },
+    }
 })
 </script>
 
@@ -242,9 +272,14 @@ pre {
     white-space: pre-wrap;
     word-break: break-all;
 }
+
 input.flatpicker-input {
     box-sizing: border-box;
     padding: 0.5rem;
     width: 100%;
+}
+
+textarea#editor {
+    display: none;
 }
 </style>
