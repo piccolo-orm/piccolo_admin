@@ -1,7 +1,7 @@
 name: "Prompt about stale PRs"
 on:
     schedule:
-        - cron: "30 1 * * 5" # runs every 5 days
+        - cron: "30 1 */3 * *" # runs every 3 days
 
 jobs:
     stale:
