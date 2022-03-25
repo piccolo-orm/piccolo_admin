@@ -1,0 +1,16 @@
+name: "Prompt about stale PRs"
+on:
+    schedule:
+        - cron: "30 1 */3 * *" # runs every 3 days
+
+jobs:
+    stale:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/stale@v4
+              with:
+                  stale-pr-message: "This PR has been marked as stale because it has been open for 30 days with no activity. Are there any blockers, or should this be closed?"
+                  days-before-pr-stale: 30
+                  days-before-pr-close: -1
+                  days-before-issue-stale: -1
+                  days-before-issue-close: -1
