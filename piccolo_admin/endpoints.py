@@ -73,8 +73,8 @@ class TableConfig:
         filter sidebar.
     :param rich_text_columns:
         You can specify ``rich_text_columns`` if you want a WYSIWYG editor
-        on Piccolo ``Text`` columns. If you do not specify any column all
-        ``Text`` column will be displayed as standard HTML textarea tag in UI
+        on certain Piccolo ``Text`` columns. Any columns not specified will use
+        a standard HTML textarea tag in the UI.
 
     """
 
@@ -83,7 +83,7 @@ class TableConfig:
     exclude_visible_columns: t.Optional[t.List[Column]] = None
     visible_filters: t.Optional[t.List[Column]] = None
     exclude_visible_filters: t.Optional[t.List[Column]] = None
-    rich_text_columns: t.List[Column] = field(default_factory=list)
+    rich_text_columns: t.Optional[t.List[Column]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -134,7 +134,11 @@ class TableConfig:
         return tuple(i._meta.name for i in self.get_visible_filters())
 
     def get_rich_text_columns_names(self) -> t.Tuple[str, ...]:
-        return tuple(i._meta.name for i in self.rich_text_columns)
+        return (
+            tuple(i._meta.name for i in self.rich_text_columns)
+            if self.rich_text_columns
+            else ()
+        )
 
 
 @dataclass
