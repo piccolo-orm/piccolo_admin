@@ -1,7 +1,7 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
-# from __future__ import annotations
+from __future__ import annotations
 
 import inspect
 import json
