@@ -38,6 +38,7 @@ master_doc = "index"
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "piccolo_theme"
+html_short_title = "Piccolo Admin"
 
 # -- Autodoc -----------------------------------------------------------------
 
