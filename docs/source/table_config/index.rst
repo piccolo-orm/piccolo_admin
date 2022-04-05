@@ -54,9 +54,12 @@ We can set which columns are visible in the filter sidebar:
 
     from piccolo_admin.endpoints import TableConfig
 
-    movie_config = TableConfig(Movie, visible_filters=[
-        Movie.name, Movie.rating, Movie.director,
-    ])
+    movie_config = TableConfig(
+        Movie,
+        visible_filters=[
+            Movie.name, Movie.rating, Movie.director,
+        ]
+    )
 
     create_admin(Director, movie_config)
 
@@ -68,6 +71,31 @@ Here is the UI when just passing in a ``TableConfig`` instance instead (fewer
 filters are visible in the sidebar):
 
 .. image:: ./images/with_visible_filters.jpg
+
+-------------------------------------------------------------------------------
+
+rich_text_columns
+-----------------
+
+We can specify which ``Text`` columns will use a rich text editor.
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        rich_text_columns=[
+            Movie.description
+        ]
+    )
+
+    create_admin(Director, movie_config)
+
+This allows the user to add hyperlinks, and basic formatting to their content,
+without having to write HTML.
+
+.. image:: ./images/rich_text_columns.jpg
 
 -------------------------------------------------------------------------------
 

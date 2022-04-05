@@ -196,6 +196,7 @@ movie_config = TableConfig(
         Movie.duration,
         Movie.genre,
     ],
+    rich_text_columns=[Movie.description],
 )
 
 director_config = TableConfig(
