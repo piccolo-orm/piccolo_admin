@@ -1,6 +1,30 @@
 Changes
 =======
 
+0.20.0
+------
+
+You can now use a rich text editor for ``Text`` columns (courtesy @sinisaos).
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    from movies.tables import Movie
+
+    movie_config = TableConfig(
+        Movie,
+        rich_text_columns=[
+            Movie.description
+        ]
+    )
+
+    create_admin(movie_config)
+
+This is useful when using Piccolo Admin for authoring content in blogs etc.
+
+-------------------------------------------------------------------------------
+
 0.19.6
 ------
 Fixes for ``Table`` classes which have custom primary key columns.
