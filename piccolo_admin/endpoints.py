@@ -56,7 +56,7 @@ class TableConfig:
     Gives the user more control over how a ``Table`` appears in the UI.
 
     :param table_class:
-        The ``Table`` class to configure.
+        The :class:`Table <piccolo.table.Table>` class to configure.
     :param visible_columns:
         If specified, only these columns will be shown in the list view of the
         UI. This is useful when you have a lot of columns.
@@ -73,8 +73,9 @@ class TableConfig:
         filter sidebar.
     :param rich_text_columns:
         You can specify ``rich_text_columns`` if you want a WYSIWYG editor
-        on certain Piccolo ``Text`` columns. Any columns not specified will use
-        a standard HTML textarea tag in the UI.
+        on certain Piccolo :class:`Text <piccolo.columns.column_types.Text>`
+        columns. Any columns not specified will use a standard HTML textarea
+        tag in the UI.
 
     """
 
@@ -560,15 +561,18 @@ def create_admin(
     :param tables:
         Each of the tables will be added to the admin.
     :param forms:
-        For each ``FormConfig`` specified, a form will automatically be
-        rendered in the user interface, accessible via the sidebar.
+        For each :class:`FormConfig <piccolo_admin.endpoints.FormConfig>`
+        specified, a form will automatically be rendered in the user interface,
+        accessible via the sidebar.
     :param auth_table:
-        Either a ``BaseUser``, or ``BaseUser`` subclass table, which is used
-        for fetching users. Defaults to ``BaseUser`` if none if specified.
+        Either a :class:`BaseUser <piccolo.apps.user.tables.BaseUser>`, or
+        ``BaseUser`` subclass table, which is used for fetching users.
+        Defaults to ``BaseUser`` if none if specified.
     :param session_table:
-        Either a ``SessionsBase``, or ``SessionsBase`` subclass table, which is
-        used for storing and querying session tokens. Defaults to
-        ``SessionsBase`` if none if specified.
+        Either a :class:`SessionsBase <piccolo_api.session_auth.tables.SessionsBase>`,
+        or ``SessionsBase`` subclass table, which is used for storing and
+        querying session tokens. Defaults to ``SessionsBase`` if none if
+        specified.
     :param session_expiry:
         How long a session is valid for.
     :param max_session_expiry:
@@ -586,24 +590,26 @@ def create_admin(
         creating online demos.
     :param rate_limit_provider:
         Rate limiting middleware is used to protect the login endpoint
-        against brute force attack. If not set, an ``InMemoryLimitProvider``
+        against brute force attack. If not set, an
+        :class:`InMemoryLimitProvider <piccolo_api.rate_limiting.middleware.InMemoryLimitProvider>`
         will be configured with reasonable defaults.
     :param production:
         If ``True``, the admin will enforce stronger security - for example,
         the cookies used will be secure, meaning they are only sent over
         HTTPS.
     :param site_name:
-        Specify a different site name in the admin UI (default Piccolo Admin).
+        Specify a different site name in the admin UI (default
+        ``'Piccolo Admin'``).
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
         the admin won't work as expected.
     :param allowed_hosts:
-        This is used by the CSRF middleware as an additional layer of
-        protection when the admin is run under HTTPS. It must be a sequence of
-        strings, such as ``['my_site.com']``.
+        This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
+        as an additional layer of protection when the admin is run under HTTPS.
+        It must be a sequence of strings, such as ``['my_site.com']``.
 
-    """
+    """  # noqa: E501
     auth_table = auth_table or BaseUser
     session_table = session_table or SessionsBase
 
