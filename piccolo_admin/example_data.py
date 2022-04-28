@@ -341,6 +341,27 @@ STUDIOS = [
     }
 ]
 
+REVIEWS = [
+    {
+        "reviewer": "John McCloud",
+        "content": "Great film - loved the ending!",
+        "rating": 5,
+        "movie": MOVIES[0]['name']
+    },
+    {
+        "reviewer": "Penelope Jones",
+        "content": "The special effects blew me away.",
+        "rating": 4,
+        "movie": MOVIES[1]['name']
+    },
+    {
+        "reviewer": "Arnold Adams",
+        "content": "It was good. I enjoyed the plot.",
+        "rating": 3,
+        "movie": MOVIES[2]['name']
+    },
+]
+
 
 # Some random words used to generate fake movie names.
 MOVIE_WORDS = [

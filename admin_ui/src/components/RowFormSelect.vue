@@ -35,7 +35,7 @@
                         }"
                         class="add"
                         target="_blank"
-                        v-if="!isFilter"
+                        v-if="!isFilter && getKeySelectID(property.title)"
                     >
                         <font-awesome-icon icon="edit" />
                     </router-link>
