@@ -248,10 +248,30 @@ class AdminRouter(FastAPI):
         table_configs: t.List[TableConfig] = []
 
         for table in tables:
+            _table = None
             if isinstance(table, TableConfig):
-                table_configs.append(table)
+                _table = table
             else:
-                table_configs.append(TableConfig(table_class=table))
+                _table = TableConfig(table_class=table)
+
+            try:
+                columns = _table.get_visible_columns()
+                for column in columns:
+                    if column._meta.secret and column._meta.required:
+                        print(
+                            """
+WARNING: %s.%s is using `secret` and `required` column kwargs which are incompatible.
+You may encounter unexpected behavior when using this table within Piccolo Admin.
+                            """
+                            % (
+                                _table.table_class._meta.tablename,
+                                column._meta._name,
+                            )
+                        )
+            except Exception as e:
+                pass
+
+            table_configs.append(_table)
 
         self.table_configs = table_configs
 
