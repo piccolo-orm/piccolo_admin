@@ -94,6 +94,8 @@ export default Vue.extend({
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
 
+            this.$router.replace({ name: "rowListing" })
+
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
