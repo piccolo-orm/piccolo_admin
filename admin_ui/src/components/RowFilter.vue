@@ -22,15 +22,15 @@ import { APIResponseMessage } from "../interfaces"
 
 export default Vue.extend({
     props: {
-        showFilterSidebar: Boolean,
+        showFilterSidebar: Boolean
     },
     components: {
-        RowFormSearch,
+        RowFormSearch
     },
     computed: {
         schema() {
             return this.$store.state.schema
-        },
+        }
     },
     methods: {
         closeSideBar() {
@@ -39,7 +39,7 @@ export default Vue.extend({
         showSuccess(contents: string) {
             var message: APIResponseMessage = {
                 contents: contents,
-                type: "success",
+                type: "success"
             }
             this.$store.commit("updateApiResponseMessage", message)
         },
@@ -68,6 +68,11 @@ export default Vue.extend({
             this.$store.commit("updateFilterParams", json)
             this.$store.commit("updateCurrentPageNumber", 1)
 
+            this.$router.replace({
+                name: "rowListing",
+                query: { ...this.$store.state.filterParams }
+            })
+
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
@@ -95,8 +100,8 @@ export default Vue.extend({
                 return
             }
             this.showSuccess("Successfully cleared filters")
-        },
-    },
+        }
+    }
 })
 </script>
 
