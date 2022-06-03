@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.21.0
+------
+
+Added a warning if a Piccolo ``Table`` column is both ``secret=True`` and
+``required=True``, as it's unsupported by Piccolo admin (courtesy @ethagnawl).
+
+-------------------------------------------------------------------------------
+
 0.20.0
 ------
 
