@@ -28,6 +28,7 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
+from piccolo.utils.warnings import Level, colored_warning
 from pydantic import BaseModel, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -248,32 +249,25 @@ class AdminRouter(FastAPI):
         table_configs: t.List[TableConfig] = []
 
         for table in tables:
-            _table = None
             if isinstance(table, TableConfig):
-                _table = table
+                table_configs.append(table)
             else:
-                _table = TableConfig(table_class=table)
-
-            try:
-                columns = _table.get_visible_columns()
-                for column in columns:
-                    if column._meta.secret and column._meta.required:
-                        print(
-                            """
-WARNING: %s.%s is using `secret` and `required` column kwargs which are incompatible.
-You may encounter unexpected behavior when using this table within Piccolo Admin.
-                            """
-                            % (
-                                _table.table_class._meta.tablename,
-                                column._meta._name,
-                            )
-                        )
-            except Exception as e:
-                pass
-
-            table_configs.append(_table)
+                table_configs.append(TableConfig(table_class=table))
 
         self.table_configs = table_configs
+
+        for table_config in table_configs:
+            table_class = table_config.table_class
+            for column in table_class._meta.columns:
+                if column._meta.secret and column._meta.required:
+                    message = (
+                        f"{table_class._meta.tablename}."
+                        f"{column._meta._name} is using `secret` and "
+                        f"`required` column args which are incompatible. "
+                        f"You may encounter unexpected behavior when using "
+                        f"this table within Piccolo Admin."
+                    )
+                    colored_warning(message, level=Level.high)
 
         #######################################################################
 
