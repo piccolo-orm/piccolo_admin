@@ -67,7 +67,7 @@ export default Vue.extend({
 
             this.$store.commit("updateFilterParams", json)
             this.$store.commit("updateCurrentPageNumber", 1)
-
+            // add filter params to route
             this.$router.replace({
                 name: "rowListing",
                 query: { ...this.$store.state.filterParams }
@@ -93,7 +93,7 @@ export default Vue.extend({
 
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
-
+            // remove filter params from route
             this.$router.replace({ name: "rowListing" })
 
             try {
