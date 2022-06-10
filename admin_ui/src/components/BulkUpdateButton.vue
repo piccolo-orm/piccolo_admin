@@ -2,11 +2,11 @@
     <a
         class="button"
         href="#"
-        title="Delete selected Rows"
+        title="Update selected Rows"
         v-on:click.prevent="$emit('triggered')"
     >
-        <font-awesome-icon icon="trash-alt" />
-        <span>Delete {{ selected }} rows</span>
+        <font-awesome-icon icon="arrow-up" />
+        <span>Update {{ selected }} rows</span>
     </a>
 </template>
 
