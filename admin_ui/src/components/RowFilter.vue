@@ -103,6 +103,17 @@ export default Vue.extend({
             }
             this.showSuccess("Successfully cleared filters")
         }
+    },
+    mounted() {
+        // keep the form data after changing the route
+        const query = this.$store.state.filterParams
+        let form: any = this.$refs.form
+
+        for (const property in query) {
+            if (!property.startsWith("__")) {
+                form[property].value = query[property]
+            }
+        }
     }
 })
 </script>
