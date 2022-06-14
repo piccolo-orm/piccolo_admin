@@ -486,14 +486,24 @@ export default Vue.extend({
             let column = prompt("Enter the name of the column")
             data[column.toLowerCase()] = prompt("Enter the value")
             for (let i = 0; i < this.selectedRows.length; i++) {
-                await this.$store.dispatch("updateRow", {
-                    tableName: this.tableName,
-                    rowID: this.selectedRows[i],
-                    data: data
-                })
+                await this.$store
+                    .dispatch("updateRow", {
+                        tableName: this.tableName,
+                        rowID: this.selectedRows[i],
+                        data: data
+                    })
+                    .then(() => {
+                        this.showSuccess("Successfully updated rows")
+                    })
+                    .catch(() => {
+                        var message: APIResponseMessage = {
+                            contents: "Invalid column name or value",
+                            type: "error"
+                        }
+                        this.$store.commit("updateApiResponseMessage", message)
+                    })
             }
             await this.fetchRows()
-            this.showSuccess("Successfully updated rows")
         },
         async deleteRows() {
             if (confirm(`Are you sure you want to delete the selected rows?`)) {
