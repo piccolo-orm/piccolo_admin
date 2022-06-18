@@ -368,18 +368,18 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
-        api_app.mount(
+        api_app.add_route(
             path="/change-password/",
-            app=AuthenticationMiddleware(
-                change_password(login_url=f"{self.prefix_path}auth/login/"),
-                SessionsAuthBackend(),
-            ),
+            route=change_password(login_url=f"{self.prefix_path}auth/login/"),
+            methods=["POST"],
+            tags=["User"],
         )
 
         api_app.add_route(
             path="/register/",
             route=register(redirect_to=f"{self.prefix_path}auth/login/"),
             methods=["POST"],
+            tags=["User"],
         )
 
         #######################################################################
