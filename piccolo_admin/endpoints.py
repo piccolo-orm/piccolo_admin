@@ -372,14 +372,12 @@ class AdminRouter(FastAPI):
             path="/change-password/",
             route=change_password(login_url=f"{self.prefix_path}auth/login/"),
             methods=["POST"],
-            tags=["User"],
         )
 
         api_app.add_route(
             path="/register/",
             route=register(redirect_to=f"{self.prefix_path}auth/login/"),
             methods=["POST"],
-            tags=["User"],
         )
 
         #######################################################################
