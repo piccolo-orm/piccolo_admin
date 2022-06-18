@@ -368,6 +368,20 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        api_app.mount(
+            path="/change-password/",
+            app=AuthenticationMiddleware(
+                change_password(login_url=f"{self.prefix_path}auth/login/"),
+                SessionsAuthBackend(),
+            ),
+        )
+
+        api_app.add_route(
+            path="/register/",
+            route=register(redirect_to=f"{self.prefix_path}auth/login/"),
+            methods=["POST"],
+        )
+
         #######################################################################
 
         auth_app = FastAPI()
@@ -390,20 +404,6 @@ class AdminRouter(FastAPI):
                 ),
                 provider=rate_limit_provider,
             ),
-        )
-
-        auth_app.mount(
-            path="/change-password/",
-            app=AuthenticationMiddleware(
-                change_password(login_url=f"{self.prefix_path}auth/login/"),
-                SessionsAuthBackend(),
-            ),
-        )
-
-        auth_app.add_route(
-            path="/register/",
-            route=register(redirect_to=f"{self.prefix_path}auth/login/"),
-            methods=["POST"],
         )
 
         auth_app.add_route(
@@ -434,6 +434,7 @@ class AdminRouter(FastAPI):
                 auth_table=auth_table,
                 session_table=session_table,
                 admin_only=True,
+                superuser_only=True,
                 increase_expiry=increase_expiry,
             ),
             on_error=handle_auth_exception,

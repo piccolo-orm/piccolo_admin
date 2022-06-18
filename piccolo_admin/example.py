@@ -271,9 +271,10 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     user = BaseUser(
         username="piccolo",
         password="piccolo123",
-        admin=True,
         email="admin@test.com",
+        admin=True,
         active=True,
+        superuser=True,
     )
     user.save().run_sync()
 

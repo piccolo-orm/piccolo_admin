@@ -4,11 +4,11 @@
             <BackButton />
             <h1>Change password</h1>
             <form v-on:submit.prevent="changePassword">
-                <label>Old password</label>
+                <label>Current password</label>
                 <input
-                    name="old_username"
+                    name="current_password"
                     type="password"
-                    v-model="oldPassword"
+                    v-model="currentPassword"
                 />
 
                 <label>New password</label>
@@ -39,7 +39,7 @@ import BackButton from "../components/BackButton.vue"
 export default {
     data() {
         return {
-            oldPassword: "",
+            currentPassword: "",
             newPassword: "",
             confirmNewPassword: ""
         }
@@ -51,12 +51,12 @@ export default {
         async changePassword() {
             console.log("Changing password")
             const payload = {
-                old_password: this.oldPassword,
+                current_password: this.currentPassword,
                 new_password: this.newPassword,
                 confirm_new_password: this.confirmNewPassword
             }
             try {
-                await axios.post(`./auth/change-password/`, payload)
+                await axios.post(`./api/change-password/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: `Changed password successfully. You will be redirected 
                         to the login page to log in with your new credentials.`,
@@ -74,7 +74,7 @@ export default {
                     type: "error"
                 })
                 setTimeout(() => {
-                    this.$router.push({ name: "home" })
+                    this.$router.push({ name: "changePassword" })
                 }, 5)
                 return
             }

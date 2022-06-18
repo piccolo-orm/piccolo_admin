@@ -53,7 +53,7 @@ export default {
                 confirm_password: this.confirmPassword
             }
             try {
-                await axios.post(`./auth/register/`, payload)
+                await axios.post(`./api/register/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: "Successfully create a new user.",
                     type: "success"
@@ -69,7 +69,7 @@ export default {
                     type: "error"
                 })
                 setTimeout(() => {
-                    this.$router.push({ name: "home" })
+                    this.$router.push({ name: "createNewUser" })
                 }, 5)
                 return
             }
