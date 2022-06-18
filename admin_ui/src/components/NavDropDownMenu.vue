@@ -1,34 +1,38 @@
 <template>
     <DropDownMenu>
         <li>
-            <a
-                href="#"
-                v-on:click.prevent="logout"
-            >
+            <a href="#" v-on:click.prevent="logout">
                 <font-awesome-icon icon="sign-out-alt" />Log out
             </a>
         </li>
+        <li>
+            <router-link
+                :to="{
+                    name: 'changePassword'
+                }"
+                ><font-awesome-icon icon="key" /> Change Password
+            </router-link>
+        </li>
+        <li>
+            <router-link
+                :to="{
+                    name: 'createNewUser'
+                }"
+                ><font-awesome-icon icon="user-plus" /> Create User
+            </router-link>
+        </li>
         <li v-if="darkMode">
-            <a
-                href="#"
-                v-on:click.prevent="updateDarkMode(false)"
-            >
+            <a href="#" v-on:click.prevent="updateDarkMode(false)">
                 <font-awesome-icon icon="sun" />Light Mode
             </a>
         </li>
         <li v-else>
-            <a
-                href="#"
-                v-on:click.prevent="updateDarkMode(true)"
-            >
+            <a href="#" v-on:click.prevent="updateDarkMode(true)">
                 <font-awesome-icon icon="moon" />Dark Mode
             </a>
         </li>
         <li>
-            <a
-                href="#"
-                v-on:click.prevent="showAboutModal"
-            >
+            <a href="#" v-on:click.prevent="showAboutModal">
                 <font-awesome-icon icon="info-circle" />About
             </a>
         </li>
@@ -43,12 +47,12 @@ import DropDownMenu from "./DropDownMenu.vue"
 
 export default Vue.extend({
     components: {
-        DropDownMenu,
+        DropDownMenu
     },
     computed: {
         darkMode() {
             return this.$store.state.darkMode
-        },
+        }
     },
     methods: {
         updateDarkMode(enabled: boolean) {
@@ -72,8 +76,8 @@ export default Vue.extend({
                     console.log(error)
                 }
             }
-        },
-    },
+        }
+    }
 })
 </script>
 

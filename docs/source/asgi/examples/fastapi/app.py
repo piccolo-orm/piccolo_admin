@@ -9,14 +9,17 @@ from piccolo_admin.endpoints import create_admin
 app = FastAPI(
     routes=[
         Mount(
-            "/admin/",
-            create_admin(
+            path="/admin/",
+            app=create_admin(
                 tables=[Director, Movie],
                 # Specify a different site name in the
-                # admin UI (default Piccolo Admin)
+                # admin UI (default Piccolo Admin):
                 site_name="My Site Admin",
                 # Required when running under HTTPS:
-                # allowed_hosts=['my_site.com']
+                allowed_hosts=["my_site.com"],
+                # Required for change_password
+                # and create new user endpoints:
+                prefix_path="/admin/",
             ),
         ),
     ],

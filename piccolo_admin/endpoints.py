@@ -16,6 +16,8 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
+from piccolo.utils.warnings import Level, colored_warning
+from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
@@ -25,10 +27,10 @@ from piccolo_api.rate_limiting.middleware import (
     RateLimitingMiddleware,
     RateLimitProvider,
 )
+from piccolo_api.register.endpoints import register
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from piccolo.utils.warnings import Level, colored_warning
 from pydantic import BaseModel, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -237,6 +239,7 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
+        prefix_path: str = "/",
     ) -> None:
         super().__init__(
             title=site_name, description="Piccolo API documentation"
@@ -273,6 +276,7 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
+        self.prefix_path = prefix_path
         self.forms = forms
         self.form_config_map = {form.slug: form for form in self.forms}
 
@@ -386,6 +390,20 @@ class AdminRouter(FastAPI):
                 ),
                 provider=rate_limit_provider,
             ),
+        )
+
+        auth_app.mount(
+            path="/change-password/",
+            app=AuthenticationMiddleware(
+                change_password(login_url=f"{self.prefix_path}auth/login/"),
+                SessionsAuthBackend(),
+            ),
+        )
+
+        auth_app.add_route(
+            path="/register/",
+            route=register(redirect_to=f"{self.prefix_path}auth/login/"),
+            methods=["POST"],
         )
 
         auth_app.add_route(
@@ -570,6 +588,7 @@ def create_admin(
     site_name: str = "Piccolo Admin",
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
+    prefix_path: str = "/",
 ):
     """
     :param tables:
@@ -622,6 +641,11 @@ def create_admin(
         This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
         as an additional layer of protection when the admin is run under HTTPS.
         It must be a sequence of strings, such as ``['my_site.com']``.
+    :param prefix_path:
+        This is used to pass an additional url prefix parameter.
+        E.g. ``Mount(path="/admin/", app=create_admin(prefix_path="/admin/")``.
+        It must be the same as ``Mount`` path argument. Used by change password
+        and create new user endpoints. Default to ``"/"`` unless otherwise specified.
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -665,6 +689,7 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
+                prefix_path=prefix_path,
             ),
             allowed_hosts=allowed_hosts,
         )

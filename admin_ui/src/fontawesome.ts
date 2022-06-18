@@ -17,6 +17,7 @@ import {
     faFilter,
     faHome,
     faInfoCircle,
+    faKey,
     faLevelUpAlt,
     faMoon,
     faPlus,
@@ -29,7 +30,8 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser
+    faUser,
+    faUserPlus
 } from "@fortawesome/free-solid-svg-icons"
 
 library.add(
@@ -48,6 +50,7 @@ library.add(
     faFilter,
     faHome,
     faInfoCircle,
+    faKey,
     faLevelUpAlt,
     faMoon,
     faPlus,
@@ -60,6 +63,7 @@ library.add(
     faTimes,
     faTools,
     faTrashAlt,
-    faUser
+    faUser,
+    faUserPlus
 )
 Vue.component("font-awesome-icon", FontAwesomeIcon)

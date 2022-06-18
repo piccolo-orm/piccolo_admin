@@ -1,0 +1,101 @@
+<template>
+    <div id="change_password">
+        <div class="inner">
+            <BackButton />
+            <h1>Change password</h1>
+            <form v-on:submit.prevent="changePassword">
+                <label>Old password</label>
+                <input
+                    name="old_username"
+                    type="password"
+                    v-model="oldPassword"
+                />
+
+                <label>New password</label>
+                <input
+                    name="new_password"
+                    type="password"
+                    v-model="newPassword"
+                />
+
+                <label>New password confirmation</label>
+                <input
+                    name="confirm_password"
+                    type="password"
+                    v-model="confirmPassword"
+                />
+
+                <button>Change password</button>
+            </form>
+        </div>
+    </div>
+</template>
+
+
+<script>
+import axios from "axios"
+import BackButton from "../components/BackButton.vue"
+
+export default {
+    data() {
+        return {
+            oldPassword: "",
+            newPassword: "",
+            confirmPassword: ""
+        }
+    },
+    components: {
+        BackButton
+    },
+    methods: {
+        async changePassword() {
+            console.log("Changing password")
+            const payload = {
+                old_password: this.oldPassword,
+                new_password: this.newPassword,
+                confirm_password: this.confirmPassword
+            }
+            try {
+                await axios.post(`./auth/change-password/`, payload)
+                this.$store.commit("updateApiResponseMessage", {
+                    contents: `Changed password successfully. You will be redirected 
+                        to the login page to log in with a new credentials.`,
+                    type: "success"
+                })
+                setTimeout(() => {
+                    this.$router.push({ name: "home" })
+                }, 3000)
+            } catch (error) {
+                console.log("Request failed")
+                console.log(error.response)
+                this.$store.commit("updateApiResponseMessage", {
+                    contents:
+                        "The form has errors. Changing password canceled.",
+                    type: "error"
+                })
+                setTimeout(() => {
+                    this.$router.push({ name: "home" })
+                }, 5)
+                return
+            }
+        }
+    }
+}
+</script>
+
+
+<style lang="less">
+div#change_password {
+    div.inner {
+        margin: 0 auto;
+        max-width: 30rem;
+        padding: 2rem 2rem;
+
+        h1 {
+            margin-top: 0;
+            padding-top: 0.5rem;
+            text-align: center;
+        }
+    }
+}
+</style>

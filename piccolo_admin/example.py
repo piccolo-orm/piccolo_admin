@@ -44,14 +44,6 @@ from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
-class Sessions(SessionsBase):
-    pass
-
-
-class User(BaseUser, tablename="piccolo_user"):
-    pass
-
-
 class Director(Table, help_text="The main director for a movie."):
     class Gender(enum.Enum):
         male = "m"
@@ -176,8 +168,8 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
     Movie,
     Studio,
-    User,
-    Sessions,
+    BaseUser,
+    SessionsBase,
 )
 
 movie_config = TableConfig(
@@ -209,7 +201,12 @@ director_config = TableConfig(
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio],
+    [
+        movie_config,
+        director_config,
+        Studio,
+        BaseUser,
+    ],
     forms=[
         FormConfig(
             name="Business email form",
@@ -224,8 +221,8 @@ APP = create_admin(
             description="Make a booking for a customer.",
         ),
     ],
-    auth_table=User,
-    session_table=Sessions,
+    auth_table=BaseUser,
+    session_table=SessionsBase,
 )
 
 
@@ -271,7 +268,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
         ).run_sync()
 
     # Create a user for testing login
-    user = User(
+    user = BaseUser(
         username="piccolo",
         password="piccolo123",
         admin=True,
