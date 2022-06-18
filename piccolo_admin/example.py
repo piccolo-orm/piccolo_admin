@@ -274,7 +274,6 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
         email="admin@test.com",
         admin=True,
         active=True,
-        superuser=True,
     )
     user.save().run_sync()
 

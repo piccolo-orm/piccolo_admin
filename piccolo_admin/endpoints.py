@@ -434,7 +434,6 @@ class AdminRouter(FastAPI):
                 auth_table=auth_table,
                 session_table=session_table,
                 admin_only=True,
-                superuser_only=True,
                 increase_expiry=increase_expiry,
             ),
             on_error=handle_auth_exception,
