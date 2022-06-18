@@ -20,9 +20,9 @@
 
                 <label>New password confirmation</label>
                 <input
-                    name="confirm_password"
+                    name="confirm_new_password"
                     type="password"
-                    v-model="confirmPassword"
+                    v-model="confirmNewPassword"
                 />
 
                 <button>Change password</button>
@@ -41,7 +41,7 @@ export default {
         return {
             oldPassword: "",
             newPassword: "",
-            confirmPassword: ""
+            confirmNewPassword: ""
         }
     },
     components: {
@@ -53,13 +53,13 @@ export default {
             const payload = {
                 old_password: this.oldPassword,
                 new_password: this.newPassword,
-                confirm_password: this.confirmPassword
+                confirm_new_password: this.confirmNewPassword
             }
             try {
                 await axios.post(`./auth/change-password/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: `Changed password successfully. You will be redirected 
-                        to the login page to log in with a new credentials.`,
+                        to the login page to log in with your new credentials.`,
                     type: "success"
                 })
                 setTimeout(() => {

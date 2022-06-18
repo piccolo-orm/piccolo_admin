@@ -2,30 +2,25 @@
     <div id="change_password">
         <div class="inner">
             <BackButton />
-            <h1>Change password</h1>
-            <form v-on:submit.prevent="changePassword">
-                <label>Old password</label>
-                <input
-                    name="old_username"
-                    type="password"
-                    v-model="oldPassword"
-                />
+            <h1>Create user</h1>
+            <form v-on:submit.prevent="createNewUser">
+                <label>Username</label>
+                <input name="username" type="text" v-model="username" />
 
-                <label>New password</label>
-                <input
-                    name="new_password"
-                    type="password"
-                    v-model="newPassword"
-                />
+                <label>Email</label>
+                <input name="email" type="text" v-model="email" />
 
-                <label>New password confirmation</label>
+                <label>Password</label>
+                <input name="password" type="password" v-model="password" />
+
+                <label>Password confirmation</label>
                 <input
                     name="confirm_password"
                     type="password"
                     v-model="confirmPassword"
                 />
 
-                <button>Change password</button>
+                <button>Create user</button>
             </form>
         </div>
     </div>
@@ -39,8 +34,9 @@ import BackButton from "../components/BackButton.vue"
 export default {
     data() {
         return {
-            oldPassword: "",
-            newPassword: "",
+            username: "",
+            email: "",
+            password: "",
             confirmPassword: ""
         }
     },
@@ -48,18 +44,18 @@ export default {
         BackButton
     },
     methods: {
-        async changePassword() {
-            console.log("Changing password")
+        async createNewUser() {
+            console.log("Creating new user")
             const payload = {
-                old_password: this.oldPassword,
-                new_password: this.newPassword,
+                username: this.username,
+                email: this.email,
+                password: this.password,
                 confirm_password: this.confirmPassword
             }
             try {
-                await axios.post(`./auth/change-password/`, payload)
+                await axios.post(`./auth/register/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
-                    contents: `Changed password successfully. You will be redirected 
-                        to the login page to log in with a new credentials.`,
+                    contents: "Successfully create a new user.",
                     type: "success"
                 })
                 setTimeout(() => {
@@ -69,8 +65,7 @@ export default {
                 console.log("Request failed")
                 console.log(error.response)
                 this.$store.commit("updateApiResponseMessage", {
-                    contents:
-                        "The form has errors. Changing password canceled.",
+                    contents: "The form has errors. Creating user canceled.",
                     type: "error"
                 })
                 setTimeout(() => {
