@@ -16,10 +16,7 @@ app = FastAPI(
                 # admin UI (default Piccolo Admin):
                 site_name="My Site Admin",
                 # Required when running under HTTPS:
-                allowed_hosts=["my_site.com"],
-                # Required for change_password
-                # and create new user endpoints:
-                prefix_path="/admin/",
+                # allowed_hosts=["my_site.com"],
             ),
         ),
     ],
