@@ -372,10 +372,12 @@ class AdminRouter(FastAPI):
             methods=["POST"],
         )
 
-        api_app.add_route(
+        api_app.mount(
             path="/register/",
-            route=register(redirect_to="./../../auth/login/"),
-            methods=["POST"],
+            app=AuthenticationMiddleware(
+                register(redirect_to="./../../auth/login/"),
+                SessionsAuthBackend(superuser_only=True),
+            ),
         )
 
         #######################################################################
