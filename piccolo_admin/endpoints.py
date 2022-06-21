@@ -368,15 +368,23 @@ class AdminRouter(FastAPI):
 
         api_app.add_route(
             path="/change-password/",
-            route=change_password(login_url="./../../auth/login/"),
+            route=change_password(
+                login_url="./../../auth/login/", session_table=session_table
+            ),
             methods=["POST"],
         )
 
         api_app.mount(
             path="/register/",
             app=AuthenticationMiddleware(
-                register(redirect_to="./../../auth/login/"),
-                SessionsAuthBackend(superuser_only=True),
+                register(
+                    redirect_to="./../../auth/login/", auth_table=auth_table
+                ),
+                SessionsAuthBackend(
+                    auth_table=auth_table,
+                    session_table=session_table,
+                    superuser_only=True,
+                ),
             ),
         )
 
