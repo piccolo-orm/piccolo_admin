@@ -26,8 +26,7 @@
     </div>
 </template>
 
-
-<script>
+<script lang="ts">
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
 
@@ -77,7 +76,6 @@ export default {
     }
 }
 </script>
-
 
 <style lang="less">
 div#change_password {

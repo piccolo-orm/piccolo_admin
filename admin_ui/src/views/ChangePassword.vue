@@ -31,8 +31,7 @@
     </div>
 </template>
 
-
-<script>
+<script lang="ts">
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
 
@@ -58,7 +57,7 @@ export default {
             try {
                 await axios.post(`./api/change-password/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
-                    contents: `Changed password successfully. You will be redirected 
+                    contents: `Changed password successfully. You will be redirected
                         to the login page to log in with your new credentials.`,
                     type: "success"
                 })
@@ -82,7 +81,6 @@ export default {
     }
 }
 </script>
-
 
 <style lang="less">
 div#change_password {
