@@ -46,6 +46,7 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 class UserResponseModel(BaseModel):
     username: str
     user_id: str
+    superuser: bool
 
 
 class MetaResponseModel(BaseModel):
@@ -458,9 +459,17 @@ class AdminRouter(FastAPI):
     ###########################################################################
 
     def get_user(self, request: Request) -> UserResponseModel:
+        request_user = request.user.user
+        user = (
+            request_user.select()
+            .where(self.auth_table.username == request.user.display_name)
+            .first()
+            .run_sync()
+        )
         return UserResponseModel(
             username=request.user.display_name,
             user_id=request.user.user_id,
+            superuser=user["superuser"],
         )
 
     ###########################################################################

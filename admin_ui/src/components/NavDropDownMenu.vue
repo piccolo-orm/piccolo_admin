@@ -18,8 +18,16 @@
                 :to="{
                     name: 'createNewUser'
                 }"
+                v-if="user.superuser"
                 ><font-awesome-icon icon="user-plus" /> Create User
             </router-link>
+            <a v-else v-on:click="disabledLink" :ref="link"
+                ><font-awesome-icon
+                    icon="user-plus"
+                    :style="{ color: '#D3D3D3' }"
+                />
+                <b :style="{ color: '#D3D3D3' }">Create User</b></a
+            >
         </li>
         <li v-if="darkMode">
             <a href="#" v-on:click.prevent="updateDarkMode(false)">
@@ -52,6 +60,9 @@ export default Vue.extend({
     computed: {
         darkMode() {
             return this.$store.state.darkMode
+        },
+        user() {
+            return this.$store.state.user
         }
     },
     methods: {
@@ -60,6 +71,9 @@ export default Vue.extend({
         },
         showAboutModal() {
             this.$store.commit("updateShowAboutModal", true)
+        },
+        disabledLink() {
+            alert("Only superuser can create new users!")
         },
         async logout() {
             if (window.confirm("Are you sure you want to logout?")) {

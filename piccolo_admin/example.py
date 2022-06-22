@@ -286,6 +286,16 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     )
     user.save().run_sync()
 
+    new_user = User(
+        username="john",
+        password="john123",
+        email="john@test.com",
+        admin=True,
+        active=True,
+        superuser=False,
+    )
+    new_user.save().run_sync()
+
     if inflate:
         try:
             import faker
