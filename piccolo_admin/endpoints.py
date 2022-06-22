@@ -370,7 +370,9 @@ class AdminRouter(FastAPI):
         api_app.add_route(
             path="/change-password/",
             route=change_password(
-                login_url="./../../auth/login/", session_table=session_table
+                login_url="./../../auth/login/",
+                session_table=session_table,
+                read_only=read_only,
             ),
             methods=["POST"],
         )
@@ -379,7 +381,9 @@ class AdminRouter(FastAPI):
             path="/register/",
             app=AuthenticationMiddleware(
                 register(
-                    redirect_to="./../../auth/login/", auth_table=auth_table
+                    redirect_to="./../../auth/login/",
+                    auth_table=auth_table,
+                    read_only=read_only,
                 ),
                 SessionsAuthBackend(
                     auth_table=auth_table,
