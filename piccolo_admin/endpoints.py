@@ -369,7 +369,9 @@ class AdminRouter(FastAPI):
         api_app.add_route(
             path="/change-password/",
             route=change_password(
-                login_url="./../../auth/login/", session_table=session_table
+                login_url="./../../auth/login/",
+                session_table=session_table,
+                read_only=read_only,
             ),
             methods=["POST"],
         )
