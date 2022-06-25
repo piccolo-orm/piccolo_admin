@@ -19,6 +19,7 @@ from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
 from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.openapi.endpoints import swagger_ui
@@ -310,9 +311,9 @@ class AdminRouter(FastAPI):
             )
 
             validators = (
-                [superuser_validators]
+                Validators(every=[superuser_validators])
                 if table_class in (auth_table, session_table)
-                else []
+                else None
             )
 
             FastAPIWrapper(
