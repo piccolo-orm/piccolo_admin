@@ -215,6 +215,22 @@ def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
+def superuser_validators(piccolo_crud: PiccoloCRUD, request: Request):
+    """
+    We need to provide extra validation on certain tables (e.g. user and
+    sessions), so only superusers can perform certain actions, otherwise the
+    security of the application can be compromised.
+    """
+    user: BaseUser = request.user.user
+    if user.superuser:
+        return
+    if request.method.upper() in ["PUT", "PATCH", "DELETE", "POST"]:
+        raise HTTPException(
+            status_code=405,
+            detail="Only superusers can perform these actions.",
+        )
+
+
 class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -292,6 +308,13 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+
+            validators = (
+                [superuser_validators]
+                if table_class in (auth_table, session_table)
+                else []
+            )
+
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -304,6 +327,7 @@ class AdminRouter(FastAPI):
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
                     },
+                    validators=validators,
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
@@ -531,20 +555,7 @@ class AdminRouter(FastAPI):
         """
         Returns a list of all tables registered with the admin.
         """
-        request_user = request.user.user
-        user = (
-            request_user.select()
-            .where(self.auth_table.username == request.user.display_name)
-            .first()
-            .run_sync()
-        )
-        if user["superuser"] is True:
-            return [i.table_class._meta.tablename for i in self.table_configs]
-        return [
-            i.table_class._meta.tablename
-            for i in self.table_configs
-            if i.table_class != self.auth_table
-        ]
+        return [i.table_class._meta.tablename for i in self.table_configs]
 
 
 def get_all_tables(
