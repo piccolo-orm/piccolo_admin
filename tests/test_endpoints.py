@@ -375,5 +375,5 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            {"username": "Bob", "user_id": "1", "superuser": True},
+            {"username": "Bob", "user_id": "1"},
         )

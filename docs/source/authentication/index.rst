@@ -53,14 +53,3 @@ You can also change a user's password:
 .. code-block:: bash
 
     piccolo user change_password
-
-Admin GUI actions
------------------
-
-.. image:: ./images/dropdown.png
-
-In addition to CLI ``admin`` user also has ability to create new users or 
-change his password in admin GUI.
-
-.. warning::
-    Only ``superuser`` can create new users in admin GUI.

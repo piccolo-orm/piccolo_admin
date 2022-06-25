@@ -46,7 +46,6 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 class UserResponseModel(BaseModel):
     username: str
     user_id: str
-    superuser: bool
 
 
 class MetaResponseModel(BaseModel):
@@ -375,20 +374,6 @@ class AdminRouter(FastAPI):
             methods=["POST"],
         )
 
-        api_app.mount(
-            path="/register/",
-            app=AuthenticationMiddleware(
-                register(
-                    redirect_to="./../../auth/login/", auth_table=auth_table
-                ),
-                SessionsAuthBackend(
-                    auth_table=auth_table,
-                    session_table=session_table,
-                    superuser_only=True,
-                ),
-            ),
-        )
-
         #######################################################################
 
         auth_app = FastAPI()
@@ -459,17 +444,9 @@ class AdminRouter(FastAPI):
     ###########################################################################
 
     def get_user(self, request: Request) -> UserResponseModel:
-        request_user = request.user.user
-        user = (
-            request_user.select()
-            .where(self.auth_table.username == request.user.display_name)
-            .first()
-            .run_sync()
-        )
         return UserResponseModel(
             username=request.user.display_name,
             user_id=request.user.user_id,
-            superuser=user["superuser"],
         )
 
     ###########################################################################
@@ -549,11 +526,24 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self) -> t.List[str]:
+    def get_table_list(self, request: Request) -> t.List[str]:
         """
         Returns a list of all tables registered with the admin.
         """
-        return [i.table_class._meta.tablename for i in self.table_configs]
+        request_user = request.user.user
+        user = (
+            request_user.select()
+            .where(self.auth_table.username == request.user.display_name)
+            .first()
+            .run_sync()
+        )
+        if user["superuser"] is True:
+            return [i.table_class._meta.tablename for i in self.table_configs]
+        return [
+            i.table_class._meta.tablename
+            for i in self.table_configs
+            if i.table_class != self.auth_table
+        ]
 
 
 def get_all_tables(
