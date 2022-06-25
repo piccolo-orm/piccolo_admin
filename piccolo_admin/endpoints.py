@@ -27,7 +27,6 @@ from piccolo_api.rate_limiting.middleware import (
     RateLimitingMiddleware,
     RateLimitProvider,
 )
-from piccolo_api.register.endpoints import register
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
