@@ -65,6 +65,7 @@ export default Vue.extend({
         resetForm() {
             this.$refs.form.reset()
             this.successMessage = null
+            this.errors = ""
         },
         async fetchFormConfig() {
             const response = await this.$store.dispatch(
