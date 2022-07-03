@@ -30,8 +30,7 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
-    faUserPlus
+    faUser
 } from "@fortawesome/free-solid-svg-icons"
 
 library.add(
@@ -63,7 +62,6 @@ library.add(
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
-    faUserPlus
+    faUser
 )
 Vue.component("font-awesome-icon", FontAwesomeIcon)
