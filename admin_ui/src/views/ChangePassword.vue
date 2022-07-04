@@ -72,10 +72,6 @@ export default {
                         "The form has errors. Changing password canceled.",
                     type: "error"
                 })
-                setTimeout(() => {
-                    this.$router.push({ name: "changePassword" })
-                }, 5)
-                return
             }
         }
     }
