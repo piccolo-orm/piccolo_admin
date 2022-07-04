@@ -1,3 +1,5 @@
+# See https://github.com/piccolo-orm/piccolo_admin/issues/173 for more info.
+
 WELSH = {
     "About": "Am",
     "Add Row": "Ychwanegu Rhes",
