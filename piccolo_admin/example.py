@@ -209,7 +209,12 @@ director_config = TableConfig(
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio],
+    [
+        movie_config,
+        director_config,
+        Studio,
+        User,
+    ],
     forms=[
         FormConfig(
             name="Business email form",
@@ -274,11 +279,22 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     user = User(
         username="piccolo",
         password="piccolo123",
-        admin=True,
         email="admin@test.com",
+        admin=True,
         active=True,
+        superuser=True,
     )
     user.save().run_sync()
+
+    new_user = User(
+        username="john",
+        password="john123",
+        email="john@test.com",
+        admin=True,
+        active=True,
+        superuser=False,
+    )
+    new_user.save().run_sync()
 
     if inflate:
         try:
