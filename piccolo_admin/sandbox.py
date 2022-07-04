@@ -20,7 +20,7 @@ APP = create_admin(
     [Director, Movie],
     auth_table=User,
     session_table=Sessions,
-    read_only=False,
+    read_only=True,
 )
 
 
