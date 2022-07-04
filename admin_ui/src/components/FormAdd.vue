@@ -1,12 +1,15 @@
 <template>
     <div>
-        <template v-if="formConfig">
+        <template v-if="formConfig && !successMessage">
             <h1>{{ formConfig.name }}</h1>
 
-            <p v-if="formConfig.description">{{ formConfig.description }}</p>
+            <p v-if="formConfig.description">
+                {{ formConfig.description }}
+            </p>
         </template>
 
         <div v-show="successMessage">
+            <h1>Form submitted</h1>
             <p>{{ successMessage }}</p>
             <ul>
                 <li>
