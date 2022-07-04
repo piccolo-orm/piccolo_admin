@@ -68,8 +68,7 @@ export default {
                 console.log("Request failed")
                 console.log(error.response)
                 this.$store.commit("updateApiResponseMessage", {
-                    contents:
-                        "The form has errors. Changing password canceled.",
+                    contents: `Error - ${error.response.data.detail}`,
                     type: "error"
                 })
             }
