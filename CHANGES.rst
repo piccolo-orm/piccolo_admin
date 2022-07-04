@@ -1,6 +1,33 @@
 Changes
 =======
 
+0.22.2
+------
+
+More sandbox fixes.
+
+-------------------------------------------------------------------------------
+
+0.22.1
+------
+
+Fixed a bug with the sandbox.
+
+-------------------------------------------------------------------------------
+
+0.22.0
+------
+
+The user can now change their password in the Piccolo Admin UI (courtesy
+@sinisaos).
+
+After submitting a custom form with Piccolo Admin, the UI used to show the
+response message in a popup at the bottom of the screen. It now shows a success
+page instead, which is better if the response message is long, as it's easier
+for the user to read. Thanks to @ethagnawl for reporting this issue.
+
+-------------------------------------------------------------------------------
+
 0.21.0
 ------
 

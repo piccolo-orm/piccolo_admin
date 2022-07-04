@@ -129,6 +129,10 @@ class TestAdminRouter(TestCase):
         self.assertEqual(response.json(), {"error": "Auth failed"})
         self.assertEqual(response.status_code, 401)
 
+        response = client.get("/api/change-password/")
+        self.assertEqual(response.json(), {"error": "Auth failed"})
+        self.assertEqual(response.status_code, 401)
+
 
 class TestForms(TestCase):
     credentials = {"username": "Bob", "password": "bob123"}
@@ -347,7 +351,7 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["movie", "director", "studio"],
+            ["movie", "director", "studio", "piccolo_user"],
         )
 
     def test_get_user(self):

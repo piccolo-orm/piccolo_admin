@@ -5,6 +5,7 @@ import AddRow from './views/AddRow.vue'
 import EditRow from './views/EditRow.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
+import ChangePassword from './views/ChangePassword.vue'
 import RowListing from './views/RowListing.vue'
 import AddForm from './views/AddForm.vue'
 
@@ -23,6 +24,12 @@ export default new Router({
             path: '/login/',
             name: 'login',
             component: Login
+        },
+        {
+            path: '/change-password/',
+            name: 'changePassword',
+            component: ChangePassword,
+            props: true
         },
         {
             path: '/forms/:formSlug/',

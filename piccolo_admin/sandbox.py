@@ -17,7 +17,10 @@ from piccolo_admin.example import (
 )
 
 APP = create_admin(
-    [Director, Movie], auth_table=User, session_table=Sessions, read_only=True
+    [Director, Movie],
+    auth_table=User,
+    session_table=Sessions,
+    read_only=True,
 )
 
 
@@ -34,6 +37,7 @@ def sandbox(host: str = "localhost", port: int = 8080):
     set_engine()
     create_schema(persist=False)
     populate_data()
+
     uvicorn.run(APP, host=host, port=port)
 
 
