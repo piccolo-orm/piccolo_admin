@@ -4,12 +4,12 @@ online without risk of abuse.
 """
 import targ
 import uvicorn
+from piccolo.apps.user.tables import BaseUser
+from piccolo_api.session_auth.tables import SessionsBase
 
 from piccolo_admin.example import (
     Director,
     Movie,
-    Sessions,
-    User,
     create_admin,
     create_schema,
     populate_data,
@@ -17,7 +17,10 @@ from piccolo_admin.example import (
 )
 
 APP = create_admin(
-    [Director, Movie], auth_table=User, session_table=Sessions, read_only=True
+    [Director, Movie],
+    auth_table=BaseUser,
+    session_table=SessionsBase,
+    read_only=True,
 )
 
 
