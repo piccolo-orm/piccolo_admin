@@ -11,11 +11,15 @@
                         />
                     </div>
                     <div class="buttons">
-                        <BulkUpdateButton
-                            :selected="selectedRows.length"
+                        <a
+                            class="button"
+                            href="#"
                             v-if="selectedRows.length > 0"
-                            v-on:triggered="updateRows"
-                        />
+                            v-on:click.prevent="showUpdate = !showUpdate"
+                        >
+                            <font-awesome-icon icon="arrow-up" />
+                            <span>Update {{ selectedRows.length }} rows</span>
+                        </a>
                         <BulkDeleteButton
                             :selected="selectedRows.length"
                             v-if="selectedRows.length > 0"
@@ -297,6 +301,14 @@
                 v-if="showSort"
                 v-on:close="showSort = false"
             />
+
+            <BulkUpdateModal
+                :schema="schema"
+                :tableName="tableName"
+                :selectedRows="selectedRows"
+                v-if="showUpdate"
+                v-on:close="showUpdate = false"
+            />
         </template>
     </BaseView>
 </template>
@@ -308,7 +320,7 @@ import { readableInterval } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
-import BulkUpdateButton from "../components/BulkUpdateButton.vue"
+import BulkUpdateModal from "../components/BulkUpdateModal.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
@@ -329,13 +341,14 @@ export default Vue.extend({
             showAddRow: false,
             showFilter: false,
             showSort: false,
+            showUpdate: false,
             visibleDropdown: null
         }
     },
     components: {
         AddRowModal,
         BaseView,
-        BulkUpdateButton,
+        BulkUpdateModal,
         BulkDeleteButton,
         CSVButton,
         DeleteButton,
@@ -480,30 +493,6 @@ export default Vue.extend({
                 await this.fetchRows()
                 this.showSuccess("Successfully deleted row")
             }
-        },
-        async updateRows() {
-            let data = {}
-            let column = prompt("Enter the name of the column")
-            data[column.toLowerCase()] = prompt("Enter the value")
-            for (let i = 0; i < this.selectedRows.length; i++) {
-                await this.$store
-                    .dispatch("updateRow", {
-                        tableName: this.tableName,
-                        rowID: this.selectedRows[i],
-                        data: data
-                    })
-                    .then(() => {
-                        this.showSuccess("Successfully updated rows")
-                    })
-                    .catch(() => {
-                        var message: APIResponseMessage = {
-                            contents: "Invalid column name or value",
-                            type: "error"
-                        }
-                        this.$store.commit("updateApiResponseMessage", message)
-                    })
-            }
-            await this.fetchRows()
         },
         async deleteRows() {
             if (confirm(`Are you sure you want to delete the selected rows?`)) {
