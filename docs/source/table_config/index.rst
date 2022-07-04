@@ -7,7 +7,7 @@ When using ``create_admin``, you can pass in normal ``Table`` classes:
 
     from piccolo_admin.endpoints import create_admin
 
-    create_admin(Director, Movie)
+    create_admin([Director, Movie])
 
 Alternatively, you can pass in ``TableConfig`` instances (or mix and match
 them).
@@ -32,7 +32,7 @@ We can set which columns are visible in the list view:
 
     movie_config = TableConfig(Movie, visible_columns=[Movie.id, Movie.name])
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 Here is the UI when just passing in a ``Table``:
 
@@ -61,7 +61,7 @@ We can set which columns are visible in the filter sidebar:
         ]
     )
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 Here is the UI when just passing in a ``Table``:
 
@@ -90,7 +90,7 @@ We can specify which ``Text`` columns will use a rich text editor.
         ]
     )
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 This allows the user to add hyperlinks, and basic formatting to their content,
 without having to write HTML.
