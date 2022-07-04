@@ -16,7 +16,10 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
+from piccolo.utils.warnings import Level, colored_warning
+from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.openapi.endpoints import swagger_ui
@@ -28,7 +31,6 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from piccolo.utils.warnings import Level, colored_warning
 from pydantic import BaseModel, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -214,6 +216,22 @@ def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
+def superuser_validators(piccolo_crud: PiccoloCRUD, request: Request):
+    """
+    We need to provide extra validation on certain tables (e.g. user and
+    sessions), so only superusers can perform certain actions, otherwise the
+    security of the application can be compromised.
+    """
+    user: BaseUser = request.user.user
+    if user.superuser:
+        return
+    if request.method.upper() in ["PUT", "PATCH", "DELETE", "POST"]:
+        raise HTTPException(
+            status_code=405,
+            detail="Only superusers can perform these actions.",
+        )
+
+
 class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -291,6 +309,13 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+
+            validators = (
+                Validators(every=[superuser_validators])
+                if table_class in (auth_table, session_table)
+                else None
+            )
+
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
                 fastapi_app=api_app,
@@ -303,6 +328,7 @@ class AdminRouter(FastAPI):
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
                     },
+                    validators=validators,
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
@@ -362,6 +388,16 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             tags=["User"],
             response_model=UserResponseModel,
+        )
+
+        api_app.add_route(
+            path="/change-password/",
+            route=change_password(
+                login_url="./../../auth/login/",
+                session_table=session_table,
+                read_only=read_only,
+            ),
+            methods=["POST"],
         )
 
         #######################################################################
@@ -516,7 +552,7 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self) -> t.List[str]:
+    def get_table_list(self, request: Request) -> t.List[str]:
         """
         Returns a list of all tables registered with the admin.
         """
@@ -622,7 +658,6 @@ def create_admin(
         This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
         as an additional layer of protection when the admin is run under HTTPS.
         It must be a sequence of strings, such as ``['my_site.com']``.
-
     """  # noqa: E501
     auth_table = auth_table or BaseUser
     session_table = session_table or SessionsBase
