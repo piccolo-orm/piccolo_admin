@@ -4,8 +4,8 @@
             <p>Select a column to update</p>
 
             <select name="property" v-model="propertyName">
-                <option :value="schema.primary_key_name" disabled>
-                    {{ schema.primary_key_name }}
+                <option :value="schema.primary_key_name">
+                    Please select column
                 </option>
                 <option
                     :key="key"
@@ -15,7 +15,9 @@
                     {{ key }}
                 </option>
             </select>
-            <p>Value to change</p>
+            <p v-show="propertyName != schema.primary_key_name">
+                Value to change
+            </p>
 
             <form v-on:submit.prevent="updateRows($event)">
                 <div :key="key" v-for="(property, key) in schema.properties">
