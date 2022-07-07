@@ -21,6 +21,20 @@
             </h1>
 
             <ul>
+                <li style="margin-right: 1rem">
+                    <a
+                        href="#"
+                        title="Translations"
+                        v-on:click.prevent="
+                            showLanguageDropdown = !showLanguageDropdown
+                        "
+                        ><font-awesome-icon icon="language" size="lg"
+                    /></a>
+                    <NavTranslationsMenu
+                        v-if="showLanguageDropdown"
+                        @closeDropdown="closeDropdown"
+                    />
+                </li>
                 <li>
                     <a
                         href="#"
@@ -53,22 +67,24 @@
 import Vue from "vue"
 import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
+import NavTranslationsMenu from "./NavTranslationsMenu.vue"
 
 export default Vue.extend({
     props: {
         username: {
             type: String,
-            default: "Unknown",
+            default: "Unknown"
         },
         siteName: {
             type: String,
-            default: "Piccolo Admin",
-        },
+            default: "Piccolo Admin"
+        }
     },
     data() {
         return {
             showSidebar: false,
             showDropdown: false,
+            showLanguageDropdown: false
         }
     },
     computed: {
@@ -79,12 +95,18 @@ export default Vue.extend({
             } else {
                 return username
             }
-        },
+        }
     },
     components: {
         SidebarOverlay,
         NavDropDownMenu,
+        NavTranslationsMenu
     },
+    methods: {
+        closeDropdown(value) {
+            this.showLanguageDropdown = value
+        }
+    }
 })
 </script>
 

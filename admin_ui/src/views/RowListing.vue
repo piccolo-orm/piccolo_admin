@@ -26,7 +26,7 @@
                             v-on:click.prevent="showAddRow = true"
                         >
                             <font-awesome-icon icon="plus" />
-                            <span>Add Row</span>
+                            <span>{{ $t("Add Row") }}</span>
                         </router-link>
 
                         <a
@@ -35,7 +35,7 @@
                             v-on:click.prevent="showSort = !showSort"
                         >
                             <font-awesome-icon icon="sort" />
-                            <span>Sort</span>
+                            <span>{{ $t("Sort") }}</span>
                         </a>
 
                         <a
@@ -45,8 +45,8 @@
                         >
                             <font-awesome-icon icon="filter" />
                             <span>
-                                {{ showFilter ? "Hide" : "Show" }}
-                                Filters
+                                {{ showFilter ? $t("Hide") : $t("Show") }}
+                                {{ $t("Filters") }}
                             </span>
                         </a>
                         <CSVButton :tableName="tableName" />
@@ -54,18 +54,22 @@
                 </div>
                 <p id="selected_count" v-if="selectedRows.length > 0">
                     <b>{{ selectedRows.length }}</b>
-                    selected result(s) on
-                    <b>page {{ currentPageNumber }}</b>
+                    {{ $t("selected result(s) on") }}
+                    <b>{{ $t("page") }} {{ currentPageNumber }}</b>
                 </p>
 
                 <div class="table_wrapper">
                     <transition name="fade">
-                        <p v-show="loadingStatus" id="loading_indicator">Loading ...</p>
+                        <p v-show="loadingStatus" id="loading_indicator">
+                            {{ $t("Loading") }} ...
+                        </p>
                     </transition>
 
                     <transition name="fade">
                         <div v-if="!loadingStatus && rows != undefined">
-                            <p v-if="rows.length == 0">No results found</p>
+                            <p v-if="rows.length == 0">
+                                {{ $t("No results found") }}
+                            </p>
                             <template v-else>
                                 <table>
                                     <tr>
@@ -76,17 +80,24 @@
                                                 v-on:change="selectAllRows"
                                             />
                                         </th>
-                                        <th v-bind:key="name" v-for="name in cellNames">
+                                        <th
+                                            v-bind:key="name"
+                                            v-for="name in cellNames"
+                                        >
                                             {{
                                                 schema.properties[name]
-                                                    ? schema.properties[name].title
+                                                    ? schema.properties[name]
+                                                          .title
                                                     : name
                                             }}
                                         </th>
                                         <th></th>
                                     </tr>
 
-                                    <tr v-bind:key="row[pkName]" v-for="row in rows">
+                                    <tr
+                                        v-bind:key="row[pkName]"
+                                        v-for="row in rows"
+                                    >
                                         <td>
                                             <input
                                                 :value="row[pkName]"
@@ -95,40 +106,64 @@
                                                 v-model="selectedRows"
                                             />
                                         </td>
-                                        <td v-bind:key="name" v-for="name in cellNames">
-                                            <span class="link" v-if="name == pkName">
+                                        <td
+                                            v-bind:key="name"
+                                            v-for="name in cellNames"
+                                        >
+                                            <span
+                                                class="link"
+                                                v-if="name == pkName"
+                                            >
                                                 <router-link
                                                     :to="{
                                                         name: 'editRow',
                                                         params: {
-                                                            tableName: tableName,
+                                                            tableName:
+                                                                tableName,
                                                             rowID: row[name]
                                                         }
                                                     }"
-                                                    >{{ row[name] }}</router-link
+                                                    >{{
+                                                        row[name]
+                                                    }}</router-link
                                                 >
                                             </span>
-                                            <span v-else-if="choicesLookup[name]">
-                                                {{ choicesLookup[name][row[name]] }}
+                                            <span
+                                                v-else-if="choicesLookup[name]"
+                                            >
+                                                {{
+                                                    choicesLookup[name][
+                                                        row[name]
+                                                    ]
+                                                }}
                                             </span>
                                             <span
                                                 class="link"
                                                 v-else-if="
-                                                    isForeignKey(name) & (row[name] !== null)
+                                                    isForeignKey(name) &
+                                                    (row[name] !== null)
                                                 "
                                             >
                                                 <router-link
                                                     :to="{
                                                         name: 'editRow',
                                                         params: {
-                                                            tableName: getTableName(name),
+                                                            tableName:
+                                                                getTableName(
+                                                                    name
+                                                                ),
                                                             rowID: row[name]
                                                         }
                                                     }"
-                                                    >{{ row[name + "_readable"] }}</router-link
+                                                    >{{
+                                                        row[name + "_readable"]
+                                                    }}</router-link
                                                 >
                                             </span>
-                                            <span class="boolean" v-else-if="isBoolean(name)">
+                                            <span
+                                                class="boolean"
+                                                v-else-if="isBoolean(name)"
+                                            >
                                                 <font-awesome-icon
                                                     class="correct"
                                                     icon="check"
@@ -145,10 +180,14 @@
                                             </span>
                                             <span v-else-if="isJSON(name)">
                                                 <pre>{{
-                                                    row[name] | formatJSON | abbreviate
+                                                    row[name]
+                                                        | formatJSON
+                                                        | abbreviate
                                                 }}</pre>
                                             </span>
-                                            <span v-else>{{ row[name] | abbreviate }}</span>
+                                            <span v-else>{{
+                                                row[name] | abbreviate
+                                            }}</span>
                                         </td>
 
                                         <td>
@@ -163,21 +202,32 @@
                                                     class="subtle"
                                                     href="#"
                                                     v-on:click.prevent="
-                                                        visibleDropdown = visibleDropdown
-                                                            ? undefined
-                                                            : row[pkName]
+                                                        visibleDropdown =
+                                                            visibleDropdown
+                                                                ? undefined
+                                                                : row[pkName]
                                                     "
                                                 >
-                                                    <font-awesome-icon icon="ellipsis-v" />
+                                                    <font-awesome-icon
+                                                        icon="ellipsis-v"
+                                                    />
                                                 </a>
-                                                <DropDownMenu v-if="visibleDropdown == row[pkName]">
+                                                <DropDownMenu
+                                                    v-if="
+                                                        visibleDropdown ==
+                                                        row[pkName]
+                                                    "
+                                                >
                                                     <li>
                                                         <router-link
                                                             :to="{
                                                                 name: 'editRow',
                                                                 params: {
-                                                                    tableName: tableName,
-                                                                    rowID: row[pkName]
+                                                                    tableName:
+                                                                        tableName,
+                                                                    rowID: row[
+                                                                        pkName
+                                                                    ]
                                                                 }
                                                             }"
                                                             class="subtle"
@@ -191,8 +241,15 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="subtle delete"
-                                                            v-on:triggered="deleteRow(row[pkName])"
+                                                            class="
+                                                                subtle
+                                                                delete
+                                                            "
+                                                            v-on:triggered="
+                                                                deleteRow(
+                                                                    row[pkName]
+                                                                )
+                                                            "
                                                         />
                                                     </li>
                                                 </DropDownMenu>
@@ -202,7 +259,9 @@
                                 </table>
 
                                 <p id="result_count">
-                                    Showing {{ rows.length }} of {{ rowCount }} result(s)
+                                    {{ $t("Showing") }} {{ rows.length }}
+                                    {{ $t("of") }} {{ rowCount }}
+                                    {{ $t("result(s)") }}
                                 </p>
 
                                 <div class="pagination_wrapper">
@@ -313,7 +372,7 @@ export default Vue.extend({
             return this.$store.state.loadingStatus
         },
         pkName() {
-            return this.schema?.primary_key_name || 'id'
+            return this.schema?.primary_key_name || "id"
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
@@ -555,11 +614,13 @@ div.wrapper {
                 left: 0;
             }
 
-            .fade-enter-active, .fade-leave-active {
+            .fade-enter-active,
+            .fade-leave-active {
                 transition: opacity 0.8s;
             }
 
-            .fade-enter, .fade-leave-to {
+            .fade-enter,
+            .fade-leave-to {
                 opacity: 0;
                 transition: opacity 0s;
             }

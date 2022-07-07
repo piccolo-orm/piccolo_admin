@@ -1,33 +1,25 @@
 <template>
     <div v-if="references.length > 0">
         <p class="referencing_title">
-            <a
-                href="#"
-                v-on:click.prevent="showReferencing = !showReferencing"
-            >
+            <a href="#" v-on:click.prevent="showReferencing = !showReferencing">
                 <span v-if="showReferencing">
-                    <font-awesome-icon icon="angle-down" />Hide
+                    <font-awesome-icon icon="angle-down" />{{ $t("Hide") }}
                 </span>
                 <span v-else>
-                    <font-awesome-icon icon="angle-right" />Show
-                </span> Referencing Tables
+                    <font-awesome-icon icon="angle-right" />{{ $t("Show") }}
+                </span>
+                {{ $t("Referencing Tables") }}
             </a>
         </p>
-        <ul
-            class="related_tables"
-            v-if="showReferencing"
-        >
+        <ul class="related_tables" v-if="showReferencing">
             <li
                 v-bind:key="reference.tableName + reference.columnName"
                 v-for="reference in references"
             >
-                <a
-                    href="#"
-                    v-on:click.prevent="clickedReference(reference)"
-                >
+                <a href="#" v-on:click.prevent="clickedReference(reference)">
                     <font-awesome-icon icon="external-link-alt" />
                     <span class="table bold">{{ reference.tableName }}</span>
-                    with a matching
+                    {{ $t("with a matching") }}
                     <span class="bold">{{ reference.columnName }}</span>
                 </a>
             </li>
@@ -43,7 +35,7 @@ import { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
-    data: function() {
+    data: function () {
         return {
             references: [] as TableReference[],
             showReferencing: false
@@ -55,7 +47,9 @@ export default Vue.extend({
                 "fetchTableReferences",
                 this.tableName
             )
-            this.references = (response.data as TableReferencesAPIResponse).references
+            this.references = (
+                response.data as TableReferencesAPIResponse
+            ).references
         },
         clickedReference(reference: TableReference) {
             let columnName = reference.columnName

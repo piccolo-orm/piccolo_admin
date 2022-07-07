@@ -9,6 +9,25 @@ import './fontawesome'
 import axios from 'axios'
 import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
+import VueI18n from 'vue-i18n'
+import english from "../assets/locales/english.json"
+import welsh from "../assets/locales/welsh.json"
+import croatian from "../assets/locales/croatian.json"
+
+
+const messages = {
+    english,
+    welsh,
+    croatian,
+}
+
+Vue.use(VueI18n);
+const i18n = new VueI18n({
+    locale: 'english',
+    messages,
+    silentTranslationWarn: process.env.NODE_ENV === 'production'
+})
+
 
 // Add the CSRF token
 axios.interceptors.request.use(function (config) {
@@ -45,6 +64,7 @@ Vue.filter('readable', function (value) {
 Vue.config.productionTip = false
 
 new Vue({
+    i18n,
     router,
     store,
     render: h => h(App)

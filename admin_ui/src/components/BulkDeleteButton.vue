@@ -6,7 +6,7 @@
         v-on:click.prevent="$emit('triggered')"
     >
         <font-awesome-icon icon="trash-alt" />
-        <span>Delete {{ selected }} selected</span>
+        <span>{{ $t("Delete") }} {{ selected }} selected</span>
     </a>
 </template>
 
@@ -15,8 +15,8 @@ export default {
     props: {
         selected: {
             type: Number,
-            default: 0,
-        },
-    },
+            default: 0
+        }
+    }
 }
 </script>

@@ -1,67 +1,47 @@
 <template>
     <div class="timedelta_widget">
         <div class="segment">
-            <p>Weeks</p>
-            <select
-                v-model.number="weeks"
-                v-on:change="emitEvent"
-            >
-                <option
-                    :key="'w' + week"
-                    v-for="week in weekRange"
-                >{{ week }}</option>
+            <p>{{ $t("Weeks") }}</p>
+            <select v-model.number="weeks" v-on:change="emitEvent">
+                <option :key="'w' + week" v-for="week in weekRange">
+                    {{ week }}
+                </option>
             </select>
         </div>
 
         <div class="segment">
-            <p>Days</p>
-            <select
-                v-model.number="days"
-                v-on:change="emitEvent"
-            >
-                <option
-                    :key="'d' + day"
-                    v-for="day in dayRange"
-                >{{ day }}</option>
+            <p>{{ $t("Days") }}</p>
+            <select v-model.number="days" v-on:change="emitEvent">
+                <option :key="'d' + day" v-for="day in dayRange">
+                    {{ day }}
+                </option>
             </select>
         </div>
 
         <div class="segment">
-            <p>Hours</p>
-            <select
-                v-model.number="hours"
-                v-on:change="emitEvent"
-            >
-                <option
-                    :key="'h' + hour"
-                    v-for="hour in hourRange"
-                >{{ hour }}</option>
+            <p>{{ $t("Hours") }}</p>
+            <select v-model.number="hours" v-on:change="emitEvent">
+                <option :key="'h' + hour" v-for="hour in hourRange">
+                    {{ hour }}
+                </option>
             </select>
         </div>
 
         <div class="segment">
-            <p>Minutes</p>
-            <select
-                v-model.number="minutes"
-                v-on:change="emitEvent"
-            >
-                <option
-                    :key="'m' + minute"
-                    v-for="minute in minuteRange"
-                >{{ minute }}</option>
+            <p>{{ $t("Minutes") }}</p>
+            <select v-model.number="minutes" v-on:change="emitEvent">
+                <option :key="'m' + minute" v-for="minute in minuteRange">
+                    {{ minute }}
+                </option>
             </select>
         </div>
 
         <div class="segment">
-            <p>Seconds</p>
-            <select
-                v-model.number="seconds"
-                v-on:change="emitEvent"
-            >
-                <option
-                    :key="'s' + second"
-                    v-for="second in secondRange"
-                >{{ second }}</option>
+            <p>{{ $t("Seconds") }}</p>
+            <select v-model.number="seconds" v-on:change="emitEvent">
+                <option :key="'s' + second" v-for="second in secondRange">
+                    {{ second }}
+                </option>
             </select>
         </div>
     </div>
@@ -78,8 +58,8 @@ export default {
         timedelta: {
             // In seconds
             default: 0,
-            type: Number,
-        },
+            type: Number
+        }
     },
     data() {
         return {
@@ -92,7 +72,7 @@ export default {
             days: undefined,
             hours: undefined,
             minutes: undefined,
-            seconds: undefined,
+            seconds: undefined
         }
     },
     methods: {
@@ -119,16 +99,16 @@ export default {
             timedelta += -this.minutes * MINUTE
 
             this.seconds = timedelta
-        },
+        }
     },
     watch: {
         timedelta(timedelta) {
             this.setupValues(timedelta)
-        },
+        }
     },
     mounted() {
         this.setupValues(this.timedelta)
-    },
+    }
 }
 </script>
 

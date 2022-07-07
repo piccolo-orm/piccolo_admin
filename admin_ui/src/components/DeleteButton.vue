@@ -6,7 +6,7 @@
         v-on:click.prevent="$emit('triggered')"
     >
         <font-awesome-icon icon="trash-alt" />
-        <span v-if="includeTitle">Delete</span>
+        <span v-if="includeTitle">{{ $t("Delete") }}</span>
     </a>
 </template>
 
