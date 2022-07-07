@@ -4,9 +4,6 @@
             <p>Select a column to update</p>
 
             <select name="property" v-model="propertyName">
-                <option :value="schema.primary_key_name">
-                    Please select column
-                </option>
                 <option
                     :key="key"
                     :value="key"
@@ -15,16 +12,14 @@
                     {{ key }}
                 </option>
             </select>
-            <p v-show="propertyName != schema.primary_key_name">
-                Value to change
-            </p>
+            <p v-show="propertyName">Value to change</p>
 
             <form v-on:submit.prevent="updateRows($event)">
                 <div :key="key" v-for="(property, key) in schema.properties">
                     <InputField
                         v-if="key == propertyName"
                         v-bind:format="property.format"
-                        v-bind:isFilter="isFilter"
+                        v-bind:isFilter="false"
                         v-bind:key="property.title"
                         v-bind:title="property.title"
                         v-bind:type="property.type || property.anyOf[0].type"
@@ -50,10 +45,6 @@ export default {
         selectedRows: {
             type: Array,
             defult: () => []
-        },
-        isFilter: {
-            type: Boolean,
-            default: false
         }
     },
     components: {
@@ -62,7 +53,7 @@ export default {
     },
     data() {
         return {
-            propertyName: this.schema.primary_key_name
+            propertyName: null
         }
     },
     methods: {
