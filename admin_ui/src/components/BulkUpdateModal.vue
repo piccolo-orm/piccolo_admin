@@ -1,10 +1,12 @@
 <template>
     <Modal v-on:close="$emit('close')" title="Bulk Update">
         <template v-if="schema">
-            <p>Select a column to update:</p>
+            <p>{{ $t("Select a column to update:") }}</p>
 
             <select name="property" v-model="selectedPropertyName">
-                <option value="null" disabled>Select a Column</option>
+                <option value="null" disabled>
+                    {{ $t("Select a Column") }}
+                </option>
                 <template v-for="(property, key) in schema.properties">
                     <option
                         :key="key"
@@ -16,7 +18,7 @@
                 </template>
             </select>
 
-            <p v-show="selectedPropertyName">New value:</p>
+            <p v-show="selectedPropertyName">{{ $t("New value:") }}</p>
 
             <form
                 v-on:submit.prevent="updateRows($event)"
@@ -46,7 +48,7 @@
                     <input type="checkbox" v-model="nullCheckboxState" />
                 </div>
 
-                <button :disabled="!buttonEnabled">Update</button>
+                <button :disabled="!buttonEnabled">{{ $t("Update") }}</button>
             </form>
         </template>
     </Modal>

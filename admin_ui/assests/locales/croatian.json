@@ -52,5 +52,10 @@
     "Edit": "Uredi",
     "Add": "Dodaj",
     "Ascending": "Uzlazno",
-    "Descending": "Silazno"
+    "Descending": "Silazno",
+    "rows": "redaka",
+    "Select a column to update:": "Odaberite stupac za ažuriranje:",
+    "Select a Column": "Odaberite stupac",
+    "New value": "Nova vrijednost:",
+    "Update": "Ažuriraj"
 }

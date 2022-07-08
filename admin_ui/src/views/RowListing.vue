@@ -72,7 +72,7 @@
                 <div class="table_wrapper">
                     <transition name="fade">
                         <p v-show="loadingStatus" id="loading_indicator">
-                            Loading ...
+                            {{ $t("Loading") }} ...
                         </p>
                     </transition>
 
@@ -252,7 +252,10 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="subtle delete"
+                                                            class="
+                                                                subtle
+                                                                delete
+                                                            "
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -270,8 +273,6 @@
                                     {{ $t("Showing") }} {{ rows.length }}
                                     {{ $t("of") }} {{ rowCount }}
                                     {{ $t("result(s)") }}
-                                    Showing {{ rows.length }} of
-                                    {{ rowCount }} result(s)
                                 </p>
 
                                 <div class="pagination_wrapper">

@@ -6,7 +6,7 @@
         v-on:click.prevent="$emit('triggered')"
     >
         <font-awesome-icon icon="trash-alt" />
-        <span>Delete {{ selected }} rows</span>
+        <span>{{ $t("Delete") }} {{ selected }} {{ $t("rows") }}</span>
     </a>
 </template>
 
