@@ -46,7 +46,7 @@
                     <input type="checkbox" v-model="nullCheckboxState" />
                 </div>
 
-                <button>Update</button>
+                <button :disabled="!buttonEnabled">Update</button>
             </form>
         </template>
     </Modal>
@@ -75,7 +75,8 @@ export default {
     data() {
         return {
             selectedPropertyName: null,
-            nullCheckboxState: false
+            nullCheckboxState: false,
+            buttonEnabled: true
         }
     },
     computed: {
@@ -86,6 +87,10 @@ export default {
     methods: {
         async updateRows(event) {
             console.log("Updating ...")
+
+            // We prevent the button from being clicked again until we've
+            // finished, as it can cause many API requests.
+            this.buttonEnabled = false
 
             const form = new FormData(event.target)
 
@@ -130,6 +135,8 @@ export default {
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             }
+
+            this.buttonEnabled = true
         }
     }
 }
