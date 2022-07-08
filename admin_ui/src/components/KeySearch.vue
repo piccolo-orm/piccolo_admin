@@ -7,7 +7,6 @@
             v-model="selectedValue"
             v-on:focus="showModal = true"
             v-on:keydown.enter.prevent
-            v-bind:name="fieldName"
         />
 
         <input

@@ -11,6 +11,17 @@
                         />
                     </div>
                     <div class="buttons">
+                        <a
+                            class="button"
+                            href="#"
+                            v-if="selectedRows.length > 0"
+                            v-on:click.prevent="
+                                showUpdateModal = !showUpdateModal
+                            "
+                        >
+                            <font-awesome-icon icon="arrow-up" />
+                            <span>Update {{ selectedRows.length }} rows</span>
+                        </a>
                         <BulkDeleteButton
                             :selected="selectedRows.length"
                             v-if="selectedRows.length > 0"
@@ -32,7 +43,7 @@
                         <a
                             class="button"
                             href="#"
-                            v-on:click.prevent="showSort = !showSort"
+                            v-on:click.prevent="showSortModal = !showSortModal"
                         >
                             <font-awesome-icon icon="sort" />
                             <span>{{ $t("Sort") }}</span>
@@ -61,7 +72,7 @@
                 <div class="table_wrapper">
                     <transition name="fade">
                         <p v-show="loadingStatus" id="loading_indicator">
-                            {{ $t("Loading") }} ...
+                            Loading ...
                         </p>
                     </transition>
 
@@ -241,10 +252,7 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="
-                                                                subtle
-                                                                delete
-                                                            "
+                                                            class="subtle delete"
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -262,6 +270,8 @@
                                     {{ $t("Showing") }} {{ rows.length }}
                                     {{ $t("of") }} {{ rowCount }}
                                     {{ $t("result(s)") }}
+                                    Showing {{ rows.length }} of
+                                    {{ rowCount }} result(s)
                                 </p>
 
                                 <div class="pagination_wrapper">
@@ -292,13 +302,20 @@
             <RowSortModal
                 :schema="schema"
                 :tableName="tableName"
-                v-if="showSort"
-                v-on:close="showSort = false"
+                v-if="showSortModal"
+                v-on:close="showSortModal = false"
+            />
+
+            <BulkUpdateModal
+                :schema="schema"
+                :tableName="tableName"
+                :selectedRows="selectedRows"
+                v-if="showUpdateModal"
+                v-on:close="showUpdateModal = false"
             />
         </template>
     </BaseView>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -306,6 +323,7 @@ import { readableInterval } from "../utils"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
+import BulkUpdateModal from "../components/BulkUpdateModal.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
@@ -315,7 +333,7 @@ import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
 import Tooltip from "../components/Tooltip.vue"
-import { Choice, Choices, Schema } from "../interfaces"
+import { APIResponseMessage, Choice, Choices, Schema } from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -325,13 +343,15 @@ export default Vue.extend({
             allSelected: false,
             showAddRow: false,
             showFilter: false,
-            showSort: false,
+            showSortModal: false,
+            showUpdateModal: false,
             visibleDropdown: null
         }
     },
     components: {
         AddRowModal,
         BaseView,
+        BulkUpdateModal,
         BulkDeleteButton,
         CSVButton,
         DeleteButton,
@@ -459,6 +479,13 @@ export default Vue.extend({
                 this.selectedRows = []
             }
         },
+        showSuccess(contents: string) {
+            var message: APIResponseMessage = {
+                contents: contents,
+                type: "success"
+            }
+            this.$store.commit("updateApiResponseMessage", message)
+        },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
                 console.log("Deleting!")
@@ -467,6 +494,7 @@ export default Vue.extend({
                     rowID
                 })
                 await this.fetchRows()
+                this.showSuccess("Successfully deleted row")
             }
         },
         async deleteRows() {
@@ -479,6 +507,7 @@ export default Vue.extend({
                     })
                 }
                 await this.fetchRows()
+                this.showSuccess("Successfully deleted rows")
             }
         },
         async fetchRows() {
@@ -517,7 +546,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";

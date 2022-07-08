@@ -27,6 +27,7 @@ piccolo, password: piccolo123).
    ../help_text/index
    ../table_config/index
    ../custom_forms/index
+   ../actions/index
    ../contributing/index
    ../rest_documentation/index
    ../changes/index

@@ -222,7 +222,8 @@ export default Vue.extend({
                     { align: "right" },
                     { align: "justify" }
                 ],
-                ["link", "image", "code-block"]
+                ["link", "image", "code-block"],
+                [{ header: [false, 1, 2, 3] }]
             ]
         }
     },

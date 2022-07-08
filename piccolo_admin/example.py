@@ -78,6 +78,10 @@ class Studio(Table, help_text="A movie studio."):
     name = Varchar()
     facilities = JSON()
 
+    @classmethod
+    def get_readable(cls):
+        return Readable(template="%s", columns=[cls.name])
+
 
 class Movie(Table):
     class Genre(int, enum.Enum):
@@ -103,6 +107,10 @@ class Movie(Table):
     barcode = BigInt(default=0)
     genre = SmallInt(choices=Genre, null=True)
     studio = ForeignKey(Studio)
+
+    @classmethod
+    def get_readable(cls):
+        return Readable(template="%s", columns=[cls.name])
 
 
 class BusinessEmailModel(BaseModel):
@@ -209,12 +217,7 @@ director_config = TableConfig(
 )
 
 APP = create_admin(
-    [
-        movie_config,
-        director_config,
-        Studio,
-        User,
-    ],
+    [movie_config, director_config, Studio],
     forms=[
         FormConfig(
             name="Business email form",

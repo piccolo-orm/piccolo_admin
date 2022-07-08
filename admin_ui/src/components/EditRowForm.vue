@@ -104,6 +104,11 @@ export default Vue.extend({
             }
             try {
                 await this.$store.dispatch("updateRow", config)
+                var message: APIResponseMessage = {
+                    contents: "Successfully saved row",
+                    type: "success"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
                 const data = error.response.data
 

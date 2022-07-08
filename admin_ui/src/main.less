@@ -14,7 +14,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-body, textarea, button {
+body,
+textarea,
+button {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
 
@@ -161,11 +163,15 @@ body, textarea, button {
     }
 
     .quillWrapper .ql-snow .ql-stroke {
-        stroke: white; 
+        stroke: white;
     }
-    
+
     .quillWrapper .ql-snow .ql-fill {
         fill: white;
+    }
+
+    .ql-picker-label {
+        color: white
     }
 }
 
@@ -261,4 +267,10 @@ svg {
 
 div.quillWrapper .ql-snow.ql-toolbar .ql-formats {
     margin-bottom: 1.5rem;
+}
+
+@media (max-width: @mobile_width) {
+    .ql-snow .ql-picker.ql-header {
+        margin-top: 1rem;
+    }
 }

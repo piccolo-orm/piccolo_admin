@@ -1,6 +1,19 @@
 Changes
 =======
 
+0.23.0
+------
+
+The WYSIWYG editor we use for ``rich_text_columns`` has been modified, so the
+user can now create HTML headings. Thanks to @tigerline86 for suggesting this
+feature and @sinisaos for implementing it.
+
+Rows can now be bulk modified - for example, if you have 100 blog posts which
+need converting to ``draft=False``, it can now be easily done using the
+Piccolo Admin GUI in a single operation (courtesy @sinisaos).
+
+-------------------------------------------------------------------------------
+
 0.22.2
 ------
 
