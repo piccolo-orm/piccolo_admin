@@ -15,7 +15,9 @@
                             class="button"
                             href="#"
                             v-if="selectedRows.length > 0"
-                            v-on:click.prevent="showUpdate = !showUpdate"
+                            v-on:click.prevent="
+                                showUpdateModal = !showUpdateModal
+                            "
                         >
                             <font-awesome-icon icon="arrow-up" />
                             <span>Update {{ selectedRows.length }} rows</span>
@@ -41,7 +43,7 @@
                         <a
                             class="button"
                             href="#"
-                            v-on:click.prevent="showSort = !showSort"
+                            v-on:click.prevent="showSortModal = !showSortModal"
                         >
                             <font-awesome-icon icon="sort" />
                             <span>Sort</span>
@@ -248,10 +250,7 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="
-                                                                subtle
-                                                                delete
-                                                            "
+                                                            class="subtle delete"
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -298,21 +297,20 @@
             <RowSortModal
                 :schema="schema"
                 :tableName="tableName"
-                v-if="showSort"
-                v-on:close="showSort = false"
+                v-if="showSortModal"
+                v-on:close="showSortModal = false"
             />
 
             <BulkUpdateModal
                 :schema="schema"
                 :tableName="tableName"
                 :selectedRows="selectedRows"
-                v-if="showUpdate"
-                v-on:close="showUpdate = false"
+                v-if="showUpdateModal"
+                v-on:close="showUpdateModal = false"
             />
         </template>
     </BaseView>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -340,8 +338,8 @@ export default Vue.extend({
             allSelected: false,
             showAddRow: false,
             showFilter: false,
-            showSort: false,
-            showUpdate: false,
+            showSortModal: false,
+            showUpdateModal: false,
             visibleDropdown: null
         }
     },
@@ -543,7 +541,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";
