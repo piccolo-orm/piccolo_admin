@@ -51,12 +51,12 @@ export default Vue.extend({
         DeleteButton,
         DropDownMenu,
         RowFormSelect,
-        ReferencingTables,
+        ReferencingTables
     },
     data: function () {
         return {
             errors: "",
-            showDropdown: false,
+            showDropdown: false
         }
     },
     computed: {
@@ -65,7 +65,7 @@ export default Vue.extend({
         },
         selectedRow() {
             return this.$store.state.selectedRow
-        },
+        }
     },
     methods: {
         async submitForm(event) {
@@ -100,16 +100,21 @@ export default Vue.extend({
             let config: UpdateRow = {
                 tableName: this.tableName,
                 rowID: this.rowID,
-                data: json,
+                data: json
             }
             try {
                 await this.$store.dispatch("updateRow", config)
+                var message: APIResponseMessage = {
+                    contents: "Successfully saved row",
+                    type: "success"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
                 const data = error.response.data
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
-                    type: "error",
+                    type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
@@ -130,13 +135,13 @@ export default Vue.extend({
             if (window.confirm("Are you sure you want to delete this row?")) {
                 let config: DeleteRow = {
                     tableName: this.tableName,
-                    rowID: this.rowID,
+                    rowID: this.rowID
                 }
                 await this.$store.dispatch("deleteRow", config)
                 alert("Successfully deleted row")
                 this.$router.push({
                     name: "rowListing",
-                    params: { tableName: this.tableName },
+                    params: { tableName: this.tableName }
                 })
             }
         },
@@ -144,27 +149,27 @@ export default Vue.extend({
             this.$store.commit("updateCurrentTablename", this.tableName)
             await this.$store.dispatch("fetchSingleRow", {
                 tableName: this.tableName,
-                rowID: this.rowID,
+                rowID: this.rowID
             })
-        },
+        }
     },
     watch: {
         "$route.params.tableName": async function () {
             await Promise.all([
                 this.fetchData(),
-                this.$store.dispatch("fetchSchema", this.tableName),
+                this.$store.dispatch("fetchSchema", this.tableName)
             ])
         },
         "$route.params.rowID": async function () {
             await this.fetchData()
-        },
+        }
     },
     async mounted() {
         await Promise.all([
             this.fetchData(),
-            this.$store.dispatch("fetchSchema", this.tableName),
+            this.$store.dispatch("fetchSchema", this.tableName)
         ])
-    },
+    }
 })
 </script>
 
