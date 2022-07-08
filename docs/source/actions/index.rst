@@ -21,7 +21,7 @@ button you will be asked to pass the column name and the value which you want
 to update in bulk.
 
 
-Export to csv
+Export to CSV
 -------------
 
 Export data to a CSV document by pressing the ``export CSV`` button.
