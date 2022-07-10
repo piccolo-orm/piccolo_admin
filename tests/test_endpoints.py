@@ -112,6 +112,7 @@ class TestAdminRouter(TestCase):
             {
                 "piccolo_admin_version": __VERSION__,
                 "site_name": "Piccolo Admin",
+                "default_language": "english",
             },
         )
         self.assertEqual(response.status_code, 200)

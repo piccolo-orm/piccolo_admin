@@ -51,6 +51,7 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+    default_language: str
 
 
 @dataclass
@@ -255,6 +256,7 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
+        default_language: str = "english",
     ) -> None:
         super().__init__(
             title=site_name, description="Piccolo API documentation"
@@ -291,6 +293,7 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
+        self.default_language = default_language
         self.forms = forms
         self.form_config_map = {form.slug: form for form in self.forms}
 
@@ -548,6 +551,7 @@ class AdminRouter(FastAPI):
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
+            default_language=self.default_language,
         )
 
     ###########################################################################
@@ -604,6 +608,7 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
+    default_language: str = "english",
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
 ):
@@ -700,6 +705,7 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
+                default_language=default_language,
             ),
             allowed_hosts=allowed_hosts,
         )

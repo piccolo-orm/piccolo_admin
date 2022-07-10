@@ -10,9 +10,9 @@ import axios from 'axios'
 import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
 import VueI18n from 'vue-i18n'
-import english from "../assets/locales/english.json"
-import welsh from "../assets/locales/welsh.json"
-import croatian from "../assets/locales/croatian.json"
+import english from "../locales/english.json"
+import welsh from "../locales/welsh.json"
+import croatian from "../locales/croatian.json"
 
 
 const messages = {
@@ -21,9 +21,9 @@ const messages = {
     croatian,
 }
 
-Vue.use(VueI18n);
+Vue.use(VueI18n)
 const i18n = new VueI18n({
-    locale: 'english',
+    locale: "english",
     messages,
     silentTranslationWarn: process.env.NODE_ENV === 'production'
 })

@@ -4,18 +4,10 @@
             <h1>{{ siteName }}</h1>
             <form v-on:submit.prevent="login">
                 <label>Username</label>
-                <input
-                    name="username"
-                    type="text"
-                    v-model="username"
-                />
+                <input name="username" type="text" v-model="username" />
 
                 <label>Password</label>
-                <input
-                    name="password"
-                    type="password"
-                    v-model="password"
-                />
+                <input name="password" type="password" v-model="password" />
 
                 <button>Login</button>
             </form>
@@ -31,13 +23,16 @@ export default {
     data: function () {
         return {
             username: "",
-            password: "",
+            password: ""
         }
     },
     computed: {
         siteName() {
             return this.$store.state.metaModule.siteName
         },
+        defaultLanguage() {
+            return this.$store.state.metaModule.defaultLanguage
+        }
     },
     methods: {
         async login() {
@@ -45,21 +40,21 @@ export default {
             try {
                 await axios.post(`./auth/login/`, {
                     username: this.username,
-                    password: this.password,
+                    password: this.password
                 })
             } catch (error) {
                 console.log("Request failed")
                 console.log(error.response)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: "Problem logging in",
-                    type: "error",
+                    type: "error"
                 })
                 return
             }
 
             await Promise.all([
                 this.$store.dispatch("fetchUser"),
-                this.$store.dispatch("fetchMeta"),
+                this.$store.dispatch("fetchMeta")
             ])
 
             let nextURL = this.$route.query.nextURL
@@ -68,8 +63,11 @@ export default {
             } else {
                 this.$router.push({ name: "home" })
             }
-        },
+        }
     },
+    updated() {
+        this.$i18n.locale = this.defaultLanguage
+    }
 }
 </script>
 
