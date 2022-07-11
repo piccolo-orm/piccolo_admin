@@ -696,6 +696,9 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
+    :param default_language:
+        Specify the default language for translations in the admin UI (default
+        ``'english'``).
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
