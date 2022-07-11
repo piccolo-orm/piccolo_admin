@@ -99,6 +99,33 @@ without having to write HTML.
 
 -------------------------------------------------------------------------------
 
+hooks
+-----
+
+Can be used to run custom logic when a row is created, modified, or deleted.
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+    from piccolo_api.crud.hooks import Hook, HookType
+
+
+    async def my_save_hook(row: Movie):
+        # Insert custom logic here
+        return row
+
+
+    movie_config = TableConfig(
+        Movie,
+        hooks=[
+            Hook(hook_type=HookType.pre_save, callable=my_save_hook)
+        ]
+    )
+
+    create_admin([Director, movie_config])
+
+-------------------------------------------------------------------------------
+
 Source
 ------
 
