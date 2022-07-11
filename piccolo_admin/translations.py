@@ -6,12 +6,15 @@ ENGLISH = {
     "Add Row": "Add Row",
     "Apply": "Apply",
     "Back": "Back",
+    "Change password": "Change password",
     "Clear filters": "Clear filters",
     "Close": "Close",
     "Dark Mode": "Dark Mode",
     "Delete": "Delete",
     "Export CSV": "Export CSV",
     "Filter": "Filter",
+    "Filters": "Filters",
+    "Forms": "Forms",
     "Hide referencing tables": "Hide referencing tables",
     "Home": "Home",
     "Language": "Language",
@@ -26,6 +29,7 @@ ENGLISH = {
     "Show referencing tables": "Show referencing tables",
     "Sort": "Sort",
     "Tables": "Tables",
+    "Welcome to": "Welcome to",
 }
 
 WELSH = {
@@ -34,12 +38,14 @@ WELSH = {
     "Add Row": "Ychwanegu Rhes",
     "Apply": "Ymgeisiwch",
     "Back": "Ol",
+    "Change password": "Newid cyfrinair",
     "Clear filters": "Clirio hidlwyr",
     "Close": "Cau",
     "Dark Mode": "Modd Yywyll",
     "Delete": "Dileu",
     "Export CSV": "Allforio CSV",
     "Filter": "Ffilter",
+    "Forms": "Ffurflenni",
     "Hide referencing tables": "Cuddio tablau cyfeirio",
     "Home": "Cartref",
     "Language": "Iaith",
@@ -54,6 +60,7 @@ WELSH = {
     "Show referencing tables": "Dangos tablau cyfeirio",
     "Sort": "Didoli",
     "Tables": "Tablau",
+    "Welcome To": "Croeso i",
 }
 
 CROATIAN = {
