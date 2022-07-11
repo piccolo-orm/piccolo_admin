@@ -398,12 +398,14 @@ class AdminRouter(FastAPI):
             "/languages/",
             endpoint=self.get_translations_list,  # type: ignore
             methods=["GET"],
+            tags=["Languages"],
         )
 
         api_app.add_api_route(
             "/languages/{language:str}/",
             endpoint=self.get_translation,  # type: ignore
             methods=["GET"],
+            tags=["Languages"],
         )
 
         api_app.add_route(
@@ -579,14 +581,19 @@ class AdminRouter(FastAPI):
 
     def get_translation(
         self, request: Request, language: str
-    ) -> t.Dict[str, str]:
+    ) -> t.Union[JSONResponse, t.Dict[str, str]]:
         """
         Return a single language.
         """
-        language = request.path_params.get("language", None)
-        return [
-            i for i in TRANSLATIONS if i.get("language", None) == language
-        ][0]
+        try:
+            language = request.path_params.get("language", None)
+            return [
+                i for i in TRANSLATIONS if i.get("language", None) == language
+            ][0]
+        except IndexError:
+            return JSONResponse(
+                {"error": "Language does not exist."}, status_code=422
+            )
 
     def get_translations_list(
         self, request: Request

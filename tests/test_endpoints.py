@@ -383,7 +383,7 @@ class TestTables(TestCase):
             {"username": "Bob", "user_id": "1"},
         )
 
-    def test_get_language(self):
+    def test_get_languages(self):
         client = TestClient(APP)
 
         # To get a CSRF cookie
@@ -402,6 +402,42 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["english"]["language"], "english")
 
+    def test_get_single_language(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
         response = client.get("/api/languages/english/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["language"], "english")
+
+    def test_get_language_failed(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.get("/api/languages/french/")
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(
+            response.json(), {"error": "Language does not exist."}
+        )
