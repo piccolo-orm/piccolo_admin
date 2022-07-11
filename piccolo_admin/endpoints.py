@@ -38,6 +38,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+from .translations import TRANSLATIONS
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
@@ -393,6 +394,18 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        api_app.add_api_route(
+            "/languages/",
+            endpoint=self.get_translations_list,  # type: ignore
+            methods=["GET"],
+        )
+
+        api_app.add_api_route(
+            "/languages/{language:str}/",
+            endpoint=self.get_translation,  # type: ignore
+            methods=["GET"],
+        )
+
         api_app.add_route(
             path="/change-password/",
             route=change_password(
@@ -561,6 +574,27 @@ class AdminRouter(FastAPI):
         Returns a list of all tables registered with the admin.
         """
         return [i.table_class._meta.tablename for i in self.table_configs]
+
+    ###########################################################################
+
+    def get_translation(
+        self, request: Request, language: str
+    ) -> t.Dict[str, str]:
+        """
+        Return a single language.
+        """
+        language = request.path_params.get("language", None)
+        return [
+            i for i in TRANSLATIONS if i.get("language", None) == language
+        ][0]
+
+    def get_translations_list(
+        self, request: Request
+    ) -> t.Dict[str, t.Dict[str, str]]:
+        """
+        Returns a list of all languages.
+        """
+        return {i["language"]: i for i in TRANSLATIONS}
 
 
 def get_all_tables(

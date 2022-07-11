@@ -25,7 +25,8 @@ export default {
             return this.$store.state.metaModule.siteName
         }
     },
-    mounted() {
+    async mounted() {
+        await this.$store.dispatch("fetchLanguages")
         this.$store.commit("updateCurrentTablename", "")
     }
 }

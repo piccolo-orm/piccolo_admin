@@ -10,21 +10,15 @@ import axios from 'axios'
 import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
 import VueI18n from 'vue-i18n'
-import english from "../locales/english.json"
-import welsh from "../locales/welsh.json"
-import croatian from "../locales/croatian.json"
 
 
-const messages = {
-    english,
-    welsh,
-    croatian,
-}
+// Vue internationalization
+const messages = localStorage.getItem("languages")
 
 Vue.use(VueI18n)
 const i18n = new VueI18n({
     locale: "english",
-    messages,
+    messages: JSON.parse(messages),
     silentTranslationWarn: process.env.NODE_ENV === 'production'
 })
 

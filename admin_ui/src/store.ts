@@ -31,7 +31,8 @@ export default new Vuex.Store({
         tableNames: [],
         formConfigs: [] as i.FormConfig[],
         user: undefined,
-        loadingStatus: false
+        loadingStatus: false,
+        languages: undefined,
     },
     mutations: {
         updateTableNames(state, value) {
@@ -88,6 +89,10 @@ export default new Vuex.Store({
         },
         updateLoadingStatus(state, value) {
             state.loadingStatus = value
+        },
+        updateLanguages(state, value) {
+            state.languages = value
+            localStorage.setItem("languages", JSON.stringify(value))
         }
     },
     actions: {
@@ -237,6 +242,10 @@ export default new Vuex.Store({
         async fetchUser(context) {
             const response = await axios.get(`${BASE_URL}user/`)
             context.commit('updateUser', response.data)
-        }
+        },
+        async fetchLanguages(context) {
+            const response = await axios.get(`${BASE_URL}languages/`)
+            context.commit('updateLanguages', response.data)
+        },
     }
 })

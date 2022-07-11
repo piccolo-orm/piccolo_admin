@@ -382,3 +382,26 @@ class TestTables(TestCase):
             response.json(),
             {"username": "Bob", "user_id": "1"},
         )
+
+    def test_get_language(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.get("/api/languages/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["english"]["language"], "english")
+
+        response = client.get("/api/languages/english/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["language"], "english")
