@@ -124,6 +124,9 @@ Can be used to run custom logic when a row is created, modified, or deleted.
 
     create_admin([Director, movie_config])
 
+To learn more about hooks, see the :class:`Hook <piccolo_api.crud.hooks.Hook>`
+docs in Piccolo API.
+
 -------------------------------------------------------------------------------
 
 Source
