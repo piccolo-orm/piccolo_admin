@@ -400,7 +400,7 @@ class TestTables(TestCase):
 
         response = client.get("/api/languages/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["english"]["language"], "english")
+        self.assertEqual(response.json()["english"]["About"], "About")
 
     def test_get_single_language(self):
         client = TestClient(APP)
@@ -419,7 +419,7 @@ class TestTables(TestCase):
 
         response = client.get("/api/languages/english/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["language"], "english")
+        self.assertEqual(response.json()["About"], "About")
 
     def test_get_language_failed(self):
         client = TestClient(APP)
@@ -436,7 +436,7 @@ class TestTables(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
-        response = client.get("/api/languages/french/")
+        response = client.get("/api/languages/nolanguage/")
         self.assertEqual(response.status_code, 422)
         self.assertEqual(
             response.json(), {"error": "Language does not exist."}

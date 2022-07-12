@@ -594,11 +594,8 @@ class AdminRouter(FastAPI):
         Return a single language.
         """
         try:
-            language = request.path_params.get("language", None)
-            return [
-                i for i in TRANSLATIONS if i.get("language", None) == language
-            ][0]
-        except IndexError:
+            return TRANSLATIONS[language]
+        except KeyError:
             return JSONResponse(
                 {"error": "Language does not exist."}, status_code=422
             )
@@ -607,9 +604,9 @@ class AdminRouter(FastAPI):
         self, request: Request
     ) -> t.Dict[str, t.Dict[str, str]]:
         """
-        Returns a list of all languages.
+        Return all languages.
         """
-        return {i["language"]: i for i in TRANSLATIONS}
+        return TRANSLATIONS
 
 
 def get_all_tables(

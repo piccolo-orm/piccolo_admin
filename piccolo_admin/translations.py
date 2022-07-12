@@ -1,7 +1,6 @@
 # See https://github.com/piccolo-orm/piccolo_admin/issues/173 for more info.
 
 ENGLISH = {
-    "language": "english",
     "About": "About",
     "Add Row": "Add Row",
     "Apply": "Apply",
@@ -33,7 +32,6 @@ ENGLISH = {
 }
 
 WELSH = {
-    "language": "welsh",
     "About": "Am",
     "Add Row": "Ychwanegu Rhes",
     "Apply": "Ymgeisiwch",
@@ -64,7 +62,6 @@ WELSH = {
 }
 
 CROATIAN = {
-    "language": "croatian",
     "About": "O",
     "Add Row": "Dodaj redak",
     "Apply": "Primijeni",
@@ -129,4 +126,8 @@ CROATIAN = {
 }
 
 
-TRANSLATIONS = [ENGLISH, WELSH, CROATIAN]
+TRANSLATIONS = {
+    "english": ENGLISH,
+    "welsh": WELSH,
+    "croatian": CROATIAN,
+}

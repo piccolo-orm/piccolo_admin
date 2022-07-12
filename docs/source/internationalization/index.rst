@@ -27,4 +27,4 @@ From the language dropdown menu choose the language for which you want a transla
 
 
 .. hint::
-    More languages ​​will be supported in the future.
+    More languages ​​will be supported in the future. Pull requests are welcome.
