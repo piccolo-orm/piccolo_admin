@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.24.0
+------
+
+``TableConfig`` now has a ``hooks`` argument - so custom logic can be run when
+a row is added / deleted / modified. Thanks to @Anton-Karpenko for suggesting
+this feature.
+
+-------------------------------------------------------------------------------
+
 0.23.0
 ------
 

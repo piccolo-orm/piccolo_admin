@@ -19,6 +19,7 @@ from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
 from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
@@ -81,6 +82,11 @@ class TableConfig:
         on certain Piccolo :class:`Text <piccolo.columns.column_types.Text>`
         columns. Any columns not specified will use a standard HTML textarea
         tag in the UI.
+    :param hooks:
+        These are passed directly to
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
+        Admin under the hood. It allows you to run custom logic when a row
+        is modified.
 
     """
 
@@ -90,6 +96,7 @@ class TableConfig:
     visible_filters: t.Optional[t.List[Column]] = None
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
+    hooks: t.Optional[t.List[Hook]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -333,6 +340,7 @@ class AdminRouter(FastAPI):
                         "rich_text_columns": rich_text_columns_names,
                     },
                     validators=validators,
+                    hooks=table_config.hooks,
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
