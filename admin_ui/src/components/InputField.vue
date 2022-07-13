@@ -288,7 +288,6 @@ export default Vue.extend({
     },
     mounted() {
         this.localValue = this.value
-        console.log(this.url)
 
         let app = this
         setTimeout(function () {
