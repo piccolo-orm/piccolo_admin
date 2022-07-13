@@ -1,4 +1,5 @@
 import datetime
+from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock
 
@@ -15,7 +16,12 @@ from piccolo_api.crud.hooks import Hook, HookType
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
+from piccolo_admin.endpoints import (
+    MEDIA_PATH,
+    TableConfig,
+    create_admin,
+    get_all_tables,
+)
 from piccolo_admin.example import APP
 from piccolo_admin.version import __VERSION__
 
@@ -312,6 +318,48 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+
+class TestUpload(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser)
+
+    def test_image_upload(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.post(
+            "/api/media/",
+            files={"file": ("1234", "filename", "image/jpeg")},
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("image" in response.json())
+
+        # remove the test file from the static directory
+        image = response.json()["image"]
+        file_name = image.split("/")[-1]
+        test_file = Path(MEDIA_PATH, file_name)
+        test_file.unlink()
 
 
 class TestTables(TestCase):

@@ -10,8 +10,11 @@ import decimal
 import enum
 import os
 import random
+import shutil
 import smtplib
 import typing as t
+import uuid
+from dataclasses import dataclass
 
 import targ
 from hypercorn.asyncio import serve
@@ -40,7 +43,12 @@ from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
-from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
+from piccolo_admin.endpoints import (
+    MEDIA_PATH,
+    FormConfig,
+    TableConfig,
+    create_admin,
+)
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 
 
@@ -101,6 +109,7 @@ class Movie(Table):
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
+    poster = Array(base_column=Varchar())
     release_date = Timestamp(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
@@ -180,6 +189,22 @@ async def booking_endpoint(request, data):
     return "Booking complete"
 
 
+@dataclass
+class LocalMediaHandler:
+    root_path: str
+
+    def upload(self, request, file):
+        image = f"{self.root_path}/{uuid.uuid4()}.jpeg"
+        image_path = "/".join(image.split("/")[-2:])
+        with open(image, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        url_path = dict(request.scope["headers"]).get(b"host", b"").decode()
+        return {"image": f"{request.url.scheme}://{url_path}/{image_path}"}
+
+
+media_handler: t.Any = LocalMediaHandler(root_path=MEDIA_PATH)
+
+
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
     Movie,
@@ -195,7 +220,8 @@ movie_config = TableConfig(
         Movie.name,
         Movie.rating,
         Movie.director,
-        Movie.studio,
+        Movie.poster,
+        Movie.tags,
     ],
     visible_filters=[
         Movie.name,
@@ -205,6 +231,8 @@ movie_config = TableConfig(
         Movie.genre,
     ],
     rich_text_columns=[Movie.description],
+    media_columns=[Movie.poster],
+    media_handler=media_handler,
 )
 
 director_config = TableConfig(

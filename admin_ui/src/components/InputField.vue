@@ -145,6 +145,24 @@
         </template>
 
         <template v-else-if="type == 'array'">
+            <div
+                v-if="
+                    schema.media_columns.includes(
+                        getFieldName(title).toLowerCase()
+                    )
+                "
+            >
+                <form
+                    id="uploadForm"
+                    enctype="multipart/form-data"
+                    v-on:change="uploadFile($event)"
+                >
+                    <label>
+                        Upload image
+                        <input type="file" name="file" />
+                    </label>
+                </form>
+            </div>
             <ArrayWidget
                 :array="localValue"
                 v-on:updateArray="localValue = $event"
@@ -160,7 +178,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-
+import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
 
 import ArrayWidget from "./ArrayWidget.vue"
@@ -249,6 +267,17 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
+        },
+        async uploadFile(event) {
+            const file = event.target.files[0]
+            let formData = new FormData()
+            formData.append("file", file)
+            const response = await axios.post("./api/media", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            this.localValue.push(response.data.image)
         }
     },
     watch: {
@@ -259,6 +288,7 @@ export default Vue.extend({
     },
     mounted() {
         this.localValue = this.value
+        console.log(this.url)
 
         let app = this
         setTimeout(function () {
@@ -269,6 +299,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="less">
+@import "../vars.less";
+
 pre {
     white-space: pre-wrap;
     word-break: break-all;
@@ -282,5 +314,23 @@ input.flatpicker-input {
 
 textarea#editor {
     display: none;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+label {
+    cursor: pointer;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-weight: bolder;
+    margin-top: 1rem;
+    transition: background-color 0.5s;
+    background-color: @dark_blue;
+    color: white;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    text-align: center;
 }
 </style>

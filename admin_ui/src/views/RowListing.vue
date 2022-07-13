@@ -194,6 +194,27 @@
                                                         | abbreviate
                                                 }}</pre>
                                             </span>
+                                            <span
+                                                v-else-if="
+                                                    schema.media_columns.includes(
+                                                        name
+                                                    )
+                                                "
+                                            >
+                                                <img
+                                                    :key="key"
+                                                    v-for="(image, key) in row[
+                                                        name
+                                                    ]"
+                                                    :src="image"
+                                                    style="
+                                                        width: 4rem;
+                                                        height: 4rem;
+                                                        border-radius: 20%;
+                                                        padding: 0.2rem;
+                                                    "
+                                                />
+                                            </span>
                                             <span v-else>{{
                                                 row[name] | abbreviate
                                             }}</span>
@@ -250,7 +271,10 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="subtle delete"
+                                                            class="
+                                                                subtle
+                                                                delete
+                                                            "
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]

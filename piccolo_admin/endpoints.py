@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
@@ -42,6 +42,7 @@ from starlette.staticfiles import StaticFiles
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
+MEDIA_PATH = os.path.join(os.path.dirname(__file__), "static")
 
 
 class UserResponseModel(BaseModel):
@@ -95,6 +96,8 @@ class TableConfig:
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
+    media_columns: t.Optional[t.List[Column]] = None
+    media_handler: t.Optional[t.Any] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -148,6 +151,13 @@ class TableConfig:
         return (
             tuple(i._meta.name for i in self.rich_text_columns)
             if self.rich_text_columns
+            else ()
+        )
+
+    def get_media_columns_names(self) -> t.Tuple[str, ...]:
+        return (
+            tuple(i._meta.name for i in self.media_columns)
+            if self.media_columns
             else ()
         )
 
@@ -316,6 +326,7 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+            media_columns_names = table_config.get_media_columns_names()
 
             validators = (
                 Validators(every=[superuser_validators])
@@ -334,6 +345,7 @@ class AdminRouter(FastAPI):
                         "visible_column_names": visible_column_names,
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
+                        "media_columns": media_columns_names,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
@@ -398,6 +410,13 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        api_app.add_api_route(
+            path="/media/",
+            endpoint=self.store_files,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+        )
+
         api_app.add_route(
             path="/change-password/",
             route=change_password(
@@ -454,6 +473,11 @@ class AdminRouter(FastAPI):
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
         )
 
+        self.mount(
+            path="/static",
+            app=StaticFiles(directory=MEDIA_PATH),
+        )
+
         auth_middleware = partial(
             AuthenticationMiddleware,
             backend=SessionsAuthBackend(
@@ -474,6 +498,14 @@ class AdminRouter(FastAPI):
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
+
+    ###########################################################################
+
+    def store_files(self, request: Request, file: UploadFile = File(...)):
+        for table_class in self.table_configs:
+            if table_class.media_handler is not None:
+                media_file = table_class.media_handler
+        return media_file.upload(request, file)
 
     ###########################################################################
 
