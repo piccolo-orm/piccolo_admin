@@ -38,7 +38,6 @@ export default Vue.extend({
         this.$store.commit("updateDarkMode", darkMode)
 
         await this.$store.dispatch("fetchMeta")
-        await this.$store.dispatch("fetchLanguages")
     },
     async beforeCreate() {
         let app = this
@@ -120,6 +119,14 @@ export default Vue.extend({
                 return Promise.reject(error)
             }
         )
+
+        axios.interceptors.request.use((config) => {
+            const languages = JSON.parse(localStorage.getItem("languages"))
+            for (const lang in languages) {
+                this.$i18n.setLocaleMessage(lang, languages[lang])
+            }
+            return config
+        })
 
         await this.$store.dispatch("fetchUser")
     }

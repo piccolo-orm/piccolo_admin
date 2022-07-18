@@ -18,6 +18,7 @@ from starlette.testclient import TestClient
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP
 from piccolo_admin.version import __VERSION__
+from piccolo_admin.translations import TRANSLATIONS
 
 
 class TableA(Table):
@@ -116,6 +117,7 @@ class TestAdminRouter(TestCase):
                 "piccolo_admin_version": __VERSION__,
                 "site_name": "Piccolo Admin",
                 "default_language": "english",
+                "languages": TRANSLATIONS,
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -382,25 +384,6 @@ class TestTables(TestCase):
             response.json(),
             {"username": "Bob", "user_id": "1"},
         )
-
-    def test_get_languages(self):
-        client = TestClient(APP)
-
-        # To get a CSRF cookie
-        response = client.get("/")
-        csrftoken = response.cookies["csrftoken"]
-
-        # Login
-        payload = dict(csrftoken=csrftoken, **self.credentials)
-        client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
-        )
-
-        response = client.get("/api/languages/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["english"]["About"], "About")
 
     def test_get_single_language(self):
         client = TestClient(APP)

@@ -54,6 +54,7 @@ class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
     default_language: str
+    languages: t.Dict[str, t.Dict[str, str]]
 
 
 @dataclass
@@ -403,13 +404,6 @@ class AdminRouter(FastAPI):
         )
 
         api_app.add_api_route(
-            "/languages/",
-            endpoint=self.get_translations_list,  # type: ignore
-            methods=["GET"],
-            tags=["Languages"],
-        )
-
-        api_app.add_api_route(
             "/languages/{language:str}/",
             endpoint=self.get_translation,  # type: ignore
             methods=["GET"],
@@ -575,6 +569,7 @@ class AdminRouter(FastAPI):
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
             default_language=self.default_language,
+            languages=TRANSLATIONS,
         )
 
     ###########################################################################
@@ -599,14 +594,6 @@ class AdminRouter(FastAPI):
             return JSONResponse(
                 {"error": "Language does not exist."}, status_code=422
             )
-
-    def get_translations_list(
-        self, request: Request
-    ) -> t.Dict[str, t.Dict[str, str]]:
-        """
-        Return all languages.
-        """
-        return TRANSLATIONS
 
 
 def get_all_tables(

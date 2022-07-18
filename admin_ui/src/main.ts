@@ -11,14 +11,10 @@ import JSONBig from 'json-bigint'
 import Cookies from 'js-cookie'
 import VueI18n from 'vue-i18n'
 
-
 // Vue internationalization
-const messages = localStorage.getItem("languages")
-
 Vue.use(VueI18n)
 const i18n = new VueI18n({
     locale: "english",
-    messages: JSON.parse(messages),
     silentTranslationWarn: process.env.NODE_ENV === 'production'
 })
 
