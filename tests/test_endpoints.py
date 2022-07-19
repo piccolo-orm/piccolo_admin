@@ -17,7 +17,6 @@ from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP
-from piccolo_admin.translations.data import TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
 
@@ -116,8 +115,6 @@ class TestAdminRouter(TestCase):
             {
                 "piccolo_admin_version": __VERSION__,
                 "site_name": "Piccolo Admin",
-                "default_language": "english",
-                "languages": TRANSLATIONS,
             },
         )
         self.assertEqual(response.status_code, 200)
@@ -385,7 +382,7 @@ class TestTables(TestCase):
             {"username": "Bob", "user_id": "1"},
         )
 
-    def test_get_single_language(self):
+    def test_translations(self):
         client = TestClient(APP)
 
         # To get a CSRF cookie
@@ -400,9 +397,32 @@ class TestTables(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
-        response = client.get("/api/languages/english/")
+        response = client.get("/api/translations/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["About"], "About")
+
+        data = response.json()
+
+        self.assertEqual(data["default_language_code"], "en")
+        self.assertIsInstance(data.get("translations"), list)
+
+    def test_get_single_translation(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/auth/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.get("/api/translations/en/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["translations"]["About"], "About")
 
     def test_get_language_failed(self):
         client = TestClient(APP)
@@ -420,10 +440,7 @@ class TestTables(TestCase):
         )
 
         response = client.get("/api/languages/nolanguage/")
-        self.assertEqual(response.status_code, 422)
-        self.assertEqual(
-            response.json(), {"error": "Language does not exist."}
-        )
+        self.assertEqual(response.status_code, 404)
 
 
 class TestHooks(TestCase):
