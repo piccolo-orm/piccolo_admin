@@ -39,7 +39,12 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from .translations import TRANSLATIONS
+from .translations import (
+    TRANSLATIONS,
+    Translation,
+    TranslationListItem,
+    TranslationListResponse,
+)
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
@@ -53,8 +58,6 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
-    default_language: str
-    languages: t.Dict[str, t.Dict[str, str]]
 
 
 @dataclass
@@ -265,7 +268,8 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
-        default_language: str = "english",
+        default_language_code: str = "en",
+        translations: t.List[Translation] = None,
     ) -> None:
         super().__init__(
             title=site_name, description="Piccolo API documentation"
@@ -300,9 +304,16 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
+        self.default_language_code = default_language_code
+        self.translations_map = {
+            translation.language_code: translation
+            for translation in (translations or TRANSLATIONS)
+        }
+
+        #######################################################################
+
         self.auth_table = auth_table
         self.site_name = site_name
-        self.default_language = default_language
         self.forms = forms
         self.form_config_map = {form.slug: form for form in self.forms}
 
@@ -404,10 +415,19 @@ class AdminRouter(FastAPI):
         )
 
         api_app.add_api_route(
+            "/languages/",
+            endpoint=self.get_translation_list,  # type: ignore
+            methods=["GET"],
+            tags=["Languages"],
+            response_model=TranslationListResponse,
+        )
+
+        api_app.add_api_route(
             "/languages/{language:str}/",
             endpoint=self.get_translation,  # type: ignore
             methods=["GET"],
             tags=["Languages"],
+            response_model=Translation,
         )
 
         api_app.add_route(
@@ -568,13 +588,11 @@ class AdminRouter(FastAPI):
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
-            default_language=self.default_language,
-            languages=TRANSLATIONS,
         )
 
     ###########################################################################
 
-    def get_table_list(self, request: Request) -> t.List[str]:
+    def get_table_list(self) -> t.List[str]:
         """
         Returns a list of all tables registered with the admin.
         """
@@ -582,18 +600,33 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_translation(
-        self, request: Request, language: str
-    ) -> t.Union[JSONResponse, t.Dict[str, str]]:
+    def get_translation_list(self) -> TranslationListResponse:
         """
-        Return a single language.
+        Return a list of language codes and names for each available
+        translation.
         """
-        try:
-            return TRANSLATIONS[language]
-        except KeyError:
-            return JSONResponse(
-                {"error": "Language does not exist."}, status_code=422
+        return TranslationListResponse(
+            translations=[
+                TranslationListItem(
+                    language_code=translation.language_code,
+                    language_name=translation.language_name,
+                )
+                for translation in TRANSLATIONS
+            ],
+            default_language_code=self.default_language_code,
+        )
+
+    def get_translation(self, language_code: str = "en") -> Translation:
+        """
+        Return a single language. The ``language_code`` is an IETF language
+        code, for example 'en' for English.
+        """
+        translation = self.translations_map.get(language_code)
+        if translation is None:
+            raise HTTPException(
+                status_code=404, detail="Translation not found"
             )
+        return translation
 
 
 def get_all_tables(
@@ -641,7 +674,8 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
-    default_language: str = "english",
+    default_language_code: str = "en",
+    translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
 ):
@@ -688,9 +722,48 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
-    :param default_language:
-        Specify the default language for translations in the admin UI (default
-        ``'english'``).
+    :param default_language_code:
+        Specify the default language used in the admin UI (the default is
+        ``'en'`` for English). The value should be an IETF language tag. To see
+        available values see ``piccolo_admin/translations.py``. The UI will be
+        automatically translated into this language.
+    :param translations:
+        Specify which translations are available. By default, we use every
+        translation in ``piccolo_admin/translations.py``.
+
+        Here's an example - if we know our users only speak English or
+        Croatian, we can specify that only those translations are visible
+        in the language selector in the UI::
+
+            from piccolo.translations import ENGLISH, CROATIAN
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='hr',
+                translations=[ENGLISH, CROATIAN]
+            )
+
+        You can also use this to provide your own translations, if there's a
+        language we don't currently support (though please open a PR to add
+        it!)::
+
+            from piccolo.translations import Translation, ENGLISH
+
+            MY_LANGUAGE = Translation(
+                language_code='xx',
+                language_name='My Language',
+                translations={
+                    'Welcome': 'XXXXX',
+                    ...
+                }
+            )
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='xx',
+                translations=[ENGLISH, MY_LANGUAGE]
+            )
+
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
@@ -741,7 +814,8 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
-                default_language=default_language,
+                default_language_code=default_language_code,
+                translations=translations,
             ),
             allowed_hosts=allowed_hosts,
         )
