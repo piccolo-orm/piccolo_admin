@@ -1,52 +1,46 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import './fontawesome'
+import Vue from "vue"
+import App from "./App.vue"
+import router from "./router"
+import store from "./store"
+import i18n from "./i18n"
+import "./fontawesome"
 
 /*****************************************************************************/
 
-import axios from 'axios'
-import JSONBig from 'json-bigint'
-import Cookies from 'js-cookie'
-import VueI18n from 'vue-i18n'
-
-// Vue internationalization
-Vue.use(VueI18n)
-const i18n = new VueI18n({
-    locale: "english",
-    silentTranslationWarn: process.env.NODE_ENV === 'production'
-})
-
+import axios from "axios"
+import JSONBig from "json-bigint"
+import Cookies from "js-cookie"
+import VueI18n from "vue-i18n"
 
 // Add the CSRF token
 axios.interceptors.request.use(function (config) {
     if (
-        ['POST', 'PUT', 'DELETE', 'PATCH'].indexOf(
+        ["POST", "PUT", "DELETE", "PATCH"].indexOf(
             config.method.toUpperCase()
         ) != -1
     ) {
-        const csrfToken = Cookies.get('csrftoken')
-        config.headers['X-CSRFToken'] = csrfToken
+        const csrfToken = Cookies.get("csrftoken")
+        config.headers["X-CSRFToken"] = csrfToken
     }
     return config
 })
 
 // Handle BigInt values
-axios.defaults.transformResponse = [function (data) {
-    if (typeof data === 'string') {
-        try {
-            data = JSONBig.parse(data);
-        } catch (e) {
+axios.defaults.transformResponse = [
+    function (data) {
+        if (typeof data === "string") {
+            try {
+                data = JSONBig.parse(data)
+            } catch (e) {}
         }
+        return data
     }
-    return data;
-}]
+]
 
 /*****************************************************************************/
 
-Vue.filter('readable', function (value) {
-    return value.split('_').join(' ')
+Vue.filter("readable", function (value) {
+    return value.split("_").join(" ")
 })
 
 /*****************************************************************************/
@@ -57,5 +51,5 @@ new Vue({
     i18n,
     router,
     store,
-    render: h => h(App)
-}).$mount('#app')
+    render: (h) => h(App)
+}).$mount("#app")
