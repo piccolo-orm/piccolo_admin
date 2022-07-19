@@ -6,7 +6,6 @@
     </div>
 </template>
 
-
 <script lang="ts">
 import axios from "axios"
 import Vue from "vue"
@@ -120,19 +119,12 @@ export default Vue.extend({
             }
         )
 
-        axios.interceptors.request.use((config) => {
-            const languages = JSON.parse(localStorage.getItem("languages"))
-            for (const lang in languages) {
-                this.$i18n.setLocaleMessage(lang, languages[lang])
-            }
-            return config
-        })
-
         await this.$store.dispatch("fetchUser")
+        await this.$store.dispatch("loadDefaultLanguage")
+        await this.$store.dispatch("fetchTranslations")
     }
 })
 </script>
-
 
 <style lang="less">
 @import "./main.less";

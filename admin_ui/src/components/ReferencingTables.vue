@@ -3,12 +3,15 @@
         <p class="referencing_title">
             <a href="#" v-on:click.prevent="showReferencing = !showReferencing">
                 <span v-if="showReferencing">
-                    <font-awesome-icon icon="angle-down" />{{ $t("Hide") }}
+                    <font-awesome-icon icon="angle-down" />{{
+                        $t("Hide referencing tables")
+                    }}
                 </span>
                 <span v-else>
-                    <font-awesome-icon icon="angle-right" />{{ $t("Show") }}
+                    <font-awesome-icon icon="angle-right" />{{
+                        $t("Show referencing tables")
+                    }}
                 </span>
-                {{ $t("Referencing Tables") }}
             </a>
         </p>
         <ul class="related_tables" v-if="showReferencing">
@@ -26,7 +29,6 @@
         </ul>
     </div>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -73,7 +75,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style scoped lang="less">
 @import "../vars.less";

@@ -17,8 +17,8 @@ from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP
+from piccolo_admin.translations.data import TRANSLATIONS
 from piccolo_admin.version import __VERSION__
-from piccolo_admin.translations import TRANSLATIONS
 
 
 class TableA(Table):

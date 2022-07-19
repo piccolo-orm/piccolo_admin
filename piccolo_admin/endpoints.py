@@ -39,8 +39,8 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from .translations import (
-    TRANSLATIONS,
+from .translations.data import TRANSLATIONS
+from .translations.models import (
     Translation,
     TranslationListItem,
     TranslationListResponse,

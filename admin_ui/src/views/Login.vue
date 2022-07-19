@@ -15,7 +15,6 @@
     </div>
 </template>
 
-
 <script>
 import axios from "axios"
 
@@ -54,7 +53,8 @@ export default {
 
             await Promise.all([
                 this.$store.dispatch("fetchUser"),
-                this.$store.dispatch("fetchMeta")
+                this.$store.dispatch("fetchMeta"),
+                this.$store.dispatch("fetchTranslations")
             ])
 
             let nextURL = this.$route.query.nextURL
@@ -64,13 +64,9 @@ export default {
                 this.$router.push({ name: "home" })
             }
         }
-    },
-    updated() {
-        this.$i18n.locale = this.defaultLanguage
     }
 }
 </script>
-
 
 <style lang="less">
 div#login {

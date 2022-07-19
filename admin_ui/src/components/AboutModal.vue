@@ -6,7 +6,7 @@
     </Modal>
 </template>
 
-<script>
+<script lang="ts">
 import Modal from "./Modal.vue"
 
 export default {
@@ -25,6 +25,3 @@ export default {
     }
 }
 </script>
-
-<style>
-</style>

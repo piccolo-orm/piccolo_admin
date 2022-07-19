@@ -7,38 +7,11 @@ Note: Flake8's line length warning has been disabled for this file - see
 
 import typing as t
 
-from pydantic import BaseModel, Field
+from piccolo_admin.translations.models import Translation
+from piccolo_admin.translations.phrases import Phrases
 
+foo: Phrases = Phrases()
 
-###############################################################################
-# Models
-class TranslationListItem(BaseModel):
-    language_name: str = Field(description="e.g. 'English'")
-    language_code: str = Field(description="e.g. 'en'")
-
-
-class TranslationListResponse(BaseModel):
-    translations: t.List[TranslationListItem]
-    default_language_code: str = Field(description="e.g. 'en'")
-
-
-class Translation(BaseModel):
-    """
-    :param language_name:
-        A human readable representation of the language. For example 'English'.
-    :param language_code:
-        The IETF language tag. For English it is 'en'. However, it also allows
-        us to specify dialects like 'en-US' for American English, or 'en-GB'
-        for British English, should we need it in the future.
-    """
-
-    language_name: str
-    language_code: str
-    translations: t.Dict[str, str]
-
-
-###############################################################################
-# Actual translations
 
 # For now there aren't any words which are different between dialects, so we
 # only need one form of English.
@@ -49,32 +22,58 @@ ENGLISH = Translation(
         "About": "About",
         "Add Row": "Add Row",
         "Apply": "Apply",
+        "Ascending": "Ascending",
+        "Back to home page": "Back to home page",
         "Back": "Back",
         "Change password": "Change password",
         "Clear filters": "Clear filters",
         "Close": "Close",
+        "Create": "Create",
+        "Current password": "Current password",
         "Dark Mode": "Dark Mode",
+        "Days": "Days",
         "Delete": "Delete",
+        "Descending": "Descending",
+        "Edit": "Edit",
         "Export CSV": "Export CSV",
         "Filter": "Filter",
-        "Filters": "Filters",
+        "Form submitted": "Form submitted",
         "Forms": "Forms",
-        "Hide referencing tables": "Hide referencing tables",
+        "Go to page": "Go to page",
         "Hide Filters": "Hide Filters",
+        "Hide referencing tables": "Hide referencing tables",
         "Home": "Home",
-        "Language": "Language",
+        "Hours": "Hours",
         "Light Mode": "Light Mode",
+        "Loading": "Loading",
         "Log out": "Log out",
-        "Per page": "Per page",
+        "Minutes": "Minutes",
+        "New password confirmation": "New password confirmation",
+        "New password": "New password",
+        "No results found": "No results found",
+        "of": "of",
+        "page": "page",
+        "rows": "rows",
         "Save": "Save",
-        "Select one of the tables in the sidebar to get started.": "Select one of the tables in the sidebar to get started.",
+        "Seconds": "Seconds",
+        "Select a Column": "Select a Column",
+        "Select a table in the sidebar to get started.": "Select a table in the sidebar to get started.",
         "Show Filters": "Show filters",
         "Show referencing tables": "Show referencing tables",
+        "Showing": "Showing",
+        "Sort by": "Sort by",
         "Sort": "Sort",
         "Tables": "Tables",
+        "Thanks for using Piccolo Admin.": "Thanks for using Piccolo Admin.",
+        "Update": "Update",
+        "Use again": "Use again",
+        "Version": "Version",
+        "Weeks": "Weeks",
         "Welcome to": "Welcome to",
+        "with a matching": "with a matching",
     },
 )
+
 
 WELSH = Translation(
     language_name="Welsh",
@@ -84,6 +83,7 @@ WELSH = Translation(
         "Add Row": "Ychwanegu Rhes",
         "Apply": "Ymgeisiwch",
         "Back": "Ol",
+        "Back to home page": "Yn ôl i'r dudalen gartref",
         "Change password": "Newid cyfrinair",
         "Clear filters": "Clirio hidlwyr",
         "Close": "Cau",
@@ -95,12 +95,10 @@ WELSH = Translation(
         "Hide Filters": "Cuddio hidlwyr",
         "Hide referencing tables": "Cuddio tablau cyfeirio",
         "Home": "Cartref",
-        "Language": "Iaith",
         "Light Mode": "Modd Golau",
         "Log out": "Allgofnodi",
-        "Per page": "Fesul tudalen",
         "Save": "Arbed",
-        "Select one of the tables in the sidebar to get started.": "Dewiswch un o'r tablau yn y bar ochr i ddechrau.",
+        "Select a table in the sidebar to get started.": "Dewiswch un o'r tablau yn y bar ochr i ddechrau.",
         "Show Filters": "Dangos hidlwyr",
         "Show referencing tables": "Dangos tablau cyfeirio",
         "Sort": "Didoli",
@@ -115,63 +113,62 @@ CROATIAN = Translation(
     translations={
         "About": "O",
         "Add Row": "Dodaj redak",
+        "Add": "Dodaj",
         "Apply": "Primijeni",
+        "Ascending": "Uzlazno",
+        "Back to home page": "Vrati se na početnu stranicu",
         "Back": "Natrag",
+        "Change password": "Promijeni lozinku",
         "Clear filters": "Obriši filtere",
         "Close": "Zatvori",
+        "Create": "Kreiraj",
+        "Current password": "Trenutna lozinka",
         "Dark Mode": "Tamni način rada",
+        "Days": "Dani",
         "Delete": "Izbriši",
+        "Descending": "Silazno",
+        "Edit": "Uredi",
         "Export CSV": "Izvezi CSV",
         "Filter": "Filtar",
         "Filters": "Filtere",
+        "Form submitted": "Obrazac poslan",
+        "Forms": "Forme",
+        "Go to page": "Idi na stranicu",
         "Hide": "Sakrij",
         "Home": "Početna",
+        "Hours": "Sati",
         "Language": "Jezik",
         "Light Mode": "Svijetli način rada",
-        "Log out": "Odjava",
-        "Per page": "Po stranici",
-        "Save": "Spremi",
-        "Select one of the tables in the sidebar to get started.": "Za početak odaberite jednu od tablica na bočnoj traci.",
-        "Welcome to": "Dobrodošli u",
-        "Show Filters": "Prikaži filtere",
-        "Show": "Prikaži",
-        "Create": "Kreiraj",
-        "Sort": "Sortiraj",
-        "Tables": "Tablice",
-        "Change password": "Promijeni lozinku",
-        "Weeks": "Tjedni",
-        "Days": "Dani",
-        "Hours": "Sati",
-        "Minutes": "Minute",
-        "Seconds": "Sekunde",
-        "Form submitted": "Obrazac poslan",
-        "Use again": "Koristi ponovno",
-        "Back to home page": "Vrati se na početnu stranicu",
-        "Go to page": "Idi na stranicu",
-        "with a matching": "s odgovarajućom kolumnom",
-        "Sort by": "Sortiraj po",
-        "Forms": "Forme",
-        "Current password": "Trenutna lozinka",
-        "New password": "Nova lozinka",
-        "New password confirmation": "Potvrda nove lozinke",
-        "selected result(s) on": "odabranih rezultat(a) na",
-        "page": "stranici",
         "Loading": "Učitavanje",
+        "Log out": "Odjava",
+        "Minutes": "Minute",
+        "New password confirmation": "Potvrda nove lozinke",
+        "New password": "Nova lozinka",
+        "New value": "Nova vrijednost:",
         "No results found": "Nema rezultata",
-        "Showing": "Pokazuje",
         "of": "od",
+        "page": "stranici",
         "result(s)": "rezultat(a)",
-        "Version": "Verzija",
-        "Thanks for using Piccolo Admin.": "Hvala što koristite Piccolo Admin.",
-        "Edit": "Uredi",
-        "Add": "Dodaj",
-        "Ascending": "Uzlazno",
-        "Descending": "Silazno",
         "rows": "redaka",
+        "Save": "Spremi",
+        "Seconds": "Sekunde",
         "Select a column to update:": "Odaberite stupac za ažuriranje:",
         "Select a Column": "Odaberite stupac",
-        "New value": "Nova vrijednost:",
+        "Select a table in the sidebar to get started.": "Za početak odaberite jednu od tablica na bočnoj traci.",
+        "selected result(s) on": "odabranih rezultat(a) na",
+        "Show Filters": "Prikaži filtere",
+        "Show": "Prikaži",
+        "Showing": "Pokazuje",
+        "Sort by": "Sortiraj po",
+        "Sort": "Sortiraj",
+        "Tables": "Tablice",
+        "Thanks for using Piccolo Admin.": "Hvala što koristite Piccolo Admin.",
         "Update": "Ažuriraj",
+        "Use again": "Koristi ponovno",
+        "Version": "Verzija",
+        "Weeks": "Tjedni",
+        "Welcome to": "Dobrodošli u",
+        "with a matching": "s odgovarajućom kolumnom",
     },
 )
 

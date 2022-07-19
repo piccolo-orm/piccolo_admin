@@ -3,11 +3,7 @@
         <div class="welcome">
             <h1>{{ $t("Welcome to") }} {{ siteName }}</h1>
             <p>
-                {{
-                    $t(
-                        "Select one of the tables in the sidebar to get started."
-                    )
-                }}
+                {{ $t("Select a table in the sidebar to get started.") }}
             </p>
         </div>
     </BaseView>
