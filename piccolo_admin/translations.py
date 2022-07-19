@@ -1,4 +1,9 @@
-# See https://github.com/piccolo-orm/piccolo_admin/issues/173 for more info.
+"""
+See https://github.com/piccolo-orm/piccolo_admin/issues/173 for more info.
+
+Note: Flake8's line length warning has been disabled for this file - see
+.flake8, so we don't have to worry about wrapping long translations.
+"""
 
 import typing as t
 
@@ -55,16 +60,15 @@ ENGLISH = Translation(
         "Filters": "Filters",
         "Forms": "Forms",
         "Hide referencing tables": "Hide referencing tables",
+        "Hide Filters": "Hide Filters",
         "Home": "Home",
         "Language": "Language",
         "Light Mode": "Light Mode",
         "Log out": "Log out",
         "Per page": "Per page",
         "Save": "Save",
-        "Select one of the tables in the sidebar to get started.": (
-            "Select one of the tables in the sidebar to get started."
-        ),
-        "Show filters": "Show filters",
+        "Select one of the tables in the sidebar to get started.": "Select one of the tables in the sidebar to get started.",
+        "Show Filters": "Show filters",
         "Show referencing tables": "Show referencing tables",
         "Sort": "Sort",
         "Tables": "Tables",
@@ -88,6 +92,7 @@ WELSH = Translation(
         "Export CSV": "Allforio CSV",
         "Filter": "Ffilter",
         "Forms": "Ffurflenni",
+        "Hide Filters": "Cuddio hidlwyr",
         "Hide referencing tables": "Cuddio tablau cyfeirio",
         "Home": "Cartref",
         "Language": "Iaith",
@@ -95,10 +100,8 @@ WELSH = Translation(
         "Log out": "Allgofnodi",
         "Per page": "Fesul tudalen",
         "Save": "Arbed",
-        "Select one of the tables in the sidebar to get started.": (
-            "Dewiswch un o'r tablau yn y bar ochr i ddechrau."
-        ),
-        "Show filters": "Dangos hidlwyr",
+        "Select one of the tables in the sidebar to get started.": "Dewiswch un o'r tablau yn y bar ochr i ddechrau.",
+        "Show Filters": "Dangos hidlwyr",
         "Show referencing tables": "Dangos tablau cyfeirio",
         "Sort": "Didoli",
         "Tables": "Tablau",
@@ -128,11 +131,9 @@ CROATIAN = Translation(
         "Log out": "Odjava",
         "Per page": "Po stranici",
         "Save": "Spremi",
-        "Select one of the tables in the sidebar to get started.": (
-            "Za početak odaberite jednu od tablica na bočnoj traci."
-        ),
+        "Select one of the tables in the sidebar to get started.": "Za početak odaberite jednu od tablica na bočnoj traci.",
         "Welcome to": "Dobrodošli u",
-        "Show filters": "Prikaži filtere",
+        "Show Filters": "Prikaži filtere",
         "Show": "Prikaži",
         "Create": "Kreiraj",
         "Sort": "Sortiraj",
@@ -161,9 +162,7 @@ CROATIAN = Translation(
         "of": "od",
         "result(s)": "rezultat(a)",
         "Version": "Verzija",
-        "Thanks for using Piccolo Admin.": (
-            "Hvala što koristite Piccolo Admin."
-        ),
+        "Thanks for using Piccolo Admin.": "Hvala što koristite Piccolo Admin.",
         "Edit": "Uredi",
         "Add": "Dodaj",
         "Ascending": "Uzlazno",
