@@ -57,6 +57,8 @@ def validate():
 
     phrases = get_phrases()
 
+    success = True
+
     for translation in TRANSLATIONS:
         existing_keys = set(translation.translations.keys())
 
@@ -72,6 +74,7 @@ def validate():
                 )
             )
             print("}")
+            success = False
         else:
             print("None")
 
@@ -79,10 +82,14 @@ def validate():
         surplus_keys = existing_keys - phrases
         if surplus_keys:
             print("\n".join(sorted(surplus_keys)))
+            success = False
         else:
             print("None")
 
         print("\n------------\n")
+
+        if not success:
+            sys.exit("Some translations are out of date.")
 
 
 def main():
