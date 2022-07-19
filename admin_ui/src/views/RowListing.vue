@@ -56,8 +56,11 @@
                         >
                             <font-awesome-icon icon="filter" />
                             <span>
-                                {{ showFilter ? $t("Hide") : $t("Show") }}
-                                {{ $t("Filters") }}
+                                {{
+                                    showFilter
+                                        ? $t("Hide Filters")
+                                        : $t("Show Filters")
+                                }}
                             </span>
                         </a>
                         <CSVButton :tableName="tableName" />
@@ -252,10 +255,7 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="
-                                                                subtle
-                                                                delete
-                                                            "
+                                                            class="subtle delete"
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
