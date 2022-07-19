@@ -473,8 +473,8 @@ SPANISH = Translation(
 
 
 TRANSLATIONS: t.List[Translation] = [
-    CROATIAN,
     ENGLISH,
+    CROATIAN,
     FRENCH,
     GERMAN,
     PORTUGUESE,
