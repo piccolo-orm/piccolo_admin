@@ -176,6 +176,8 @@ CROATIAN = Translation(
         "Form submitted": "Obrazac poslan",
         "Forms": "Forme",
         "Go to page": "Idi na stranicu",
+        "Hide Filters": "Sakrij filtre",
+        "Hide referencing tables": "Sakrij referentne tablice",
         "Home": "Početna",
         "Hours": "Sati",
         "Light Mode": "Svijetli način rada",
@@ -197,6 +199,7 @@ CROATIAN = Translation(
         "Select a table in the sidebar to get started.": "Za početak odaberite jednu od tablica na bočnoj traci.",
         "selected result(s) on": "odabranih rezultat(a) na",
         "Show Filters": "Prikaži filtere",
+        "Show referencing tables": "Prikaži referentne tablice",
         "Showing": "Pokazuje",
         "Sort by": "Sortiraj po",
         "Sort": "Sortiraj",
@@ -208,10 +211,6 @@ CROATIAN = Translation(
         "Weeks": "Tjedni",
         "Welcome to": "Dobrodošli u",
         "with a matching": "s odgovarajućom kolumnom",
-        "Hide Filters": "Sakrij filtre",
-        "Hide referencing tables": "Sakrij referentne tablice",
-        "Select a column to update": "Odaberite stupac za ažuriranje",
-        "Show referencing tables": "Prikaži referentne tablice",
     },
 )
 

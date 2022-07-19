@@ -10,7 +10,6 @@ import "./fontawesome"
 import axios from "axios"
 import JSONBig from "json-bigint"
 import Cookies from "js-cookie"
-import VueI18n from "vue-i18n"
 
 // Add the CSRF token
 axios.interceptors.request.use(function (config) {
