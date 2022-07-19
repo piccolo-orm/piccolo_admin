@@ -88,8 +88,10 @@ def validate():
 
         print("\n------------\n")
 
-        if not success:
-            sys.exit("Some translations are out of date.")
+    if not success:
+        sys.exit("Some translations are out of date.")
+    else:
+        print("Everything is good!")
 
 
 def main():

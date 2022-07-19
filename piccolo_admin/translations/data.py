@@ -220,6 +220,7 @@ PORTUGUESE = Translation(
     language_name="Portuguese",
     language_code="pt",
     translations={
+        "About": "Sobre",
         "Add Row": "Adicionar linha",
         "Apply": "Aplicar",
         "Ascending": "Ascendente",
@@ -283,6 +284,7 @@ GERMAN = Translation(
     language_name="German",
     language_code="de",
     translations={
+        "About": "Um",
         "Add Row": "Zeile hinzufügen",
         "Apply": "Sich bewerben",
         "Ascending": "Aufsteigend",
@@ -346,6 +348,7 @@ FRENCH = Translation(
     language_name="French",
     language_code="fr",
     translations={
+        "About": "À propos de",
         "Add Row": "Ajouter une rangée",
         "Apply": "Appliquer",
         "Ascending": "Ascendant",
@@ -409,6 +412,7 @@ SPANISH = Translation(
     language_name="Spanish",
     language_code="es",
     translations={
+        "About": "Sobre",
         "Add Row": "Añadir fila",
         "Apply": "Aplicar",
         "Ascending": "Ascendente",
