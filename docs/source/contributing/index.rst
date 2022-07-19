@@ -130,3 +130,22 @@ Then launch Cypress as follows:
 
 This will launch the Cypress app, which is basically a wrapper around Chrome,
 from which you can start the automated tests.
+
+-------------------------------------------------------------------------------
+
+Translations
+------------
+
+The Piccolo Admin UI supports translations for several languages. If you
+would like to contribute a new language, it would be very appreciated.
+
+Look in ``piccolo_admin/translations/data.py``. Use one of the existing
+translations as a foundation.
+
+We have a script which checks if any translations are missing, which you can
+use if you like:
+
+.. code-block:: bash
+
+    cd scripts
+    python get_translations.py validate
