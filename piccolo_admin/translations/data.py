@@ -1,8 +1,15 @@
 """
 See https://github.com/piccolo-orm/piccolo_admin/issues/173 for more info.
 
-Note: Flake8's line length warning has been disabled for this file - see
+NOTE: Flake8's line length warning has been disabled for this file - see
 .flake8, so we don't have to worry about wrapping long translations.
+
+NOTE: To validate the translations (to see if any are missing)::
+
+    # At the root of the project
+    cd scripts
+    python get_translations.py validate
+
 """
 
 import typing as t
