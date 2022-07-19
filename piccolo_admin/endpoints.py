@@ -415,18 +415,18 @@ class AdminRouter(FastAPI):
         )
 
         api_app.add_api_route(
-            "/languages/",
+            "/translations/",
             endpoint=self.get_translation_list,  # type: ignore
             methods=["GET"],
-            tags=["Languages"],
+            tags=["Translations"],
             response_model=TranslationListResponse,
         )
 
         api_app.add_api_route(
-            "/languages/{language:str}/",
+            "/translations/{language_code:str}/",
             endpoint=self.get_translation,  # type: ignore
             methods=["GET"],
-            tags=["Languages"],
+            tags=["Translations"],
             response_model=Translation,
         )
 
