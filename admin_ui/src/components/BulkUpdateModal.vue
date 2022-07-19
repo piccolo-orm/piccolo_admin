@@ -1,7 +1,7 @@
 <template>
     <Modal v-on:close="$emit('close')" title="Bulk Update">
         <template v-if="schema">
-            <p>{{ $t("Select a column to update:") }}</p>
+            <p>{{ $t("Select a column to update") }}</p>
 
             <select name="property" v-model="selectedPropertyName">
                 <option value="null" disabled>
@@ -18,7 +18,7 @@
                 </template>
             </select>
 
-            <p v-show="selectedPropertyName">{{ $t("New value:") }}</p>
+            <p v-show="selectedPropertyName">{{ $t("New value") }}</p>
 
             <form
                 v-on:submit.prevent="updateRows($event)"
