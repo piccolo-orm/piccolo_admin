@@ -46,7 +46,7 @@ li {
         text-transform: capitalize;
 
         span.language_code {
-            text-transform: lowercase;
+            text-transform: initial;
         }
     }
 }
