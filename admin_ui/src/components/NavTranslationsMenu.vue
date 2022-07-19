@@ -8,9 +8,10 @@
                 href="#"
                 @click.prevent="updateLanguage(translation.language_code)"
             >
-                {{ translation.language_name }} ({{
-                    translation.language_code
-                }})
+                {{ translation.language_name }}
+                <span class="language_code"
+                    >({{ translation.language_code }})</span
+                >
             </a>
         </li>
     </DropDownMenu>
@@ -40,12 +41,13 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="less">
-a {
-    text-transform: capitalize;
+li {
+    a {
+        text-transform: capitalize;
 
-    svg {
-        height: 0.5em;
-        vertical-align: middle;
+        span.language_code {
+            text-transform: lowercase;
+        }
     }
 }
 </style>
