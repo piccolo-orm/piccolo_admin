@@ -25,7 +25,6 @@ class Translation(BaseModel):
         The IETF language tag. For English it is 'en'. However, it also allows
         us to specify dialects like 'en-US' for American English, or 'en-GB'
         for British English, should we need it in the future.
-
     """
 
     language_name: str
@@ -103,7 +102,7 @@ WELSH = Translation(
         "Show referencing tables": "Dangos tablau cyfeirio",
         "Sort": "Didoli",
         "Tables": "Tablau",
-        "Welcome To": "Croeso i",
+        "Welcome to": "Croeso i",
     },
 )
 
