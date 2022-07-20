@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Add {{ tableName | readable }}</h1>
+        <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
 
         <pre>{{ errors }}</pre>
 
