@@ -249,7 +249,7 @@
                                                         >
                                                             <font-awesome-icon
                                                                 icon="edit"
-                                                            />Edit
+                                                            />{{ $t("Edit") }}
                                                         </router-link>
                                                     </li>
                                                     <li>
