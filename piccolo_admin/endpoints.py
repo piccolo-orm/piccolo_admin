@@ -611,7 +611,7 @@ class AdminRouter(FastAPI):
                     language_code=translation.language_code,
                     language_name=translation.language_name,
                 )
-                for translation in TRANSLATIONS
+                for translation in self.translations_map.values()
             ],
             default_language_code=self.default_language_code,
         )
