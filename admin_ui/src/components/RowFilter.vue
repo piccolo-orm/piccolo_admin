@@ -16,7 +16,6 @@
     </div>
 </template>
 
-
 <script lang="ts">
 import Vue from "vue"
 import RowFormSearch from "./RowFormSearch.vue"
@@ -101,7 +100,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style scoped lang="less">
 div.filter_wrapper {
