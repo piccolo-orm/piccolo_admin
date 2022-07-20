@@ -34,7 +34,7 @@
                 ref="form"
             >
                 <NewForm :schema="schema" />
-                <button>Submit</button>
+                <button>{{ $t("Submit") }}</button>
             </form>
         </div>
     </div>
