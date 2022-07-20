@@ -119,8 +119,7 @@ export default Vue.extend({
             }
         )
 
-        await this.$store.dispatch("loadDefaultLanguage")
-        await this.$store.dispatch("fetchTranslations")
+        await this.$store.dispatch("setupTranslations")
         await this.$store.dispatch("fetchUser")
     }
 })

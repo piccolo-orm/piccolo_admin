@@ -33,7 +33,7 @@ export default Vue.extend({
     },
     methods: {
         async updateLanguage(languageCode: string) {
-            await this.$store.dispatch("fetchTranslation", languageCode)
+            await this.$store.dispatch("loadTranslation", languageCode)
             this.$emit("closeDropdown", false)
         }
     },
