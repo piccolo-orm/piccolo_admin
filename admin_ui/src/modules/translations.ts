@@ -7,8 +7,6 @@ import {
 } from "@/interfaces"
 import i18n from "@/i18n"
 
-const BASE_URL = process.env.VUE_APP_BASE_URI
-
 const DEFAULT_LANGUAGE_KEY = "piccoloAdminDefaultLanguage"
 
 /**
@@ -45,7 +43,7 @@ export default {
          */
         async fetchTranslations(context) {
             const response = await axios.get<TranslationsListAPIResponse>(
-                `${BASE_URL}translations/`
+                `./public/translations/`
             )
 
             context.commit("updateTranslations", response.data.translations)
@@ -62,7 +60,7 @@ export default {
          */
         async fetchTranslation(context, languageCode: string) {
             const response = await axios.get<TranslationAPIResponse>(
-                `${BASE_URL}translations/${languageCode}/`
+                `./public/translations/${languageCode}/`
             )
             i18n.setLocaleMessage(
                 response.data.language_code,

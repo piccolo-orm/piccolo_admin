@@ -322,8 +322,8 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        api_app = FastAPI(docs_url=None)
-        api_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
+        private_app = FastAPI(docs_url=None)
+        private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -341,7 +341,7 @@ class AdminRouter(FastAPI):
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
-                fastapi_app=api_app,
+                fastapi_app=private_app,
                 piccolo_crud=PiccoloCRUD(
                     table=table_class,
                     read_only=read_only,
@@ -361,7 +361,7 @@ class AdminRouter(FastAPI):
                 ),
             )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/tables/",
             endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
@@ -369,15 +369,7 @@ class AdminRouter(FastAPI):
             tags=["Tables"],
         )
 
-        api_app.add_api_route(
-            path="/meta/",
-            endpoint=self.get_meta,  # type: ignore
-            methods=["GET"],
-            tags=["Meta"],
-            response_model=MetaResponseModel,
-        )
-
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/",
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
@@ -385,28 +377,28 @@ class AdminRouter(FastAPI):
             response_model=t.List[FormConfigResponseModel],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.get_single_form,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/schema/",
             endpoint=self.get_single_form_schema,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/user/",
             endpoint=self.get_user,  # type: ignore
             methods=["GET"],
@@ -414,26 +406,10 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
-        api_app.add_api_route(
-            "/translations/",
-            endpoint=self.get_translation_list,  # type: ignore
-            methods=["GET"],
-            tags=["Translations"],
-            response_model=TranslationListResponse,
-        )
-
-        api_app.add_api_route(
-            "/translations/{language_code:str}/",
-            endpoint=self.get_translation,  # type: ignore
-            methods=["GET"],
-            tags=["Translations"],
-            response_model=Translation,
-        )
-
-        api_app.add_route(
+        private_app.add_route(
             path="/change-password/",
             route=change_password(
-                login_url="./../../auth/login/",
+                login_url="./../../public/login/",
                 session_table=session_table,
                 read_only=read_only,
             ),
@@ -442,14 +418,15 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        auth_app = FastAPI()
+        public_app = FastAPI(docs_url=None)
+        public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
                 limit=1000, timespan=300
             )
 
-        auth_app.mount(
+        public_app.mount(
             path="/login/",
             app=RateLimitingMiddleware(
                 app=session_login(
@@ -464,10 +441,33 @@ class AdminRouter(FastAPI):
             ),
         )
 
-        auth_app.add_route(
+        public_app.add_route(
             path="/logout/",
             route=session_logout(session_table=session_table),
             methods=["POST"],
+        )
+
+        # We make the meta endpoint available without auth, because it contains
+        # the site name.
+        public_app.add_api_route(
+            "/meta/", endpoint=self.get_meta, tags=["Meta"]  # type: ignore
+        )
+
+        # The translations are public, because we need them on the login page.
+        public_app.add_api_route(
+            "/translations/",
+            endpoint=self.get_translation_list,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=TranslationListResponse,
+        )
+
+        public_app.add_api_route(
+            "/translations/{language_code:str}/",
+            endpoint=self.get_translation,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=Translation,
         )
 
         #######################################################################
@@ -497,12 +497,8 @@ class AdminRouter(FastAPI):
             on_error=handle_auth_exception,
         )
 
-        self.mount(path="/api", app=auth_middleware(api_app))
-        self.mount(path="/auth", app=auth_app)
-
-        # We make the meta endpoint available without auth, because it contains
-        # the site name.
-        self.add_api_route("/meta/", endpoint=self.get_meta)  # type: ignore
+        self.mount(path="/api", app=auth_middleware(private_app))
+        self.mount(path="/public", app=public_app)
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)

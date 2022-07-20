@@ -109,7 +109,7 @@ class TestAdminRouter(TestCase):
     def test_get_meta(self):
         client = TestClient(APP)
 
-        response = client.get("/meta/")
+        response = client.get("/public/meta/")
         self.assertEqual(
             response.json(),
             {
@@ -163,7 +163,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
@@ -242,7 +242,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
@@ -292,7 +292,7 @@ class TestForms(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
@@ -339,7 +339,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
@@ -367,7 +367,7 @@ class TestTables(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
@@ -382,22 +382,12 @@ class TestTables(TestCase):
             {"username": "Bob", "user_id": "1"},
         )
 
+
+class TestTranslations(TestCase):
     def test_translations(self):
         client = TestClient(APP)
 
-        # To get a CSRF cookie
-        response = client.get("/")
-        csrftoken = response.cookies["csrftoken"]
-
-        # Login
-        payload = dict(csrftoken=csrftoken, **self.credentials)
-        client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
-        )
-
-        response = client.get("/api/translations/")
+        response = client.get("/public/translations/")
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -408,38 +398,14 @@ class TestTables(TestCase):
     def test_get_single_translation(self):
         client = TestClient(APP)
 
-        # To get a CSRF cookie
-        response = client.get("/")
-        csrftoken = response.cookies["csrftoken"]
-
-        # Login
-        payload = dict(csrftoken=csrftoken, **self.credentials)
-        client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
-        )
-
-        response = client.get("/api/translations/en/")
+        response = client.get("/public/translations/en/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["translations"]["About"], "About")
 
     def test_get_language_failed(self):
         client = TestClient(APP)
 
-        # To get a CSRF cookie
-        response = client.get("/")
-        csrftoken = response.cookies["csrftoken"]
-
-        # Login
-        payload = dict(csrftoken=csrftoken, **self.credentials)
-        client.post(
-            "/auth/login/",
-            json=payload,
-            headers={"X-CSRFToken": csrftoken},
-        )
-
-        response = client.get("/api/languages/nolanguage/")
+        response = client.get("/public/languages/nolanguage/")
         self.assertEqual(response.status_code, 404)
 
 
@@ -485,7 +451,7 @@ class TestHooks(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )

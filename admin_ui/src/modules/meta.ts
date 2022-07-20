@@ -17,7 +17,7 @@ export default {
     },
     actions: {
         async fetchMeta(context) {
-            const response = await axios.get(`./meta/`)
+            const response = await axios.get(`./public/meta/`)
             context.commit("updateSiteName", response.data.site_name)
             context.commit(
                 "updatePiccoloAdminVersion",

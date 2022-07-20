@@ -58,7 +58,7 @@ export default Vue.extend({
             if (window.confirm("Are you sure you want to logout?")) {
                 console.log("Logging out")
                 try {
-                    await axios.post("./auth/logout/")
+                    await axios.post("./public/logout/")
                     // Reload the entire page, rather than using vue-router,
                     // otherwise some data from Vuex will remain in memory.
                     // The app will redirect the user to the login page
@@ -74,5 +74,4 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

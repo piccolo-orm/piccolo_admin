@@ -25,11 +25,7 @@ server {
 		proxy_pass http://127.0.0.1:8000;
 	}
 
-	location /auth {
-		proxy_pass http://127.0.0.1:8000;
-	}
-
-	location /meta {
+	location /public {
 		proxy_pass http://127.0.0.1:8000;
 	}
 }

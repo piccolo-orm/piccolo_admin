@@ -37,7 +37,7 @@ export default {
         async login() {
             console.log("Logging in")
             try {
-                await axios.post(`./auth/login/`, {
+                await axios.post(`./public/login/`, {
                     username: this.username,
                     password: this.password
                 })
@@ -51,11 +51,7 @@ export default {
                 return
             }
 
-            await Promise.all([
-                this.$store.dispatch("fetchUser"),
-                this.$store.dispatch("fetchMeta"),
-                this.$store.dispatch("fetchTranslations")
-            ])
+            await this.$store.dispatch("fetchUser")
 
             let nextURL = this.$route.query.nextURL
             if (nextURL) {
