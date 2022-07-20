@@ -735,7 +735,7 @@ def create_admin(
         Croatian, we can specify that only those translations are visible
         in the language selector in the UI::
 
-            from piccolo.translations import ENGLISH, CROATIAN
+            from piccolo.translations.data import ENGLISH, CROATIAN
 
             create_admin(
                 tables=[TableA, TableB],
@@ -747,7 +747,8 @@ def create_admin(
         language we don't currently support (though please open a PR to add
         it!)::
 
-            from piccolo.translations import Translation, ENGLISH
+            from piccolo.translations.models import Translation
+            from piccolo.translations.data import ENGLISH
 
             MY_LANGUAGE = Translation(
                 language_code='xx',
