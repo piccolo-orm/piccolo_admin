@@ -449,7 +449,7 @@ SPANISH = Translation(
         "Back to home page": "Volver a la página de inicio",
         "Back": "atrás",
         "Change password": "Cambia la contraseña",
-        "Clear filters": "Filtros claros",
+        "Clear filters": "Eliminar filtros",
         "Close": "Cerca",
         "Create": "Crear",
         "Current password": "Contraseña actual",
