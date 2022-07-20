@@ -28,6 +28,7 @@ ENGLISH = Translation(
     language_name="English",
     language_code="en",
     translations={
+        "Add": "Add",
         "About": "About",
         "Add Row": "Add Row",
         "Apply": "Apply",
@@ -94,6 +95,7 @@ WELSH = Translation(
     language_code="cy",
     translations={
         "About": "Am",
+        "Add": "Ychwanegu",
         "Add Row": "Ychwanegu Rhes",
         "Apply": "Ymgeisiwch",
         "Ascending": "Esgynnol",
@@ -158,6 +160,7 @@ CROATIAN = Translation(
     language_code="hr",
     translations={
         "About": "O",
+        "Add": "Dodaj",
         "Add Row": "Dodaj redak",
         "Apply": "Primijeni",
         "Ascending": "Uzlazno",
@@ -223,6 +226,7 @@ PORTUGUESE = Translation(
     language_code="pt",
     translations={
         "About": "Sobre",
+        "Add": "Adicionar",
         "Add Row": "Adicionar linha",
         "Apply": "Aplicar",
         "Ascending": "Ascendente",
@@ -288,6 +292,7 @@ GERMAN = Translation(
     language_code="de",
     translations={
         "About": "Um",
+        "Add": "Hinzufügen",
         "Add Row": "Zeile hinzufügen",
         "Apply": "Sich bewerben",
         "Ascending": "Aufsteigend",
@@ -353,6 +358,7 @@ FRENCH = Translation(
     language_code="fr",
     translations={
         "About": "À propos de",
+        "Add": "Additionner",
         "Add Row": "Ajouter une rangée",
         "Apply": "Appliquer",
         "Ascending": "Ascendant",
@@ -418,6 +424,7 @@ SPANISH = Translation(
     language_code="es",
     translations={
         "About": "Sobre",
+        "Add": "Añadir",
         "Add Row": "Añadir fila",
         "Apply": "Aplicar",
         "Ascending": "Ascendente",
