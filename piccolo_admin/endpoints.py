@@ -268,7 +268,7 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
-        default_language_code: str = "en",
+        default_language_code: str = "auto",
         translations: t.List[Translation] = None,
     ) -> None:
         super().__init__(
@@ -670,7 +670,7 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
-    default_language_code: str = "en",
+    default_language_code: str = "auto",
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
@@ -719,10 +719,12 @@ def create_admin(
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
     :param default_language_code:
-        Specify the default language used in the admin UI (the default is
-        ``'en'`` for English). The value should be an IETF language tag. To see
-        available values see ``piccolo_admin/translations/data.py``. The UI
-        will be automatically translated into this language.
+        Specify the default language used in the admin UI. The value should be
+        an IETF language tag, for example 'en' for English. To see available
+        values see ``piccolo_admin/translations/data.py``. The UI
+        will be automatically translated into this language. If a value of
+        'auto' is specified, then we check the user's browser for the
+        language they prefer, using the ``navigator.language`` JavaScript API.
     :param translations:
         Specify which translations are available. By default, we use every
         translation in ``piccolo_admin/translations/data.py``.
