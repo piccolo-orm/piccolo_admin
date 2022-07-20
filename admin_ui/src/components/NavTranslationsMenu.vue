@@ -8,6 +8,11 @@
                 href="#"
                 @click.prevent="updateLanguage(translation.language_code)"
             >
+                <font-awesome-icon
+                    v-if="currentLanguageCode == translation.language_code"
+                    icon="check"
+                />
+
                 {{ translation.language_name }}
                 <span class="language_code"
                     >({{ translation.language_code }})</span
@@ -35,6 +40,9 @@ export default Vue.extend({
     computed: {
         translations(): TranslationListItemAPI[] {
             return this.$store.state.translationsModule.translations
+        },
+        currentLanguageCode(): string {
+            return this.$i18n.locale || "en"
         }
     }
 })
