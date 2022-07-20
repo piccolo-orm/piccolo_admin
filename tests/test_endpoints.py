@@ -392,7 +392,7 @@ class TestTranslations(TestCase):
 
         data = response.json()
 
-        self.assertEqual(data["default_language_code"], "en")
+        self.assertEqual(data["default_language_code"], "auto")
         self.assertIsInstance(data.get("translations"), list)
 
     def test_get_single_translation(self):
