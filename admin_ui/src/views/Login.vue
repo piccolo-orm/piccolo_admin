@@ -3,19 +3,19 @@
         <div class="inner">
             <h1>{{ siteName }}</h1>
             <form v-on:submit.prevent="login">
-                <label>Username</label>
+                <label>{{ $t("Username") }}</label>
                 <input name="username" type="text" v-model="username" />
 
-                <label>Password</label>
+                <label>{{ $t("Password") }}</label>
                 <input name="password" type="password" v-model="password" />
 
-                <button>Login</button>
+                <button>{{ $t("Login") }}</button>
             </form>
         </div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import axios from "axios"
 
 export default {
