@@ -3,9 +3,7 @@ import axios from "axios"
 export default {
     state: {
         siteName: "Piccolo Admin",
-        piccoloAdminVersion: "Unknown",
-        defaultLanguage: "english",
-        languages: undefined
+        piccoloAdminVersion: "Unknown"
     },
     mutations: {
         updateSiteName(state, value: string) {
