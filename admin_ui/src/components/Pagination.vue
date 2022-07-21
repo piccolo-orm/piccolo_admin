@@ -1,45 +1,34 @@
 <template>
     <div id="pagination">
-        <ul
-            class="pages"
-            v-if="pageCount < 20"
-        >
-            <li
-                :key="n"
-                v-for="n in pageCount"
-            >
+        <ul class="pages" v-if="pageCount < 20">
+            <li :key="n" v-for="n in pageCount">
                 <a
                     class="subtle"
                     href="#"
-                    v-bind:class="{active: n === currentPageNumber}"
+                    v-bind:class="{ active: n === currentPageNumber }"
                     v-on:click.prevent="changePage(n)"
-                >{{ n }}</a>
+                    >{{ n }}</a
+                >
             </li>
         </ul>
 
-        <div
-            class="page_select"
-            v-else
-        >
-            <label>Go to page</label>
+        <div class="page_select" v-else>
+            <label>{{ $t("Go to page") }}</label>
             <select v-model="pageDropdownValue">
-                <option
-                    :key="n"
-                    v-for="n in pageCount"
-                >{{ n }}</option>
+                <option :key="n" v-for="n in pageCount">{{ n }}</option>
             </select>
         </div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     props: {
-        tableName: String,
+        tableName: String
     },
     data() {
         return {
-            pageDropdownValue: 0,
+            pageDropdownValue: 0
         }
     },
     computed: {
@@ -61,7 +50,7 @@ export default {
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
-        },
+        }
     },
     methods: {
         async changePage(pageNumber) {
@@ -70,16 +59,16 @@ export default {
                 this.$store.commit("updateCurrentPageNumber", pageNumber)
                 await this.$store.dispatch("fetchRows")
             }
-        },
+        }
     },
     watch: {
         pageDropdownValue(value) {
             this.changePage(value)
-        },
+        }
     },
     mounted() {
         this.pageDropdownValue = this.currentPageNumber
-    },
+    }
 }
 </script>
 

@@ -9,14 +9,18 @@
         </template>
 
         <div v-show="successMessage">
-            <h1>Form submitted</h1>
+            <h1>{{ $t("Form submitted") }}</h1>
             <p>{{ successMessage }}</p>
             <ul>
                 <li>
-                    <a href="#" @click.prevent="resetForm">Use again</a>
+                    <a href="#" @click.prevent="resetForm">{{
+                        $t("Use again")
+                    }}</a>
                 </li>
                 <li>
-                    <router-link to="/">Back to home page</router-link>
+                    <router-link to="/">{{
+                        $t("Back to home page")
+                    }}</router-link>
                 </li>
             </ul>
         </div>
@@ -30,7 +34,7 @@
                 ref="form"
             >
                 <NewForm :schema="schema" />
-                <button>Submit</button>
+                <button>{{ $t("Submit") }}</button>
             </form>
         </div>
     </div>

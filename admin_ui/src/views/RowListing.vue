@@ -37,7 +37,7 @@
                             v-on:click.prevent="showAddRow = true"
                         >
                             <font-awesome-icon icon="plus" />
-                            <span>Add Row</span>
+                            <span>{{ $t("Add Row") }}</span>
                         </router-link>
 
                         <a
@@ -46,7 +46,7 @@
                             v-on:click.prevent="showSortModal = !showSortModal"
                         >
                             <font-awesome-icon icon="sort" />
-                            <span>Sort</span>
+                            <span>{{ $t("Sort") }}</span>
                         </a>
 
                         <a
@@ -56,8 +56,11 @@
                         >
                             <font-awesome-icon icon="filter" />
                             <span>
-                                {{ showFilter ? "Hide" : "Show" }}
-                                Filters
+                                {{
+                                    showFilter
+                                        ? $t("Hide Filters")
+                                        : $t("Show Filters")
+                                }}
                             </span>
                         </a>
                         <CSVButton :tableName="tableName" />
@@ -65,20 +68,22 @@
                 </div>
                 <p id="selected_count" v-if="selectedRows.length > 0">
                     <b>{{ selectedRows.length }}</b>
-                    selected result(s) on
-                    <b>page {{ currentPageNumber }}</b>
+                    {{ $t("selected result(s) on") }}
+                    <b>{{ $t("page") }} {{ currentPageNumber }}</b>
                 </p>
 
                 <div class="table_wrapper">
                     <transition name="fade">
                         <p v-show="loadingStatus" id="loading_indicator">
-                            Loading ...
+                            {{ $t("Loading") }} ...
                         </p>
                     </transition>
 
                     <transition name="fade">
                         <div v-if="!loadingStatus && rows != undefined">
-                            <p v-if="rows.length == 0">No results found</p>
+                            <p v-if="rows.length == 0">
+                                {{ $t("No results found") }}
+                            </p>
                             <template v-else>
                                 <table>
                                     <tr>
@@ -244,7 +249,7 @@
                                                         >
                                                             <font-awesome-icon
                                                                 icon="edit"
-                                                            />Edit
+                                                            />{{ $t("Edit") }}
                                                         </router-link>
                                                     </li>
                                                     <li>
@@ -265,8 +270,9 @@
                                 </table>
 
                                 <p id="result_count">
-                                    Showing {{ rows.length }} of
-                                    {{ rowCount }} result(s)
+                                    {{ $t("Showing") }} {{ rows.length }}
+                                    {{ $t("of") }} {{ rowCount }}
+                                    {{ $t("result(s)") }}
                                 </p>
 
                                 <div class="pagination_wrapper">

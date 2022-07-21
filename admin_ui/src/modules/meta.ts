@@ -1,9 +1,9 @@
-import axios from 'axios'
+import axios from "axios"
 
 export default {
     state: {
-        siteName: 'Piccolo Admin',
-        piccoloAdminVersion: 'Unknown'
+        siteName: "Piccolo Admin",
+        piccoloAdminVersion: "Unknown"
     },
     mutations: {
         updateSiteName(state, value: string) {
@@ -11,13 +11,16 @@ export default {
         },
         updatePiccoloAdminVersion(state, value: string) {
             state.piccoloAdminVersion = value
-        },
+        }
     },
     actions: {
         async fetchMeta(context) {
-            const response = await axios.get(`./meta/`)
-            context.commit('updateSiteName', response.data.site_name)
-            context.commit('updatePiccoloAdminVersion', response.data.piccolo_admin_version)
+            const response = await axios.get(`./public/meta/`)
+            context.commit("updateSiteName", response.data.site_name)
+            context.commit(
+                "updatePiccoloAdminVersion",
+                response.data.piccolo_admin_version
+            )
         }
     }
 }

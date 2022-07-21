@@ -1,18 +1,18 @@
 server {
-	listen 80;
-	server_name piccolo_admin;
+    listen 80;
+    server_name piccolo_admin;
 
-	location / {
-		proxy_pass http://127.0.0.1:8080;
-	}
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
 
-	location /js {
-		proxy_pass http://127.0.0.1:8080;
-	}
+    location /js {
+        proxy_pass http://127.0.0.1:8080;
+    }
 
-	location /css {
-		proxy_pass http://127.0.0.1:8080;
-	}
+    location /css {
+        proxy_pass http://127.0.0.1:8080;
+    }
 
     location /sockjs-node {
         proxy_pass http://127.0.0.1:8080;
@@ -21,15 +21,11 @@ server {
         proxy_set_header Connection "Upgrade";
     }
 
-	location /api {
-		proxy_pass http://127.0.0.1:8000;
-	}
+    location /api {
+        proxy_pass http://127.0.0.1:8000;
+    }
 
-	location /auth {
-		proxy_pass http://127.0.0.1:8000;
-	}
-
-	location /meta {
-		proxy_pass http://127.0.0.1:8000;
-	}
+    location /public {
+        proxy_pass http://127.0.0.1:8000;
+    }
 }

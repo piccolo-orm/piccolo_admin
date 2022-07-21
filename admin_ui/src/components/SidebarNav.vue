@@ -2,11 +2,11 @@
     <div class="sidebar">
         <p class="opaque">
             <router-link class="subtle" to="/">
-                <font-awesome-icon icon="home" />Home
+                <font-awesome-icon icon="home" />{{ $t("Home") }}
             </router-link>
         </p>
         <p class="opaque" v-on:click="isHiddenTables = !isHiddenTables">
-            <font-awesome-icon icon="table" />Tables
+            <font-awesome-icon icon="table" />{{ $t("Tables") }}
             <span style="float: right">
                 <font-awesome-icon
                     icon="angle-down"
@@ -22,7 +22,7 @@
             v-if="formConfigs.length > 0"
             v-on:click="isHiddenForms = !isHiddenForms"
         >
-            <font-awesome-icon icon="cogs" />Forms
+            <font-awesome-icon icon="cogs" />{{ $t("Forms") }}
             <span style="float: right">
                 <font-awesome-icon
                     icon="angle-down"
@@ -45,18 +45,18 @@ export default Vue.extend({
     data() {
         return {
             isHiddenTables: false,
-            isHiddenForms: false,
+            isHiddenForms: false
         }
     },
     components: {
         TableNav,
-        FormNav,
+        FormNav
     },
     computed: {
         formConfigs() {
             return this.$store.state.formConfigs
-        },
-    },
+        }
+    }
 })
 </script>
 

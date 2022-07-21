@@ -28,6 +28,8 @@ piccolo, password: piccolo123).
    ../table_config/index
    ../custom_forms/index
    ../actions/index
+   ../internationalization/index
    ../contributing/index
    ../rest_documentation/index
+   ../api_reference/index
    ../changes/index

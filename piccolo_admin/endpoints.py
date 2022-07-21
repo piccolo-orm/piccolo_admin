@@ -39,6 +39,12 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+from .translations.data import TRANSLATIONS
+from .translations.models import (
+    Translation,
+    TranslationListItem,
+    TranslationListResponse,
+)
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
@@ -262,6 +268,8 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
+        default_language_code: str = "auto",
+        translations: t.List[Translation] = None,
     ) -> None:
         super().__init__(
             title=site_name, description="Piccolo API documentation"
@@ -296,6 +304,14 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
+        self.default_language_code = default_language_code
+        self.translations_map = {
+            translation.language_code.lower(): translation
+            for translation in (translations or TRANSLATIONS)
+        }
+
+        #######################################################################
+
         self.auth_table = auth_table
         self.site_name = site_name
         self.forms = forms
@@ -306,8 +322,8 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        api_app = FastAPI(docs_url=None)
-        api_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
+        private_app = FastAPI(docs_url=None)
+        private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -325,7 +341,7 @@ class AdminRouter(FastAPI):
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
-                fastapi_app=api_app,
+                fastapi_app=private_app,
                 piccolo_crud=PiccoloCRUD(
                     table=table_class,
                     read_only=read_only,
@@ -345,7 +361,7 @@ class AdminRouter(FastAPI):
                 ),
             )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/tables/",
             endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
@@ -353,15 +369,7 @@ class AdminRouter(FastAPI):
             tags=["Tables"],
         )
 
-        api_app.add_api_route(
-            path="/meta/",
-            endpoint=self.get_meta,  # type: ignore
-            methods=["GET"],
-            tags=["Meta"],
-            response_model=MetaResponseModel,
-        )
-
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/",
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
@@ -369,28 +377,28 @@ class AdminRouter(FastAPI):
             response_model=t.List[FormConfigResponseModel],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.get_single_form,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/schema/",
             endpoint=self.get_single_form_schema,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/user/",
             endpoint=self.get_user,  # type: ignore
             methods=["GET"],
@@ -398,10 +406,10 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
-        api_app.add_route(
+        private_app.add_route(
             path="/change-password/",
             route=change_password(
-                login_url="./../../auth/login/",
+                login_url="./../../public/login/",
                 session_table=session_table,
                 read_only=read_only,
             ),
@@ -410,14 +418,15 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        auth_app = FastAPI()
+        public_app = FastAPI(docs_url=None)
+        public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
                 limit=1000, timespan=300
             )
 
-        auth_app.mount(
+        public_app.mount(
             path="/login/",
             app=RateLimitingMiddleware(
                 app=session_login(
@@ -432,10 +441,33 @@ class AdminRouter(FastAPI):
             ),
         )
 
-        auth_app.add_route(
+        public_app.add_route(
             path="/logout/",
             route=session_logout(session_table=session_table),
             methods=["POST"],
+        )
+
+        # We make the meta endpoint available without auth, because it contains
+        # the site name.
+        public_app.add_api_route(
+            "/meta/", endpoint=self.get_meta, tags=["Meta"]  # type: ignore
+        )
+
+        # The translations are public, because we need them on the login page.
+        public_app.add_api_route(
+            "/translations/",
+            endpoint=self.get_translation_list,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=TranslationListResponse,
+        )
+
+        public_app.add_api_route(
+            "/translations/{language_code:str}/",
+            endpoint=self.get_translation,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=Translation,
         )
 
         #######################################################################
@@ -465,12 +497,8 @@ class AdminRouter(FastAPI):
             on_error=handle_auth_exception,
         )
 
-        self.mount(path="/api", app=auth_middleware(api_app))
-        self.mount(path="/auth", app=auth_app)
-
-        # We make the meta endpoint available without auth, because it contains
-        # the site name.
-        self.add_api_route("/meta/", endpoint=self.get_meta)  # type: ignore
+        self.mount(path="/api", app=auth_middleware(private_app))
+        self.mount(path="/public", app=public_app)
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
@@ -560,11 +588,41 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self, request: Request) -> t.List[str]:
+    def get_table_list(self) -> t.List[str]:
         """
         Returns a list of all tables registered with the admin.
         """
         return [i.table_class._meta.tablename for i in self.table_configs]
+
+    ###########################################################################
+
+    def get_translation_list(self) -> TranslationListResponse:
+        """
+        Return a list of language codes and names for each available
+        translation.
+        """
+        return TranslationListResponse(
+            translations=[
+                TranslationListItem(
+                    language_code=translation.language_code,
+                    language_name=translation.language_name,
+                )
+                for translation in self.translations_map.values()
+            ],
+            default_language_code=self.default_language_code,
+        )
+
+    def get_translation(self, language_code: str = "en") -> Translation:
+        """
+        Return a single language. The ``language_code`` is an IETF language
+        code, for example 'en' for English.
+        """
+        translation = self.translations_map.get(language_code.lower())
+        if translation is None:
+            raise HTTPException(
+                status_code=404, detail="Translation not found"
+            )
+        return translation
 
 
 def get_all_tables(
@@ -612,6 +670,8 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
+    default_language_code: str = "auto",
+    translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
 ):
@@ -658,6 +718,52 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
+    :param default_language_code:
+        Specify the default language used in the admin UI. The value should be
+        an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
+        for example ``'en'`` for English. To see available values see
+        ``piccolo_admin/translations/data.py``. The UI will be automatically
+        translated into this language. If a value of ``'auto'`` is specified,
+        then we check the user's browser for the language they prefer, using
+        the ``navigator.language`` JavaScript API.
+    :param translations:
+        Specify which translations are available. By default, we use every
+        translation in ``piccolo_admin/translations/data.py``.
+
+        Here's an example - if we know our users only speak English or
+        Croatian, we can specify that only those translations are visible
+        in the language selector in the UI::
+
+            from piccolo.translations.data import ENGLISH, CROATIAN
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='hr',
+                translations=[ENGLISH, CROATIAN]
+            )
+
+        You can also use this to provide your own translations, if there's a
+        language we don't currently support (though please open a PR to add
+        it!)::
+
+            from piccolo.translations.models import Translation
+            from piccolo.translations.data import ENGLISH
+
+            MY_LANGUAGE = Translation(
+                language_code='xx',
+                language_name='My Language',
+                translations={
+                    'Welcome': 'XXXXX',
+                    ...
+                }
+            )
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='xx',
+                translations=[ENGLISH, MY_LANGUAGE]
+            )
+
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
@@ -708,6 +814,8 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
+                default_language_code=default_language_code,
+                translations=translations,
             ),
             allowed_hosts=allowed_hosts,
         )

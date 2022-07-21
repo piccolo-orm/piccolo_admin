@@ -57,6 +57,24 @@ export interface TableReferencesAPIResponse {
 
 /*****************************************************************************/
 
+export interface TranslationListItemAPI {
+    language_name: string
+    language_code: string
+}
+
+export interface TranslationsListAPIResponse {
+    translations: TranslationListItemAPI[]
+    default_language_code: string
+}
+
+export interface TranslationAPIResponse {
+    language_name: string
+    language_code: string
+    translations: { [key: string]: string }
+}
+
+/*****************************************************************************/
+
 export interface Choice {
     display_name: string
     value: string

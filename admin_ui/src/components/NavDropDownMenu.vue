@@ -2,7 +2,7 @@
     <DropDownMenu>
         <li>
             <a href="#" v-on:click.prevent="logout">
-                <font-awesome-icon icon="sign-out-alt" />Log out
+                <font-awesome-icon icon="sign-out-alt" />{{ $t("Log out") }}
             </a>
         </li>
         <li>
@@ -10,22 +10,23 @@
                 :to="{
                     name: 'changePassword'
                 }"
-                ><font-awesome-icon icon="key" /> Change Password
+                ><font-awesome-icon icon="key" />{{ $t("Change password") }}
             </router-link>
         </li>
         <li v-if="darkMode">
             <a href="#" v-on:click.prevent="updateDarkMode(false)">
-                <font-awesome-icon icon="sun" />Light Mode
+                <font-awesome-icon icon="sun" />{{ $t("Light Mode") }}
             </a>
         </li>
         <li v-else>
             <a href="#" v-on:click.prevent="updateDarkMode(true)">
-                <font-awesome-icon icon="moon" />Dark Mode
+                <font-awesome-icon icon="moon" />{{ $t("Dark Mode") }}
             </a>
         </li>
         <li>
             <a href="#" v-on:click.prevent="showAboutModal">
-                <font-awesome-icon icon="info-circle" />About
+                <font-awesome-icon icon="info-circle" />{{ $t("About") }}
+                Piccolo
             </a>
         </li>
     </DropDownMenu>
@@ -57,7 +58,7 @@ export default Vue.extend({
             if (window.confirm("Are you sure you want to logout?")) {
                 console.log("Logging out")
                 try {
-                    await axios.post("./auth/logout/")
+                    await axios.post("./public/logout/")
                     // Reload the entire page, rather than using vue-router,
                     // otherwise some data from Vuex will remain in memory.
                     // The app will redirect the user to the login page
@@ -73,5 +74,4 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

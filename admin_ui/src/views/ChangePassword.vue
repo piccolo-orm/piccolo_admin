@@ -2,30 +2,30 @@
     <div id="change_password">
         <div class="inner">
             <BackButton />
-            <h1>Change password</h1>
+            <h1>{{ $t("Change password") }}</h1>
             <form v-on:submit.prevent="changePassword">
-                <label>Current password</label>
+                <label>{{ $t("Current password") }}</label>
                 <input
                     name="current_password"
                     type="password"
                     v-model="currentPassword"
                 />
 
-                <label>New password</label>
+                <label>{{ $t("New password") }}</label>
                 <input
                     name="new_password"
                     type="password"
                     v-model="newPassword"
                 />
 
-                <label>New password confirmation</label>
+                <label>{{ $t("New password confirmation") }}</label>
                 <input
                     name="confirm_new_password"
                     type="password"
                     v-model="confirmNewPassword"
                 />
 
-                <button>Change password</button>
+                <button>{{ $t("Change password") }}</button>
             </form>
         </div>
     </div>

@@ -3,6 +3,9 @@
 Actions
 =======
 
+Piccolo Admin allows us to perform bulk actions, by ticking the checkboxes
+next to the rows.
+
 .. image:: ./images/actions.png
 
 Bulk delete
