@@ -306,7 +306,7 @@ class AdminRouter(FastAPI):
 
         self.default_language_code = default_language_code
         self.translations_map = {
-            translation.language_code: translation
+            translation.language_code.lower(): translation
             for translation in (translations or TRANSLATIONS)
         }
 
@@ -617,7 +617,7 @@ class AdminRouter(FastAPI):
         Return a single language. The ``language_code`` is an IETF language
         code, for example 'en' for English.
         """
-        translation = self.translations_map.get(language_code)
+        translation = self.translations_map.get(language_code.lower())
         if translation is None:
             raise HTTPException(
                 status_code=404, detail="Translation not found"
