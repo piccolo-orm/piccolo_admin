@@ -7,8 +7,7 @@ NOTE: Flake8's line length warning has been disabled for this file - see
 NOTE: To validate the translations (to see if any are missing)::
 
     # At the root of the project
-    cd scripts
-    python get_translations.py validate
+    python scripts/get_translations.py validate
 
 NOTE: One of the fastest ways to get the translations in bulk is using Google
 Spreadsheets. For example, this function translates a value from English to

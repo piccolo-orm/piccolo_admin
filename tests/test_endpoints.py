@@ -17,6 +17,7 @@ from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP
+from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
 
@@ -385,6 +386,10 @@ class TestTables(TestCase):
 
 class TestTranslations(TestCase):
     def test_translations(self):
+        """
+        Test the default configuration, where the translations endpoint should
+        return all translations.
+        """
         client = TestClient(APP)
 
         response = client.get("/public/translations/")
@@ -393,19 +398,65 @@ class TestTranslations(TestCase):
         data = response.json()
 
         self.assertEqual(data["default_language_code"], "auto")
-        self.assertIsInstance(data.get("translations"), list)
+        self.assertListEqual(
+            [i["language_code"] for i in data.get("translations")],
+            [i.language_code for i in TRANSLATIONS],
+        )
+
+    def test_translations_custom(self):
+        """
+        Test a custom configuration, where the translations endpoint should
+        return only the configured translations.
+        """
+        translations = [ENGLISH, FRENCH]
+
+        client = TestClient(
+            create_admin(
+                tables=[],
+                translations=translations,
+                default_language_code="fr",
+            )
+        )
+
+        response = client.get("/public/translations/")
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertEqual(data["default_language_code"], "fr")
+        self.assertListEqual(
+            [i["language_code"] for i in data.get("translations")],
+            [i.language_code for i in translations],
+        )
 
     def test_get_single_translation(self):
+        """
+        Make sure we can retrieve a single translation.
+        """
         client = TestClient(APP)
 
         response = client.get("/public/translations/en/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["translations"]["About"], "About")
 
-    def test_get_language_failed(self):
+    def test_get_language_case_insensitive(self):
+        """
+        Make sure the language codes are case insensitive. This is important,
+        as most browsers use `en-US`, but older Safari versions used `en-us`.
+        """
         client = TestClient(APP)
 
-        response = client.get("/public/languages/nolanguage/")
+        for language_code in ("en", "EN"):
+            response = client.get(f"/public/translations/{language_code}/")
+            self.assertEqual(response.status_code, 200)
+
+    def test_get_language_failed(self):
+        """
+        Make sure unrecognised languages are handled gracefully.
+        """
+        client = TestClient(APP)
+
+        response = client.get("/public/translations/nolanguage/")
         self.assertEqual(response.status_code, 404)
 
 
