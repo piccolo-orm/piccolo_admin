@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.25.0
+------
+
+Added translations, to make the UI more accessible in a variety of languages
+(thanks to @sinisaos for helping with this).
+
+-------------------------------------------------------------------------------
+
 0.24.0
 ------
 
