@@ -31,4 +31,5 @@ piccolo, password: piccolo123).
    ../internationalization/index
    ../contributing/index
    ../rest_documentation/index
+   ../api_reference/index
    ../changes/index

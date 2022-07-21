@@ -15,13 +15,30 @@ class TranslationListResponse(BaseModel):
 
 class Translation(BaseModel):
     """
+    Used to provide translations in the UI.
+
     :param language_name:
-        A human readable representation of the language. For example 'English'.
+        A human readable representation of the language. For example
+        ``'English'``.
     :param language_code:
-        The IETF language tag. For English it is 'en'. However, it also allows
-        us to specify dialects like 'en-US' for American English, or 'en-GB'
-        for British English, should we need it in the future.
-    """
+        The `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_.
+        For English it is ``'en'``. However, it also allows us to specify
+        dialects like ``'en-US'`` for American English, or ``'en-GB'`` for
+        British English.
+    :param translations:
+        A mapping of English words / phrases to their translated form. For
+        example::
+
+            Translation(
+                language_name='Portuguese',
+                language_code='pt',
+                translations={
+                    'Welcome to': 'Bem-vindo ao',
+                    ...
+                }
+            )
+
+    """  # noqa: E501
 
     language_name: str
     language_code: str

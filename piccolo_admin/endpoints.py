@@ -720,11 +720,12 @@ def create_admin(
         ``'Piccolo Admin'``).
     :param default_language_code:
         Specify the default language used in the admin UI. The value should be
-        an IETF language tag, for example 'en' for English. To see available
-        values see ``piccolo_admin/translations/data.py``. The UI
-        will be automatically translated into this language. If a value of
-        'auto' is specified, then we check the user's browser for the
-        language they prefer, using the ``navigator.language`` JavaScript API.
+        an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
+        for example ``'en'`` for English. To see available values see
+        ``piccolo_admin/translations/data.py``. The UI will be automatically
+        translated into this language. If a value of ``'auto'`` is specified,
+        then we check the user's browser for the language they prefer, using
+        the ``navigator.language`` JavaScript API.
     :param translations:
         Specify which translations are available. By default, we use every
         translation in ``piccolo_admin/translations/data.py``.
