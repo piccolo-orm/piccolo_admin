@@ -28,9 +28,6 @@ export default {
     computed: {
         siteName() {
             return this.$store.state.metaModule.siteName
-        },
-        defaultLanguage() {
-            return this.$store.state.metaModule.defaultLanguage
         }
     },
     methods: {
