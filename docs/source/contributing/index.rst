@@ -147,5 +147,4 @@ use if you like:
 
 .. code-block:: bash
 
-    cd scripts
-    python get_translations.py validate
+    python scripts/get_translations.py validate
