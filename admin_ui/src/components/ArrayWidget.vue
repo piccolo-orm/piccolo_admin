@@ -13,7 +13,11 @@
                 </a>
             </li>
             <li>
-                <a href="#" v-on:click.prevent="addArrayElement">
+                <a
+                    href="#"
+                    v-on:click.prevent="addArrayElement"
+                    v-if="!schema.media_columns.includes(title.toLowerCase())"
+                >
                     <font-awesome-icon icon="plus" />{{ $t("Add") }}
                 </a>
             </li>
@@ -31,11 +35,20 @@ export default {
         inputType: {
             type: String,
             default: "text"
+        },
+        title: {
+            type: String,
+            default: ""
         }
     },
     data() {
         return {
             internalArray: []
+        }
+    },
+    computed: {
+        schema() {
+            return this.$store.state.schema
         }
     },
     methods: {

@@ -166,6 +166,7 @@
             <ArrayWidget
                 :array="localValue"
                 v-on:updateArray="localValue = $event"
+                :title="getFieldName(title)"
             />
             <input
                 :value="JSON.stringify(localValue)"
