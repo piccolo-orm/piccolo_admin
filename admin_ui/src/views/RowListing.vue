@@ -212,12 +212,6 @@
                                                         name
                                                     ]"
                                                     :src="image"
-                                                    style="
-                                                        width: 4rem;
-                                                        height: 4rem;
-                                                        border-radius: 20%;
-                                                        padding: 0.2rem;
-                                                    "
                                                 />
                                             </span>
                                             <span v-else>{{
@@ -775,5 +769,11 @@ div.wrapper {
             width: 110rem;
         }
     }
+}
+
+img {
+    width: 4rem;
+    height: 4rem;
+    padding: 0.2rem;
 }
 </style>

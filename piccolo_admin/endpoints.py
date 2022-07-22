@@ -48,7 +48,7 @@ from .translations.models import (
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
-MEDIA_PATH = os.path.join(os.path.dirname(__file__), "static")
+MEDIA_PATH = os.path.join(os.path.dirname(__file__), "media")
 
 
 class UserResponseModel(BaseModel):
@@ -506,7 +506,7 @@ class AdminRouter(FastAPI):
         )
 
         self.mount(
-            path="/static",
+            path="/media",
             app=StaticFiles(directory=MEDIA_PATH),
         )
 

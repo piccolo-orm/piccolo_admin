@@ -7,6 +7,14 @@
                     :value="value"
                     id="choice"
                     v-on:change="updateArray($event, index)"
+                    v-if="!schema.media_columns.includes(title.toLowerCase())"
+                />
+                <input
+                    v-else
+                    type="image"
+                    :src="value"
+                    id="image"
+                    v-on:click.prevent
                 />
                 <a href="#" v-on:click.prevent="removeArrayElement(index)">
                     <font-awesome-icon icon="times" />
@@ -96,6 +104,11 @@ ul.array_items {
             flex-grow: 1;
             margin-right: 0.5rem;
             margin-bottom: 0 !important;
+        }
+
+        #image {
+            max-width: 25%;
+            cursor: alias;
         }
     }
 }
