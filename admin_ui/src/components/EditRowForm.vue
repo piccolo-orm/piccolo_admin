@@ -1,7 +1,7 @@
 <template>
     <div v-if="schema">
         <div class="header">
-            <h1>Edit {{ tableName | readable }}</h1>
+            <h1>{{ $t("Edit") }} {{ tableName | readable }}</h1>
 
             <p>
                 <a
@@ -27,7 +27,7 @@
 
         <form v-on:submit.prevent="submitForm($event)">
             <RowFormSelect :row="selectedRow" :schema="schema" />
-            <button>Save</button>
+            <button>{{ $t("Save") }}</button>
         </form>
 
         <ReferencingTables :rowID="rowID" :tableName="tableName" />

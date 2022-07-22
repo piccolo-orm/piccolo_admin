@@ -1,10 +1,11 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import axios from 'axios'
-import * as i from './interfaces'
+import Vue from "vue"
+import Vuex from "vuex"
+import axios from "axios"
+import * as i from "./interfaces"
 
-import aboutModalModule from './modules/aboutModal'
-import metaModule from './modules/meta'
+import aboutModalModule from "./modules/aboutModal"
+import metaModule from "./modules/meta"
+import translationsModule from "./modules/translations"
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const BASE_URL = process.env.VUE_APP_BASE_URI
 export default new Vuex.Store({
     modules: {
         aboutModalModule,
-        metaModule
+        metaModule,
+        translationsModule
     },
     state: {
         apiResponseMessage: null as i.APIResponseMessage | null,
@@ -84,7 +86,7 @@ export default new Vuex.Store({
         },
         updateDarkMode(state, enabled: boolean) {
             state.darkMode = enabled
-            localStorage.setItem('darkMode', String(enabled))
+            localStorage.setItem("darkMode", String(enabled))
         },
         updateLoadingStatus(state, value) {
             state.loadingStatus = value
@@ -93,7 +95,7 @@ export default new Vuex.Store({
     actions: {
         async fetchFormConfigs(context) {
             const response = await axios.get(`${BASE_URL}forms/`)
-            context.commit('updateFormConfigs', response.data)
+            context.commit("updateFormConfigs", response.data)
         },
         async fetchFormConfig(context, formSlug: string) {
             const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
@@ -103,7 +105,7 @@ export default new Vuex.Store({
             const response = await axios.get(
                 `${BASE_URL}forms/${formSlug}/schema/`
             )
-            context.commit('updateFormSchema', response.data)
+            context.commit("updateFormSchema", response.data)
             return response
         },
 
@@ -111,7 +113,7 @@ export default new Vuex.Store({
 
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
-            context.commit('updateTableNames', response.data)
+            context.commit("updateTableNames", response.data)
         },
         async fetchCount(context) {
             const tableName = context.state.currentTableName
@@ -123,30 +125,30 @@ export default new Vuex.Store({
                 }
             )
             const data = response.data as i.RowCountAPIResponse
-            context.commit('updateRowCount', data.count)
+            context.commit("updateRowCount", data.count)
             return data
         },
         async fetchRows(context) {
-            context.commit('updateLoadingStatus', true)
+            context.commit("updateLoadingStatus", true)
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
             const sortBy = context.state.sortBy
             if (sortBy) {
-                let prefix = sortBy.ascending ? '' : '-'
-                params['__order'] = prefix + sortBy.property
+                let prefix = sortBy.ascending ? "" : "-"
+                params["__order"] = prefix + sortBy.property
             }
 
             // Get the row counts:
-            const rowCountResponse = await context.dispatch('fetchCount')
-            params['__page_size'] = context.state.pageSize
+            const rowCountResponse = await context.dispatch("fetchCount")
+            params["__page_size"] = context.state.pageSize
 
-            if (rowCountResponse.count < params['__page_size']) {
-                context.commit('updateCurrentPageNumber', 1)
+            if (rowCountResponse.count < params["__page_size"]) {
+                context.commit("updateCurrentPageNumber", 1)
             }
 
             // Now get the rows:
-            params['__page'] = context.state.currentPageNumber
+            params["__page"] = context.state.currentPageNumber
 
             try {
                 const response = await axios.get(
@@ -155,15 +157,15 @@ export default new Vuex.Store({
                         params: params
                     }
                 )
-                context.commit('updateRows', response.data.rows)
+                context.commit("updateRows", response.data.rows)
             } catch (error) {
                 console.log(error.response)
-                context.commit('updateApiResponseMessage', {
+                context.commit("updateApiResponseMessage", {
                     contents: `Problem fetching ${tableName} rows.`,
-                    type: 'error'
+                    type: "error"
                 })
             }
-            context.commit('updateLoadingStatus', false)
+            context.commit("updateLoadingStatus", false)
         },
         async fetchTableReferences(context, tableName: string) {
             const response = await axios.get(
@@ -175,15 +177,15 @@ export default new Vuex.Store({
             const params = {}
 
             if (config.search) {
-                params['search'] = config.search
+                params["search"] = config.search
             }
 
             if (config.limit) {
-                params['limit'] = config.limit
+                params["limit"] = config.limit
             }
 
             if (config.offset) {
-                params['offset'] = config.offset
+                params["offset"] = config.offset
             }
 
             const response = await axios.get(
@@ -204,14 +206,14 @@ export default new Vuex.Store({
             const response = await axios.get(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/?__readable=true`
             )
-            context.commit('updateSelectedRow', response.data)
+            context.commit("updateSelectedRow", response.data)
             return response
         },
         async fetchSchema(context, tableName: string) {
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/schema/`
             )
-            context.commit('updateSchema', response.data)
+            context.commit("updateSchema", response.data)
             return response
         },
         async createRow(context, config: i.CreateRow) {
@@ -236,7 +238,7 @@ export default new Vuex.Store({
         },
         async fetchUser(context) {
             const response = await axios.get(`${BASE_URL}user/`)
-            context.commit('updateUser', response.data)
+            context.commit("updateUser", response.data)
         }
     }
 })
