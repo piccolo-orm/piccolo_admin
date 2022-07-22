@@ -343,7 +343,7 @@ class TestUpload(TestCase):
         # Login
         payload = dict(csrftoken=csrftoken, **self.credentials)
         client.post(
-            "/auth/login/",
+            "/public/login/",
             json=payload,
             headers={"X-CSRFToken": csrftoken},
         )
