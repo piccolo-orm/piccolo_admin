@@ -14,7 +14,7 @@ import shutil
 import smtplib
 import typing as t
 import uuid
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
 import targ
 from hypercorn.asyncio import serve
@@ -189,11 +189,17 @@ async def booking_endpoint(request, data):
     return "Booking complete"
 
 
-@dataclass
-class LocalMediaHandler:
-    root_path: str
-
+class MediaHandler(ABC):
+    @abstractmethod
     def upload(self, request, file):
+        pass
+
+
+class LocalMediaHandler(MediaHandler):
+    def __init__(self, root_path: str) -> None:
+        self.root_path = root_path
+
+    def upload(self, request, file) -> t.Dict[str, str]:
         image = f"{self.root_path}/{uuid.uuid4()}.jpeg"
         image_path = "/".join(image.split("/")[-2:])
         with open(image, "wb") as buffer:
@@ -202,7 +208,7 @@ class LocalMediaHandler:
         return {"image": f"{request.url.scheme}://{url_path}/{image_path}"}
 
 
-media_handler: t.Any = LocalMediaHandler(root_path=MEDIA_PATH)
+media_handler = LocalMediaHandler(root_path=MEDIA_PATH)
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
