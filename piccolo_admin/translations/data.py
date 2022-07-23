@@ -575,10 +575,10 @@ FINNISH = Translation(
 TRANSLATIONS: t.List[Translation] = [
     ENGLISH,
     CROATIAN,
+    FINNISH,
     FRENCH,
     GERMAN,
     PORTUGUESE,
     SPANISH,
     WELSH,
-    FINNISH
 ]
