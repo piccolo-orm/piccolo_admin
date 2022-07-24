@@ -1,22 +1,17 @@
 <template>
     <div
-        :class="{error: apiResponseMessage.type == 'error'}"
+        :class="{ error: apiResponseMessage.type == 'error' }"
         id="message_popup"
         v-if="visible"
     >
         <p class="message">{{ message }}</p>
         <p class="close">
-            <a
-                class="subtle"
-                href="#"
-                v-on:click.prevent="visible = false"
-            >
+            <a class="subtle" href="#" v-on:click.prevent="visible = false">
                 <font-awesome-icon icon="times" />
             </a>
         </p>
     </div>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -26,7 +21,7 @@ export default Vue.extend({
     data() {
         return {
             visible: false,
-            timeLastAppeared: 0,
+            timeLastAppeared: 0
         }
     },
     computed: {
@@ -37,12 +32,12 @@ export default Vue.extend({
         },
         apiResponseMessage(): i.APIResponseMessage {
             return this.$store.state.apiResponseMessage
-        },
+        }
     },
     methods: {
         getTime(): number {
             return new Date().getTime()
-        },
+        }
     },
     watch: {
         visible() {
@@ -59,11 +54,10 @@ export default Vue.extend({
                     app.visible = false
                 }
             }, 3000)
-        },
-    },
+        }
+    }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";
@@ -76,6 +70,7 @@ div#message_popup {
     padding: 0.5rem 1rem;
     box-sizing: border-box;
     background-color: green;
+    z-index: 5000;
 
     p,
     a {

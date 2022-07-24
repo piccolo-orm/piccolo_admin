@@ -1,17 +1,42 @@
 <template>
     <div>
-        <template v-if="formConfig">
+        <template v-if="formConfig && !successMessage">
             <h1>{{ formConfig.name }}</h1>
 
-            <p v-if="formConfig.description">{{ formConfig.description }}</p>
+            <p v-if="formConfig.description">
+                {{ formConfig.description }}
+            </p>
         </template>
 
-        <pre>{{ errors }}</pre>
+        <div v-show="successMessage">
+            <h1>{{ $t("Form submitted") }}</h1>
+            <p>{{ successMessage }}</p>
+            <ul>
+                <li>
+                    <a href="#" @click.prevent="resetForm">{{
+                        $t("Use again")
+                    }}</a>
+                </li>
+                <li>
+                    <router-link to="/">{{
+                        $t("Back to home page")
+                    }}</router-link>
+                </li>
+            </ul>
+        </div>
 
-        <form v-if="schema" v-on:submit.prevent="submitForm($event)">
-            <NewForm :schema="schema" />
-            <button>Submit</button>
-        </form>
+        <div v-show="!successMessage">
+            <pre>{{ errors }}</pre>
+
+            <form
+                v-if="schema"
+                v-on:submit.prevent="submitForm($event)"
+                ref="form"
+            >
+                <NewForm :schema="schema" />
+                <button>{{ $t("Submit") }}</button>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -26,24 +51,29 @@ const BASE_URL = process.env.VUE_APP_BASE_URI
 export default Vue.extend({
     props: {
         formSlug: String,
-        schema: Object,
+        schema: Object
     },
     components: {
-        NewForm,
+        NewForm
     },
     data() {
         return {
             errors: "",
-            formData: {},
             formConfig: undefined as FormConfig,
+            successMessage: null
         }
     },
     watch: {
         async formSlug() {
             await this.fetchFormConfig()
-        },
+        }
     },
     methods: {
+        resetForm() {
+            this.$refs.form.reset()
+            this.successMessage = null
+            this.errors = ""
+        },
         async fetchFormConfig() {
             const response = await this.$store.dispatch(
                 "fetchFormConfig",
@@ -52,7 +82,6 @@ export default Vue.extend({
             this.formConfig = response.data
         },
         async submitForm(event: any) {
-            console.log("I was pressed")
             const form = new FormData(event.target)
 
             const json = {}
@@ -77,7 +106,7 @@ export default Vue.extend({
                 const data = error.response.data
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
-                    type: "error",
+                    type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
@@ -89,21 +118,13 @@ export default Vue.extend({
                 return
             }
 
-            this.$router.push("/")
-            let apiMessage = response.data.message
-
-            var message: APIResponseMessage = {
-                contents: apiMessage
-                    ? apiMessage
-                    : "Successfully posted form data",
-                type: "success",
-            }
-            this.$store.commit("updateApiResponseMessage", message)
-        },
+            this.successMessage =
+                response.data.message || "Successfully submitted form"
+        }
     },
     async mounted() {
         await this.fetchFormConfig()
-    },
+    }
 })
 </script>
 

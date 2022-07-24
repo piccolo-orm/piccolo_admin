@@ -1,50 +1,41 @@
 <template>
     <div>
         <ul class="array_items">
-            <li
-                :key="index"
-                v-for="(value, index) in internalArray"
-            >
+            <li :key="index" v-for="(value, index) in internalArray">
                 <input
                     :type="inputType"
                     :value="value"
                     id="choice"
                     v-on:change="updateArray($event, index)"
                 />
-                <a
-                    href="#"
-                    v-on:click.prevent="removeArrayElement(index)"
-                >
+                <a href="#" v-on:click.prevent="removeArrayElement(index)">
                     <font-awesome-icon icon="times" />
                 </a>
             </li>
             <li>
-                <a
-                    href="#"
-                    v-on:click.prevent="addArrayElement"
-                >
-                    <font-awesome-icon icon="plus" />Add
+                <a href="#" v-on:click.prevent="addArrayElement">
+                    <font-awesome-icon icon="plus" />{{ $t("Add") }}
                 </a>
             </li>
         </ul>
     </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     props: {
         array: {
             type: Array,
-            default: () => [],
+            default: () => []
         },
         inputType: {
             type: String,
-            default: "text",
-        },
+            default: "text"
+        }
     },
     data() {
         return {
-            internalArray: [],
+            internalArray: []
         }
     },
     methods: {
@@ -59,16 +50,16 @@ export default {
         removeArrayElement(index) {
             this.$delete(this.internalArray, index)
             this.$emit("updateArray", this.internalArray)
-        },
+        }
     },
     watch: {
         array() {
             this.internalArray = [...this.array]
-        },
+        }
     },
     mounted() {
         this.internalArray = [...this.array]
-    },
+    }
 }
 </script>
 

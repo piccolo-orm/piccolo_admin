@@ -6,7 +6,6 @@
     </div>
 </template>
 
-
 <script lang="ts">
 import axios from "axios"
 import Vue from "vue"
@@ -18,7 +17,7 @@ import MessagePopup from "./components/MessagePopup.vue"
 export default Vue.extend({
     components: {
         AboutModal,
-        MessagePopup,
+        MessagePopup
     },
     computed: {
         darkMode() {
@@ -26,7 +25,7 @@ export default Vue.extend({
         },
         showAboutModal() {
             return this.$store.state.aboutModalModule.showAboutModal
-        },
+        }
     },
     async created() {
         let darkMode = JSON.parse(localStorage.getItem("darkMode"))
@@ -56,8 +55,8 @@ export default Vue.extend({
                             app.$router.push({
                                 name: "login",
                                 query: {
-                                    nextURL: nextURL,
-                                },
+                                    nextURL: nextURL
+                                }
                             })
                         }, 0)
                     }
@@ -78,7 +77,7 @@ export default Vue.extend({
                     let message: i.APIResponseMessage = {
                         contents:
                             "Method not supported - running in read only mode.",
-                        type: "error",
+                        type: "error"
                     }
                     app.$store.commit("updateApiResponseMessage", message)
                 }
@@ -112,7 +111,7 @@ export default Vue.extend({
                     let message: i.APIResponseMessage = {
                         contents:
                             "The server can't be reached - please try later.",
-                        type: "error",
+                        type: "error"
                     }
                     app.$store.commit("updateApiResponseMessage", message)
                 }
@@ -120,11 +119,11 @@ export default Vue.extend({
             }
         )
 
+        await this.$store.dispatch("setupTranslations")
         await this.$store.dispatch("fetchUser")
-    },
+    }
 })
 </script>
-
 
 <style lang="less">
 @import "./main.less";

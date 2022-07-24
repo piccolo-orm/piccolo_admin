@@ -1,6 +1,70 @@
 Changes
 =======
 
+0.26.0
+------
+
+Added Finnish translations (courtesy @olliglorioso).
+
+-------------------------------------------------------------------------------
+
+0.25.0
+------
+
+Added translations, to make the UI more accessible in a variety of languages
+(thanks to @sinisaos for helping with this).
+
+-------------------------------------------------------------------------------
+
+0.24.0
+------
+
+``TableConfig`` now has a ``hooks`` argument - so custom logic can be run when
+a row is added / deleted / modified. Thanks to @Anton-Karpenko for suggesting
+this feature.
+
+-------------------------------------------------------------------------------
+
+0.23.0
+------
+
+The WYSIWYG editor we use for ``rich_text_columns`` has been modified, so the
+user can now create HTML headings. Thanks to @tigerline86 for suggesting this
+feature and @sinisaos for implementing it.
+
+Rows can now be bulk modified - for example, if you have 100 blog posts which
+need converting to ``draft=False``, it can now be easily done using the
+Piccolo Admin GUI in a single operation (courtesy @sinisaos).
+
+-------------------------------------------------------------------------------
+
+0.22.2
+------
+
+More sandbox fixes.
+
+-------------------------------------------------------------------------------
+
+0.22.1
+------
+
+Fixed a bug with the sandbox.
+
+-------------------------------------------------------------------------------
+
+0.22.0
+------
+
+The user can now change their password in the Piccolo Admin UI (courtesy
+@sinisaos).
+
+After submitting a custom form with Piccolo Admin, the UI used to show the
+response message in a popup at the bottom of the screen. It now shows a success
+page instead, which is better if the response message is long, as it's easier
+for the user to read. Thanks to @ethagnawl for reporting this issue.
+
+-------------------------------------------------------------------------------
+
 0.21.0
 ------
 

@@ -53,3 +53,18 @@ You can also change a user's password:
 .. code-block:: bash
 
     piccolo user change_password
+
+-------------------------------------------------------------------------------
+
+Change admin password in the UI
+-------------------------------
+
+The admin user also has the option to change their password in the Piccolo Admin UI.
+This option can be selected from the user dropdown menu.
+
+.. image:: ./images/change_password.png
+
+After that, you will be shown a form in which you can change your
+administrator password.
+
+.. image:: ./images/change_password_form.png

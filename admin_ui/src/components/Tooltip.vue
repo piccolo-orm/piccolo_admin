@@ -20,7 +20,7 @@
                 right: popupRight,
                 left: popupLeft,
                 width: popupWidth,
-                textAlign: textAlign,
+                textAlign: textAlign
             }"
         >
             <span>{{ content }}</span>
@@ -28,13 +28,13 @@
     </span>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     props: {
         content: {
             default: "",
-            type: String,
-        },
+            type: String
+        }
     },
     data() {
         return {
@@ -44,7 +44,7 @@ export default {
             popupLeft: "auto",
             popupRight: "auto",
             popupWidth: undefined,
-            textAlign: undefined,
+            textAlign: undefined
         }
     },
     methods: {
@@ -88,7 +88,7 @@ export default {
         },
         hidePopup() {
             this.popupVisible = false
-        },
+        }
     },
     mounted() {
         let app = this
@@ -102,7 +102,7 @@ export default {
         if (this.onResize) {
             window.removeEventListener("resize", this.onResize)
         }
-    },
+    }
 }
 </script>
 

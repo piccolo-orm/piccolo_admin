@@ -1,19 +1,20 @@
 <template>
     <div class="filter_wrapper">
-        <h1>Filter</h1>
+        <h1>{{ $t("Filter") }}</h1>
 
-        <a @click="closeSideBar()" class="button" id="sidebar-close">
-            <span> <font-awesome-icon icon="times" /> </span>Close
+        <a v-on:click="closeSideBar()" class="button" id="sidebar-close">
+            <span> <font-awesome-icon icon="times" /> </span>{{ $t("Close") }}
         </a>
 
         <form ref="form" v-on:submit.prevent="submitForm($event)">
             <RowFormSearch v-bind:schema="schema" />
-            <button>Apply</button>
+            <button>{{ $t("Apply") }}</button>
         </form>
-        <button v-on:click.prevent="clearFilters">Clear filters</button>
+        <button v-on:click.prevent="clearFilters">
+            {{ $t("Clear filters") }}
+        </button>
     </div>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -117,7 +118,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style scoped lang="less">
 div.filter_wrapper {

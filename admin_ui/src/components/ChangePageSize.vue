@@ -12,12 +12,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     data() {
         return {
             selectedPageSize: 15,
-            pageOptions: [5, 15, 30, 50, 100],
+            pageOptions: [5, 15, 30, 50, 100]
         }
     },
     methods: {
@@ -25,21 +25,21 @@ export default {
             this.$store.commit("updatePageSize", this.selectedPageSize)
             this.$store.commit("updateCurrentPageNumber", 1)
             await this.$store.dispatch("fetchRows")
-        },
+        }
     },
     computed: {
         pageSize() {
             return this.$store.state.pageSize
-        },
+        }
     },
     watch: {
         pageSize() {
             this.selectedPageSize = this.pageSize
-        },
+        }
     },
     mounted() {
         this.selectedPageSize = this.pageSize
-    },
+    }
 }
 </script>
 

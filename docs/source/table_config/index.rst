@@ -7,7 +7,7 @@ When using ``create_admin``, you can pass in normal ``Table`` classes:
 
     from piccolo_admin.endpoints import create_admin
 
-    create_admin(Director, Movie)
+    create_admin([Director, Movie])
 
 Alternatively, you can pass in ``TableConfig`` instances (or mix and match
 them).
@@ -32,7 +32,7 @@ We can set which columns are visible in the list view:
 
     movie_config = TableConfig(Movie, visible_columns=[Movie.id, Movie.name])
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 Here is the UI when just passing in a ``Table``:
 
@@ -61,7 +61,7 @@ We can set which columns are visible in the filter sidebar:
         ]
     )
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 Here is the UI when just passing in a ``Table``:
 
@@ -90,12 +90,42 @@ We can specify which ``Text`` columns will use a rich text editor.
         ]
     )
 
-    create_admin(Director, movie_config)
+    create_admin([Director, movie_config])
 
 This allows the user to add hyperlinks, and basic formatting to their content,
 without having to write HTML.
 
 .. image:: ./images/rich_text_columns.jpg
+
+-------------------------------------------------------------------------------
+
+hooks
+-----
+
+Can be used to run custom logic when a row is created, modified, or deleted.
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+    from piccolo_api.crud.hooks import Hook, HookType
+
+
+    async def my_save_hook(row: Movie):
+        # Insert custom logic here
+        return row
+
+
+    movie_config = TableConfig(
+        Movie,
+        hooks=[
+            Hook(hook_type=HookType.pre_save, callable=my_save_hook)
+        ]
+    )
+
+    create_admin([Director, movie_config])
+
+To learn more about hooks, see the :class:`Hook <piccolo_api.crud.hooks.Hook>`
+docs in Piccolo API.
 
 -------------------------------------------------------------------------------
 

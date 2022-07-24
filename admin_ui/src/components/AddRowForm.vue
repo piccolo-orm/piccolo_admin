@@ -1,18 +1,12 @@
 <template>
     <div>
-        <h1>Add {{ tableName | readable }}</h1>
+        <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
 
         <pre>{{ errors }}</pre>
 
-        <form
-            v-if="defaults"
-            v-on:submit.prevent="submitForm($event)"
-        >
-            <RowFormSelect
-                v-bind:row="defaults"
-                v-bind:schema="schema"
-            />
-            <button>Create</button>
+        <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
+            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
+            <button>{{ $t("Create") }}</button>
         </form>
     </div>
 </template>
@@ -24,15 +18,15 @@ import { APIResponseMessage } from "../interfaces"
 export default {
     props: {
         tableName: String,
-        schema: Object,
+        schema: Object
     },
     components: {
-        RowFormSelect,
+        RowFormSelect
     },
     data: function () {
         return {
             defaults: {},
-            errors: "",
+            errors: ""
         }
     },
     methods: {
@@ -69,14 +63,14 @@ export default {
             try {
                 await this.$store.dispatch("createRow", {
                     tableName: this.tableName,
-                    data: json,
+                    data: json
                 })
             } catch (error) {
                 const data = error.response.data
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
-                    type: "error",
+                    type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
@@ -91,7 +85,7 @@ export default {
 
             var message: APIResponseMessage = {
                 contents: "Successfully added row",
-                type: "success",
+                type: "success"
             }
             this.$store.commit("updateApiResponseMessage", message)
 
@@ -100,12 +94,12 @@ export default {
             if (opener) {
                 opener.postMessage("edited row", document.location.origin)
             }
-        },
+        }
     },
     async mounted() {
         let response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
-    },
+    }
 }
 </script>
 

@@ -16,7 +16,11 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
+from piccolo.utils.warnings import Level, colored_warning
+from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.hooks import Hook
+from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.openapi.endpoints import swagger_ui
@@ -28,7 +32,6 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from piccolo.utils.warnings import Level, colored_warning
 from pydantic import BaseModel, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -36,6 +39,12 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+from .translations.data import TRANSLATIONS
+from .translations.models import (
+    Translation,
+    TranslationListItem,
+    TranslationListResponse,
+)
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
@@ -77,6 +86,11 @@ class TableConfig:
         on certain Piccolo :class:`Text <piccolo.columns.column_types.Text>`
         columns. Any columns not specified will use a standard HTML textarea
         tag in the UI.
+    :param hooks:
+        These are passed directly to
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
+        Admin under the hood. It allows you to run custom logic when a row
+        is modified.
 
     """
 
@@ -86,6 +100,7 @@ class TableConfig:
     visible_filters: t.Optional[t.List[Column]] = None
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
+    hooks: t.Optional[t.List[Hook]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -214,6 +229,22 @@ def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
+def superuser_validators(piccolo_crud: PiccoloCRUD, request: Request):
+    """
+    We need to provide extra validation on certain tables (e.g. user and
+    sessions), so only superusers can perform certain actions, otherwise the
+    security of the application can be compromised.
+    """
+    user: BaseUser = request.user.user
+    if user.superuser:
+        return
+    if request.method.upper() in ["PUT", "PATCH", "DELETE", "POST"]:
+        raise HTTPException(
+            status_code=405,
+            detail="Only superusers can perform these actions.",
+        )
+
+
 class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -237,6 +268,8 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
+        default_language_code: str = "auto",
+        translations: t.List[Translation] = None,
     ) -> None:
         super().__init__(
             title=site_name, description="Piccolo API documentation"
@@ -271,6 +304,14 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
+        self.default_language_code = default_language_code
+        self.translations_map = {
+            translation.language_code.lower(): translation
+            for translation in (translations or TRANSLATIONS)
+        }
+
+        #######################################################################
+
         self.auth_table = auth_table
         self.site_name = site_name
         self.forms = forms
@@ -281,8 +322,8 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        api_app = FastAPI(docs_url=None)
-        api_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
+        private_app = FastAPI(docs_url=None)
+        private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -291,9 +332,16 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+
+            validators = (
+                Validators(every=[superuser_validators])
+                if table_class in (auth_table, session_table)
+                else None
+            )
+
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
-                fastapi_app=api_app,
+                fastapi_app=private_app,
                 piccolo_crud=PiccoloCRUD(
                     table=table_class,
                     read_only=read_only,
@@ -303,6 +351,8 @@ class AdminRouter(FastAPI):
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
                     },
+                    validators=validators,
+                    hooks=table_config.hooks,
                 ),
                 fastapi_kwargs=FastAPIKwargs(
                     all_routes={
@@ -311,7 +361,7 @@ class AdminRouter(FastAPI):
                 ),
             )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/tables/",
             endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
@@ -319,15 +369,7 @@ class AdminRouter(FastAPI):
             tags=["Tables"],
         )
 
-        api_app.add_api_route(
-            path="/meta/",
-            endpoint=self.get_meta,  # type: ignore
-            methods=["GET"],
-            tags=["Meta"],
-            response_model=MetaResponseModel,
-        )
-
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/",
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
@@ -335,28 +377,28 @@ class AdminRouter(FastAPI):
             response_model=t.List[FormConfigResponseModel],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.get_single_form,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/schema/",
             endpoint=self.get_single_form_schema,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/forms/{form_slug:str}/",
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Forms"],
         )
 
-        api_app.add_api_route(
+        private_app.add_api_route(
             path="/user/",
             endpoint=self.get_user,  # type: ignore
             methods=["GET"],
@@ -364,16 +406,27 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        private_app.add_route(
+            path="/change-password/",
+            route=change_password(
+                login_url="./../../public/login/",
+                session_table=session_table,
+                read_only=read_only,
+            ),
+            methods=["POST"],
+        )
+
         #######################################################################
 
-        auth_app = FastAPI()
+        public_app = FastAPI(docs_url=None)
+        public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
                 limit=1000, timespan=300
             )
 
-        auth_app.mount(
+        public_app.mount(
             path="/login/",
             app=RateLimitingMiddleware(
                 app=session_login(
@@ -388,10 +441,33 @@ class AdminRouter(FastAPI):
             ),
         )
 
-        auth_app.add_route(
+        public_app.add_route(
             path="/logout/",
             route=session_logout(session_table=session_table),
             methods=["POST"],
+        )
+
+        # We make the meta endpoint available without auth, because it contains
+        # the site name.
+        public_app.add_api_route(
+            "/meta/", endpoint=self.get_meta, tags=["Meta"]  # type: ignore
+        )
+
+        # The translations are public, because we need them on the login page.
+        public_app.add_api_route(
+            "/translations/",
+            endpoint=self.get_translation_list,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=TranslationListResponse,
+        )
+
+        public_app.add_api_route(
+            "/translations/{language_code:str}/",
+            endpoint=self.get_translation,  # type: ignore
+            methods=["GET"],
+            tags=["Translations"],
+            response_model=Translation,
         )
 
         #######################################################################
@@ -421,12 +497,8 @@ class AdminRouter(FastAPI):
             on_error=handle_auth_exception,
         )
 
-        self.mount(path="/api", app=auth_middleware(api_app))
-        self.mount(path="/auth", app=auth_app)
-
-        # We make the meta endpoint available without auth, because it contains
-        # the site name.
-        self.add_api_route("/meta/", endpoint=self.get_meta)  # type: ignore
+        self.mount(path="/api", app=auth_middleware(private_app))
+        self.mount(path="/public", app=public_app)
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
@@ -522,6 +594,36 @@ class AdminRouter(FastAPI):
         """
         return [i.table_class._meta.tablename for i in self.table_configs]
 
+    ###########################################################################
+
+    def get_translation_list(self) -> TranslationListResponse:
+        """
+        Return a list of language codes and names for each available
+        translation.
+        """
+        return TranslationListResponse(
+            translations=[
+                TranslationListItem(
+                    language_code=translation.language_code,
+                    language_name=translation.language_name,
+                )
+                for translation in self.translations_map.values()
+            ],
+            default_language_code=self.default_language_code,
+        )
+
+    def get_translation(self, language_code: str = "en") -> Translation:
+        """
+        Return a single language. The ``language_code`` is an IETF language
+        code, for example 'en' for English.
+        """
+        translation = self.translations_map.get(language_code.lower())
+        if translation is None:
+            raise HTTPException(
+                status_code=404, detail="Translation not found"
+            )
+        return translation
+
 
 def get_all_tables(
     tables: t.Sequence[t.Type[Table]],
@@ -568,6 +670,8 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
+    default_language_code: str = "auto",
+    translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
 ):
@@ -614,6 +718,52 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
+    :param default_language_code:
+        Specify the default language used in the admin UI. The value should be
+        an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
+        for example ``'en'`` for English. To see available values see
+        ``piccolo_admin/translations/data.py``. The UI will be automatically
+        translated into this language. If a value of ``'auto'`` is specified,
+        then we check the user's browser for the language they prefer, using
+        the ``navigator.language`` JavaScript API.
+    :param translations:
+        Specify which translations are available. By default, we use every
+        translation in ``piccolo_admin/translations/data.py``.
+
+        Here's an example - if we know our users only speak English or
+        Croatian, we can specify that only those translations are visible
+        in the language selector in the UI::
+
+            from piccolo.translations.data import ENGLISH, CROATIAN
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='hr',
+                translations=[ENGLISH, CROATIAN]
+            )
+
+        You can also use this to provide your own translations, if there's a
+        language we don't currently support (though please open a PR to add
+        it!)::
+
+            from piccolo.translations.models import Translation
+            from piccolo.translations.data import ENGLISH
+
+            MY_LANGUAGE = Translation(
+                language_code='xx',
+                language_name='My Language',
+                translations={
+                    'Welcome': 'XXXXX',
+                    ...
+                }
+            )
+
+            create_admin(
+                tables=[TableA, TableB],
+                default_language_code='xx',
+                translations=[ENGLISH, MY_LANGUAGE]
+            )
+
     :param auto_include_related:
         If a table has foreign keys to other tables, those tables will also be
         included in the admin by default, if not already specified. Otherwise
@@ -622,7 +772,6 @@ def create_admin(
         This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
         as an additional layer of protection when the admin is run under HTTPS.
         It must be a sequence of strings, such as ``['my_site.com']``.
-
     """  # noqa: E501
     auth_table = auth_table or BaseUser
     session_table = session_table or SessionsBase
@@ -665,6 +814,8 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
+                default_language_code=default_language_code,
+                translations=translations,
             ),
             allowed_hosts=allowed_hosts,
         )

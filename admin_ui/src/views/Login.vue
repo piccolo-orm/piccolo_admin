@@ -3,64 +3,52 @@
         <div class="inner">
             <h1>{{ siteName }}</h1>
             <form v-on:submit.prevent="login">
-                <label>Username</label>
-                <input
-                    name="username"
-                    type="text"
-                    v-model="username"
-                />
+                <label>{{ $t("Username") }}</label>
+                <input name="username" type="text" v-model="username" />
 
-                <label>Password</label>
-                <input
-                    name="password"
-                    type="password"
-                    v-model="password"
-                />
+                <label>{{ $t("Password") }}</label>
+                <input name="password" type="password" v-model="password" />
 
-                <button>Login</button>
+                <button>{{ $t("Login") }}</button>
             </form>
         </div>
     </div>
 </template>
 
-
-<script>
+<script lang="ts">
 import axios from "axios"
 
 export default {
     data: function () {
         return {
             username: "",
-            password: "",
+            password: ""
         }
     },
     computed: {
         siteName() {
             return this.$store.state.metaModule.siteName
-        },
+        }
     },
     methods: {
         async login() {
             console.log("Logging in")
             try {
-                await axios.post(`./auth/login/`, {
+                await axios.post(`./public/login/`, {
                     username: this.username,
-                    password: this.password,
+                    password: this.password
                 })
             } catch (error) {
                 console.log("Request failed")
                 console.log(error.response)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: "Problem logging in",
-                    type: "error",
+                    type: "error"
                 })
                 return
             }
 
-            await Promise.all([
-                this.$store.dispatch("fetchUser"),
-                this.$store.dispatch("fetchMeta"),
-            ])
+            await this.$store.dispatch("fetchUser")
 
             let nextURL = this.$route.query.nextURL
             if (nextURL) {
@@ -68,11 +56,10 @@ export default {
             } else {
                 this.$router.push({ name: "home" })
             }
-        },
-    },
+        }
+    }
 }
 </script>
-
 
 <style lang="less">
 div#login {

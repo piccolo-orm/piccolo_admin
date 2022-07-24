@@ -8,7 +8,7 @@
             type="csv"
         >
             <font-awesome-icon icon="file-csv" />
-            <span>Export CSV</span>
+            <span>{{ $t("Export CSV") }}</span>
         </downloadexcel>
     </a>
 </template>
@@ -21,7 +21,7 @@ import * as i from "../interfaces"
 export default {
     props: ["tableName"],
     components: {
-        downloadexcel,
+        downloadexcel
     },
     methods: {
         // Export data as csv from json:
@@ -36,7 +36,7 @@ export default {
             const response = await axios.get(
                 `api/tables/${this.tableName}/count/`,
                 {
-                    params,
+                    params
                 }
             )
             const data = response.data as i.RowCountAPIResponse
@@ -54,7 +54,7 @@ export default {
                     const response = await axios.get(
                         `api/tables/${this.tableName}/?__readable=true`,
                         {
-                            params: localParams,
+                            params: localParams
                         }
                     )
                     exportedRows.push(...response.data.rows)
@@ -71,8 +71,8 @@ export default {
         },
         finishDownload() {
             alert("Your data is ready.")
-        },
-    },
+        }
+    }
 }
 </script>
 
