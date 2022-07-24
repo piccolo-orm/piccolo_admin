@@ -28,6 +28,8 @@
 <script lang="ts">
 import KeySearchModal from "./KeySearchModal.vue"
 
+let persistedData = undefined
+
 export default {
     props: {
         fieldName: String,
@@ -56,14 +58,15 @@ export default {
             this.selectedValue = event.readable
             this.hiddenSelectedValue = event.id
             this.showModal = false
+            persistedData = event.readable
         }
     },
     components: {
         KeySearchModal
     },
     async mounted() {
-        this.selectedValue = this.readable
-        this.hiddenSelectedValue = this.rowID
+        this.selectedValue = persistedData
+        this.hiddenSelectedValue = this.$route.query[this.fieldName]
     }
 }
 </script>

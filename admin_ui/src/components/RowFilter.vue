@@ -74,6 +74,8 @@ export default Vue.extend({
                 query: { ...this.$store.state.filterParams }
             })
 
+            history.pushState({ data: json }, "form data")
+
             try {
                 await this.$store.dispatch("fetchRows")
             } catch (error) {
@@ -106,14 +108,11 @@ export default Vue.extend({
         }
     },
     mounted() {
-        // keep the form data after changing the route
-        const query = this.$store.state.filterParams
+        const stateData = history.state.data
         let form: any = this.$refs.form
 
-        for (const property in query) {
-            if (!property.startsWith("__")) {
-                form[property].value = query[property]
-            }
+        for (const property in stateData) {
+            form[property].value = stateData[property]
         }
     }
 })

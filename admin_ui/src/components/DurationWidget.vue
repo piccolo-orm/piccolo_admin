@@ -2,7 +2,7 @@
     <div class="timedelta_widget">
         <div class="segment">
             <p>{{ $t("Weeks") }}</p>
-            <select v-model.number="weeks" v-on:change="emitEvent">
+            <select v-model.number="weeks" v-on:change="emitEvent" id="weeks">
                 <option :key="'w' + week" v-for="week in weekRange">
                     {{ week }}
                 </option>
@@ -11,7 +11,7 @@
 
         <div class="segment">
             <p>{{ $t("Days") }}</p>
-            <select v-model.number="days" v-on:change="emitEvent">
+            <select v-model.number="days" v-on:change="emitEvent" id="days">
                 <option :key="'d' + day" v-for="day in dayRange">
                     {{ day }}
                 </option>
@@ -20,7 +20,7 @@
 
         <div class="segment">
             <p>{{ $t("Hours") }}</p>
-            <select v-model.number="hours" v-on:change="emitEvent">
+            <select v-model.number="hours" v-on:change="emitEvent" id="hours">
                 <option :key="'h' + hour" v-for="hour in hourRange">
                     {{ hour }}
                 </option>
@@ -29,7 +29,11 @@
 
         <div class="segment">
             <p>{{ $t("Minutes") }}</p>
-            <select v-model.number="minutes" v-on:change="emitEvent">
+            <select
+                v-model.number="minutes"
+                v-on:change="emitEvent"
+                id="minutes"
+            >
                 <option :key="'m' + minute" v-for="minute in minuteRange">
                     {{ minute }}
                 </option>
@@ -38,7 +42,11 @@
 
         <div class="segment">
             <p>{{ $t("Seconds") }}</p>
-            <select v-model.number="seconds" v-on:change="emitEvent">
+            <select
+                v-model.number="seconds"
+                v-on:change="emitEvent"
+                id="seconds"
+            >
                 <option :key="'s' + second" v-for="second in secondRange">
                     {{ second }}
                 </option>
@@ -47,11 +55,16 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 const WEEK = DAY * 7
+let selectSeconds: any = 0
+let selectMinutes: any = 0
+let selectHours: any = 0
+let selectDays: any = 0
+let selectWeeks: any = 0
 
 export default {
     props: {
@@ -68,11 +81,11 @@ export default {
             hourRange: [...Array(24).keys()],
             minuteRange: [...Array(60).keys()],
             secondRange: [...Array(60).keys()],
-            weeks: undefined,
-            days: undefined,
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined
+            weeks: 0,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
         }
     },
     methods: {
@@ -84,6 +97,21 @@ export default {
                 this.days * DAY +
                 this.weeks * WEEK
             this.$emit("newTimedelta", timedelta)
+
+            let s = document.getElementById("seconds") as HTMLSelectElement
+            selectSeconds = s.options[s.options.selectedIndex].value
+
+            let m = document.getElementById("minutes") as HTMLSelectElement
+            selectMinutes = m.options[m.options.selectedIndex].value
+
+            let h = document.getElementById("hours") as HTMLSelectElement
+            selectHours = h.options[h.options.selectedIndex].value
+
+            let d = document.getElementById("days") as HTMLSelectElement
+            selectDays = d.options[d.options.selectedIndex].value
+
+            let w = document.getElementById("weeks") as HTMLSelectElement
+            selectWeeks = w.options[w.options.selectedIndex].value
         },
         setupValues(timedelta) {
             this.weeks = Math.floor(timedelta / WEEK)
@@ -107,7 +135,11 @@ export default {
         }
     },
     mounted() {
-        this.setupValues(this.timedelta)
+        this.seconds = parseInt(selectSeconds) || 0
+        this.minutes = parseInt(selectMinutes) || 0
+        this.hours = parseInt(selectHours) || 0
+        this.days = parseInt(selectDays) || 0
+        this.weeks = parseInt(selectWeeks) || 0
     }
 }
 </script>

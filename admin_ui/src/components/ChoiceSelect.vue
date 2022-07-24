@@ -1,8 +1,6 @@
 <template>
     <select v-bind:name="fieldName" v-model="localValue">
-        <option v-bind:selected="value == 'all'" v-if="isFilter" value="all">
-            All
-        </option>
+        <option v-if="isFilter" value="">All</option>
         <option v-bind:selected="value == null" v-if="isNullable" value="null">
             Null
         </option>
@@ -51,12 +49,9 @@ export default Vue.extend({
             localValue: ""
         }
     },
-    mounted() {
-        this.localValue = this.isFilter ? "all" : this.value
-    },
     watch: {
         value(newValue) {
-            this.localValue = newValue
+            this.localValue = this.isFilter ? "all" : newValue
         }
     }
 })
