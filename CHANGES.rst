@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.26.1
+------
+
+Modified the release process, so it works on GitHub (courtesy @olliglorioso).
+
+-------------------------------------------------------------------------------
+
 0.26.0
 ------
 
