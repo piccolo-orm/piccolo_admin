@@ -46,7 +46,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
         if not file_name:
             # It's unlikely that the file_name is an empty string, but just in
             # case.
-            raise ValueError("The file has no name.")
+            raise ValueError("The file name can't be empty.")
 
         uuid_ = uuid.uuid4()
 

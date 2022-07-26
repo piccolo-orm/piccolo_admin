@@ -28,8 +28,59 @@ class TestLocalMediaStorage(TestCase):
             file_id = storage.store_file_sync(test_file)
             self.assertTrue(file_id in os.listdir(media_path))
 
-            # Retrive the URL for the file
+            # Retrieve the URL for the file
             url = storage.get_file_url_sync(file_id)
             self.assertEqual(
                 url, "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"
             )
+
+
+class TestGenerateFileID(TestCase):
+    def setUp(self) -> None:
+        self.media_path = tempfile.gettempdir()
+        self.storage = LocalMediaStorage(
+            media_path=self.media_path, media_url="/media/"
+        )
+
+    def test_starts_with_period(self):
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(file_name=".private_file.jpeg")
+
+        self.assertEqual(
+            str(manager.exception), "File names must not start with a period."
+        )
+
+    def test_empty_file_name(self):
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(file_name="")
+
+        self.assertEqual(
+            str(manager.exception), "The file name can't be empty."
+        )
+
+    def test_long_extension(self):
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(
+                file_name="test.abcdefghijklmonpqrstuvwxyz123"
+            )
+
+        self.assertEqual(
+            str(manager.exception), "Suspiciously long file extension."
+        )
+
+    @patch("piccolo_admin.media.storage.uuid")
+    def test_long_file_name(self, uuid_module: MagicMock):
+        """
+        Make sure that really long file names are truncated.
+        """
+        uuid_module.uuid4.return_value = uuid.UUID(
+            "fd0125c7-8777-4976-83c1-81605d5ab155"
+        )
+
+        truncated_file_id = self.storage.generate_file_id(
+            file_name="".join("a" for _ in range(200)) + ".jpg"
+        )
+        self.assertEqual(
+            truncated_file_id,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fd0125c7-8777-4976-83c1-81605d5ab155.jpg",  # noqa: E501
+        )
