@@ -614,7 +614,7 @@ RUSSIAN = Translation(
         "of": "из",
         "page": "страницу(е)",
         "Password": "Пароль",
-        "result(s)": "строк(и)",  
+        "result(s)": "строк(и)",
         "rows": "строки",
         "Save": "Сохранить",
         "Seconds": "Секунды",
@@ -648,6 +648,6 @@ TRANSLATIONS: t.List[Translation] = [
     GERMAN,
     PORTUGUESE,
     SPANISH,
-    WELSH,
     RUSSIAN,
+    WELSH,
 ]
