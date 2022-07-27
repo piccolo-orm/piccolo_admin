@@ -636,7 +636,7 @@ RUSSIAN = Translation(
         "Version": "Версия",
         "Weeks": "Недели",
         "Welcome to": "Добро пожаловать в",
-        "with a matching": "соответствует",
+        "with a matching": "c соответствующим",
     },
 )
 
