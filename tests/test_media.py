@@ -18,15 +18,27 @@ class TestLocalMediaStorage(TestCase):
         )
 
         media_path = tempfile.gettempdir()
+        print(media_path)
 
         storage = LocalMediaStorage(media_path=media_path, media_url="/media/")
 
         with open(
-            os.path.join(os.path.dirname(__file__), "files/bulb.jpg"), "rb"
+            os.path.join(os.path.dirname(__file__), "test_files/bulb.jpg"),
+            "rb",
         ) as test_file:
             # Store the file
-            file_id = storage.store_file_sync(test_file)
+            file_id = storage.store_file_sync(
+                file_name="bulb.jpg", file=test_file
+            )
+
+            # Make sure the file was stored.
             self.assertTrue(file_id in os.listdir(media_path))
+
+            # Make sure the permissions are correct
+            self.assertEqual(
+                oct(os.stat(os.path.join(media_path, file_id)).st_mode)[-3:],
+                "640",
+            )
 
             # Retrieve the URL for the file
             url = storage.get_file_url_sync(file_id)
@@ -58,14 +70,22 @@ class TestGenerateFileID(TestCase):
             str(manager.exception), "The file name can't be empty."
         )
 
-    def test_long_extension(self):
+    def test_allowed_extensions(self):
         with self.assertRaises(ValueError) as manager:
             self.storage.generate_file_id(
                 file_name="test.abcdefghijklmonpqrstuvwxyz123"
             )
 
         self.assertEqual(
-            str(manager.exception), "Suspiciously long file extension."
+            str(manager.exception), "This file type isn't allowed."
+        )
+
+    def test_allowed_characters(self):
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(file_name="@{£}%^*jpeg")
+
+        self.assertEqual(
+            str(manager.exception), "@ is not allowed in the filename."
         )
 
     @patch("piccolo_admin.media.storage.uuid")

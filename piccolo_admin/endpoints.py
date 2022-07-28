@@ -11,9 +11,10 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
+from piccolo.columns.column_types import Array, Text, Varchar
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
@@ -32,13 +33,14 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+from .media.storage import MediaStorage
 from .translations.data import TRANSLATIONS
 from .translations.models import (
     Translation,
@@ -48,7 +50,7 @@ from .translations.models import (
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
-MEDIA_PATH = os.path.join(os.path.dirname(__file__), "static")
+MEDIA_PATH = os.path.join(os.path.dirname(__file__), "example_media")
 
 
 class UserResponseModel(BaseModel):
@@ -59,6 +61,10 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+
+
+class StoreFileResponseModel(BaseModel):
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
 
 
 @dataclass
@@ -92,6 +98,15 @@ class TableConfig:
         :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
         Admin under the hood. It allows you to run custom logic when a row
         is modified.
+    :param media_columns:
+        These columns will be used to store media. We don't directly store the
+        media in the database, but instead store a string, which is a unique
+        identifier, and can be used to retrieve a URL for accessing the file.
+        Piccolo Admin automatically renders a file upload widget for each media
+        column in the UI.
+    :param media_storage:
+        If you specify ``media_columns``, then you must also specify this. It
+        is used to store files, and to retrieve URLs for accessing those files.
 
     """
 
@@ -103,20 +118,32 @@ class TableConfig:
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
     media_columns: t.Optional[t.List[Column]] = None
-    media_handler: t.Optional[t.Any] = None
+    media_storage: t.Optional[MediaStorage] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
             raise ValueError(
-                "Only specify ``visible_columns`` or "
-                "``exclude_visible_columns``."
+                "Only specify `visible_columns` or "
+                "`exclude_visible_columns`."
             )
 
         if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
-                "Only specify ``visible_filters`` or "
-                "``exclude_visible_filters``."
+                "Only specify `visible_filters` or `exclude_visible_filters`."
             )
+
+        if self.media_columns:
+            if not self.media_storage:
+                raise ValueError(
+                    "If you have `media_columns`, you must also specify "
+                    "`media_storage`."
+                )
+            for column in self.media_columns:
+                if not isinstance(column, (Varchar, Text, Array)):
+                    raise ValueError(
+                        "A column in `media_columns` is not a `Varchar`,"
+                        "`Text`, or `Array`."
+                    )
 
     def _get_columns(
         self,
@@ -420,9 +447,10 @@ class AdminRouter(FastAPI):
 
         private_app.add_api_route(
             path="/media/",
-            endpoint=self.store_files,  # type: ignore
+            endpoint=self.store_file,  # type: ignore
             methods=["POST"],
             tags=["Media"],
+            response_model=StoreFileResponseModel,
         )
 
         private_app.add_route(
@@ -505,8 +533,10 @@ class AdminRouter(FastAPI):
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
         )
 
+        # TODO - this is problematic ... mount a media folder by default?
+        # Allow the user to customise the location???
         self.mount(
-            path="/static",
+            path="/media",
             app=StaticFiles(directory=MEDIA_PATH),
         )
 
@@ -529,11 +559,29 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def store_files(self, request: Request, file: UploadFile = File(...)):
-        for table_class in self.table_configs:
-            if table_class.media_handler is not None:
-                media_file = table_class.media_handler
-        return media_file.upload(request, file)
+    async def store_file(
+        self,
+        request: Request,
+        column: str = Form(None),
+        table: str = Form(None),
+        file: UploadFile = File(...),
+    ) -> StoreFileResponseModel:
+        # TODO - this is wrong ... pass the tablename and column in the body.
+        # Can we associate a MediaStorage with a particular column???
+        for table_config in self.table_configs:
+            if table_config.media_storage is not None:
+                media_storage = table_config.media_storage
+
+        file_key = await media_storage.store_file(
+            file_name=file.filename, file=file.file, user=request.user.user
+        )
+        return StoreFileResponseModel(file_key=file_key)
+
+    async def get_file_url(self, request: Request):
+        # Pass in the file URL as a GET param??? Not sure ...
+        # shouldn't really pass it in as a body ...
+        # Going to be limited though by the allowed characters in URLs ...
+        pass
 
     ###########################################################################
 

@@ -10,11 +10,8 @@ import decimal
 import enum
 import os
 import random
-import shutil
 import smtplib
 import typing as t
-import uuid
-from dataclasses import dataclass
 
 import targ
 from hypercorn.asyncio import serve
@@ -43,13 +40,9 @@ from piccolo.table import Table
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
-from piccolo_admin.endpoints import (
-    MEDIA_PATH,
-    FormConfig,
-    TableConfig,
-    create_admin,
-)
+from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
+from piccolo_admin.media.storage import LocalMediaStorage
 
 
 class Sessions(SessionsBase):
@@ -189,20 +182,10 @@ async def booking_endpoint(request, data):
     return "Booking complete"
 
 
-@dataclass
-class LocalMediaHandler:
-    root_path: str
-
-    def upload(self, request, file):
-        image = f"{self.root_path}/{uuid.uuid4()}.jpeg"
-        image_path = "/".join(image.split("/")[-2:])
-        with open(image, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        url_path = dict(request.scope["headers"]).get(b"host", b"").decode()
-        return {"image": f"{request.url.scheme}://{url_path}/{image_path}"}
-
-
-media_handler: t.Any = LocalMediaHandler(root_path=MEDIA_PATH)
+MEDIA_STORGE = LocalMediaStorage(
+    media_path=os.path.join(os.path.dirname(__file__), "example_media"),
+    media_url="/media/",
+)
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
@@ -232,7 +215,7 @@ movie_config = TableConfig(
     ],
     rich_text_columns=[Movie.description],
     media_columns=[Movie.poster],
-    media_handler=media_handler,
+    media_storage=MEDIA_STORGE,
 )
 
 director_config = TableConfig(

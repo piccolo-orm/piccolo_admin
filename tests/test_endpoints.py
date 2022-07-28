@@ -1,4 +1,5 @@
 import datetime
+import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock
@@ -348,18 +349,24 @@ class TestUpload(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
-        response = client.post(
-            "/api/media/",
-            files={"file": ("1234", "filename", "image/jpeg")},
-            headers={"X-CSRFToken": csrftoken},
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "test_files/bulb.jpg"
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue("image" in response.json())
 
-        # remove the test file from the static directory
-        image = response.json()["image"]
-        file_name = image.split("/")[-1]
-        test_file = Path(MEDIA_PATH, file_name)
+        with open(test_file_path, "rb") as test_file:
+            response = client.post(
+                "/api/media/",
+                data={"table": "movie", "column": "poster"},
+                files={"file": ("bulb.jpg", test_file, "image/jpeg")},
+                headers={"X-CSRFToken": csrftoken},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("file_key" in response.json())
+
+        # Remove the test file from the media directory
+        file_key = response.json()["file_key"]
+        test_file = Path(MEDIA_PATH, file_key)
         test_file.unlink()
 
 

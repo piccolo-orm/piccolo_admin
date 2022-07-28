@@ -273,7 +273,7 @@ export default Vue.extend({
             const file = event.target.files[0]
             let formData = new FormData()
             formData.append("file", file)
-            const response = await axios.post("./api/media", formData, {
+            const response = await axios.post("./api/media/", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
