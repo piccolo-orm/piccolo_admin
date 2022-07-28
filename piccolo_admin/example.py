@@ -182,7 +182,7 @@ async def booking_endpoint(request, data):
     return "Booking complete"
 
 
-MEDIA_STORGE = LocalMediaStorage(
+MEDIA_STORAGE = LocalMediaStorage(
     media_path=os.path.join(os.path.dirname(__file__), "example_media"),
     media_url="/media/",
 )
@@ -214,8 +214,7 @@ movie_config = TableConfig(
         Movie.genre,
     ],
     rich_text_columns=[Movie.description],
-    media_columns=[Movie.poster],
-    media_storage=MEDIA_STORGE,
+    media_columns={Movie.poster: MEDIA_STORAGE},
 )
 
 director_config = TableConfig(

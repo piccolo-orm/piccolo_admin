@@ -356,7 +356,7 @@ class TestUpload(TestCase):
         with open(test_file_path, "rb") as test_file:
             response = client.post(
                 "/api/media/",
-                data={"table": "movie", "column": "poster"},
+                data={"table_name": "movie", "column_name": "poster"},
                 files={"file": ("bulb.jpg", test_file, "image/jpeg")},
                 headers={"X-CSRFToken": csrftoken},
             )

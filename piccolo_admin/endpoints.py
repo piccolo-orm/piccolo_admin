@@ -104,9 +104,6 @@ class TableConfig:
         identifier, and can be used to retrieve a URL for accessing the file.
         Piccolo Admin automatically renders a file upload widget for each media
         column in the UI.
-    :param media_storage:
-        If you specify ``media_columns``, then you must also specify this. It
-        is used to store files, and to retrieve URLs for accessing those files.
 
     """
 
@@ -117,8 +114,7 @@ class TableConfig:
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
-    media_columns: t.Optional[t.List[Column]] = None
-    media_storage: t.Optional[MediaStorage] = None
+    media_columns: t.Optional[t.Dict[Column, MediaStorage]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -133,12 +129,7 @@ class TableConfig:
             )
 
         if self.media_columns:
-            if not self.media_storage:
-                raise ValueError(
-                    "If you have `media_columns`, you must also specify "
-                    "`media_storage`."
-                )
-            for column in self.media_columns:
+            for column in self.media_columns.keys():
                 if not isinstance(column, (Varchar, Text, Array)):
                     raise ValueError(
                         "A column in `media_columns` is not a `Varchar`,"
@@ -325,6 +316,10 @@ class AdminRouter(FastAPI):
                 table_configs.append(TableConfig(table_class=table))
 
         self.table_configs = table_configs
+        self.table_config_map = {
+            table_config.table_class._meta.tablename: table_config
+            for table_config in table_configs
+        }
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -562,15 +557,39 @@ class AdminRouter(FastAPI):
     async def store_file(
         self,
         request: Request,
-        column: str = Form(None),
-        table: str = Form(None),
+        column_name: str = Form(None),
+        table_name: str = Form(None),
         file: UploadFile = File(...),
     ) -> StoreFileResponseModel:
-        # TODO - this is wrong ... pass the tablename and column in the body.
-        # Can we associate a MediaStorage with a particular column???
-        for table_config in self.table_configs:
-            if table_config.media_storage is not None:
-                media_storage = table_config.media_storage
+        table_config = self.table_config_map.get(table_name)
+        if not table_config:
+            raise HTTPException(status_code=404, detail="No such table found.")
+
+        media_columns = table_config.media_columns
+
+        if media_columns is None:
+            raise HTTPException(
+                status_code=422,
+                detail="No media columns are configured for this table.",
+            )
+
+        try:
+            column = table_config.table_class._meta.get_column_by_name(
+                column_name
+            )
+        except ValueError:
+            raise HTTPException(
+                status_code=404,
+                detail="No such column found.",
+            )
+
+        media_storage = media_columns.get(column)
+
+        if not media_storage:
+            raise HTTPException(
+                status_code=422,
+                detail="This column is not configured as a media_column.",
+            )
 
         file_key = await media_storage.store_file(
             file_name=file.filename, file=file.file, user=request.user.user
