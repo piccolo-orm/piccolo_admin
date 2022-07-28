@@ -18,7 +18,6 @@ class TestLocalMediaStorage(TestCase):
         )
 
         media_path = tempfile.gettempdir()
-        print(media_path)
 
         storage = LocalMediaStorage(media_path=media_path, media_url="/media/")
 
