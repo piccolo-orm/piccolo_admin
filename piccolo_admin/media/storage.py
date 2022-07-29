@@ -35,6 +35,7 @@ ALLOWED_EXTENSIONS = (
     "svg",
     "tif",
     "txt",
+    "webp",
 )
 
 ALLOWED_CHARACTERS = (
