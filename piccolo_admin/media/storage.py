@@ -99,7 +99,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
             for character in file_name:
                 if character not in self.allowed_characters:
                     raise ValueError(
-                        f"{character} is not allowed in the filename."
+                        f"'{character}' is not allowed in the filename."
                     )
 
         components = file_name.rsplit(".", 1)
