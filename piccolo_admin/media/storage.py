@@ -119,7 +119,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
             # Truncate really long names. Otherwise they might be too long
             # for some operating systems, or too long to be stored in a
             # database field.
-            name = file_name[:50]
+            name = name[:50]
 
         uuid_ = uuid.uuid4()
 
