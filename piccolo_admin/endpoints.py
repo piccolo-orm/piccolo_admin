@@ -591,9 +591,15 @@ class AdminRouter(FastAPI):
                 detail="This column is not configured as a media_column.",
             )
 
-        file_key = await media_storage.store_file(
-            file_name=file.filename, file=file.file, user=request.user.user
-        )
+        try:
+            file_key = await media_storage.store_file(
+                file_name=file.filename, file=file.file, user=request.user.user
+            )
+        except ValueError as exception:
+            raise HTTPException(
+                status_code=422,
+                detail=str(exception)
+            )
         return StoreFileResponseModel(file_key=file_key)
 
     async def get_file_url(self, request: Request):
