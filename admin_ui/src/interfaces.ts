@@ -56,7 +56,7 @@ export interface TableReferencesAPIResponse {
 }
 
 /*****************************************************************************/
-
+// Translations
 export interface TranslationListItemAPI {
     language_name: string
     language_code: string
@@ -71,6 +71,13 @@ export interface TranslationAPIResponse {
     language_name: string
     language_code: string
     translations: { [key: string]: string }
+}
+
+/*****************************************************************************/
+// File storage
+
+export interface StoreFileAPIResponse {
+    file_key: string
 }
 
 /*****************************************************************************/

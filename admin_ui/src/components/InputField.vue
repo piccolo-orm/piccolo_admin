@@ -117,7 +117,7 @@
         <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
                 <OperatorField
-                    :fieldName="title.toLowerCase()"
+                    :fieldName="getFieldName(title)"
                     v-if="isFilter"
                 />
                 <DurationWidget
@@ -181,13 +181,13 @@
 import Vue, { PropType } from "vue"
 import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
+import { VueEditor } from "vue2-editor"
 
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
-import { Choices } from "../interfaces"
-import { VueEditor } from "vue2-editor"
+import { Choices, StoreFileAPIResponse, APIResponseMessage } from "@/interfaces"
 
 export default Vue.extend({
     props: {
@@ -252,6 +252,9 @@ export default Vue.extend({
         },
         schema() {
             return this.$store.state.schema
+        },
+        currentTableName() {
+            return this.$store.state.currentTableName
         }
     },
     methods: {
@@ -272,13 +275,38 @@ export default Vue.extend({
         async uploadFile(event) {
             const file = event.target.files[0]
             let formData = new FormData()
+            formData.append("table_name", this.currentTableName)
+            formData.append("column_name", this.getFieldName(this.title))
             formData.append("file", file)
-            const response = await axios.post("./api/media/", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
+            try {
+                const response = await axios.post<StoreFileAPIResponse>(
+                    "./api/media/",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }
+                )
+                this.localValue.push(response.data.file_key)
+            } catch (error) {
+                let errorMessage = "The request failed."
+                const statusCode = error.response.status
+
+                if (statusCode == 413) {
+                    errorMessage = "The file is too large."
+                } else if (statusCode == 500) {
+                    errorMessage = "An error happened on the server."
+                } else {
+                    errorMessage = error.response.data.detail
                 }
-            })
-            this.localValue.push(response.data.image)
+
+                let message: APIResponseMessage = {
+                    contents: errorMessage,
+                    type: "error"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
+            }
         }
     },
     watch: {
