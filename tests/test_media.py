@@ -84,7 +84,7 @@ class TestGenerateFileID(TestCase):
             self.storage.generate_file_id(file_name="@{£}%^*jpeg")
 
         self.assertEqual(
-            str(manager.exception), "@ is not allowed in the filename."
+            str(manager.exception), "'@' is not allowed in the filename."
         )
 
     @patch("piccolo_admin.media.storage.uuid")
