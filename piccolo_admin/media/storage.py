@@ -22,20 +22,46 @@ if t.TYPE_CHECKING:
     from concurrent.futures._base import Executor
 
 
-ALLOWED_EXTENSIONS = (
+AUDIO_EXTENSIONS = (
+    "aiff",
+    "mp3",
+    "wav",
+)
+
+DATA_EXTENSIONS = (
+    "csv",
+    "tsv",
+)
+
+DOCUMENT_EXTENSIONS = ("pdf",)
+
+IMAGE_EXTENSIONS = (
     "gif",
     "jpeg",
     "jpg",
-    "mov",
-    "mp3",
-    "mp4",
-    "pdf",
     "png",
-    "rtf",
     "svg",
     "tif",
-    "txt",
     "webp",
+)
+
+TEXT_EXTENSIONS = (
+    "rtf",
+    "txt",
+)
+
+VIDEO_EXTENSIONS = (
+    "mov",
+    "mp4",
+)
+
+ALLOWED_EXTENSIONS = (
+    *AUDIO_EXTENSIONS,
+    *DATA_EXTENSIONS,
+    *DOCUMENT_EXTENSIONS,
+    *IMAGE_EXTENSIONS,
+    *TEXT_EXTENSIONS,
+    *VIDEO_EXTENSIONS,
 )
 
 ALLOWED_CHARACTERS = (
