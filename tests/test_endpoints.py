@@ -1,8 +1,9 @@
 import datetime
 import os
+import uuid
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.column_types import (
@@ -334,7 +335,12 @@ class TestUpload(TestCase):
     def tearDown(self):
         drop_db_tables_sync(SessionsBase, BaseUser)
 
-    def test_image_upload(self):
+    @patch("piccolo_admin.media.storage.uuid")
+    def test_image_upload(self, uuid_module: MagicMock):
+        uuid_module.uuid4.return_value = uuid.UUID(
+            "fd0125c7-8777-4976-83c1-81605d5ab155"
+        )
+
         client = TestClient(APP)
 
         # To get a CSRF cookie
@@ -362,12 +368,29 @@ class TestUpload(TestCase):
             )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("file_key" in response.json())
+        file_key: str = response.json().get("file_key")
+        self.assertIsNotNone(file_key)
+
+        # Make sure that we can retrieve the URL
+        response = client.post(
+            "/api/media/generate-file-url/",
+            json={
+                "table_name": "movie",
+                "column_name": "poster",
+                "file_key": file_key,
+            },
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(
+            response.json(),
+            {
+                "file_url": "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"  # noqa: E501
+            },
+        )
 
         # Remove the test file from the media directory
-        file_key = response.json()["file_key"]
-        test_file = Path(MEDIA_PATH, file_key)
-        test_file.unlink()
+        Path(MEDIA_PATH, file_key).unlink()
 
 
 class TestTables(TestCase):

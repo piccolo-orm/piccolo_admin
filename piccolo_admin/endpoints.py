@@ -459,11 +459,11 @@ class AdminRouter(FastAPI):
         )
 
         private_app.add_api_route(
-            path="/media/url/",
+            path="/media/generate-file-url/",
             endpoint=self.generate_file_url,  # type: ignore
             methods=["POST"],
             tags=["Media"],
-            response_model=StoreFileResponseModel,
+            response_model=GenerateFileURLResponseModel,
         )
 
         private_app.add_route(
