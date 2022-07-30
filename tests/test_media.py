@@ -40,7 +40,7 @@ class TestLocalMediaStorage(TestCase):
             )
 
             # Retrieve the URL for the file
-            url = storage.get_file_url_sync(file_id)
+            url = storage.generate_file_url_sync(file_id)
             self.assertEqual(
                 url, "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"
             )

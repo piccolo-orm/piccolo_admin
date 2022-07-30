@@ -146,7 +146,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get_file_url(
+    async def generate_file_url(
         self, file_id: str, user: t.Optional[BaseUser] = None
     ):
         """
@@ -241,7 +241,7 @@ class LocalMediaStorage(MediaStorage):
             self.store_file(file_name=file_name, file=file, user=user)
         )
 
-    async def get_file_url(
+    async def generate_file_url(
         self, file_id: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
@@ -249,10 +249,10 @@ class LocalMediaStorage(MediaStorage):
         """
         return "/".join((self.media_url.rstrip("/"), file_id))
 
-    def get_file_url_sync(
+    def generate_file_url_sync(
         self, file_id: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
-        A sync wrapper around :meth:`get_file_url`.
+        A sync wrapper around :meth:`generate_file_url`.
         """
-        return run_sync(self.get_file_url(file_id=file_id, user=user))
+        return run_sync(self.generate_file_url(file_id=file_id, user=user))

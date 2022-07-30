@@ -67,6 +67,16 @@ class StoreFileResponseModel(BaseModel):
     file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
 
 
+class GenerateFileURLRequestModel(BaseModel):
+    column_name: str
+    table_name: str
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
+
+
+class GenerateFileURLResponseModel(BaseModel):
+    file_url: str = Field(description="A URL which the file is accessible on.")
+
+
 @dataclass
 class TableConfig:
     """
@@ -448,6 +458,14 @@ class AdminRouter(FastAPI):
             response_model=StoreFileResponseModel,
         )
 
+        private_app.add_api_route(
+            path="/media/url/",
+            endpoint=self.generate_file_url,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+            response_model=StoreFileResponseModel,
+        )
+
         private_app.add_route(
             path="/change-password/",
             route=change_password(
@@ -554,13 +572,16 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    async def store_file(
-        self,
-        request: Request,
-        column_name: str = Form(None),
-        table_name: str = Form(None),
-        file: UploadFile = File(...),
-    ) -> StoreFileResponseModel:
+    def _get_media_storage(
+        self, table_name: str, column_name: str
+    ) -> MediaStorage:
+        """
+        Retrieve the ``MediaStorage`` for the given column.
+
+        :raises HTTPException:
+            If a matching ``MediaStorage`` can't be found.
+
+        """
         table_config = self.table_config_map.get(table_name)
         if not table_config:
             raise HTTPException(status_code=404, detail="No such table found.")
@@ -591,22 +612,47 @@ class AdminRouter(FastAPI):
                 detail="This column is not configured as a media_column.",
             )
 
+        return media_storage
+
+    async def store_file(
+        self,
+        request: Request,
+        table_name: str = Form(None),
+        column_name: str = Form(None),
+        file: UploadFile = File(...),
+    ) -> StoreFileResponseModel:
+        """
+        Stores in the file in the configured ``MediaStorage``, and returns a
+        unique key for identifying that file.
+        """
+        media_storage = self._get_media_storage(
+            table_name=table_name, column_name=column_name
+        )
+
         try:
             file_key = await media_storage.store_file(
                 file_name=file.filename, file=file.file, user=request.user.user
             )
         except ValueError as exception:
-            raise HTTPException(
-                status_code=422,
-                detail=str(exception)
-            )
+            raise HTTPException(status_code=422, detail=str(exception))
         return StoreFileResponseModel(file_key=file_key)
 
-    async def get_file_url(self, request: Request):
-        # Pass in the file URL as a GET param??? Not sure ...
-        # shouldn't really pass it in as a body ...
-        # Going to be limited though by the allowed characters in URLs ...
-        pass
+    async def generate_file_url(
+        self, request: Request, model: GenerateFileURLRequestModel
+    ) -> GenerateFileURLResponseModel:
+        """
+        Returns a URL for accessing the given file.
+
+        We don't use a GET for this endpoint, as using a GET param to pass the
+        ``file_key`` is too restrictive on which characters can be used.
+        """
+        media_storage = self._get_media_storage(
+            table_name=model.table_name, column_name=model.column_name
+        )
+        file_url = await media_storage.generate_file_url(
+            file_id=model.file_key, user=request.user.user
+        )
+        return GenerateFileURLResponseModel(file_url=file_url)
 
     ###########################################################################
 
