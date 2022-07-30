@@ -202,18 +202,38 @@
                                             <span
                                                 v-else-if="isMediaColumn(name)"
                                             >
-                                                <a
-                                                    href="#"
-                                                    @click.prevent="
-                                                        showMedia(
-                                                            row[name],
+                                                <template v-if="isArray(name)">
+                                                    <a
+                                                        style="display: block"
+                                                        href="#"
+                                                        v-for="item in row[
                                                             name
-                                                        )
-                                                    "
-                                                    >{{
-                                                        row[name] | abbreviate
-                                                    }}
-                                                </a>
+                                                        ]"
+                                                        :key="item"
+                                                        @click.prevent="
+                                                            showMedia(
+                                                                item,
+                                                                name
+                                                            )
+                                                        "
+                                                        >{{ item | abbreviate }}
+                                                    </a>
+                                                </template>
+                                                <template v-else>
+                                                    <a
+                                                        href="#"
+                                                        @click.prevent="
+                                                            showMedia(
+                                                                row[name],
+                                                                name
+                                                            )
+                                                        "
+                                                        >{{
+                                                            row[name]
+                                                                | abbreviate
+                                                        }}
+                                                    </a>
+                                                </template>
                                             </span>
                                             <span v-else>{{
                                                 row[name] | abbreviate
@@ -489,6 +509,9 @@ export default Vue.extend({
         },
         isJSON(name: string): boolean {
             return this.schema.properties[name]["format"] == "json"
+        },
+        isArray(name: string): boolean {
+            return this.schema.properties[name]["type"] == "array"
         },
         isMediaColumn(name: string): boolean {
             return this.schema.media_columns.includes(name)
