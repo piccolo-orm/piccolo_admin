@@ -13,9 +13,16 @@
         </div>
 
         <div
+            v-if="isImage(mediaViewerConfig.fileKey)"
             class="image_container"
             v-bind:style="{ backgroundImage: `url(${fileURL})` }"
         ></div>
+        <div class="no_preview" v-else>
+            <p>
+                <font-awesome-icon icon="file"></font-awesome-icon> Unable to
+                preview file
+            </p>
+        </div>
 
         <div class="bottom_bar">
             <p>
@@ -38,6 +45,8 @@ import { MediaViewerConfig } from "@/interfaces"
 // @ts-ignore
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
+const IMAGE_EXTENSIONS = ["gif", "jpeg", "jpg", "png", "svg", "tif", "webp"]
+
 export default Vue.extend({
     props: {
         mediaViewerConfig: {
@@ -50,6 +59,11 @@ export default Vue.extend({
         }
     },
     methods: {
+        isImage(fileKey: string) {
+            const components = fileKey.split(".")
+            const extension = components[components.length - 1]
+            return IMAGE_EXTENSIONS.indexOf(extension) != -1
+        },
         async generateFileURL({
             columnName,
             tableName,
@@ -136,6 +150,19 @@ div#media_viewer {
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
+    }
+
+    div.no_preview {
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        display: flex;
+        align-items: center;
+
+        p {
+            text-align: center;
+            flex-grow: 1;
+        }
     }
 
     div.bottom_bar {
