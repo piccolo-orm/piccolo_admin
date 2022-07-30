@@ -1,5 +1,7 @@
 <template>
     <div id="media_viewer">
+        <!-- Top bar -->
+
         <div class="top_bar">
             <p class="file_key">
                 <span>File:</span> {{ mediaViewerConfig.fileKey }}
@@ -12,17 +14,29 @@
             </p>
         </div>
 
+        <!-- Media containers -->
+
         <div
             v-if="isImage(mediaViewerConfig.fileKey)"
             class="image_container"
             v-bind:style="{ backgroundImage: `url(${fileURL})` }"
         ></div>
+
+        <div
+            v-else-if="isVideo(mediaViewerConfig.fileKey)"
+            class="video_container"
+        >
+            <video controls :src="fileURL">Video playback not available</video>
+        </div>
+
         <div class="no_preview" v-else>
             <p>
                 <font-awesome-icon icon="file"></font-awesome-icon> Unable to
-                preview file
+                preview file - download below.
             </p>
         </div>
+
+        <!-- Bottom bar -->
 
         <div class="bottom_bar">
             <p>
@@ -46,6 +60,7 @@ import { MediaViewerConfig } from "@/interfaces"
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
 const IMAGE_EXTENSIONS = ["gif", "jpeg", "jpg", "png", "svg", "tif", "webp"]
+const VIDEO_EXTENSIONS = ["mp4", "webm"]
 
 export default Vue.extend({
     props: {
@@ -63,6 +78,11 @@ export default Vue.extend({
             const components = fileKey.split(".")
             const extension = components[components.length - 1]
             return IMAGE_EXTENSIONS.indexOf(extension) != -1
+        },
+        isVideo(fileKey: string) {
+            const components = fileKey.split(".")
+            const extension = components[components.length - 1]
+            return VIDEO_EXTENSIONS.indexOf(extension) != -1
         },
         async generateFileURL({
             columnName,
@@ -144,18 +164,30 @@ div#media_viewer {
         }
     }
 
-    div.image_container {
+    div.image_container,
+    div.video_container,
+    div.no_preview {
         flex-grow: 1;
         flex-shrink: 1;
+    }
+
+    div.image_container {
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
     }
 
-    div.no_preview {
-        flex-grow: 1;
-        flex-shrink: 1;
+    div.video_container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
 
+        video {
+            max-width: 100%;
+        }
+    }
+
+    div.no_preview {
         display: flex;
         align-items: center;
 

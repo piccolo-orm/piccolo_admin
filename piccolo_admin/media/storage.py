@@ -50,10 +50,7 @@ TEXT_EXTENSIONS = (
     "txt",
 )
 
-VIDEO_EXTENSIONS = (
-    "mov",
-    "mp4",
-)
+VIDEO_EXTENSIONS = ("mov", "mp4", "webm")
 
 ALLOWED_EXTENSIONS = (
     *AUDIO_EXTENSIONS,
