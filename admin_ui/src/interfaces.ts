@@ -80,6 +80,12 @@ export interface StoreFileAPIResponse {
     file_key: string
 }
 
+export interface MediaViewerConfig {
+    fileKey: string
+    columnName: string
+    tableName: string
+}
+
 /*****************************************************************************/
 
 export interface Choice {

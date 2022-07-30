@@ -385,7 +385,7 @@ class TestUpload(TestCase):
         self.assertDictEqual(
             response.json(),
             {
-                "file_url": "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"  # noqa: E501
+                "file_url": "/api/media-files/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"  # noqa: E501
             },
         )
 

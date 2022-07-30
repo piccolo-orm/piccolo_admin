@@ -83,6 +83,11 @@ button {
         background-color: darken(white, 5%);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: @dark_grey;
+
+        &[type="file"] {
+            background: none;
+            border: none;
+        }
     }
 
     tr {
@@ -144,6 +149,11 @@ button {
         background-color: darken(@dark_grey, 4%);
         border: 1px solid rgba(0, 0, 0, 0.2);
         color: @off_white;
+
+        &[type="file"] {
+            background: none;
+            border: none;
+        }
     }
 
     .opaque {
@@ -258,6 +268,10 @@ a {
         font-size: 0.7em;
         padding: 0.3rem 0.5rem;
         text-transform: uppercase;
+
+        &:hover {
+            color: white;
+        }
     }
 }
 

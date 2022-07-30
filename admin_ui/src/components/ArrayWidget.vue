@@ -16,7 +16,7 @@
                 <a
                     href="#"
                     v-on:click.prevent="addArrayElement"
-                    v-if="!schema.media_columns.includes(title.toLowerCase())"
+                    v-if="enableAddButton"
                 >
                     <font-awesome-icon icon="plus" />{{ $t("Add") }}
                 </a>
@@ -39,6 +39,10 @@ export default {
         title: {
             type: String,
             default: ""
+        },
+        enableAddButton: {
+            type: Boolean,
+            default: true
         }
     },
     data() {

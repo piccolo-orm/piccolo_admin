@@ -450,6 +450,19 @@ class AdminRouter(FastAPI):
             response_model=UserResponseModel,
         )
 
+        private_app.add_route(
+            path="/change-password/",
+            route=change_password(
+                login_url="./../../public/login/",
+                session_table=session_table,
+                read_only=read_only,
+            ),
+            methods=["POST"],
+        )
+
+        #######################################################################
+        # Media
+
         private_app.add_api_route(
             path="/media/",
             endpoint=self.store_file,  # type: ignore
@@ -466,14 +479,11 @@ class AdminRouter(FastAPI):
             response_model=GenerateFileURLResponseModel,
         )
 
-        private_app.add_route(
-            path="/change-password/",
-            route=change_password(
-                login_url="./../../public/login/",
-                session_table=session_table,
-                read_only=read_only,
-            ),
-            methods=["POST"],
+        # TODO - this is problematic ... mount a media folder by default?
+        # Allow the user to customise the location???
+        private_app.mount(
+            path="/media-files/",
+            app=StaticFiles(directory=MEDIA_PATH),
         )
 
         #######################################################################
@@ -544,13 +554,6 @@ class AdminRouter(FastAPI):
         self.mount(
             path="/js",
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
-        )
-
-        # TODO - this is problematic ... mount a media folder by default?
-        # Allow the user to customise the location???
-        self.mount(
-            path="/media",
-            app=StaticFiles(directory=MEDIA_PATH),
         )
 
         auth_middleware = partial(

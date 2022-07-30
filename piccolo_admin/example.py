@@ -102,7 +102,8 @@ class Movie(Table):
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
-    poster = Array(base_column=Varchar())
+    poster = Varchar()
+    screenshots = Array(base_column=Varchar())
     release_date = Timestamp(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
@@ -184,7 +185,7 @@ async def booking_endpoint(request, data):
 
 MEDIA_STORAGE = LocalMediaStorage(
     media_path=os.path.join(os.path.dirname(__file__), "example_media"),
-    media_url="/media/",
+    media_url="/api/media-files/",
 )
 
 
@@ -205,6 +206,7 @@ movie_config = TableConfig(
         Movie.director,
         Movie.poster,
         Movie.tags,
+        Movie.screenshots,
     ],
     visible_filters=[
         Movie.name,
@@ -212,9 +214,14 @@ movie_config = TableConfig(
         Movie.director,
         Movie.duration,
         Movie.genre,
+        Movie.screenshots,
+        Movie.poster,
     ],
     rich_text_columns=[Movie.description],
-    media_columns={Movie.poster: MEDIA_STORAGE},
+    media_columns={
+        Movie.poster: MEDIA_STORAGE,
+        Movie.screenshots: MEDIA_STORAGE,
+    },
 )
 
 director_config = TableConfig(

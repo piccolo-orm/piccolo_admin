@@ -1,5 +1,9 @@
 <template>
     <div>
+        <template v-if="isMediaColumn && !isFilter">
+            <input type="file" @change="uploadFile($event)" />
+        </template>
+
         <template v-if="choices">
             <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <ChoiceSelect
@@ -145,26 +149,9 @@
         </template>
 
         <template v-else-if="type == 'array'">
-            <div
-                v-if="
-                    schema.media_columns.includes(
-                        getFieldName(title).toLowerCase()
-                    )
-                "
-            >
-                <form
-                    id="uploadForm"
-                    enctype="multipart/form-data"
-                    v-on:change="uploadFile($event)"
-                >
-                    <label>
-                        Upload image
-                        <input type="file" name="file" />
-                    </label>
-                </form>
-            </div>
             <ArrayWidget
                 :array="localValue"
+                :enableAddButton="isFilter || !isMediaColumn"
                 v-on:updateArray="localValue = $event"
                 :title="getFieldName(title)"
             />
@@ -255,6 +242,11 @@ export default Vue.extend({
         },
         currentTableName() {
             return this.$store.state.currentTableName
+        },
+        isMediaColumn() {
+            return this.schema.media_columns.includes(
+                this.getFieldName(this.title).toLowerCase()
+            )
         }
     },
     methods: {
@@ -274,6 +266,11 @@ export default Vue.extend({
         },
         async uploadFile(event) {
             const file = event.target.files[0]
+
+            if (!file) {
+                return
+            }
+
             let formData = new FormData()
             formData.append("table_name", this.currentTableName)
             formData.append("column_name", this.getFieldName(this.title))
@@ -288,17 +285,28 @@ export default Vue.extend({
                         }
                     }
                 )
-                this.localValue.push(response.data.file_key)
+                if (this.type == "array") {
+                    if (this.localValue) {
+                        this.localValue.push(response.data.file_key)
+                    } else {
+                        this.localValue = [response.data.file_key]
+                    }
+                } else {
+                    this.localValue = response.data.file_key
+                }
             } catch (error) {
                 let errorMessage = "The request failed."
-                const statusCode = error.response.status
+                const statusCode = error.response?.status
 
-                if (statusCode == 413) {
-                    errorMessage = "The file is too large."
-                } else if (statusCode == 500) {
-                    errorMessage = "An error happened on the server."
-                } else {
-                    errorMessage = error.response.data.detail
+                if (statusCode) {
+                    if (statusCode == 413) {
+                        errorMessage = "The file is too large."
+                    } else if (statusCode == 500) {
+                        errorMessage = "An error happened on the server."
+                    } else {
+                        errorMessage =
+                            error.response?.data?.detail ?? "Unknown error"
+                    }
                 }
 
                 let message: APIResponseMessage = {
@@ -340,25 +348,11 @@ input.flatpicker-input {
     width: 100%;
 }
 
+input[type="file"] {
+    margin-bottom: 0.5rem;
+}
+
 textarea#editor {
     display: none;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-label {
-    cursor: pointer;
-    border: none;
-    padding: 0.8rem 1.2rem;
-    font-weight: bolder;
-    margin-top: 1rem;
-    transition: background-color 0.5s;
-    background-color: @dark_blue;
-    color: white;
-    font-size: 0.7em;
-    text-transform: uppercase;
-    text-align: center;
 }
 </style>
