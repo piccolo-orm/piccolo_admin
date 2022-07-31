@@ -16,32 +16,39 @@
 
         <!-- Media containers -->
 
-        <div
-            v-if="isImage(mediaViewerConfig.fileKey)"
-            class="image_container"
-            v-bind:style="{ backgroundImage: `url(${fileURL})` }"
-        ></div>
+        <template v-if="fileURL">
+            <div
+                v-if="isImage(mediaViewerConfig.fileKey)"
+                class="image_container"
+                v-bind:style="{ backgroundImage: `url(${fileURL})` }"
+            ></div>
 
-        <div
-            v-else-if="isVideo(mediaViewerConfig.fileKey)"
-            class="video_container"
-        >
-            <video controls :src="fileURL">Video playback not available</video>
-        </div>
+            <div
+                v-else-if="isVideo(mediaViewerConfig.fileKey)"
+                class="video_container"
+            >
+                <video controls :src="fileURL">
+                    Video playback not available
+                </video>
+            </div>
 
-        <div
-            v-else-if="isAudio(mediaViewerConfig.fileKey)"
-            class="audio_container"
-        >
-            <audio controls :src="fileURL">Audio playback not available</audio>
-        </div>
+            <div
+                v-else-if="isAudio(mediaViewerConfig.fileKey)"
+                class="audio_container"
+            >
+                <audio controls :src="fileURL">
+                    Audio playback not available
+                </audio>
+            </div>
 
-        <div class="no_preview" v-else>
-            <p>
-                <font-awesome-icon icon="file"></font-awesome-icon> Unable to
-                preview file - download below.
-            </p>
-        </div>
+            <div class="no_preview" v-else>
+                <p>
+                    <font-awesome-icon icon="file"></font-awesome-icon> Unable
+                    to preview file - download below.
+                </p>
+            </div>
+        </template>
+        <p v-else>Loading ...</p>
 
         <!-- Bottom bar -->
 
