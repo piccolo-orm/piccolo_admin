@@ -1,7 +1,18 @@
 <template>
     <div>
         <template v-if="isMediaColumn && !isFilter">
-            <input type="file" @change="uploadFile($event)" />
+            <div class="media_block">
+                <input type="file" @change="uploadFile($event)" />
+                <a href="#" @click.prevent="showMedia" v-if="localValue"
+                    >View</a
+                >
+            </div>
+
+            <MediaViewer
+                v-if="showMediaViewer"
+                :mediaViewerConfig="mediaViewerConfig"
+                @close="showMediaViewer = false"
+            />
         </template>
 
         <template v-if="choices">
@@ -174,7 +185,13 @@ import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
 import OperatorField from "./OperatorField.vue"
-import { Choices, StoreFileAPIResponse, APIResponseMessage } from "@/interfaces"
+import MediaViewer from "./MediaViewer.vue"
+import {
+    Choices,
+    StoreFileAPIResponse,
+    APIResponseMessage,
+    MediaViewerConfig
+} from "@/interfaces"
 
 export default Vue.extend({
     props: {
@@ -211,6 +228,7 @@ export default Vue.extend({
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
+        MediaViewer,
         OperatorField,
         VueEditor
     },
@@ -218,6 +236,8 @@ export default Vue.extend({
         return {
             localValue: undefined,
             textareaHeight: "50px",
+            showMediaViewer: false,
+            mediaViewerConfig: null as MediaViewerConfig,
             customToolbar: [
                 ["bold", "italic", "underline", "strike", "blockquote"],
                 [{ list: "ordered" }, { list: "bullet" }],
@@ -263,6 +283,15 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
+        },
+        showMedia() {
+            const mediaViewerConfig: MediaViewerConfig = {
+                fileKey: this.localValue,
+                columnName: this.getFieldName(this.title),
+                tableName: this.currentTableName
+            }
+            this.mediaViewerConfig = mediaViewerConfig
+            this.showMediaViewer = true
         },
         async uploadFile(event) {
             const file = event.target.files[0]
@@ -315,6 +344,8 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             }
+
+            event.target.value = ""
         }
     },
     watch: {
@@ -354,5 +385,20 @@ input[type="file"] {
 
 textarea#editor {
     display: none;
+}
+
+div.media_block {
+    display: flex;
+    flex-direction: row;
+
+    input {
+        flex-grow: 1;
+    }
+
+    a {
+        text-align: right;
+        flex-shrink: 0;
+        text-decoration: none;
+    }
 }
 </style>
