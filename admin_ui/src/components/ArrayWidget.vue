@@ -14,6 +14,7 @@
             </li>
             <li>
                 <a
+                    class="add"
                     href="#"
                     v-on:click.prevent="addArrayElement"
                     v-if="enableAddButton"
@@ -94,6 +95,10 @@ ul.array_items {
 
         a {
             text-decoration: none;
+
+            &.add {
+                font-size: 0.9em;
+            }
         }
 
         input {
