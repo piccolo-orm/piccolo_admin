@@ -30,7 +30,6 @@ import {
     faSearch,
     faSignOutAlt,
     faSort,
-    faSpinner,
     faSun,
     faTable,
     faTimes,
