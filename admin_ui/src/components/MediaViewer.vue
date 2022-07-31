@@ -29,6 +29,13 @@
             <video controls :src="fileURL">Video playback not available</video>
         </div>
 
+        <div
+            v-else-if="isAudio(mediaViewerConfig.fileKey)"
+            class="audio_container"
+        >
+            <audio controls :src="fileURL">Audio playback not available</audio>
+        </div>
+
         <div class="no_preview" v-else>
             <p>
                 <font-awesome-icon icon="file"></font-awesome-icon> Unable to
@@ -59,6 +66,7 @@ import { MediaViewerConfig } from "@/interfaces"
 // @ts-ignore
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
+const AUDIO_EXTENSIONS = ["mp3", "wav"]
 const IMAGE_EXTENSIONS = ["gif", "jpeg", "jpg", "png", "svg", "tif", "webp"]
 const VIDEO_EXTENSIONS = ["mp4", "webm"]
 
@@ -74,12 +82,17 @@ export default Vue.extend({
         }
     },
     methods: {
-        isImage(fileKey: string) {
+        isAudio(fileKey: string): boolean {
+            const components = fileKey.split(".")
+            const extension = components[components.length - 1]
+            return AUDIO_EXTENSIONS.indexOf(extension) != -1
+        },
+        isImage(fileKey: string): boolean {
             const components = fileKey.split(".")
             const extension = components[components.length - 1]
             return IMAGE_EXTENSIONS.indexOf(extension) != -1
         },
-        isVideo(fileKey: string) {
+        isVideo(fileKey: string): boolean {
             const components = fileKey.split(".")
             const extension = components[components.length - 1]
             return VIDEO_EXTENSIONS.indexOf(extension) != -1
@@ -147,6 +160,7 @@ div#media_viewer {
             text-align: center;
             white-space: nowrap;
             font-size: 0.9em;
+            padding: 0 0.5rem;
 
             span {
                 font-weight: bold;
@@ -154,7 +168,6 @@ div#media_viewer {
         }
 
         p.close {
-            padding-left: 1rem;
             flex-shrink: 0;
 
             a {
@@ -164,6 +177,7 @@ div#media_viewer {
         }
     }
 
+    div.audio_container,
     div.image_container,
     div.video_container,
     div.no_preview {
@@ -177,11 +191,14 @@ div#media_viewer {
         background-repeat: no-repeat;
     }
 
+    div.audio_container,
     div.video_container {
         display: flex;
         align-items: center;
         flex-direction: column;
+        justify-content: center;
 
+        audio,
         video {
             max-width: 100%;
         }

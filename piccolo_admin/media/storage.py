@@ -23,7 +23,6 @@ if t.TYPE_CHECKING:
 
 
 AUDIO_EXTENSIONS = (
-    "aiff",
     "mp3",
     "wav",
 )
