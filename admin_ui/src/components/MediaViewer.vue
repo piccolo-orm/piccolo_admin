@@ -20,8 +20,9 @@
             <div
                 v-if="isImage(mediaViewerConfig.fileKey)"
                 class="image_container"
-                v-bind:style="{ backgroundImage: `url(${fileURL})` }"
-            ></div>
+            >
+                <img :src="fileURL" />
+            </div>
 
             <div
                 v-else-if="isVideo(mediaViewerConfig.fileKey)"
@@ -205,12 +206,6 @@ div#media_viewer {
         flex-shrink: 1;
     }
 
-    div.image_container {
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-    }
-
     div.pdf_container {
         iframe {
             border: none;
@@ -219,16 +214,31 @@ div#media_viewer {
         }
     }
 
-    div.audio_container,
-    div.video_container {
+    div.audio_container {
         display: flex;
         align-items: center;
         flex-direction: column;
         justify-content: center;
 
-        audio,
-        video {
+        audio {
             max-width: 100%;
+        }
+    }
+
+    div.image_container,
+    div.video_container {
+        position: relative;
+
+        video,
+        img {
+            max-height: 100%;
+            max-width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto auto;
         }
     }
 
