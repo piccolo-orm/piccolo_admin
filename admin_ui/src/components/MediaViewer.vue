@@ -56,12 +56,21 @@
                 </p>
             </div>
         </template>
-        <p v-else>Loading ...</p>
+
+        <div v-else class="loading_container">
+            <p>
+                <font-awesome-icon
+                    icon="circle-notch"
+                    class="fa-spin"
+                ></font-awesome-icon
+                >Loading ...
+            </p>
+        </div>
 
         <!-- Bottom bar -->
 
         <div class="bottom_bar">
-            <p>
+            <p v-if="fileURL">
                 <a class="button" :href="fileURL" download
                     ><font-awesome-icon icon="download"></font-awesome-icon>
                     Download</a
@@ -201,7 +210,8 @@ div#media_viewer {
     div.image_container,
     div.pdf_container,
     div.video_container,
-    div.no_preview {
+    div.no_preview,
+    div.loading_container {
         flex-grow: 1;
         flex-shrink: 1;
     }
@@ -222,6 +232,22 @@ div#media_viewer {
 
         audio {
             max-width: 100%;
+        }
+    }
+
+    div.loading_container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        p {
+            text-align: center;
+
+            svg {
+                padding: 0;
+                margin-right: 0.5rem;
+            }
         }
     }
 
