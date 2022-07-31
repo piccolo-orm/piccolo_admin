@@ -41,6 +41,13 @@
                 </audio>
             </div>
 
+            <div
+                v-else-if="isPDF(mediaViewerConfig.fileKey)"
+                class="pdf_container"
+            >
+                <iframe :src="fileURL"></iframe>
+            </div>
+
             <div class="no_preview" v-else>
                 <p>
                     <font-awesome-icon icon="file"></font-awesome-icon> Unable
@@ -91,17 +98,22 @@ export default Vue.extend({
     methods: {
         isAudio(fileKey: string): boolean {
             const components = fileKey.split(".")
-            const extension = components[components.length - 1]
+            const extension = components[components.length - 1].toLowerCase()
             return AUDIO_EXTENSIONS.indexOf(extension) != -1
         },
         isImage(fileKey: string): boolean {
             const components = fileKey.split(".")
-            const extension = components[components.length - 1]
+            const extension = components[components.length - 1].toLowerCase()
             return IMAGE_EXTENSIONS.indexOf(extension) != -1
+        },
+        isPDF(fileKey: string): boolean {
+            const components = fileKey.split(".")
+            const extension = components[components.length - 1].toLowerCase()
+            return extension.toLowerCase() == "pdf"
         },
         isVideo(fileKey: string): boolean {
             const components = fileKey.split(".")
-            const extension = components[components.length - 1]
+            const extension = components[components.length - 1].toLowerCase()
             return VIDEO_EXTENSIONS.indexOf(extension) != -1
         },
         async generateFileURL({
@@ -151,7 +163,7 @@ div#media_viewer {
         flex-shrink: 0;
         display: flex;
         flex-direction: row;
-        padding: 1rem;
+        padding: 0.5rem;
         align-items: center;
 
         p {
@@ -186,6 +198,7 @@ div#media_viewer {
 
     div.audio_container,
     div.image_container,
+    div.pdf_container,
     div.video_container,
     div.no_preview {
         flex-grow: 1;
@@ -196,6 +209,14 @@ div#media_viewer {
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
+    }
+
+    div.pdf_container {
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
     }
 
     div.audio_container,
