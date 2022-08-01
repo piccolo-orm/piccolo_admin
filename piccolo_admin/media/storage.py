@@ -114,6 +114,11 @@ class MediaStorage(metaclass=abc.ABCMeta):
         if file_name.startswith("."):
             raise ValueError("File names must not start with a period.")
 
+        # Don't allow double dots in the file name, in case it allows a file to
+        # be written to a parent folder.
+        if ".." in file_name:
+            raise ValueError("File names must not contain '..'.")
+
         if self.allowed_characters:
             # Having some restriction on the allowed characters is important,
             # in case there are things like null bytes in there.

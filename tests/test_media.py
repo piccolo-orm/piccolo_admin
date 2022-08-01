@@ -67,6 +67,18 @@ class TestGenerateFileID(TestCase):
             str(manager.exception), "File names must not start with a period."
         )
 
+    def test_double_period(self):
+        """
+        A file_name containing a double period shoudn't be allowed, as it
+        could potentially be used to traverse the file system.
+        """
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(file_name="test/../file.jpeg")
+
+        self.assertEqual(
+            str(manager.exception), "File names must not contain '..'."
+        )
+
     def test_empty_file_name(self):
         with self.assertRaises(ValueError) as manager:
             self.storage.generate_file_id(file_name="")
