@@ -330,7 +330,7 @@ class TestUpload(TestCase):
     def tearDown(self):
         drop_db_tables_sync(SessionsBase, BaseUser)
 
-    @patch("piccolo_admin.media.storage.uuid")
+    @patch("piccolo_admin.media.base.uuid")
     def test_image_upload(self, uuid_module: MagicMock):
         uuid_value = uuid.uuid4()
         uuid_module.uuid4.return_value = uuid_value

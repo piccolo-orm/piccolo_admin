@@ -5,11 +5,11 @@ import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from piccolo_admin.media.storage import LocalMediaStorage
+from piccolo_admin.media.local import LocalMediaStorage
 
 
 class TestLocalMediaStorage(TestCase):
-    @patch("piccolo_admin.media.storage.uuid")
+    @patch("piccolo_admin.media.base.uuid")
     def test_store_file(self, uuid_module: MagicMock):
         """
         Make sure we can store files, and retrieve them.
@@ -103,7 +103,7 @@ class TestGenerateFileID(TestCase):
             str(manager.exception), "'@' is not allowed in the filename."
         )
 
-    @patch("piccolo_admin.media.storage.uuid")
+    @patch("piccolo_admin.media.base.uuid")
     def test_long_file_name(self, uuid_module: MagicMock):
         """
         Make sure that really long file names are truncated.

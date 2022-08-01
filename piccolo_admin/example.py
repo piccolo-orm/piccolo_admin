@@ -42,7 +42,7 @@ from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
-from piccolo_admin.media.storage import LocalMediaStorage
+from piccolo_admin.media.local import LocalMediaStorage
 
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
 

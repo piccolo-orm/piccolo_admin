@@ -40,7 +40,8 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from .media.storage import LocalMediaStorage, MediaStorage
+from .media.base import MediaStorage
+from .media.local import LocalMediaStorage
 from .translations.data import TRANSLATIONS
 from .translations.models import (
     Translation,
