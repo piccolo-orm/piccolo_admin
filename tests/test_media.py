@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 import uuid
 from unittest import TestCase
@@ -17,7 +18,12 @@ class TestLocalMediaStorage(TestCase):
             "fd0125c7-8777-4976-83c1-81605d5ab155"
         )
 
-        media_path = tempfile.gettempdir()
+        media_path = os.path.join(tempfile.gettempdir(), "piccolo-admin-media")
+
+        if os.path.exists(media_path):
+            shutil.rmtree(media_path)
+
+        os.mkdir(media_path)
 
         storage = LocalMediaStorage(media_path=media_path, media_url="/media/")
 
