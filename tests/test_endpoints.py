@@ -350,7 +350,7 @@ class TestUpload(TestCase):
         )
 
         test_file_path = os.path.join(
-            os.path.dirname(__file__), "test_files/bulb.jpg"
+            os.path.dirname(__file__), "media/test_files/bulb.jpg"
         )
 
         with open(test_file_path, "rb") as test_file:
