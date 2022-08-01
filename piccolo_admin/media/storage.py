@@ -22,6 +22,9 @@ if t.TYPE_CHECKING:
     from concurrent.futures._base import Executor
 
 
+logger = logging.getLogger(__file__)
+
+
 AUDIO_EXTENSIONS = (
     "mp3",
     "wav",
@@ -109,7 +112,11 @@ class MediaStorage(metaclass=abc.ABCMeta):
             # case.
             raise ValueError("The file name can't be empty.")
 
-        # Don't allow the file to begin with a dot, otherwise it will be a
+        # If the file_name includes the entire path (e.g. /foo/bar.jpg) - we
+        # just want bar.jpg.
+        file_name = pathlib.Path(file_name).name
+
+        # Don't allow the file name to begin with a dot, otherwise it will be a
         # hidden file on Unix.
         if file_name.startswith("."):
             raise ValueError("File names must not start with a period.")
@@ -174,7 +181,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     async def generate_file_url(
-        self, file_id: str, user: t.Optional[BaseUser] = None
+        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
     ):
         """
         This retrieves an absolute URL for the file. It might be a signed URL,
@@ -182,6 +189,10 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
         :param file_id:
             Get the URL for a file with this file_id.
+        :param root_url:
+            The URL the media is usually served from. The sub class might
+            ignore this argument entirely, if it's fetching the data from
+            an external source like S3.
         :param user:
             The Piccolo ``BaseUser`` who requested this.
         """
@@ -192,7 +203,6 @@ class LocalMediaStorage(MediaStorage):
     def __init__(
         self,
         media_path: str,
-        media_url: str,
         executor: t.Optional[Executor] = None,
         allowed_extensions: t.Optional[t.Sequence[str]] = ALLOWED_EXTENSIONS,
         allowed_characters: t.Optional[t.Sequence[str]] = ALLOWED_CHARACTERS,
@@ -206,9 +216,6 @@ class LocalMediaStorage(MediaStorage):
         :param media_path:
             This is the local folder where the media files will be stored. It
             should be an absolute path. For example, ``'/srv/piccolo-media/'``.
-        :param media_url:
-            This is the URL where media is served from. For example:
-            ``'/media/'``.
         :param executor:
             An executor, which file save operations are run in, to avoid
             blocking the event loop. If not specified, we use a sensibly
@@ -224,9 +231,11 @@ class LocalMediaStorage(MediaStorage):
             given these file permissions.
         """  # noqa: E501
         self.media_path = media_path
-        self.media_url = media_url
-        self.exector = executor or ThreadPoolExecutor(max_workers=10)
+        self.executor = executor or ThreadPoolExecutor(max_workers=10)
         self.file_permissions = file_permissions
+
+        if not os.path.exists(media_path):
+            os.mkdir(self.media_path)
 
         super().__init__(
             allowed_extensions=allowed_extensions,
@@ -247,14 +256,20 @@ class LocalMediaStorage(MediaStorage):
 
         def save():
             path = os.path.join(self.media_path, file_id)
-            with open(
-                os.path.join(self.media_path, file_id), "wb"
-            ) as new_file:
+
+            if os.path.exists(path):
+                logger.error(
+                    "A file name clash has occurred - the chances are very "
+                    "low. Could be malicious, or a serious bug."
+                )
+                raise IOError("Unable to save the file")
+
+            with open(path, "wb") as new_file:
                 shutil.copyfileobj(file, new_file)
                 if file_permissions is not None:
                     os.chmod(path, 0o640)
 
-        await loop.run_in_executor(self.exector, save)
+        await loop.run_in_executor(self.executor, save)
 
         return file_id
 
@@ -269,17 +284,21 @@ class LocalMediaStorage(MediaStorage):
         )
 
     async def generate_file_url(
-        self, file_id: str, user: t.Optional[BaseUser] = None
+        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         This retrieves an absolute URL for the file.
         """
-        return "/".join((self.media_url.rstrip("/"), file_id))
+        return "/".join((root_url.rstrip("/"), file_id))
 
     def generate_file_url_sync(
-        self, file_id: str, user: t.Optional[BaseUser] = None
+        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         A sync wrapper around :meth:`generate_file_url`.
         """
-        return run_sync(self.generate_file_url(file_id=file_id, user=user))
+        return run_sync(
+            self.generate_file_url(
+                file_id=file_id, root_url=root_url, user=user
+            )
+        )

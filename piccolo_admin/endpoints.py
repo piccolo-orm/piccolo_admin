@@ -40,7 +40,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from .media.storage import MediaStorage
+from .media.storage import LocalMediaStorage, MediaStorage
 from .translations.data import TRANSLATIONS
 from .translations.models import (
     Translation,
@@ -50,7 +50,6 @@ from .translations.models import (
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
-MEDIA_PATH = os.path.join(os.path.dirname(__file__), "example_media")
 
 
 class UserResponseModel(BaseModel):
@@ -479,12 +478,19 @@ class AdminRouter(FastAPI):
             response_model=GenerateFileURLResponseModel,
         )
 
-        # TODO - this is problematic ... mount a media folder by default?
-        # Allow the user to customise the location???
-        private_app.mount(
-            path="/media-files/",
-            app=StaticFiles(directory=MEDIA_PATH),
-        )
+        for table_config in self.table_configs:
+            if table_config.media_columns:
+                for (
+                    column,
+                    media_storage,
+                ) in table_config.media_columns.items():
+                    if isinstance(media_storage, LocalMediaStorage):
+                        private_app.mount(
+                            path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",  # noqa: E501
+                            app=StaticFiles(
+                                directory=media_storage.media_path
+                            ),
+                        )
 
         #######################################################################
 
@@ -653,7 +659,11 @@ class AdminRouter(FastAPI):
             table_name=model.table_name, column_name=model.column_name
         )
         file_url = await media_storage.generate_file_url(
-            file_id=model.file_key, user=request.user.user
+            file_id=model.file_key,
+            root_url=(
+                f"./api/media-files/{model.table_name}/{model.column_name}/"
+            ),
+            user=request.user.user,
         )
         return GenerateFileURLResponseModel(file_url=file_url)
 

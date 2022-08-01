@@ -44,6 +44,8 @@ from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 from piccolo_admin.media.storage import LocalMediaStorage
 
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
+
 
 class Sessions(SessionsBase):
     pass
@@ -183,12 +185,6 @@ async def booking_endpoint(request, data):
     return "Booking complete"
 
 
-MEDIA_STORAGE = LocalMediaStorage(
-    media_path=os.path.join(os.path.dirname(__file__), "example_media"),
-    media_url="/api/media-files/",
-)
-
-
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
     Movie,
@@ -219,8 +215,12 @@ movie_config = TableConfig(
     ],
     rich_text_columns=[Movie.description],
     media_columns={
-        Movie.poster: MEDIA_STORAGE,
-        Movie.screenshots: MEDIA_STORAGE,
+        Movie.poster: LocalMediaStorage(
+            media_path=os.path.join(MEDIA_ROOT, "poster"),
+        ),
+        Movie.screenshots: LocalMediaStorage(
+            media_path=os.path.join(MEDIA_ROOT, "screenshots"),
+        ),
     },
 )
 

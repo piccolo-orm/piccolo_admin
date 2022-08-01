@@ -18,13 +18,8 @@ from piccolo_api.crud.hooks import Hook, HookType
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import (
-    MEDIA_PATH,
-    TableConfig,
-    create_admin,
-    get_all_tables,
-)
-from piccolo_admin.example import APP
+from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
+from piccolo_admin.example import APP, MEDIA_ROOT
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -337,9 +332,8 @@ class TestUpload(TestCase):
 
     @patch("piccolo_admin.media.storage.uuid")
     def test_image_upload(self, uuid_module: MagicMock):
-        uuid_module.uuid4.return_value = uuid.UUID(
-            "fd0125c7-8777-4976-83c1-81605d5ab155"
-        )
+        uuid_value = uuid.uuid4()
+        uuid_module.uuid4.return_value = uuid_value
 
         client = TestClient(APP)
 
@@ -385,12 +379,12 @@ class TestUpload(TestCase):
         self.assertDictEqual(
             response.json(),
             {
-                "file_url": "/api/media-files/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"  # noqa: E501
+                "file_url": f"./api/media-files/movie/poster/bulb-{uuid_value}.jpg"  # noqa: E501
             },
         )
 
         # Remove the test file from the media directory
-        Path(MEDIA_PATH, file_key).unlink()
+        Path(MEDIA_ROOT, "poster", file_key).unlink()
 
 
 class TestTables(TestCase):

@@ -25,7 +25,7 @@ class TestLocalMediaStorage(TestCase):
 
         os.mkdir(media_path)
 
-        storage = LocalMediaStorage(media_path=media_path, media_url="/media/")
+        storage = LocalMediaStorage(media_path=media_path)
 
         with open(
             os.path.join(os.path.dirname(__file__), "test_files/bulb.jpg"),
@@ -46,7 +46,7 @@ class TestLocalMediaStorage(TestCase):
             )
 
             # Retrieve the URL for the file
-            url = storage.generate_file_url_sync(file_id)
+            url = storage.generate_file_url_sync(file_id, root_url="/media/")
             self.assertEqual(
                 url, "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"
             )
@@ -55,9 +55,7 @@ class TestLocalMediaStorage(TestCase):
 class TestGenerateFileID(TestCase):
     def setUp(self) -> None:
         self.media_path = tempfile.gettempdir()
-        self.storage = LocalMediaStorage(
-            media_path=self.media_path, media_url="/media/"
-        )
+        self.storage = LocalMediaStorage(media_path=self.media_path)
 
     def test_starts_with_period(self):
         with self.assertRaises(ValueError) as manager:
@@ -69,11 +67,11 @@ class TestGenerateFileID(TestCase):
 
     def test_double_period(self):
         """
-        A file_name containing a double period shoudn't be allowed, as it
+        A file_name containing a double period shouldn't be allowed, as it
         could potentially be used to traverse the file system.
         """
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name="test/../file.jpeg")
+            self.storage.generate_file_id(file_name="test..file.jpeg")
 
         self.assertEqual(
             str(manager.exception), "File names must not contain '..'."
