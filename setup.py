@@ -21,7 +21,7 @@ with open(os.path.join(directory, "README.md")) as f:
     LONG_DESCRIPTION = f.read()
 
 
-EXTRAS = ["s3"]
+EXTRAS = ["faker", "s3"]
 
 
 def parse_requirement(req_path: str) -> t.List[str]:
@@ -69,7 +69,7 @@ setup(
     url="https://github.com/piccolo-orm/piccolo_admin",
     packages=find_packages(exclude=("tests",)),
     install_requires=REQUIREMENTS,
-    extras_require={"faker": ["faker==6.5.0"]},
+    extras_require=extras_require(),
     license="MIT",
     include_package_data=True,
     entry_points={
