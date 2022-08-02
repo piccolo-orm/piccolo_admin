@@ -3,13 +3,16 @@ import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
+from piccolo_admin.example import Movie
 from piccolo_admin.media.local import LocalMediaStorage
 
 
 class TestGenerateFileID(TestCase):
     def setUp(self) -> None:
         self.media_path = tempfile.gettempdir()
-        self.storage = LocalMediaStorage(media_path=self.media_path)
+        self.storage = LocalMediaStorage(
+            column=Movie.poster, media_path=self.media_path
+        )
 
     def test_starts_with_period(self):
         with self.assertRaises(ValueError) as manager:

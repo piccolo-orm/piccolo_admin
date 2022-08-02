@@ -9,6 +9,7 @@ import typing as t
 from concurrent.futures import ThreadPoolExecutor
 
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.column_types import Array, Text, Varchar
 from piccolo.utils.sync import run_sync
 
 from .base import ALLOWED_CHARACTERS, ALLOWED_EXTENSIONS, MediaStorage
@@ -23,6 +24,7 @@ logger = logging.getLogger(__file__)
 class LocalMediaStorage(MediaStorage):
     def __init__(
         self,
+        column: t.Union[Text, Varchar, Array],
         media_path: str,
         executor: t.Optional[Executor] = None,
         allowed_extensions: t.Optional[t.Sequence[str]] = ALLOWED_EXTENSIONS,
@@ -34,6 +36,8 @@ class LocalMediaStorage(MediaStorage):
         applications, where you're happy with the media files being stored
         on a single server.
 
+        :param column:
+            The Piccolo ``Column`` which the storage is for.
         :param media_path:
             This is the local folder where the media files will be stored. It
             should be an absolute path. For example, ``'/srv/piccolo-media/'``.
@@ -59,6 +63,7 @@ class LocalMediaStorage(MediaStorage):
             os.mkdir(self.media_path)
 
         super().__init__(
+            column=column,
             allowed_extensions=allowed_extensions,
             allowed_characters=allowed_characters,
         )

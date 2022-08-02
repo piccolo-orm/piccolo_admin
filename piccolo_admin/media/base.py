@@ -8,6 +8,7 @@ import typing as t
 import uuid
 
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.column_types import Array, Text, Varchar
 
 logger = logging.getLogger(__file__)
 
@@ -68,9 +69,16 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
     def __init__(
         self,
+        column: t.Union[Text, Varchar, Array],
         allowed_extensions: t.Optional[t.Sequence[str]] = ALLOWED_EXTENSIONS,
         allowed_characters: t.Optional[t.Sequence[str]] = ALLOWED_CHARACTERS,
     ):
+        if not isinstance(column, (Varchar, Text, Array)):
+            raise ValueError(
+                "The column must be a `Varchar`, `Text`, or `Array`."
+            )
+
+        self.column = column
         self.allowed_extensions = (
             [i.lower() for i in allowed_extensions]
             if allowed_extensions

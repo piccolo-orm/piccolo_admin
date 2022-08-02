@@ -14,7 +14,6 @@ from functools import partial
 from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
-from piccolo.columns.column_types import Array, Text, Varchar
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
@@ -108,7 +107,7 @@ class TableConfig:
         :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
         Admin under the hood. It allows you to run custom logic when a row
         is modified.
-    :param media_columns:
+    :param media_storage:
         These columns will be used to store media. We don't directly store the
         media in the database, but instead store a string, which is a unique
         identifier, and can be used to retrieve a URL for accessing the file.
@@ -124,7 +123,7 @@ class TableConfig:
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
-    media_columns: t.Optional[t.Dict[Column, MediaStorage]] = None
+    media_storage: t.Optional[t.Sequence[MediaStorage]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -138,13 +137,12 @@ class TableConfig:
                 "Only specify `visible_filters` or `exclude_visible_filters`."
             )
 
-        if self.media_columns:
-            for column in self.media_columns.keys():
-                if not isinstance(column, (Varchar, Text, Array)):
-                    raise ValueError(
-                        "A column in `media_columns` is not a `Varchar`,"
-                        "`Text`, or `Array`."
-                    )
+        # Create a mapping for faster lookups
+        self.media_columns = (
+            {i.column: i for i in self.media_storage}
+            if self.media_storage
+            else None
+        )
 
     def _get_columns(
         self,

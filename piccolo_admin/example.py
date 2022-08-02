@@ -59,7 +59,7 @@ try:
         ENDPOINT_URL=s3.cloudprovider.com
         REGION_NAME=my-region
 
-    The ``Movie.poster`` column will then use S3 for storage.
+    The ``Director.photo`` column will then use S3 for storage.
 
     """
 
@@ -125,6 +125,7 @@ class Director(Table, help_text="The main director for a movie."):
         ),
     )
     gender = Varchar(length=1, choices=Gender)
+    photo = Varchar()
 
     @classmethod
     def get_readable(cls):
@@ -270,19 +271,16 @@ movie_config = TableConfig(
         Movie.poster,
     ],
     rich_text_columns=[Movie.description],
-    media_columns={
-        Movie.poster: S3MediaStorage(
-            bucket_name=t.cast(str, BUCKET_NAME),
-            connection_kwargs=S3_CONFIG,
-        )
-        if USE_S3
-        else LocalMediaStorage(
+    media_storage=(
+        LocalMediaStorage(
+            column=Movie.poster,
             media_path=os.path.join(MEDIA_ROOT, "poster"),
         ),
-        Movie.screenshots: LocalMediaStorage(
+        LocalMediaStorage(
+            column=Movie.screenshots,
             media_path=os.path.join(MEDIA_ROOT, "screenshots"),
         ),
-    },
+    ),
 )
 
 director_config = TableConfig(
@@ -291,7 +289,20 @@ director_config = TableConfig(
         Director._meta.primary_key,
         Director.name,
         Director.gender,
+        Director.photo,
     ],
+    media_storage=(
+        S3MediaStorage(
+            column=Director.photo,
+            bucket_name=t.cast(str, BUCKET_NAME),
+            connection_kwargs=S3_CONFIG,
+        )
+        if USE_S3
+        else LocalMediaStorage(
+            column=Director.photo,
+            media_path=os.path.join(MEDIA_ROOT, "photo"),
+        ),
+    ),
 )
 
 APP = create_admin(

@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import boto3
 from moto import mock_s3
 
+from piccolo_admin.example import Movie
 from piccolo_admin.media.s3 import S3MediaStorage
 
 
@@ -33,7 +34,9 @@ class TestS3MediaStorage(TestCase):
             get_client.return_value = boto3.client("s3", **connection_kwargs)
 
             storage = S3MediaStorage(
-                bucket_name="posters", connection_kwargs=connection_kwargs
+                column=Movie.poster,
+                bucket_name="posters",
+                connection_kwargs=connection_kwargs,
             )
 
             with open(

@@ -7,6 +7,7 @@ import typing as t
 from concurrent.futures import ThreadPoolExecutor
 
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns.column_types import Array, Text, Varchar
 
 from .base import ALLOWED_CHARACTERS, ALLOWED_EXTENSIONS, MediaStorage
 
@@ -17,6 +18,7 @@ if t.TYPE_CHECKING:
 class S3MediaStorage(MediaStorage):
     def __init__(
         self,
+        column: t.Union[Text, Varchar, Array],
         bucket_name: str,
         connection_kwargs: t.Dict[str, t.Any] = None,
         signed_url_expiry: int = 3600,
@@ -77,6 +79,7 @@ class S3MediaStorage(MediaStorage):
         self.executor = executor or ThreadPoolExecutor(max_workers=10)
 
         super().__init__(
+            column=column,
             allowed_extensions=allowed_extensions,
             allowed_characters=allowed_characters,
         )

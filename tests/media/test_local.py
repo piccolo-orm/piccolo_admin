@@ -5,6 +5,7 @@ import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
+from piccolo_admin.example import Movie
 from piccolo_admin.media.local import LocalMediaStorage
 
 
@@ -25,7 +26,7 @@ class TestLocalMediaStorage(TestCase):
 
         os.mkdir(media_path)
 
-        storage = LocalMediaStorage(media_path=media_path)
+        storage = LocalMediaStorage(column=Movie.poster, media_path=media_path)
 
         with open(
             os.path.join(os.path.dirname(__file__), "test_files/bulb.jpg"),
