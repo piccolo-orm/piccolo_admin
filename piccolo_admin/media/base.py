@@ -159,6 +159,8 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
         return file_id
 
+    ###########################################################################
+
     @abc.abstractmethod
     async def store_file(
         self, file_name: str, file: t.IO, user: t.Optional[BaseUser] = None
@@ -173,7 +175,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
             The Piccolo ``BaseUser`` who requested this.
 
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     async def generate_file_url(
@@ -192,36 +194,34 @@ class MediaStorage(metaclass=abc.ABCMeta):
         :param user:
             The Piccolo ``BaseUser`` who requested this.
         """
-        raise NotImplementedError
-
-    ###########################################################################
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     async def get_file(self, file_key: str) -> t.Optional[t.IO]:
         """
         Returns the file object matching the ``file_key``.
         """
-        pass
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     async def delete_file(self, file_key: str):
         """
         Deletes the file object matching the ``file_key``.
         """
-        pass
-
-    ###########################################################################
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     async def bulk_delete_files(self, file_keys: t.List[str]):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     async def get_file_keys(self) -> t.List[str]:
         """
         Returns the file key for each file we have stored.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
+
+    ###########################################################################
 
     async def get_file_keys_from_db(self) -> t.List[str]:
         """
