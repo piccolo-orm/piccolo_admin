@@ -43,6 +43,59 @@ from pydantic import BaseModel, validator
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
 from piccolo_admin.media.local import LocalMediaStorage
+from piccolo_admin.media.s3 import S3MediaStorage
+
+try:
+    """
+    If you want to try out S3, create a .env file in this folder, with the
+    following contents (inserting your S3 credentials where appropriate):
+
+        AWS_ACCESS_KEY_ID=abc123
+        AWS_SECRET_ACCESS_KEY=abc123
+        BUCKET_NAME=bucket123
+
+    These values can also be added if required:
+
+        ENDPOINT_URL=s3.cloudprovider.com
+        REGION_NAME=my-region
+
+    """
+
+    import dotenv
+
+    dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    BUCKET_NAME = os.environ.get("BUCKET_NAME")
+
+    USE_S3 = all(
+        (
+            AWS_SECRET_ACCESS_KEY,
+            AWS_SECRET_ACCESS_KEY,
+            BUCKET_NAME,
+        )
+    )
+
+    if USE_S3:
+        print("Using S3")
+
+        S3_CONFIG = {
+            "aws_access_key_id": AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
+        }
+
+        ENDPOINT_URL = os.environ.get("ENDPOINT_URL")
+        if ENDPOINT_URL:
+            S3_CONFIG["endpoint_url"] = ENDPOINT_URL
+
+        REGION_NAME = os.environ.get("REGION_NAME")
+        if REGION_NAME:
+            S3_CONFIG["region_name"] = REGION_NAME
+
+except ImportError:
+    USE_S3 = False
+
 
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
 
@@ -193,6 +246,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
 )
 
+
 movie_config = TableConfig(
     table_class=Movie,
     visible_columns=[
@@ -215,7 +269,12 @@ movie_config = TableConfig(
     ],
     rich_text_columns=[Movie.description],
     media_columns={
-        Movie.poster: LocalMediaStorage(
+        Movie.poster: S3MediaStorage(
+            bucket_name=t.cast(str, BUCKET_NAME),
+            connection_kwargs=S3_CONFIG,
+        )
+        if USE_S3
+        else LocalMediaStorage(
             media_path=os.path.join(MEDIA_ROOT, "poster"),
         ),
         Movie.screenshots: LocalMediaStorage(
