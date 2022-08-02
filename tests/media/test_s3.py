@@ -72,3 +72,16 @@ class TestS3MediaStorage(TestCase):
                 )
                 self.assertTrue("Signature" in params_dict)
                 self.assertTrue("Expires" in params_dict)
+
+                # Get the file
+                file = asyncio.run(storage.get_file(file_key=file_key))
+                assert file is not None
+                self.assertEqual(
+                    file.read(),
+                    # We need to reopen the test file, in case it's closed:
+                    open(test_file.name, "rb").read(),
+                )
+
+                # List file keys
+                file_keys = asyncio.run(storage.get_file_keys())
+                self.assertListEqual(file_keys, [file_key])

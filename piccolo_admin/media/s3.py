@@ -250,10 +250,10 @@ class S3MediaStorage(MediaStorage):
                 Bucket=self.bucket_name, **extra_kwargs
             )
 
-            contents = response["Contents"]
+            contents = response.get("Contents")
 
             if contents:
-                for obj in response["Contents"]:
+                for obj in contents:
                     keys.append(obj["Key"])
 
                 start_after = keys[-1]
