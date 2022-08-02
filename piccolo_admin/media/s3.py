@@ -221,7 +221,8 @@ class S3MediaStorage(MediaStorage):
                 )
             ]
             if not batch:
-                break
+                # https://github.com/nedbat/coveragepy/issues/772
+                break  # pragma: no cover
 
             s3_client.delete_objects(
                 Bucket=self.bucket_name,
@@ -258,7 +259,8 @@ class S3MediaStorage(MediaStorage):
 
                 start_after = keys[-1]
             else:
-                break
+                # https://github.com/nedbat/coveragepy/issues/772
+                break  # pragma: no cover
 
         return keys
 

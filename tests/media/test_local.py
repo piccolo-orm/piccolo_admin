@@ -87,22 +87,15 @@ class TestLocalMediaStorage(TestCase):
             asyncio.run(storage.delete_file(file_key=file_key))
             self.assertEqual(os.listdir(storage.media_path), [])
 
-    def test_bulk_delete(self):
-        media_path = os.path.join(tempfile.gettempdir(), "piccolo-admin-media")
+            # Test bulk deletion
+            for file_name in ("file_1.txt", "file_2.txt", "file_3.txt"):
+                with open(os.path.join(media_path, file_name), "w") as f:
+                    f.write("test")
 
-        if os.path.exists(media_path):
-            shutil.rmtree(media_path)
+            asyncio.run(
+                storage.bulk_delete_files(
+                    file_keys=["file_1.txt", "file_2.txt"]
+                )
+            )
 
-        os.mkdir(media_path)
-
-        for file_name in ("file_1.txt", "file_2.txt", "file_3.txt"):
-            with open(os.path.join(media_path, file_name), "w") as f:
-                f.write("test")
-
-        storage = LocalMediaStorage(column=Movie.poster, media_path=media_path)
-
-        asyncio.run(
-            storage.bulk_delete_files(file_keys=["file_1.txt", "file_2.txt"])
-        )
-
-        self.assertListEqual(os.listdir(media_path), ["file_3.txt"])
+            self.assertListEqual(os.listdir(media_path), ["file_3.txt"])

@@ -1,4 +1,5 @@
 import asyncio
+import io
 import os
 import uuid
 from unittest import TestCase
@@ -90,3 +91,18 @@ class TestS3MediaStorage(TestCase):
                 asyncio.run(storage.delete_file(file_key=file_key))
                 file_keys = asyncio.run(storage.get_file_keys())
                 self.assertListEqual(file_keys, [])
+
+                # Test bulk deletion
+                file_keys = []
+                for file_name in ("file_1.txt", "file_2.txt", "file_3.txt"):
+                    file = io.BytesIO(b"test")
+                    file_key = asyncio.run(
+                        storage.store_file(file_name=file_name, file=file)
+                    )
+                    file_keys.append(file_key)
+
+                asyncio.run(storage.bulk_delete_files(file_keys=file_keys[:2]))
+
+                self.assertListEqual(
+                    asyncio.run(storage.get_file_keys()), file_keys[2:]
+                )
