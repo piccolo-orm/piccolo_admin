@@ -1,3 +1,4 @@
+import asyncio
 import os
 import uuid
 from unittest import TestCase
@@ -44,17 +45,19 @@ class TestS3MediaStorage(TestCase):
                 "rb",
             ) as test_file:
                 # Store the file
-                file_id = storage.store_file_sync(
-                    file_name="bulb.jpg", file=test_file
+                file_key = asyncio.run(
+                    storage.store_file(file_name="bulb.jpg", file=test_file)
                 )
 
                 # Retrieve the URL for the file
-                url = storage.generate_file_url_sync(file_id, root_url="")
+                url = asyncio.run(
+                    storage.generate_file_url(file_key, root_url="")
+                )
 
                 path, params = url.split("?", 1)
 
                 self.assertEqual(
-                    path, f"https://posters.s3.amazonaws.com/{file_id}"
+                    path, f"https://posters.s3.amazonaws.com/{file_key}"
                 )
 
                 # We're parsing a string like this:

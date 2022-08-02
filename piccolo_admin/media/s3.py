@@ -65,7 +65,7 @@ class S3MediaStorage(MediaStorage):
 
         try:
             import boto3  # noqa
-        except ImportError:
+        except ImportError:  # pragma: no cover
             sys.exit(
                 "Please install boto3 to use this feature "
                 "`pip install 'piccolo_admin[s3]'`"
@@ -84,7 +84,7 @@ class S3MediaStorage(MediaStorage):
             allowed_characters=allowed_characters,
         )
 
-    def get_client(self):
+    def get_client(self):  # pragma: no cover
         """
         Returns an S3 clent.
         """
