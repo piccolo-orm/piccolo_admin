@@ -54,6 +54,7 @@ jobs:
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements/requirements.txt
+                  pip install -r requirements/extra/s3.txt
                   pip install -r requirements/test-requirements.txt
             - name: Test with pytest, SQLite
               run: ./scripts/run-tests.sh
