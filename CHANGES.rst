@@ -1,6 +1,34 @@
 Changes
 =======
 
+0.28.0
+------
+
+Added Ukrainian translations (courtesy @ruslan-rv-ua).
+
+-------------------------------------------------------------------------------
+
+0.27.0
+------
+
+Added Russian translations (courtesy @northpowered).
+
+-------------------------------------------------------------------------------
+
+0.26.1
+------
+
+Modified the release process, so it works on GitHub (courtesy @olliglorioso).
+
+-------------------------------------------------------------------------------
+
+0.26.0
+------
+
+Added Finnish translations (courtesy @olliglorioso).
+
+-------------------------------------------------------------------------------
+
 0.25.0
 ------
 
