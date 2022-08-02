@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import asyncio
 import logging
 import pathlib
 import string
@@ -192,3 +193,86 @@ class MediaStorage(metaclass=abc.ABCMeta):
             The Piccolo ``BaseUser`` who requested this.
         """
         raise NotImplementedError
+
+    ###########################################################################
+
+    @abc.abstractmethod
+    async def get_file(self, file_key: str) -> t.Optional[t.IO]:
+        """
+        Returns the file object matching the ``file_key``.
+        """
+        pass
+
+    @abc.abstractmethod
+    async def delete_file(self, file_key: str):
+        """
+        Deletes the file object matching the ``file_key``.
+        """
+        pass
+
+    ###########################################################################
+
+    @abc.abstractmethod
+    async def bulk_delete_files(self, file_keys: t.List[str]):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def get_file_keys(self) -> t.List[str]:
+        """
+        Returns the file key for each file we have stored.
+        """
+        raise NotImplementedError
+
+    async def get_file_keys_from_db(self) -> t.List[str]:
+        """
+        Returns the file key for each file we have in the database.
+        """
+        table = self.column._meta.table
+        return await table.select(self.column).output(as_list=True)
+
+    async def get_unused_file_keys(self) -> t.List[str]:
+        """
+        Compares the file keys we have stored, vs what's in the database.
+        """
+        db_keys, disk_keys = await asyncio.gather(
+            self.get_file_keys_from_db(), self.get_file_keys()
+        )
+        return list(set(disk_keys) - set(db_keys))
+
+    async def delete_unused_files(
+        self, number_shown: int = 10, auto: bool = False
+    ):
+        """
+        Over time, you will end up with files stored which are no longer
+        needed. For example, if a row is deleted in the database, which
+        referenced a stored file.
+
+        By periodically running this method, it will clean up these unused
+        files.
+
+        It's important that each column uses its own folder for storing files.
+        If multiple columns store data in the same folder, then we could
+        delete some files which are needed by another column.
+
+        :param number_shown:
+            This number of unused file names are printed out, so you can be
+            sure nothing strange is going on.
+        :param auto:
+            If ``True``, no confirmation is required before deletion takes
+            place.
+
+        """
+        unused_file_keys = await self.get_unused_file_keys()
+
+        number_unused = len(unused_file_keys)
+
+        print(f"There are {number_unused} unused files.")
+
+        if number_unused:
+            print("Here are some examples:")
+            print("\n".join(i for i in unused_file_keys[:number_shown]))
+
+            if auto or input(
+                "Would you like to delete them? Enter y to confirm" == "y"
+            ):
+                await self.bulk_delete_files(unused_file_keys)

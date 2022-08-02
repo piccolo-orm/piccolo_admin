@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import logging
 import os
 import pathlib
@@ -128,3 +129,52 @@ class LocalMediaStorage(MediaStorage):
                 file_id=file_id, root_url=root_url, user=user
             )
         )
+
+    ###########################################################################
+
+    async def get_file(self, file_key: str) -> t.Optional[t.IO]:
+        """
+        Returns the file object matching the ``file_key``.
+        """
+        loop = asyncio.get_running_loop()
+        func = functools.partial(self.get_file_sync, file_key=file_key)
+        return await loop.run_in_executor(self.executor, func)
+
+    def get_file_sync(self, file_key: str) -> t.Optional[t.IO]:
+        """
+        A sync wrapper around :meth:`get_file`.
+        """
+        path = os.path.join(self.media_path, file_key)
+        with open(path, "rb") as f:
+            return f
+
+    async def delete_file(self, file_key: str):
+        """
+        Deletes the file object matching the ``file_key``.
+        """
+        loop = asyncio.get_running_loop()
+        func = functools.partial(self.delete_file_sync, file_key=file_key)
+        return await loop.run_in_executor(self.executor, func)
+
+    def delete_file_sync(self, file_key: str):
+        """
+        A sync wrapper around :meth:`delete_file`.
+        """
+        path = os.path.join(self.media_path, file_key)
+        os.unlink(path)
+
+    async def bulk_delete_files(self, file_keys: t.List[str]):
+        media_path = self.media_path
+        for file_key in file_keys:
+            os.unlink(os.path.join(media_path, file_key))
+
+    async def get_file_keys(self) -> t.List[str]:
+        """
+        Returns the file key for each file we have stored.
+        """
+        file_keys = []
+        for (_, _, filenames) in os.walk(self.media_path):
+            file_keys.extend(filenames)
+            break
+
+        return file_keys

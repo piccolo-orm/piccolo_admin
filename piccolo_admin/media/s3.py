@@ -156,3 +156,117 @@ class S3MediaStorage(MediaStorage):
             Params={"Bucket": self.bucket_name, "Key": file_id},
             ExpiresIn=self.signed_url_expiry,
         )
+
+    ###########################################################################
+
+    async def get_file(self, file_key: str) -> t.Optional[t.IO]:
+        """
+        Returns the file object matching the ``file_key``.
+        """
+        loop = asyncio.get_running_loop()
+
+        func = functools.partial(self.get_file_sync, file_key=file_key)
+
+        return await loop.run_in_executor(self.executor, func)
+
+    def get_file_sync(self, file_key: str) -> t.Optional[t.IO]:
+        """
+        Returns the file object matching the ``file_key``.
+        """
+        s3_client = self.get_client()
+        response = s3_client.get_object(
+            Bucket=self.bucket_name,
+            Key=file_key,
+        )
+        return response["Body"]
+
+    async def delete_file(self, file_key: str):
+        """
+        Deletes the file object matching the ``file_key``.
+        """
+        loop = asyncio.get_running_loop()
+
+        func = functools.partial(
+            self.delete_file_sync,
+            file_key=file_key,
+        )
+
+        return await loop.run_in_executor(self.executor, func)
+
+    def delete_file_sync(self, file_key: str):
+        """
+        Deletes the file object matching the ``file_key``.
+        """
+        s3_client = self.get_client()
+        return s3_client.delete_object(Bucket=self.bucket_name, Key=file_key)
+
+    async def bulk_delete_files(self, file_keys: t.List[str]):
+        loop = asyncio.get_running_loop()
+        func = functools.partial(
+            self.bulk_delete_files_sync,
+            file_keys=file_keys,
+        )
+        await loop.run_in_executor(self.executor, func)
+
+    def bulk_delete_files_sync(self, file_keys: t.List[str]):
+        s3_client = self.get_client()
+
+        batch_size = 100
+        iteration = 0
+
+        while True:
+            batch = file_keys[
+                (iteration * batch_size) : (  # noqa: E203
+                    iteration + 1 * batch_size
+                )
+            ]
+            if not batch:
+                break
+
+            s3_client.delete_objects(
+                Bucket=self.bucket_name,
+                Delete={
+                    "Objects": [{"Key": i} for i in file_keys],
+                },
+            )
+
+            iteration += 1
+
+    def get_file_keys_sync(self) -> t.List[str]:
+        """
+        Returns the file key for each file we have stored.
+        """
+        s3_client = self.get_client()
+
+        keys = []
+        start_after = None
+
+        while True:
+            extra_kwargs: t.Dict[str, t.Any] = (
+                {"StartAfter": start_after} if start_after else {}
+            )
+
+            response = s3_client.list_objects_v2(
+                Bucket=self.bucket_name, **extra_kwargs
+            )
+
+            contents = response["Contents"]
+
+            if contents:
+                for obj in response["Contents"]:
+                    keys.append(obj["Key"])
+
+                start_after = keys[-1]
+            else:
+                break
+
+        return keys
+
+    async def get_file_keys(self) -> t.List[str]:
+        """
+        Returns the file key for each file we have stored.
+        """
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            self.executor, self.get_file_keys_sync
+        )
