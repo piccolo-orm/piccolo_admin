@@ -85,3 +85,8 @@ class TestS3MediaStorage(TestCase):
                 # List file keys
                 file_keys = asyncio.run(storage.get_file_keys())
                 self.assertListEqual(file_keys, [file_key])
+
+                # Delete the file
+                asyncio.run(storage.delete_file(file_key=file_key))
+                file_keys = asyncio.run(storage.get_file_keys())
+                self.assertListEqual(file_keys, [])
