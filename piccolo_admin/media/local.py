@@ -15,7 +15,7 @@ from piccolo.utils.sync import run_sync
 
 from .base import ALLOWED_CHARACTERS, ALLOWED_EXTENSIONS, MediaStorage
 
-if t.TYPE_CHECKING:
+if t.TYPE_CHECKING:  # pragma: no cover
     from concurrent.futures._base import Executor
 
 
