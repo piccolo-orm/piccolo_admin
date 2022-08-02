@@ -74,6 +74,11 @@ class TestLocalMediaStorage(TestCase):
             self.assertEqual(file.read(), test_file.read())
             file.close()
 
+            # Make sure that a value is raised if we try saving a file with the
+            # same name.
+            with self.assertRaises(IOError):
+                storage.store_file_sync(file_name="bulb.jpg", file=test_file)
+
             # List all of the files
             file_list = asyncio.run(storage.get_file_keys())
             self.assertEqual(file_list, [file_key])
