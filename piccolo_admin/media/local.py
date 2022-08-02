@@ -145,8 +145,7 @@ class LocalMediaStorage(MediaStorage):
         A sync wrapper around :meth:`get_file`.
         """
         path = os.path.join(self.media_path, file_key)
-        with open(path, "rb") as f:
-            return f
+        return open(path, "rb")
 
     async def delete_file(self, file_key: str):
         """

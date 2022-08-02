@@ -1,6 +1,8 @@
+import asyncio
 import os
 import shutil
 import tempfile
+import typing as t
 import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -65,3 +67,9 @@ class TestLocalMediaStorage(TestCase):
             self.assertEqual(
                 url, "/media/bulb-fd0125c7-8777-4976-83c1-81605d5ab155.jpg"
             )
+
+            # Retrieve the file itself
+            file = asyncio.run(storage.get_file(file_key=file_id))
+            assert file is not None
+            test_file.seek(0, 0)
+            self.assertEqual(file.read(), test_file.read())
