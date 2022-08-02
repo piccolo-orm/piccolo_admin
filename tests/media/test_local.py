@@ -2,7 +2,6 @@ import asyncio
 import os
 import shutil
 import tempfile
-import typing as t
 import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
