@@ -272,7 +272,8 @@ class MediaStorage(metaclass=abc.ABCMeta):
             print("Here are some examples:")
             print("\n".join(i for i in unused_file_keys[:number_shown]))
 
-            if auto or input(
-                "Would you like to delete them? Enter y to confirm" == "y"
+            if auto or (
+                input("Would you like to delete them? Enter y to confirm")
+                == "y"
             ):
                 await self.bulk_delete_files(unused_file_keys)
