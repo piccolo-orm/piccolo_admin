@@ -72,3 +72,4 @@ class TestLocalMediaStorage(TestCase):
             assert file is not None
             test_file.seek(0, 0)
             self.assertEqual(file.read(), test_file.read())
+            file.close()
