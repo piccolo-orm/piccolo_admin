@@ -10,6 +10,20 @@ from piccolo_admin.media.local import LocalMediaStorage
 
 
 class TestLocalMediaStorage(TestCase):
+    def test_folder_created(self):
+        """
+        If the media folder doesn't exist, then ``LocalMediaStorage`` should
+        try and create it.
+        """
+        media_path = os.path.join(tempfile.gettempdir(), "randomfolder")
+
+        if os.path.exists(media_path):
+            shutil.rmtree(media_path)
+
+        LocalMediaStorage(column=Movie.poster, media_path=media_path)
+
+        self.assertTrue(os.path.exists(media_path))
+
     @patch("piccolo_admin.media.base.uuid")
     def test_store_file(self, uuid_module: MagicMock):
         """
