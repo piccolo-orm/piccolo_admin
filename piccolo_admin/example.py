@@ -59,6 +59,8 @@ try:
         ENDPOINT_URL=s3.cloudprovider.com
         REGION_NAME=my-region
 
+    The ``Movie.poster`` column will then use S3 for storage.
+
     """
 
     import dotenv
