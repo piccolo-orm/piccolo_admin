@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import functools
-import os
 import sys
 import typing as t
 from concurrent.futures import ThreadPoolExecutor
@@ -89,10 +88,7 @@ class S3MediaStorage(MediaStorage):
         session = self.boto3.session.Session()
         client = session.client(
             "s3",
-            aws_access_key_id=os.environ.get("OVH_S3_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.environ.get("OVH_S3_SECRET_ACCESS_KEY"),
-            endpoint_url="https://s3.uk.cloud.ovh.net/",
-            region_name="uk",
+            **self.connection_kwargs,
         )
         return client
 
