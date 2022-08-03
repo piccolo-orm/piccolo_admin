@@ -658,7 +658,7 @@ class AdminRouter(FastAPI):
             table_name=model.table_name, column_name=model.column_name
         )
         file_url = await media_storage.generate_file_url(
-            file_id=model.file_key,
+            file_key=model.file_key,
             root_url=(
                 f"./api/media-files/{model.table_name}/{model.column_name}/"
             ),

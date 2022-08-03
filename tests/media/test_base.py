@@ -22,7 +22,7 @@ class TestGenerateFileID(TestCase):
 
     def test_starts_with_period(self):
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name=".private_file.jpeg")
+            self.storage.generate_file_key(file_name=".private_file.jpeg")
 
         self.assertEqual(
             str(manager.exception), "File names must not start with a period."
@@ -34,7 +34,7 @@ class TestGenerateFileID(TestCase):
         could potentially be used to traverse the file system.
         """
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name="test..file.jpeg")
+            self.storage.generate_file_key(file_name="test..file.jpeg")
 
         self.assertEqual(
             str(manager.exception), "File names must not contain '..'."
@@ -42,7 +42,7 @@ class TestGenerateFileID(TestCase):
 
     def test_empty_file_name(self):
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name="")
+            self.storage.generate_file_key(file_name="")
 
         self.assertEqual(
             str(manager.exception), "The file name can't be empty."
@@ -50,7 +50,7 @@ class TestGenerateFileID(TestCase):
 
     def test_allowed_extensions(self):
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(
+            self.storage.generate_file_key(
                 file_name="test.abcdefghijklmonpqrstuvwxyz123"
             )
 
@@ -60,7 +60,7 @@ class TestGenerateFileID(TestCase):
 
     def test_allowed_characters(self):
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name="@{£}%^*jpeg")
+            self.storage.generate_file_key(file_name="@{£}%^*jpeg")
 
         self.assertEqual(
             str(manager.exception), "'@' is not allowed in the filename."
@@ -68,7 +68,7 @@ class TestGenerateFileID(TestCase):
 
     def test_no_extension(self):
         with self.assertRaises(ValueError) as manager:
-            self.storage.generate_file_id(file_name="test")
+            self.storage.generate_file_key(file_name="test")
 
         self.assertEqual(str(manager.exception), "The file has no extension.")
 
@@ -81,11 +81,11 @@ class TestGenerateFileID(TestCase):
             "fd0125c7-8777-4976-83c1-81605d5ab155"
         )
 
-        truncated_file_id = self.storage.generate_file_id(
+        truncated_file_key = self.storage.generate_file_key(
             file_name="".join("a" for _ in range(200)) + ".jpg"
         )
         self.assertEqual(
-            truncated_file_id,
+            truncated_file_key,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fd0125c7-8777-4976-83c1-81605d5ab155.jpg",  # noqa: E501
         )
 

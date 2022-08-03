@@ -109,7 +109,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
         )
         self.allowed_characters = allowed_characters
 
-    def generate_file_id(
+    def generate_file_key(
         self, file_name: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
@@ -118,7 +118,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
         By default we add a UUID to the filename, to make it unique::
 
-            >>> self.generate_file_id(file_name='my-poster.jpg')
+            >>> self.generate_file_key(file_name='my-poster.jpg')
             my-poster-3beac950-7721-46c9-9e7d-5e908ef51011.jpg
 
         :raises ValueError:
@@ -175,11 +175,11 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
         uuid_ = uuid.uuid4()
 
-        file_id = f"{name}-{uuid_}"
+        file_key = f"{name}-{uuid_}"
         if extension:
-            file_id += f".{extension}"
+            file_key += f".{extension}"
 
-        return file_id
+        return file_key
 
     ###########################################################################
 
@@ -201,14 +201,14 @@ class MediaStorage(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     async def generate_file_url(
-        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
+        self, file_key: str, root_url: str, user: t.Optional[BaseUser] = None
     ):
         """
         This retrieves an absolute URL for the file. It might be a signed URL,
         if using S3 for storage.
 
-        :param file_id:
-            Get the URL for a file with this file_id.
+        :param file_key:
+            Get the URL for a file with this file_key.
         :param root_url:
             The URL the media is usually served from. The sub class might
             ignore this argument entirely, if it's fetching the data from

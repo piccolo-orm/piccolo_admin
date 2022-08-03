@@ -77,13 +77,13 @@ class LocalMediaStorage(MediaStorage):
         # just want bar.jpg.
         file_name = pathlib.Path(file_name).name
 
-        file_id = self.generate_file_id(file_name=file_name, user=user)
+        file_key = self.generate_file_key(file_name=file_name, user=user)
 
         loop = asyncio.get_running_loop()
         file_permissions = self.file_permissions
 
         def save():
-            path = os.path.join(self.media_path, file_id)
+            path = os.path.join(self.media_path, file_key)
 
             if os.path.exists(path):
                 logger.error(
@@ -99,7 +99,7 @@ class LocalMediaStorage(MediaStorage):
 
         await loop.run_in_executor(self.executor, save)
 
-        return file_id
+        return file_key
 
     def store_file_sync(
         self, file_name: str, file: t.IO, user: t.Optional[BaseUser] = None
@@ -112,22 +112,22 @@ class LocalMediaStorage(MediaStorage):
         )
 
     async def generate_file_url(
-        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
+        self, file_key: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         This retrieves an absolute URL for the file.
         """
-        return "/".join((root_url.rstrip("/"), file_id))
+        return "/".join((root_url.rstrip("/"), file_key))
 
     def generate_file_url_sync(
-        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
+        self, file_key: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         A sync wrapper around :meth:`generate_file_url`.
         """
         return run_sync(
             self.generate_file_url(
-                file_id=file_id, root_url=root_url, user=user
+                file_key=file_key, root_url=root_url, user=user
             )
         )
 

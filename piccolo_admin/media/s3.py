@@ -104,9 +104,9 @@ class S3MediaStorage(MediaStorage):
             self.store_file_sync, file_name=file_name, file=file, user=user
         )
 
-        file_id = await loop.run_in_executor(self.executor, blocking_function)
+        file_key = await loop.run_in_executor(self.executor, blocking_function)
 
-        return file_id
+        return file_key
 
     def store_file_sync(
         self, file_name: str, file: t.IO, user: t.Optional[BaseUser] = None
@@ -114,20 +114,20 @@ class S3MediaStorage(MediaStorage):
         """
         A sync wrapper around :meth:`store_file`.
         """
-        file_id = self.generate_file_id(file_name=file_name, user=user)
+        file_key = self.generate_file_key(file_name=file_name, user=user)
 
         client = self.get_client()
 
         client.upload_fileobj(
             file,
             self.bucket_name,
-            file_id,
+            file_key,
         )
 
-        return file_id
+        return file_key
 
     async def generate_file_url(
-        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
+        self, file_key: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         This retrieves an absolute URL for the file.
@@ -136,7 +136,7 @@ class S3MediaStorage(MediaStorage):
 
         blocking_function: t.Callable = functools.partial(
             self.generate_file_url_sync,
-            file_id=file_id,
+            file_key=file_key,
             root_url=root_url,
             user=user,
         )
@@ -144,7 +144,7 @@ class S3MediaStorage(MediaStorage):
         return await loop.run_in_executor(self.executor, blocking_function)
 
     def generate_file_url_sync(
-        self, file_id: str, root_url: str, user: t.Optional[BaseUser] = None
+        self, file_key: str, root_url: str, user: t.Optional[BaseUser] = None
     ) -> str:
         """
         A sync wrapper around :meth:`generate_file_url`.
@@ -153,7 +153,7 @@ class S3MediaStorage(MediaStorage):
 
         return s3_client.generate_presigned_url(
             ClientMethod="get_object",
-            Params={"Bucket": self.bucket_name, "Key": file_id},
+            Params={"Bucket": self.bucket_name, "Key": file_key},
             ExpiresIn=self.signed_url_expiry,
         )
 
