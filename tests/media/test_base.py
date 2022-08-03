@@ -1,4 +1,6 @@
 import asyncio
+import os
+import shutil
 import tempfile
 import uuid
 from unittest import TestCase
@@ -140,3 +142,39 @@ class TestGetFileKeysFromDB(TestCase):
         self.assertListEqual(
             sorted(response), ["image-1.jpg", "image-2.jpg", "image-3.jpg"]
         )
+
+
+class TestDeleteUnusedFiles(TestCase):
+    def setUp(self):
+        create_db_tables_sync(Movie, Director, Studio)
+
+    def tearDown(self):
+        drop_db_tables_sync(Movie, Director, Studio)
+
+    def test_get_file_keys_from_db(self):
+        media_path = os.path.join(
+            tempfile.gettempdir(), "piccolo-admin-test-unused-files"
+        )
+
+        if os.path.exists(media_path):
+            shutil.rmtree(media_path)
+
+        os.mkdir(media_path)
+
+        file_names = ["image-1.jpg", "image-2.jpg", "image-3.jpg"]
+        extra_file_name = "image-4.jpg"
+
+        Movie.insert(
+            *[Movie(poster=file_name) for file_name in file_names]
+        ).run_sync()
+
+        for file_name in [*file_names, extra_file_name]:
+            with open(os.path.join(media_path, file_name), "wb") as _:
+                pass
+
+        storage = LocalMediaStorage(column=Movie.poster, media_path=media_path)
+
+        asyncio.run(storage.delete_unused_files(auto=True))
+
+        # The extra_file_name should have been deleted.
+        self.assertListEqual(sorted(os.listdir(media_path)), file_names)
