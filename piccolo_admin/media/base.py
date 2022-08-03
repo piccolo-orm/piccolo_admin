@@ -62,6 +62,9 @@ ALLOWED_CHARACTERS = (
 )
 
 
+ALLOWED_COLUMN_TYPES = (Varchar, Text)
+
+
 # TODO - might move this to Piccolo API.
 class MediaStorage(metaclass=abc.ABCMeta):
     """
@@ -74,7 +77,13 @@ class MediaStorage(metaclass=abc.ABCMeta):
         allowed_extensions: t.Optional[t.Sequence[str]] = ALLOWED_EXTENSIONS,
         allowed_characters: t.Optional[t.Sequence[str]] = ALLOWED_CHARACTERS,
     ):
-        if not isinstance(column, (Varchar, Text, Array)):
+        if not (
+            isinstance(column, ALLOWED_COLUMN_TYPES)
+            or (
+                isinstance(column, Array)
+                and isinstance(column.base_column, ALLOWED_COLUMN_TYPES)
+            )
+        ):
             raise ValueError(
                 "The column must be a `Varchar`, `Text`, or `Array`."
             )

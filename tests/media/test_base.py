@@ -4,6 +4,7 @@ import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
+from piccolo.columns.column_types import Array, Integer
 from piccolo.table import create_db_tables_sync, drop_db_tables_sync
 
 from piccolo_admin.example import Director, Movie, Studio
@@ -79,6 +80,37 @@ class TestGenerateFileID(TestCase):
             truncated_file_id,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fd0125c7-8777-4976-83c1-81605d5ab155.jpg",  # noqa: E501
         )
+
+
+class TestInit(TestCase):
+    def test_unsupported_column(self):
+        """
+        We only allow media columns which can store strings in them.
+        """
+        with self.assertRaises(ValueError) as manager:
+            LocalMediaStorage(column=Movie.rating, media_path="/tmp/")
+
+        self.assertEqual(
+            str(manager.exception),
+            "The column must be a `Varchar`, `Text`, or `Array`.",
+        )
+
+    def test_arrays(self):
+        """
+        Arrays are allowed, but only if the ``base_column`` can store strings.
+        """
+        with self.assertRaises(ValueError) as manager:
+            LocalMediaStorage(
+                column=Array(base_column=Integer()), media_path="/tmp/"
+            )
+
+        self.assertEqual(
+            str(manager.exception),
+            "The column must be a `Varchar`, `Text`, or `Array`.",
+        )
+
+        # This should raise no exceptions, as it's an Array of Varchar.
+        LocalMediaStorage(column=Movie.poster, media_path="/tmp/")
 
 
 class TestGetFileKeysFromDB(TestCase):
