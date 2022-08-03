@@ -2,7 +2,7 @@ server {
     listen 80;
     server_name piccolo_admin;
 
-    // By default Nginx only allows us to upload very small files.
+    # By default Nginx only allows us to upload very small files.
     client_max_body_size 20M;
 
     location / {
