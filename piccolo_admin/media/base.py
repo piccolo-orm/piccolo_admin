@@ -14,18 +14,22 @@ from piccolo.columns.column_types import Array, Text, Varchar
 logger = logging.getLogger(__file__)
 
 
+#: Pass into ``allowed_characters`` to just allow audio files.
 AUDIO_EXTENSIONS = (
     "mp3",
     "wav",
 )
 
+#: Pass into ``allowed_characters`` to just allow data files.
 DATA_EXTENSIONS = (
     "csv",
     "tsv",
 )
 
+#: Pass into ``allowed_characters`` to just allow document files.
 DOCUMENT_EXTENSIONS = ("pdf",)
 
+#: Pass into ``allowed_characters`` to just allow image files.
 IMAGE_EXTENSIONS = (
     "gif",
     "jpeg",
@@ -36,11 +40,13 @@ IMAGE_EXTENSIONS = (
     "webp",
 )
 
+#: Pass into ``allowed_characters`` to just allow text files.
 TEXT_EXTENSIONS = (
     "rtf",
     "txt",
 )
 
+#: Pass into ``allowed_characters`` to just allow video files.
 VIDEO_EXTENSIONS = ("mov", "mp4", "webm")
 
 #: These are the extensions which are allowed by default.

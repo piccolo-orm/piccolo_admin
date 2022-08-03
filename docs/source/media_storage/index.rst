@@ -107,7 +107,21 @@ Source
 
 .. currentmodule:: piccolo_admin.media.base
 
+.. autoclass:: MediaStorage
+
 .. autodata:: ALLOWED_EXTENSIONS
+
+.. autodata:: AUDIO_EXTENSIONS
+
+.. autodata:: DATA_EXTENSIONS
+
+.. autodata:: DOCUMENT_EXTENSIONS
+
+.. autodata:: IMAGE_EXTENSIONS
+
+.. autodata:: TEXT_EXTENSIONS
+
+.. autodata:: VIDEO_EXTENSIONS
 
 .. autodata:: ALLOWED_CHARACTERS
 
