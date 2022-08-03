@@ -43,6 +43,7 @@ TEXT_EXTENSIONS = (
 
 VIDEO_EXTENSIONS = ("mov", "mp4", "webm")
 
+#: These are the extensions which are allowed by default.
 ALLOWED_EXTENSIONS = (
     *AUDIO_EXTENSIONS,
     *DATA_EXTENSIONS,
@@ -52,6 +53,7 @@ ALLOWED_EXTENSIONS = (
     *VIDEO_EXTENSIONS,
 )
 
+#: These are the characters allowed in the file name by default.
 ALLOWED_CHARACTERS = (
     *string.ascii_letters,
     *string.digits,
@@ -68,8 +70,13 @@ ALLOWED_COLUMN_TYPES = (Varchar, Text)
 # TODO - might move this to Piccolo API.
 class MediaStorage(metaclass=abc.ABCMeta):
     """
-    If you want to implement media uploads, use a subclass of this class.
-    """
+    If you want to implement your own custom storage backend, create a subclass
+    of this class. Override each method marked with ``@abc.abstractmethod``.
+
+    Typically, just use :class:`LocalMediaStorage <piccolo_admin.media.local.LocalMediaStorage>`
+    or :class:`S3MediaStorage <piccolo_admin.media.s3.S3MediaStorage>` instead.
+
+    """  # noqa: E501
 
     def __init__(
         self,

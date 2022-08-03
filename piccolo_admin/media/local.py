@@ -41,7 +41,8 @@ class LocalMediaStorage(MediaStorage):
             The Piccolo ``Column`` which the storage is for.
         :param media_path:
             This is the local folder where the media files will be stored. It
-            should be an absolute path. For example, ``'/srv/piccolo-media/'``.
+            should be an absolute path. For example,
+            ``'/srv/piccolo-media/poster/'``.
         :param executor:
             An executor, which file save operations are run in, to avoid
             blocking the event loop. If not specified, we use a sensibly
