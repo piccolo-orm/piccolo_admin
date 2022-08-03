@@ -1,9 +1,12 @@
+import asyncio
 import tempfile
 import uuid
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from piccolo_admin.example import Movie
+from piccolo.table import create_db_tables_sync, drop_db_tables_sync
+
+from piccolo_admin.example import Director, Movie, Studio
 from piccolo_admin.media.local import LocalMediaStorage
 
 
@@ -75,4 +78,27 @@ class TestGenerateFileID(TestCase):
         self.assertEqual(
             truncated_file_id,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fd0125c7-8777-4976-83c1-81605d5ab155.jpg",  # noqa: E501
+        )
+
+
+class TestGetFileKeysFromDB(TestCase):
+    def setUp(self):
+        create_db_tables_sync(Movie, Director, Studio)
+
+    def tearDown(self):
+        drop_db_tables_sync(Movie, Director, Studio)
+
+    def test_get_file_keys_from_db(self):
+        Movie.insert(
+            Movie(poster="image-1.jpg"),
+            Movie(poster="image-2.jpg"),
+            Movie(poster="image-3.jpg"),
+        ).run_sync()
+
+        storage = LocalMediaStorage(column=Movie.poster, media_path="/tmp/")
+
+        response = asyncio.run(storage.get_file_keys_from_db())
+
+        self.assertListEqual(
+            sorted(response), ["image-1.jpg", "image-2.jpg", "image-3.jpg"]
         )
