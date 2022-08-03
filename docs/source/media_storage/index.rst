@@ -156,7 +156,7 @@ In order to associate a column with ``LocalMediaStorage``, we do the following:
         screenshots = Array(base_column=Varchar())
 
 
-    MEDIA_ROOT = '/src/piccolo-admin/'
+    MEDIA_ROOT = '/srv/piccolo-admin/'
 
 
     MOVIE_POSTER_MEDIA = LocalMediaStorage(
@@ -227,7 +227,7 @@ In order to associate a column with ``S3MediaStorage``, we do the following:
         screenshots = Array(base_column=Varchar())
 
 
-    # Note - don't store connection details in plain text if possible.
+    # Note - don't store credentials in source code if possible.
     # It's safer to read them from environment variables.
     # A tool like `python-dotenv` can help with this.
     S3_CONNECTION_KWARGS = {
