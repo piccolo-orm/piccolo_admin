@@ -187,7 +187,7 @@ Some things to be aware of:
 * By specifiying ``allowed_extensions``, we make sure that only images can be
   uploaded.
 * We store the files for posters and screenshots in **separate folders** - this
-  is important later on.
+  is important when :ref:`cleaning up files <CleaningUpFiles>`.
 
 
 Source
@@ -266,7 +266,7 @@ Some things to be aware of:
 * By specifiying ``allowed_extensions``, we make sure that only images can be
   uploaded.
 * We store the files for posters and screenshots in **separate buckets** - this
-  is important later on.
+  is important when :ref:`cleaning up files <CleaningUpFiles>`.
 
 
 Source
@@ -293,6 +293,8 @@ For example:
     # We can delete files from storage
     await MOVIE_POSTER_MEDIA.delete_file('some-file-key.jpeg')
 
+
+.. _CleaningUpFiles:
 
 Cleaning up files
 -----------------
