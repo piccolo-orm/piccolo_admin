@@ -1,11 +1,35 @@
 Media Storage
-============
+=============
 
 Piccolo Admin has excellent support for managing media files (images, audio,
 video, and more). The files can be stored locally on the server, or in
 S3 compatible storage.
 
 .. image:: ./images/media_upload.png
+
+
+User Interface
+--------------
+
+You're able to view many file types within the user interface - images, videos,
+audio, documents, and more.
+
+Viewing images:
+
+.. image:: ./images/sample_ui/media_viewer_image.png
+
+Viewing video:
+
+.. image:: ./images/sample_ui/media_viewer_video.png
+
+Viewing audio:
+
+.. image:: ./images/sample_ui/media_viewer_audio.png
+
+Viewing PDFs:
+
+.. image:: ./images/sample_ui/media_viewer_pdf.png
+
 
 Supported columns
 -----------------
@@ -87,7 +111,7 @@ Source
 
 .. autodata:: ALLOWED_CHARACTERS
 
-.. autoclass:: MediaStorage
+
 
 
 LocalMediaStorage
