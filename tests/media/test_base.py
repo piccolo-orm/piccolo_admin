@@ -64,6 +64,12 @@ class TestGenerateFileID(TestCase):
             str(manager.exception), "'@' is not allowed in the filename."
         )
 
+    def test_no_extension(self):
+        with self.assertRaises(ValueError) as manager:
+            self.storage.generate_file_id(file_name="test")
+
+        self.assertEqual(str(manager.exception), "The file has no extension.")
+
     @patch("piccolo_admin.media.base.uuid")
     def test_long_file_name(self, uuid_module: MagicMock):
         """
