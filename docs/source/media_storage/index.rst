@@ -137,7 +137,7 @@ In order to associate a column with ``LocalMediaStorage``, we do the following:
 
     MOVIE_POSTER_MEDIA = LocalMediaStorage(
         column=Movie.poster,
-        media_path=os.path.join(MEDIA_ROOT, 'movie_posters'),
+        media_path=os.path.join(MEDIA_ROOT, 'movie_poster'),
         allowed_extensions=['jpg', 'jpeg', 'png']
     )
 

@@ -274,11 +274,11 @@ movie_config = TableConfig(
     media_storage=(
         LocalMediaStorage(
             column=Movie.poster,
-            media_path=os.path.join(MEDIA_ROOT, "poster"),
+            media_path=os.path.join(MEDIA_ROOT, "movie_poster"),
         ),
         LocalMediaStorage(
             column=Movie.screenshots,
-            media_path=os.path.join(MEDIA_ROOT, "screenshots"),
+            media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
         ),
     ),
 )
