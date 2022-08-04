@@ -77,7 +77,7 @@ ALLOWED_COLUMN_TYPES = (Varchar, Text)
 class MediaStorage(metaclass=abc.ABCMeta):
     """
     If you want to implement your own custom storage backend, create a subclass
-    of this class. Override each method marked with ``@abc.abstractmethod``.
+    of this class. Override each abstract method.
 
     Typically, just use :class:`LocalMediaStorage <piccolo_admin.media.local.LocalMediaStorage>`
     or :class:`S3MediaStorage <piccolo_admin.media.s3.S3MediaStorage>` instead.

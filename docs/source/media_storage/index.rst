@@ -34,8 +34,8 @@ Viewing PDFs:
 Supported columns
 -----------------
 
-We store the files in a folder on the server, or in S3, and store unique
-references to those files in the database.
+We store the files in a folder on the server, or in a S3 bucket, and store
+unique references to those files in the database.
 
 .. note::
     We don't store the files directly in the database, because database storage
@@ -96,36 +96,12 @@ MediaStorage
 ------------
 
 For each column we want to use for media storage, we associate it with a
-``MediaStorage`` instance.
+:class:`MediaStorage <piccolo_admin.media.base.MediaStorage>` instance.
 
 Out of the box we have two subclasses - :class:`LocalMediaStorage <piccolo_admin.media.local.LocalMediaStorage>`
 and :class:`S3MediaStorage <piccolo_admin.media.s3.S3MediaStorage>`.
-You can also create your own subclass to implement your own storage backend.
-
-Source
-~~~~~~
-
-.. currentmodule:: piccolo_admin.media.base
-
-.. autoclass:: MediaStorage
-
-.. autodata:: ALLOWED_EXTENSIONS
-
-.. autodata:: AUDIO_EXTENSIONS
-
-.. autodata:: DATA_EXTENSIONS
-
-.. autodata:: DOCUMENT_EXTENSIONS
-
-.. autodata:: IMAGE_EXTENSIONS
-
-.. autodata:: TEXT_EXTENSIONS
-
-.. autodata:: VIDEO_EXTENSIONS
-
-.. autodata:: ALLOWED_CHARACTERS
-
-
+You can also create your own subclass of :class:`MediaStorage <piccolo_admin.media.base.MediaStorage>`
+to implement your own storage backend.
 
 
 LocalMediaStorage
@@ -296,6 +272,8 @@ For example:
     # We can delete files from storage
     await MOVIE_POSTER_MEDIA.delete_file('some-file-key.jpeg')
 
+
+To see all of the methods available, look at :class:`MediaStorage <piccolo_admin.media.base.MediaStorage>`.
 
 .. _CleaningUpFiles:
 
