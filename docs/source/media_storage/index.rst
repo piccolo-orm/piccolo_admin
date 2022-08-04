@@ -267,8 +267,9 @@ Some things to be aware of:
 
 * By specifiying ``allowed_extensions``, we make sure that only images can be
   uploaded.
-* We store the files for posters and screenshots in **separate buckets** - this
-  is important when :ref:`cleaning up files <CleaningUpFiles>`.
+* We store the files for posters and screenshots in **separate folders within
+  the bucket** - this is important when :ref:`cleaning up files <CleaningUpFiles>`.
+  You could even store them in separate buckets if you prefer.
 
 
 Source
