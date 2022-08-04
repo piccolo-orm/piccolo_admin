@@ -24,6 +24,9 @@ Some of it's standout features:
 * Works on mobile and desktop
 * Use standalone, or integrate it easily with ASGI apps like FastAPI, and Starlette
 * Multilingual out of box
+* Bulk actions, like updating and deleting data
+* Flexible UI - only show the columns you want your users to see
+
 
 Demo
 ----
