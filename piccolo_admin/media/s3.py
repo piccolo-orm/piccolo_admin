@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import pathlib
 import sys
 import typing as t
 from concurrent.futures import ThreadPoolExecutor
@@ -20,6 +21,7 @@ class S3MediaStorage(MediaStorage):
         self,
         column: t.Union[Text, Varchar, Array],
         bucket_name: str,
+        folder_name: str,
         connection_kwargs: t.Dict[str, t.Any] = None,
         signed_url_expiry: int = 3600,
         executor: t.Optional[Executor] = None,
@@ -32,14 +34,23 @@ class S3MediaStorage(MediaStorage):
         on a server. Many cloud providers provide S3 compatible storage,
         besides from Amazon Web Services.
 
+        :param column:
+            The Piccolo ``Column`` which the storage is for.
         :param bucket_name:
             Which S3 bucket the files are stored in.
+        :param folder:
+            The files will be stored in this folder within the bucket. S3
+            buckets don't really have folders, but if ``folder`` is
+            ``'movie_screenshots'``, then we store the file at
+            ``'movie_screenshots/my-file-abc-123.jpeg'``, to simulate it being
+            in a folder.
         :param connection_kwargs:
             These kwargs are passed directly to ``boto3``. Learn more about
             `available options <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/core/session.html#boto3.session.Session.client>`_.
             For example::
 
                 S3MediaStorage(
+                    ...,
                     connection_kwargs={
                         'aws_access_key_id': 'abc123',
                         'aws_secret_access_key': 'xyz789',
@@ -74,6 +85,7 @@ class S3MediaStorage(MediaStorage):
             self.boto3 = boto3
 
         self.bucket_name = bucket_name
+        self.folder_name = folder_name
         self.connection_kwargs = connection_kwargs
         self.signed_url_expiry = signed_url_expiry
         self.executor = executor or ThreadPoolExecutor(max_workers=10)
@@ -121,7 +133,7 @@ class S3MediaStorage(MediaStorage):
         client.upload_fileobj(
             file,
             self.bucket_name,
-            file_key,
+            str(pathlib.Path(self.folder_name, file_key)),
         )
 
         return file_key
@@ -153,7 +165,10 @@ class S3MediaStorage(MediaStorage):
 
         return s3_client.generate_presigned_url(
             ClientMethod="get_object",
-            Params={"Bucket": self.bucket_name, "Key": file_key},
+            Params={
+                "Bucket": self.bucket_name,
+                "Key": str(pathlib.Path(self.folder_name, file_key)),
+            },
             ExpiresIn=self.signed_url_expiry,
         )
 
@@ -176,7 +191,7 @@ class S3MediaStorage(MediaStorage):
         s3_client = self.get_client()
         response = s3_client.get_object(
             Bucket=self.bucket_name,
-            Key=file_key,
+            Key=str(pathlib.Path(self.folder_name, file_key)),
         )
         return response["Body"]
 
@@ -198,7 +213,10 @@ class S3MediaStorage(MediaStorage):
         Deletes the file object matching the ``file_key``.
         """
         s3_client = self.get_client()
-        return s3_client.delete_object(Bucket=self.bucket_name, Key=file_key)
+        return s3_client.delete_object(
+            Bucket=self.bucket_name,
+            Key=str(pathlib.Path(self.folder_name, file_key)),
+        )
 
     async def bulk_delete_files(self, file_keys: t.List[str]):
         loop = asyncio.get_running_loop()
@@ -213,6 +231,7 @@ class S3MediaStorage(MediaStorage):
 
         batch_size = 100
         iteration = 0
+        folder_name = self.folder_name
 
         while True:
             batch = file_keys[
@@ -227,7 +246,10 @@ class S3MediaStorage(MediaStorage):
             s3_client.delete_objects(
                 Bucket=self.bucket_name,
                 Delete={
-                    "Objects": [{"Key": i} for i in file_keys],
+                    "Objects": [
+                        {"Key": str(pathlib.Path(self.folder_name, file_key))}
+                        for file_key in file_keys
+                    ],
                 },
             )
 
@@ -248,7 +270,9 @@ class S3MediaStorage(MediaStorage):
             )
 
             response = s3_client.list_objects_v2(
-                Bucket=self.bucket_name, **extra_kwargs
+                Bucket=self.bucket_name,
+                Prefix=self.folder_name,
+                **extra_kwargs,
             )
 
             contents = response.get("Contents")
@@ -262,7 +286,9 @@ class S3MediaStorage(MediaStorage):
                 # https://github.com/nedbat/coveragepy/issues/772
                 break  # pragma: no cover
 
-        return keys
+        prefix = f"{self.folder_name}/"
+
+        return [i.lstrip(prefix) for i in keys]
 
     async def get_file_keys(self) -> t.List[str]:
         """

@@ -22,10 +22,12 @@ class TestS3MediaStorage(TestCase):
         uuid_module.uuid4.return_value = uuid.UUID(
             "fd0125c7-8777-4976-83c1-81605d5ab155"
         )
+        bucket_name = "bucket123"
+        folder_name = "movie_posters"
 
         with mock_s3():
             s3 = boto3.resource("s3", region_name="us-east-1")
-            s3.create_bucket(Bucket="posters")
+            s3.create_bucket(Bucket=bucket_name)
 
             connection_kwargs = {
                 "aws_access_key_id": "abc123",
@@ -37,7 +39,8 @@ class TestS3MediaStorage(TestCase):
 
             storage = S3MediaStorage(
                 column=Movie.poster,
-                bucket_name="posters",
+                bucket_name=bucket_name,
+                folder_name=folder_name,
                 connection_kwargs=connection_kwargs,
             )
 
@@ -58,7 +61,8 @@ class TestS3MediaStorage(TestCase):
                 path, params = url.split("?", 1)
 
                 self.assertEqual(
-                    path, f"https://posters.s3.amazonaws.com/{file_key}"
+                    path,
+                    f"https://{bucket_name}.s3.amazonaws.com/{folder_name}/{file_key}",  # noqa: E501
                 )
 
                 # We're parsing a string like this:

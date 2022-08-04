@@ -295,6 +295,7 @@ director_config = TableConfig(
         S3MediaStorage(
             column=Director.photo,
             bucket_name=t.cast(str, BUCKET_NAME),
+            folder_name="director_photo",
             connection_kwargs=S3_CONFIG,
         )
         if USE_S3

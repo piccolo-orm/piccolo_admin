@@ -238,7 +238,8 @@ In order to associate a column with ``S3MediaStorage``, we do the following:
 
     MOVIE_POSTER_MEDIA = S3MediaStorage(
         column=Movie.poster,
-        bucket_name="movieposterstorage"
+        bucket_name="bucket123"
+        folder_name="movie_poster"
         connection_kwargs=S3_CONNECTION_KWARGS,
         allowed_extensions=['jpg', 'jpeg', 'png']
     )
@@ -246,7 +247,8 @@ In order to associate a column with ``S3MediaStorage``, we do the following:
 
     MOVIE_SCREENSHOTS_MEDIA = S3MediaStorage(
         column=Movie.screenshots,
-        bucket_name="moviescreenshotsstorage"
+        bucket_name="bucket123"
+        folder_name="movie_screenshots"
         connection_kwargs=S3_CONNECTION_KWARGS,
         allowed_extensions=['jpg', 'jpeg', 'png']
     )
