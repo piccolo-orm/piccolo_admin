@@ -13,6 +13,8 @@
                 :mediaViewerConfig="mediaViewerConfig"
                 @close="showMediaViewer = false"
             />
+
+            <LoadingOverlay v-if="showLoadingOverlay" />
         </template>
 
         <template v-if="choices">
@@ -184,8 +186,9 @@ import { VueEditor } from "vue2-editor"
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
-import OperatorField from "./OperatorField.vue"
+import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
+import OperatorField from "./OperatorField.vue"
 import {
     Choices,
     StoreFileAPIResponse,
@@ -221,6 +224,10 @@ export default Vue.extend({
         choices: {
             type: Object as PropType<Choices>,
             default: null
+        },
+        showLoadingOverlay: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     components: {
@@ -228,6 +235,7 @@ export default Vue.extend({
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
+        LoadingOverlay,
         MediaViewer,
         OperatorField,
         VueEditor
@@ -304,6 +312,9 @@ export default Vue.extend({
             formData.append("table_name", this.currentTableName)
             formData.append("column_name", this.getFieldName(this.title))
             formData.append("file", file)
+
+            this.showLoadingOverlay = true
+
             try {
                 const response = await axios.post<StoreFileAPIResponse>(
                     "./api/media/",
@@ -346,6 +357,7 @@ export default Vue.extend({
             }
 
             event.target.value = ""
+            this.showLoadingOverlay = false
         }
     },
     watch: {
