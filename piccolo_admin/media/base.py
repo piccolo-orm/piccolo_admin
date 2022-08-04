@@ -109,30 +109,16 @@ class MediaStorage(metaclass=abc.ABCMeta):
         )
         self.allowed_characters = allowed_characters
 
-    def generate_file_key(
-        self, file_name: str, user: t.Optional[BaseUser] = None
-    ) -> str:
+    def validate_file_name(self, file_name: str):
         """
-        Generates a unique file ID. If you have your own strategy for naming
-        files, you can override this method.
-
-        By default we add a UUID to the filename, to make it unique::
-
-            >>> self.generate_file_key(file_name='my-poster.jpg')
-            my-poster-3beac950-7721-46c9-9e7d-5e908ef51011.jpg
-
         :raises ValueError:
-            If the ``file_name`` is invalid.
+            If the file name is invalid.
 
         """
         if not file_name:
             # It's unlikely that the file_name is an empty string, but just in
             # case.
             raise ValueError("The file name can't be empty.")
-
-        # If the file_name includes the entire path (e.g. /foo/bar.jpg) - we
-        # just want bar.jpg.
-        file_name = pathlib.Path(file_name).name
 
         # Don't allow the file name to begin with a dot, otherwise it will be a
         # hidden file on Unix.
@@ -157,7 +143,7 @@ class MediaStorage(metaclass=abc.ABCMeta):
         components = file_name.rsplit(".", 1)
 
         if len(components) == 2:
-            name, extension = components
+            _, extension = components
 
             if self.allowed_extensions:
                 if extension.lower() not in self.allowed_extensions:
@@ -166,6 +152,30 @@ class MediaStorage(metaclass=abc.ABCMeta):
                     raise ValueError("This file type isn't allowed.")
         else:
             raise ValueError("The file has no extension.")
+
+    def generate_file_key(
+        self, file_name: str, user: t.Optional[BaseUser] = None
+    ) -> str:
+        """
+        Generates a unique file ID. If you have your own strategy for naming
+        files, you can override this method.
+
+        By default we add a UUID to the filename, to make it unique::
+
+            >>> self.generate_file_key(file_name='my-poster.jpg')
+            my-poster-3beac950-7721-46c9-9e7d-5e908ef51011.jpg
+
+        :raises ValueError:
+            If the ``file_name`` is invalid.
+
+        """
+        # If the file_name includes the entire path (e.g. /foo/bar.jpg) - we
+        # just want bar.jpg.
+        file_name = pathlib.Path(file_name).name
+
+        self.validate_file_name(file_name=file_name)
+
+        name, extension = file_name.rsplit(".", 1)
 
         if len(file_name) > 50:
             # Truncate really long names. Otherwise they might be too long
