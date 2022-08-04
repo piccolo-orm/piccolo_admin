@@ -181,3 +181,8 @@ class LocalMediaStorage(MediaStorage):
 
     def __hash__(self):
         return hash(("local", self.media_path))
+
+    def __eq__(self, value):
+        if not isinstance(value, LocalMediaStorage):
+            return False
+        return value.__hash__() == self.__hash__()

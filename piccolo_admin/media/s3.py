@@ -299,11 +299,6 @@ class S3MediaStorage(MediaStorage):
             self.executor, self.get_file_keys_sync
         )
 
-    def __eq__(self, value) -> bool:
-        if not isinstance(value, S3MediaStorage):
-            return False
-        return self.__hash__() == value.__hash__()
-
     def __hash__(self):
         return hash(
             (
@@ -315,3 +310,8 @@ class S3MediaStorage(MediaStorage):
                 self.folder_name,
             )
         )
+
+    def __eq__(self, value):
+        if not isinstance(value, S3MediaStorage):
+            return False
+        return value.__hash__() == self.__hash__()
