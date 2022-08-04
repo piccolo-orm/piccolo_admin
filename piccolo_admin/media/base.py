@@ -299,3 +299,8 @@ class MediaStorage(metaclass=abc.ABCMeta):
                 == "y"
             ):
                 await self.bulk_delete_files(unused_file_keys)
+
+    def __eq__(self, value):
+        if not isinstance(value, MediaStorage):
+            return False
+        return value.__hash__() == self.__hash__()

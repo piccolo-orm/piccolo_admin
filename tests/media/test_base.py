@@ -11,6 +11,7 @@ from piccolo.table import create_db_tables_sync, drop_db_tables_sync
 
 from piccolo_admin.example import Director, Movie, Studio
 from piccolo_admin.media.local import LocalMediaStorage
+from piccolo_admin.media.s3 import S3MediaStorage
 
 
 class TestGenerateFileID(TestCase):
@@ -178,3 +179,120 @@ class TestDeleteUnusedFiles(TestCase):
 
         # The extra_file_name should have been deleted.
         self.assertListEqual(sorted(os.listdir(media_path)), file_names)
+
+
+class TestHash(TestCase):
+    """
+    We want to be able to detect if multiple storage classes are
+    accidentally referencing the same folder.
+    """
+
+    def test_local_media(self):
+        """
+        Test comparing ``LocalMediaStorage``.
+        """
+        # These should be equal, as the media path is the same.
+        self.assertEqual(
+            LocalMediaStorage(column=Movie.poster, media_path="/tmp/"),
+            LocalMediaStorage(column=Movie.screenshots, media_path="/tmp/"),
+        )
+
+        # These shouldn't be equal, as the media paths are different.
+        self.assertNotEqual(
+            LocalMediaStorage(column=Movie.poster, media_path="/tmp/poster/"),
+            LocalMediaStorage(
+                column=Movie.screenshots, media_path="/tmp/screenshots/"
+            ),
+        )
+
+    def test_s3_media(self):
+        """
+        Test comparing ``S3MediaStorage``.
+        """
+        # These should be equal, as the folder name and bucket name as the
+        # same.
+        self.assertEqual(
+            S3MediaStorage(
+                column=Movie.poster,
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+            S3MediaStorage(
+                column=Movie.screenshots,
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+        )
+
+        # These shouldn't be equal, as the folder names are different.
+        self.assertNotEqual(
+            S3MediaStorage(
+                column=Movie.poster,
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+            S3MediaStorage(
+                column=Movie.screenshots,
+                bucket_name="bucker123",
+                folder_name="folder456",
+            ),
+        )
+
+        # These shouldn't be equal, as the bucket names are different.
+        self.assertNotEqual(
+            S3MediaStorage(
+                column=Movie.poster,
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+            S3MediaStorage(
+                column=Movie.screenshots,
+                bucket_name="bucker456",
+                folder_name="folder123",
+            ),
+        )
+
+        # These shouldn't be equal, as the endpoint URLs are different.
+        self.assertNotEqual(
+            S3MediaStorage(
+                column=Movie.poster,
+                connection_kwargs={"endpoint_url": "https://cloud-1.com"},
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+            S3MediaStorage(
+                column=Movie.screenshots,
+                connection_kwargs={"endpoint_url": "https://cloud-2.com"},
+                bucket_name="bucker123",
+                folder_name="folder123",
+            ),
+        )
+
+    def test_mix(self):
+        """
+        Test comparing a mix of ``LocalMediaStorage`` and ``S3MediaStorage``.
+        """
+        self.assertNotEqual(
+            LocalMediaStorage(column=Movie.poster, media_path="/tmp/"),
+            S3MediaStorage(
+                column=Movie.screenshots,
+                bucket_name="bucker123",
+                folder_name="folder456",
+            ),
+        )
+
+    def test_sets(self):
+        """
+        Make sure sets behave as expected.
+        """
+        self.assertEqual(
+            len(
+                {
+                    LocalMediaStorage(column=Movie.poster, media_path="/tmp/"),
+                    LocalMediaStorage(
+                        column=Movie.screenshots, media_path="/tmp/"
+                    ),
+                },
+            ),
+            1,
+        )

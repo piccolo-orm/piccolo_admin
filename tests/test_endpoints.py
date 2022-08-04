@@ -19,7 +19,8 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
-from piccolo_admin.example import APP, MEDIA_ROOT
+from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
+from piccolo_admin.media.local import LocalMediaStorage
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -110,6 +111,34 @@ class TestTableConfig(TestCase):
 
 
 class TestAdminRouter(TestCase):
+    def test_init(self):
+        with self.assertRaises(ValueError) as manager:
+            create_admin(
+                tables=[
+                    TableConfig(
+                        Movie,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.poster, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                    TableConfig(
+                        Director,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.screenshots, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                ]
+            )
+        self.assertEqual(
+            str(manager.exception),
+            "Media storage is misconfigured - multiple columns are saving "
+            "to the same location.",
+        )
+
     def test_get_meta(self):
         client = TestClient(APP)
 
@@ -318,7 +347,7 @@ class TestForms(TestCase):
         self.assertEqual(response.status_code, 400)
 
 
-class TestUpload(TestCase):
+class TestMediaStorage(TestCase):
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):

@@ -4,6 +4,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import inspect
+import itertools
 import json
 import os
 import typing as t
@@ -329,6 +330,9 @@ class AdminRouter(FastAPI):
             for table_config in table_configs
         }
 
+        #######################################################################
+        # Make sure columns are configured properly.
+
         for table_config in table_configs:
             table_class = table_config.table_class
             for column in table_class._meta.columns:
@@ -341,6 +345,25 @@ class AdminRouter(FastAPI):
                         f"this table within Piccolo Admin."
                     )
                     colored_warning(message, level=Level.high)
+
+        #######################################################################
+        # Make sure media storage is configured properly.
+
+        media_storage = [
+            i
+            for i in itertools.chain(
+                *[
+                    table_config.media_storage or []
+                    for table_config in table_configs
+                ]
+            )
+        ]
+
+        if len(media_storage) != len(set(media_storage)):
+            raise ValueError(
+                "Media storage is misconfigured - multiple columns are saving "
+                "to the same location."
+            )
 
         #######################################################################
 

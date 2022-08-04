@@ -178,3 +178,6 @@ class LocalMediaStorage(MediaStorage):
             break
 
         return file_keys
+
+    def __hash__(self):
+        return hash(("local", self.media_path))

@@ -298,3 +298,20 @@ class S3MediaStorage(MediaStorage):
         return await loop.run_in_executor(
             self.executor, self.get_file_keys_sync
         )
+
+    def __eq__(self, value) -> bool:
+        if not isinstance(value, S3MediaStorage):
+            return False
+        return self.__hash__() == value.__hash__()
+
+    def __hash__(self):
+        return hash(
+            (
+                "s3",
+                self.connection_kwargs.get("endpoint_url")
+                if self.connection_kwargs
+                else None,
+                self.bucket_name,
+                self.folder_name,
+            )
+        )
