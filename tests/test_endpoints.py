@@ -413,7 +413,7 @@ class TestMediaStorage(TestCase):
         )
 
         # Remove the test file from the media directory
-        Path(MEDIA_ROOT, "poster", file_key).unlink()
+        Path(MEDIA_ROOT, "movie_poster", file_key).unlink()
 
 
 class TestTables(TestCase):
