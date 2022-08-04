@@ -247,7 +247,7 @@ class S3MediaStorage(MediaStorage):
                 Bucket=self.bucket_name,
                 Delete={
                     "Objects": [
-                        {"Key": str(pathlib.Path(self.folder_name, file_key))}
+                        {"Key": str(pathlib.Path(folder_name, file_key))}
                         for file_key in file_keys
                     ],
                 },
