@@ -1,6 +1,9 @@
 import datetime
+import os
+import uuid
+from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.column_types import (
@@ -16,7 +19,8 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
-from piccolo_admin.example import APP
+from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
+from piccolo_admin.media.local import LocalMediaStorage
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -107,6 +111,34 @@ class TestTableConfig(TestCase):
 
 
 class TestAdminRouter(TestCase):
+    def test_init(self):
+        with self.assertRaises(ValueError) as manager:
+            create_admin(
+                tables=[
+                    TableConfig(
+                        Movie,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.poster, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                    TableConfig(
+                        Director,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.screenshots, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                ]
+            )
+        self.assertEqual(
+            str(manager.exception),
+            "Media storage is misconfigured - multiple columns are saving "
+            "to the same location.",
+        )
+
     def test_get_meta(self):
         client = TestClient(APP)
 
@@ -313,6 +345,75 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+
+class TestMediaStorage(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser)
+
+    @patch("piccolo_admin.media.base.uuid")
+    def test_image_upload(self, uuid_module: MagicMock):
+        uuid_value = uuid.uuid4()
+        uuid_module.uuid4.return_value = uuid_value
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "media/test_files/bulb.jpg"
+        )
+
+        with open(test_file_path, "rb") as test_file:
+            response = client.post(
+                "/api/media/",
+                data={"table_name": "movie", "column_name": "poster"},
+                files={"file": ("bulb.jpg", test_file, "image/jpeg")},
+                headers={"X-CSRFToken": csrftoken},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        file_key: str = response.json().get("file_key")
+        self.assertIsNotNone(file_key)
+
+        # Make sure that we can retrieve the URL
+        response = client.post(
+            "/api/media/generate-file-url/",
+            json={
+                "table_name": "movie",
+                "column_name": "poster",
+                "file_key": file_key,
+            },
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(
+            response.json(),
+            {
+                "file_url": f"./api/media-files/movie/poster/bulb-{uuid_value}.jpg"  # noqa: E501
+            },
+        )
+
+        # Remove the test file from the media directory
+        Path(MEDIA_ROOT, "movie_poster", file_key).unlink()
 
 
 class TestTables(TestCase):

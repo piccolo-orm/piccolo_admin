@@ -1,5 +1,25 @@
 <template>
     <div>
+        <template v-if="isMediaColumn && !isFilter">
+            <div class="media_block">
+                <input type="file" @change="uploadFile($event)" />
+                <a
+                    href="#"
+                    @click.prevent="showMedia"
+                    v-if="localValue && type != 'array'"
+                    ><font-awesome-icon icon="eye" title="View"
+                /></a>
+            </div>
+
+            <MediaViewer
+                v-if="showMediaViewer"
+                :mediaViewerConfig="mediaViewerConfig"
+                @close="showMediaViewer = false"
+            />
+
+            <LoadingOverlay v-if="showLoadingOverlay" />
+        </template>
+
         <template v-if="choices">
             <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
             <ChoiceSelect
@@ -41,12 +61,16 @@
             </template>
 
             <div v-else-if="format == 'text-area' && isFilter == false">
-                <textarea
+                <vue-editor
                     v-if="
-                        !schema.rich_text_columns.includes(
-                            getFieldName(title).toLowerCase()
-                        )
+                        schema.rich_text_columns.includes(getFieldName(title))
                     "
+                    v-model="localValue"
+                    v-bind:name="getFieldName(title)"
+                    :editor-toolbar="customToolbar"
+                />
+                <textarea
+                    v-else
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="getFieldName(title)"
@@ -54,12 +78,6 @@
                     v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
-                />
-                <vue-editor
-                    v-else
-                    v-model="localValue"
-                    v-bind:name="getFieldName(title)"
-                    :editor-toolbar="customToolbar"
                 />
 
                 <textarea
@@ -117,7 +135,7 @@
         <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
                 <OperatorField
-                    :fieldName="title.toLowerCase()"
+                    :fieldName="getFieldName(title)"
                     v-if="isFilter"
                 />
                 <DurationWidget
@@ -147,7 +165,10 @@
         <template v-else-if="type == 'array'">
             <ArrayWidget
                 :array="localValue"
+                :enableAddButton="isFilter || !isMediaColumn"
                 v-on:updateArray="localValue = $event"
+                :fieldName="getFieldName(title)"
+                :isFilter="isFilter"
             />
             <input
                 :value="JSON.stringify(localValue)"
@@ -160,15 +181,22 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-
+import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
+import { VueEditor } from "vue2-editor"
 
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
+import LoadingOverlay from "./LoadingOverlay.vue"
+import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
-import { Choices } from "../interfaces"
-import { VueEditor } from "vue2-editor"
+import {
+    Choices,
+    StoreFileAPIResponse,
+    APIResponseMessage,
+    MediaViewerConfig
+} from "@/interfaces"
 
 export default Vue.extend({
     props: {
@@ -205,6 +233,8 @@ export default Vue.extend({
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
+        LoadingOverlay,
+        MediaViewer,
         OperatorField,
         VueEditor
     },
@@ -212,6 +242,8 @@ export default Vue.extend({
         return {
             localValue: undefined,
             textareaHeight: "50px",
+            showMediaViewer: false,
+            mediaViewerConfig: null as MediaViewerConfig,
             customToolbar: [
                 ["bold", "italic", "underline", "strike", "blockquote"],
                 [{ list: "ordered" }, { list: "bullet" }],
@@ -224,7 +256,8 @@ export default Vue.extend({
                 ],
                 ["link", "image", "code-block"],
                 [{ header: [false, 1, 2, 3] }]
-            ]
+            ],
+            showLoadingOverlay: false
         }
     },
     computed: {
@@ -233,6 +266,14 @@ export default Vue.extend({
         },
         schema() {
             return this.$store.state.schema
+        },
+        currentTableName() {
+            return this.$store.state.currentTableName
+        },
+        isMediaColumn() {
+            return this.schema.media_columns.includes(
+                this.getFieldName(this.title).toLowerCase()
+            )
         }
     },
     methods: {
@@ -249,6 +290,73 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
+        },
+        showMedia() {
+            const mediaViewerConfig: MediaViewerConfig = {
+                fileKey: this.localValue,
+                columnName: this.getFieldName(this.title),
+                tableName: this.currentTableName
+            }
+            this.mediaViewerConfig = mediaViewerConfig
+            this.showMediaViewer = true
+        },
+        async uploadFile(event) {
+            const file = event.target.files[0]
+
+            if (!file) {
+                return
+            }
+
+            let formData = new FormData()
+            formData.append("table_name", this.currentTableName)
+            formData.append("column_name", this.getFieldName(this.title))
+            formData.append("file", file)
+
+            this.showLoadingOverlay = true
+
+            try {
+                const response = await axios.post<StoreFileAPIResponse>(
+                    "./api/media/",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }
+                )
+                if (this.type == "array") {
+                    if (this.localValue) {
+                        this.localValue.push(response.data.file_key)
+                    } else {
+                        this.localValue = [response.data.file_key]
+                    }
+                } else {
+                    this.localValue = response.data.file_key
+                }
+            } catch (error) {
+                let errorMessage = "The request failed."
+                const statusCode = error.response?.status
+
+                if (statusCode) {
+                    if (statusCode == 413) {
+                        errorMessage = "The file is too large."
+                    } else if (statusCode == 500) {
+                        errorMessage = "An error happened on the server."
+                    } else {
+                        errorMessage =
+                            error.response?.data?.detail ?? "Unknown error"
+                    }
+                }
+
+                let message: APIResponseMessage = {
+                    contents: errorMessage,
+                    type: "error"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
+            }
+
+            event.target.value = ""
+            this.showLoadingOverlay = false
         }
     },
     watch: {
@@ -269,6 +377,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="less">
+@import "../vars.less";
+
 pre {
     white-space: pre-wrap;
     word-break: break-all;
@@ -280,7 +390,26 @@ input.flatpicker-input {
     width: 100%;
 }
 
+input[type="file"] {
+    margin-bottom: 0.5rem;
+}
+
 textarea#editor {
     display: none;
+}
+
+div.media_block {
+    display: flex;
+    flex-direction: row;
+
+    input {
+        flex-grow: 1;
+    }
+
+    a {
+        text-align: right;
+        flex-shrink: 0;
+        text-decoration: none;
+    }
 }
 </style>

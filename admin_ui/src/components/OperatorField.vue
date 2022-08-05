@@ -11,8 +11,10 @@
     </select>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from "vue"
+
+export default Vue.extend({
     props: {
         fieldName: String
     },
@@ -42,8 +44,7 @@ export default {
             ]
         }
     }
-}
+})
 </script>
 
-<style>
-</style>
+<style></style>

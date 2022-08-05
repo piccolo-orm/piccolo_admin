@@ -8,38 +8,87 @@
                     id="choice"
                     v-on:change="updateArray($event, index)"
                 />
+                <a
+                    href="#"
+                    v-on:click.prevent="showMedia(index)"
+                    :value="value"
+                    v-if="isMediaColumn && !isFilter"
+                    ><font-awesome-icon icon="eye" title="View"
+                /></a>
                 <a href="#" v-on:click.prevent="removeArrayElement(index)">
-                    <font-awesome-icon icon="times" />
+                    <font-awesome-icon icon="times" title="Remove" />
                 </a>
             </li>
             <li>
-                <a href="#" v-on:click.prevent="addArrayElement">
-                    <font-awesome-icon icon="plus" />{{ $t("Add") }}
+                <a
+                    class="add"
+                    href="#"
+                    v-on:click.prevent="addArrayElement"
+                    v-if="enableAddButton"
+                >
+                    <font-awesome-icon icon="plus" title="Add" />{{ $t("Add") }}
                 </a>
             </li>
         </ul>
+        <MediaViewer
+            v-if="showMediaViewer"
+            :mediaViewerConfig="mediaViewerConfig"
+            @close="showMediaViewer = false"
+        />
     </div>
 </template>
 
 <script lang="ts">
-export default {
+import Vue, { PropType } from "vue"
+import MediaViewer from "./MediaViewer.vue"
+import { MediaViewerConfig } from "@/interfaces"
+
+export default Vue.extend({
     props: {
         array: {
-            type: Array,
+            type: Array as PropType<string[]>,
             default: () => []
         },
         inputType: {
-            type: String,
+            type: String as PropType<string>,
             default: "text"
+        },
+        fieldName: {
+            type: String as PropType<string>,
+            default: ""
+        },
+        enableAddButton: {
+            type: Boolean as PropType<boolean>,
+            default: true
+        },
+        isFilter: {
+            type: Boolean as PropType<boolean>,
+            default: true
         }
+    },
+    components: {
+        MediaViewer
     },
     data() {
         return {
-            internalArray: []
+            internalArray: [],
+            showMediaViewer: false,
+            mediaViewerConfig: null as MediaViewerConfig
+        }
+    },
+    computed: {
+        schema() {
+            return this.$store.state.schema
+        },
+        currentTableName() {
+            return this.$store.state.currentTableName
+        },
+        isMediaColumn() {
+            return this.schema.media_columns.includes(this.fieldName)
         }
     },
     methods: {
-        updateArray($event, index) {
+        updateArray($event, index: number) {
             this.$set(this.internalArray, index, $event.target.value)
             this.$emit("updateArray", this.internalArray)
         },
@@ -47,9 +96,18 @@ export default {
             this.internalArray = [...this.internalArray, ""]
             this.$emit("updateArray", this.internalArray)
         },
-        removeArrayElement(index) {
+        removeArrayElement(index: number) {
             this.$delete(this.internalArray, index)
             this.$emit("updateArray", this.internalArray)
+        },
+        showMedia(index: number) {
+            const mediaViewerConfig: MediaViewerConfig = {
+                fileKey: this.internalArray[index],
+                columnName: this.fieldName,
+                tableName: this.currentTableName
+            }
+            this.mediaViewerConfig = mediaViewerConfig
+            this.showMediaViewer = true
         }
     },
     watch: {
@@ -60,7 +118,7 @@ export default {
     mounted() {
         this.internalArray = [...this.array]
     }
-}
+})
 </script>
 
 <style scoped lang="less">
@@ -77,6 +135,10 @@ ul.array_items {
 
         a {
             text-decoration: none;
+
+            &.add {
+                font-size: 0.9em;
+            }
         }
 
         input {

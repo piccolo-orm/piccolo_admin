@@ -4,6 +4,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import inspect
+import itertools
 import json
 import os
 import typing as t
@@ -11,7 +12,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
@@ -32,13 +33,15 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from starlette.exceptions import ExceptionMiddleware, HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+from .media.base import MediaStorage
+from .media.local import LocalMediaStorage
 from .translations.data import TRANSLATIONS
 from .translations.models import (
     Translation,
@@ -58,6 +61,20 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+
+
+class StoreFileResponseModel(BaseModel):
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
+
+
+class GenerateFileURLRequestModel(BaseModel):
+    column_name: str
+    table_name: str
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
+
+
+class GenerateFileURLResponseModel(BaseModel):
+    file_url: str = Field(description="A URL which the file is accessible on.")
 
 
 @dataclass
@@ -91,6 +108,12 @@ class TableConfig:
         :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
         Admin under the hood. It allows you to run custom logic when a row
         is modified.
+    :param media_storage:
+        These columns will be used to store media. We don't directly store the
+        media in the database, but instead store a string, which is a unique
+        identifier, and can be used to retrieve a URL for accessing the file.
+        Piccolo Admin automatically renders a file upload widget for each media
+        column in the UI.
 
     """
 
@@ -101,19 +124,26 @@ class TableConfig:
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
+    media_storage: t.Optional[t.Sequence[MediaStorage]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
             raise ValueError(
-                "Only specify ``visible_columns`` or "
-                "``exclude_visible_columns``."
+                "Only specify `visible_columns` or "
+                "`exclude_visible_columns`."
             )
 
         if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
-                "Only specify ``visible_filters`` or "
-                "``exclude_visible_filters``."
+                "Only specify `visible_filters` or `exclude_visible_filters`."
             )
+
+        # Create a mapping for faster lookups
+        self.media_columns = (
+            {i.column: i for i in self.media_storage}
+            if self.media_storage
+            else None
+        )
 
     def _get_columns(
         self,
@@ -154,6 +184,13 @@ class TableConfig:
         return (
             tuple(i._meta.name for i in self.rich_text_columns)
             if self.rich_text_columns
+            else ()
+        )
+
+    def get_media_columns_names(self) -> t.Tuple[str, ...]:
+        return (
+            tuple(i._meta.name for i in self.media_columns)
+            if self.media_columns
             else ()
         )
 
@@ -288,6 +325,13 @@ class AdminRouter(FastAPI):
                 table_configs.append(TableConfig(table_class=table))
 
         self.table_configs = table_configs
+        self.table_config_map = {
+            table_config.table_class._meta.tablename: table_config
+            for table_config in table_configs
+        }
+
+        #######################################################################
+        # Make sure columns are configured properly.
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -301,6 +345,25 @@ class AdminRouter(FastAPI):
                         f"this table within Piccolo Admin."
                     )
                     colored_warning(message, level=Level.high)
+
+        #######################################################################
+        # Make sure media storage is configured properly.
+
+        media_storage = [
+            i
+            for i in itertools.chain(
+                *[
+                    table_config.media_storage or []
+                    for table_config in table_configs
+                ]
+            )
+        ]
+
+        if len(media_storage) != len(set(media_storage)):
+            raise ValueError(
+                "Media storage is misconfigured - multiple columns are saving "
+                "to the same location."
+            )
 
         #######################################################################
 
@@ -332,6 +395,7 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+            media_columns_names = table_config.get_media_columns_names()
 
             validators = (
                 Validators(every=[superuser_validators])
@@ -350,6 +414,7 @@ class AdminRouter(FastAPI):
                         "visible_column_names": visible_column_names,
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
+                        "media_columns": media_columns_names,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
@@ -415,6 +480,39 @@ class AdminRouter(FastAPI):
             ),
             methods=["POST"],
         )
+
+        #######################################################################
+        # Media
+
+        private_app.add_api_route(
+            path="/media/",
+            endpoint=self.store_file,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+            response_model=StoreFileResponseModel,
+        )
+
+        private_app.add_api_route(
+            path="/media/generate-file-url/",
+            endpoint=self.generate_file_url,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+            response_model=GenerateFileURLResponseModel,
+        )
+
+        for table_config in self.table_configs:
+            if table_config.media_columns:
+                for (
+                    column,
+                    media_storage,
+                ) in table_config.media_columns.items():
+                    if isinstance(media_storage, LocalMediaStorage):
+                        private_app.mount(
+                            path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",  # noqa: E501
+                            app=StaticFiles(
+                                directory=media_storage.media_path
+                            ),
+                        )
 
         #######################################################################
 
@@ -502,6 +600,94 @@ class AdminRouter(FastAPI):
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
+
+    ###########################################################################
+
+    def _get_media_storage(
+        self, table_name: str, column_name: str
+    ) -> MediaStorage:
+        """
+        Retrieve the ``MediaStorage`` for the given column.
+
+        :raises HTTPException:
+            If a matching ``MediaStorage`` can't be found.
+
+        """
+        table_config = self.table_config_map.get(table_name)
+        if not table_config:
+            raise HTTPException(status_code=404, detail="No such table found.")
+
+        media_columns = table_config.media_columns
+
+        if media_columns is None:
+            raise HTTPException(
+                status_code=422,
+                detail="No media columns are configured for this table.",
+            )
+
+        try:
+            column = table_config.table_class._meta.get_column_by_name(
+                column_name
+            )
+        except ValueError:
+            raise HTTPException(
+                status_code=404,
+                detail="No such column found.",
+            )
+
+        media_storage = media_columns.get(column)
+
+        if not media_storage:
+            raise HTTPException(
+                status_code=422,
+                detail="This column is not configured as a media_column.",
+            )
+
+        return media_storage
+
+    async def store_file(
+        self,
+        request: Request,
+        table_name: str = Form(None),
+        column_name: str = Form(None),
+        file: UploadFile = File(...),
+    ) -> StoreFileResponseModel:
+        """
+        Stores in the file in the configured ``MediaStorage``, and returns a
+        unique key for identifying that file.
+        """
+        media_storage = self._get_media_storage(
+            table_name=table_name, column_name=column_name
+        )
+
+        try:
+            file_key = await media_storage.store_file(
+                file_name=file.filename, file=file.file, user=request.user.user
+            )
+        except ValueError as exception:
+            raise HTTPException(status_code=422, detail=str(exception))
+        return StoreFileResponseModel(file_key=file_key)
+
+    async def generate_file_url(
+        self, request: Request, model: GenerateFileURLRequestModel
+    ) -> GenerateFileURLResponseModel:
+        """
+        Returns a URL for accessing the given file.
+
+        We don't use a GET for this endpoint, as using a GET param to pass the
+        ``file_key`` is too restrictive on which characters can be used.
+        """
+        media_storage = self._get_media_storage(
+            table_name=model.table_name, column_name=model.column_name
+        )
+        file_url = await media_storage.generate_file_url(
+            file_key=model.file_key,
+            root_url=(
+                f"./api/media-files/{model.table_name}/{model.column_name}/"
+            ),
+            user=request.user.user,
+        )
+        return GenerateFileURLResponseModel(file_url=file_url)
 
     ###########################################################################
 

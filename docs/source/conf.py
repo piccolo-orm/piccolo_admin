@@ -46,6 +46,11 @@ extensions += ["sphinx.ext.autodoc"]
 autodoc_typehints = "signature"
 autodoc_typehints_format = "short"
 autoclass_content = "both"
+autodoc_preserve_defaults = True
+
+# -- Viewcode -------------------------------------------------------------
+
+extensions += ["sphinx.ext.viewcode"]
 
 # -- Intersphinx -------------------------------------------------------------
 
