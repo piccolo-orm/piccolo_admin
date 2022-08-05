@@ -3,9 +3,12 @@
         <template v-if="isMediaColumn && !isFilter">
             <div class="media_block">
                 <input type="file" @change="uploadFile($event)" />
-                <a href="#" @click.prevent="showMedia" v-if="localValue"
-                    >View</a
-                >
+                <a
+                    href="#"
+                    @click.prevent="showMedia"
+                    v-if="localValue && type != 'array'"
+                    ><font-awesome-icon icon="eye" title="View"
+                /></a>
             </div>
 
             <MediaViewer
@@ -58,12 +61,16 @@
             </template>
 
             <div v-else-if="format == 'text-area' && isFilter == false">
-                <textarea
+                <vue-editor
                     v-if="
-                        !schema.rich_text_columns.includes(
-                            getFieldName(title).toLowerCase()
-                        )
+                        schema.rich_text_columns.includes(getFieldName(title))
                     "
+                    v-model="localValue"
+                    v-bind:name="getFieldName(title)"
+                    :editor-toolbar="customToolbar"
+                />
+                <textarea
+                    v-else
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="getFieldName(title)"
@@ -71,12 +78,6 @@
                     v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
-                />
-                <vue-editor
-                    v-else
-                    v-model="localValue"
-                    v-bind:name="getFieldName(title)"
-                    :editor-toolbar="customToolbar"
                 />
 
                 <textarea
@@ -166,7 +167,8 @@
                 :array="localValue"
                 :enableAddButton="isFilter || !isMediaColumn"
                 v-on:updateArray="localValue = $event"
-                :title="getFieldName(title)"
+                :fieldName="getFieldName(title)"
+                :isFilter="isFilter"
             />
             <input
                 :value="JSON.stringify(localValue)"
@@ -224,10 +226,6 @@ export default Vue.extend({
         choices: {
             type: Object as PropType<Choices>,
             default: null
-        },
-        showLoadingOverlay: {
-            type: Boolean as PropType<boolean>,
-            default: false
         }
     },
     components: {
@@ -258,7 +256,8 @@ export default Vue.extend({
                 ],
                 ["link", "image", "code-block"],
                 [{ header: [false, 1, 2, 3] }]
-            ]
+            ],
+            showLoadingOverlay: false
         }
     },
     computed: {
