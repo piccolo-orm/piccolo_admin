@@ -1,6 +1,19 @@
 Changes
 =======
 
+0.29.0
+------
+
+Added media upload support - to both a local folder, and S3.
+
+Images, videos, PDFs, and audio files can be viewed within the UI.
+
+This is the one of the biggest updates we've ever made!
+
+Thanks to @sinisaos for all of the help.
+
+-------------------------------------------------------------------------------
+
 0.28.0
 ------
 
