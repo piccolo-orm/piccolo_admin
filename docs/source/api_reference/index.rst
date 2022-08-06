@@ -12,7 +12,7 @@ Translations
 MediaStorage
 ------------
 
-.. currentmodule:: piccolo_admin.media.base
+.. currentmodule:: piccolo_api.media.base
 
 .. autoclass:: MediaStorage
     :members:

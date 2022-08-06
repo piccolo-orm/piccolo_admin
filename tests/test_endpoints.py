@@ -20,7 +20,7 @@ from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
-from piccolo_admin.media.local import LocalMediaStorage
+from piccolo_api.media.local import LocalMediaStorage
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -359,7 +359,7 @@ class TestMediaStorage(TestCase):
     def tearDown(self):
         drop_db_tables_sync(SessionsBase, BaseUser)
 
-    @patch("piccolo_admin.media.base.uuid")
+    @patch("piccolo_api.media.base.uuid")
     def test_image_upload(self, uuid_module: MagicMock):
         uuid_value = uuid.uuid4()
         uuid_module.uuid4.return_value = uuid_value
@@ -379,7 +379,7 @@ class TestMediaStorage(TestCase):
         )
 
         test_file_path = os.path.join(
-            os.path.dirname(__file__), "media/test_files/bulb.jpg"
+            os.path.dirname(__file__), "files/bulb.jpg"
         )
 
         with open(test_file_path, "rb") as test_file:

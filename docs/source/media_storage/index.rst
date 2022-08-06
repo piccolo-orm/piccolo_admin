@@ -96,11 +96,11 @@ MediaStorage
 ------------
 
 For each column we want to use for media storage, we associate it with a
-:class:`MediaStorage <piccolo_admin.media.base.MediaStorage>` instance.
+:class:`MediaStorage <piccolo_api.media.base.MediaStorage>` instance.
 
-Out of the box we have two subclasses - :class:`LocalMediaStorage <piccolo_admin.media.local.LocalMediaStorage>`
-and :class:`S3MediaStorage <piccolo_admin.media.s3.S3MediaStorage>`.
-You can also create your own subclass of :class:`MediaStorage <piccolo_admin.media.base.MediaStorage>`
+Out of the box we have two subclasses - :class:`LocalMediaStorage <piccolo_api.media.local.LocalMediaStorage>`
+and :class:`S3MediaStorage <piccolo_api.media.s3.S3MediaStorage>`.
+You can also create your own subclass of :class:`MediaStorage <piccolo_api.media.base.MediaStorage>`
 to implement your own storage backend.
 
 
@@ -123,7 +123,7 @@ In order to associate a column with ``LocalMediaStorage``, we do the following:
         TableConfig,
         create_admin
     )
-    from piccolo_admin.media.local import LocalMediaStorage
+    from piccolo_api.media.local import LocalMediaStorage
 
 
     class Movie(Table):
@@ -169,7 +169,7 @@ Some things to be aware of:
 Source
 ~~~~~~
 
-.. currentmodule:: piccolo_admin.media.local
+.. currentmodule:: piccolo_api.media.local
 
 .. autoclass:: LocalMediaStorage
 
@@ -194,7 +194,7 @@ In order to associate a column with ``S3MediaStorage``, we do the following:
         TableConfig,
         create_admin
     )
-    from piccolo_admin.media.s3 import S3MediaStorage
+    from piccolo_api.media.s3 import S3MediaStorage
 
 
     class Movie(Table):
@@ -251,7 +251,7 @@ Some things to be aware of:
 Source
 ~~~~~~
 
-.. currentmodule:: piccolo_admin.media.s3
+.. currentmodule:: piccolo_api.media.s3
 
 .. autoclass:: S3MediaStorage
 
@@ -273,7 +273,7 @@ For example:
     await MOVIE_POSTER_MEDIA.delete_file('some-file-key.jpeg')
 
 
-To see all of the methods available, look at :class:`MediaStorage <piccolo_admin.media.base.MediaStorage>`.
+To see all of the methods available, look at :class:`MediaStorage <piccolo_api.media.base.MediaStorage>`.
 
 .. _CleaningUpFiles:
 
