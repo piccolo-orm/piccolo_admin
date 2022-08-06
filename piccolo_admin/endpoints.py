@@ -24,6 +24,8 @@ from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
+from piccolo_api.media.base import MediaStorage
+from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.openapi.endpoints import swagger_ui
 from piccolo_api.rate_limiting.middleware import (
     InMemoryLimitProvider,
@@ -40,8 +42,6 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from .media.base import MediaStorage
-from .media.local import LocalMediaStorage
 from .translations.data import TRANSLATIONS
 from .translations.models import (
     Translation,

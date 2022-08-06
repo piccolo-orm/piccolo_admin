@@ -37,13 +37,13 @@ from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table
+from piccolo_api.media.local import LocalMediaStorage
+from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
-from piccolo_admin.media.local import LocalMediaStorage
-from piccolo_admin.media.s3 import S3MediaStorage
 
 try:
     """
