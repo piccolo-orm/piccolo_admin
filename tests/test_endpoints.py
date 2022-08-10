@@ -15,12 +15,12 @@ from piccolo.columns.column_types import (
 )
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.crud.hooks import Hook, HookType
+from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
 from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
-from piccolo_api.media.local import LocalMediaStorage
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -408,12 +408,102 @@ class TestMediaStorage(TestCase):
         self.assertDictEqual(
             response.json(),
             {
-                "file_url": f"./api/media-files/movie/poster/bulb-{uuid_value}.jpg"  # noqa: E501
+                "file_url": f"./api/media-files/movie/poster"
+                f"/bulb-{uuid_value}.jpg"
             },
         )
 
         # Remove the test file from the media directory
         Path(MEDIA_ROOT, "movie_poster", file_key).unlink()
+
+    def test_store_file_read_only(self):
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "example_media"
+        )
+
+        MOVIE_POSTER_MEDIA = LocalMediaStorage(
+            column=Movie.poster,
+            media_path=os.path.join(test_file_path),
+        )
+
+        movie_config = TableConfig(
+            table_class=Movie,
+            media_storage=[MOVIE_POSTER_MEDIA],
+        )
+
+        APP = create_admin([movie_config], read_only=True)
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.post(
+            "/api/media/",
+            data={"table_name": "movie", "column_name": "poster"},
+            files={"file": ("bulb.jpg", "file", "image/jpeg")},
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(
+            response.content,
+            b'{"detail":"Method Not Allowed"}',
+        )
+
+    def test_generate_file_url_read_only(self):
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "example_media"
+        )
+
+        MOVIE_POSTER_MEDIA = LocalMediaStorage(
+            column=Movie.poster,
+            media_path=os.path.join(test_file_path),
+        )
+
+        movie_config = TableConfig(
+            table_class=Movie,
+            media_storage=[MOVIE_POSTER_MEDIA],
+        )
+
+        APP = create_admin([movie_config], read_only=True)
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.post(
+            "/api/media/generate-file-url/",
+            json={
+                "table_name": "movie",
+                "column_name": "poster",
+                "file_key": "file_key",
+            },
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(
+            response.content,
+            b'{"detail":"Method Not Allowed"}',
+        )
 
 
 class TestTables(TestCase):
