@@ -1,6 +1,16 @@
 Changes
 =======
 
+0.29.1
+------
+
+The media endpoints now obey the ``read_only`` option of ``create_admin``.
+Read only mode is used for online demos.
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
 0.29.0
 ------
 
