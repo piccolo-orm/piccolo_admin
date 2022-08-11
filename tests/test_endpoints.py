@@ -456,7 +456,7 @@ class TestMediaStorage(TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertEqual(
             response.content,
-            b'{"detail":"Method Not Allowed"}',
+            b'{"detail":"Running in read-only mode."}',
         )
 
     def test_generate_file_url_read_only(self):
@@ -502,7 +502,7 @@ class TestMediaStorage(TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertEqual(
             response.content,
-            b'{"detail":"Method Not Allowed"}',
+            b'{"detail":"Running in read-only mode."}',
         )
 
 

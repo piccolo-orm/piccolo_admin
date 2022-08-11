@@ -657,21 +657,24 @@ class AdminRouter(FastAPI):
         Stores in the file in the configured ``MediaStorage``, and returns a
         unique key for identifying that file.
         """
-        if not self.read_only:
-            media_storage = self._get_media_storage(
-                table_name=table_name, column_name=column_name
+        if self.read_only:
+            raise HTTPException(
+                status_code=405, detail="Running in read-only mode."
             )
 
-            try:
-                file_key = await media_storage.store_file(
-                    file_name=file.filename,
-                    file=file.file,
-                    user=request.user.user,
-                )
-            except ValueError as exception:
-                raise HTTPException(status_code=422, detail=str(exception))
-            return StoreFileResponseModel(file_key=file_key)
-        raise HTTPException(status_code=405)
+        media_storage = self._get_media_storage(
+            table_name=table_name, column_name=column_name
+        )
+
+        try:
+            file_key = await media_storage.store_file(
+                file_name=file.filename,
+                file=file.file,
+                user=request.user.user,
+            )
+        except ValueError as exception:
+            raise HTTPException(status_code=422, detail=str(exception))
+        return StoreFileResponseModel(file_key=file_key)
 
     async def generate_file_url(
         self, request: Request, model: GenerateFileURLRequestModel
@@ -682,20 +685,23 @@ class AdminRouter(FastAPI):
         We don't use a GET for this endpoint, as using a GET param to pass the
         ``file_key`` is too restrictive on which characters can be used.
         """
-        if not self.read_only:
-            media_storage = self._get_media_storage(
-                table_name=model.table_name, column_name=model.column_name
+        if self.read_only:
+            raise HTTPException(
+                status_code=405, detail="Running in read-only mode."
             )
-            file_url = await media_storage.generate_file_url(
-                file_key=model.file_key,
-                root_url=(
-                    f"./api/media-files/{model.table_name}"
-                    f"/{model.column_name}/"
-                ),
-                user=request.user.user,
-            )
-            return GenerateFileURLResponseModel(file_url=file_url)
-        raise HTTPException(status_code=405)
+
+        media_storage = self._get_media_storage(
+            table_name=model.table_name, column_name=model.column_name
+        )
+        file_url = await media_storage.generate_file_url(
+            file_key=model.file_key,
+            root_url=(
+                f"./api/media-files/{model.table_name}"
+                f"/{model.column_name}/"
+            ),
+            user=request.user.user,
+        )
+        return GenerateFileURLResponseModel(file_url=file_url)
 
     ###########################################################################
 
