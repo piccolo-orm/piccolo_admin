@@ -149,8 +149,6 @@ class TestAdminRouter(TestCase):
                 "piccolo_admin_version": __VERSION__,
                 "site_name": "Piccolo Admin",
                 "logo_image": "logo.jpg",
-                "logo_width": 40,
-                "logo_height": 30,
             },
         )
         self.assertEqual(response.status_code, 200)

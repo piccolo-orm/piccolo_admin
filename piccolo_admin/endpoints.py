@@ -62,8 +62,6 @@ class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
     logo_image: str
-    logo_width: int
-    logo_height: int
 
 
 class StoreFileResponseModel(BaseModel):
@@ -309,8 +307,6 @@ class AdminRouter(FastAPI):
         production: bool = False,
         site_name: str = "Piccolo Admin",
         logo_image: str = "logo.jpg",
-        logo_width: int = 40,
-        logo_height: int = 30,
         default_language_code: str = "auto",
         translations: t.List[Translation] = None,
     ) -> None:
@@ -384,8 +380,6 @@ class AdminRouter(FastAPI):
         self.auth_table = auth_table
         self.site_name = site_name
         self.logo_image = logo_image
-        self.logo_width = logo_width
-        self.logo_height = logo_height
         self.forms = forms
         self.read_only = read_only
         self.form_config_map = {form.slug: form for form in self.forms}
@@ -799,8 +793,6 @@ class AdminRouter(FastAPI):
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
             logo_image=self.logo_image,
-            logo_width=self.logo_width,
-            logo_height=self.logo_height,
         )
 
     ###########################################################################
@@ -888,8 +880,6 @@ def create_admin(
     production: bool = False,
     site_name: str = "Piccolo Admin",
     logo_image: str = "logo.jpg",
-    logo_width: int = 40,
-    logo_height: int = 30,
     default_language_code: str = "auto",
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
@@ -939,14 +929,8 @@ def create_admin(
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
     :param logo_image:
-        Specify a logo image in the admin UI (default
-        ``'logo.jpg'``).
-    :param logo_width:
-        Specify a logo width in the admin UI (default
-        ``'40'``).
-    :param logo_height:
-        Specify a logo height in the admin UI (default
-        ``'30'``).
+        The path to an image on the server which will be used as the logo in the UI.
+        It not specified, a default logo is used.
     :param default_language_code:
         Specify the default language used in the admin UI. The value should be
         an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
@@ -1044,8 +1028,6 @@ def create_admin(
                 production=production,
                 site_name=site_name,
                 logo_image=logo_image,
-                logo_width=logo_width,
-                logo_height=logo_height,
                 default_language_code=default_language_code,
                 translations=translations,
             ),
