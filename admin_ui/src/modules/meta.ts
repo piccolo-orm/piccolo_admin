@@ -4,7 +4,7 @@ export default {
     state: {
         siteName: "Piccolo Admin",
         piccoloAdminVersion: "Unknown",
-        logoName: "logo.jpg",
+        logoImage: "logo.jpg",
         logoWidth: 40,
         logoHeight: 30,
     },
@@ -12,8 +12,8 @@ export default {
         updateSiteName(state, value: string) {
             state.siteName = value
         },
-        updateLogoName(state, value: string) {
-            state.logoName = value
+        updateLogoImage(state, value: string) {
+            state.logoImage = value
         },
         updateLogoWidth(state, value: number) {
             state.logoWidth = value
@@ -29,7 +29,7 @@ export default {
         async fetchMeta(context) {
             const response = await axios.get(`./public/meta/`)
             context.commit("updateSiteName", response.data.site_name)
-            context.commit("updateLogoName", response.data.logo_name)
+            context.commit("updateLogoImage", response.data.logo_image)
             context.commit("updateLogoWidth", response.data.logo_width)
             context.commit("updateLogoHeight", response.data.logo_height)
             context.commit(

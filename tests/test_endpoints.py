@@ -148,7 +148,7 @@ class TestAdminRouter(TestCase):
             {
                 "piccolo_admin_version": __VERSION__,
                 "site_name": "Piccolo Admin",
-                "logo_name": "logo.jpg",
+                "logo_image": "logo.jpg",
                 "logo_width": 40,
                 "logo_height": 30,
             },

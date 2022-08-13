@@ -1,6 +1,6 @@
 <template>
     <img
-        :src="'icons/' + logoName"
+        :src="'icons/' + logoImage"
         :width="logoWidth"
         :height="logoHeight"
         id="logo"
@@ -10,8 +10,8 @@
 <script lang="ts">
 export default {
     computed: {
-        logoName() {
-            return this.$store.state.metaModule.logoName
+        logoImage() {
+            return this.$store.state.metaModule.logoImage
         },
         logoWidth() {
             return this.$store.state.metaModule.logoWidth

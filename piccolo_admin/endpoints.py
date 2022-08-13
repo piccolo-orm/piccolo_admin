@@ -61,7 +61,7 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
-    logo_name: str
+    logo_image: str
     logo_width: int
     logo_height: int
 
@@ -308,7 +308,7 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
-        logo_name: str = "logo.jpg",
+        logo_image: str = "logo.jpg",
         logo_width: int = 40,
         logo_height: int = 30,
         default_language_code: str = "auto",
@@ -383,7 +383,7 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
-        self.logo_name = logo_name
+        self.logo_image = logo_image
         self.logo_width = logo_width
         self.logo_height = logo_height
         self.forms = forms
@@ -798,7 +798,7 @@ class AdminRouter(FastAPI):
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
-            logo_name=self.logo_name,
+            logo_image=self.logo_image,
             logo_width=self.logo_width,
             logo_height=self.logo_height,
         )
@@ -887,7 +887,7 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
-    logo_name: str = "logo.jpg",
+    logo_image: str = "logo.jpg",
     logo_width: int = 40,
     logo_height: int = 30,
     default_language_code: str = "auto",
@@ -938,8 +938,8 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
-    :param logo_name:
-        Specify a logo name in the admin UI (default
+    :param logo_image:
+        Specify a logo image in the admin UI (default
         ``'logo.jpg'``).
     :param logo_width:
         Specify a logo width in the admin UI (default
@@ -1043,7 +1043,7 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
-                logo_name=logo_name,
+                logo_image=logo_image,
                 logo_width=logo_width,
                 logo_height=logo_height,
                 default_language_code=default_language_code,
