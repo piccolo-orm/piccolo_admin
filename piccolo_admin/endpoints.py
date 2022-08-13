@@ -61,6 +61,9 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+    logo_name: str
+    logo_width: int
+    logo_height: int
 
 
 class StoreFileResponseModel(BaseModel):
@@ -305,6 +308,9 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
+        logo_name: str = "logo.jpg",
+        logo_width: int = 40,
+        logo_height: int = 30,
         default_language_code: str = "auto",
         translations: t.List[Translation] = None,
     ) -> None:
@@ -377,6 +383,9 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
+        self.logo_name = logo_name
+        self.logo_width = logo_width
+        self.logo_height = logo_height
         self.forms = forms
         self.read_only = read_only
         self.form_config_map = {form.slug: form for form in self.forms}
@@ -585,6 +594,11 @@ class AdminRouter(FastAPI):
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
         )
 
+        self.mount(
+            path="/icons",
+            app=StaticFiles(directory=os.path.join(ASSET_PATH, "icons")),
+        )
+
         auth_middleware = partial(
             AuthenticationMiddleware,
             backend=SessionsAuthBackend(
@@ -784,6 +798,9 @@ class AdminRouter(FastAPI):
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
+            logo_name=self.logo_name,
+            logo_width=self.logo_width,
+            logo_height=self.logo_height,
         )
 
     ###########################################################################
@@ -870,6 +887,9 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
+    logo_name: str = "logo.jpg",
+    logo_width: int = 40,
+    logo_height: int = 30,
     default_language_code: str = "auto",
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
@@ -918,6 +938,15 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
+    :param logo_name:
+        Specify a logo name in the admin UI (default
+        ``'logo.jpg'``).
+    :param logo_width:
+        Specify a logo width in the admin UI (default
+        ``'40'``).
+    :param logo_height:
+        Specify a logo height in the admin UI (default
+        ``'30'``).
     :param default_language_code:
         Specify the default language used in the admin UI. The value should be
         an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
@@ -1014,6 +1043,9 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
+                logo_name=logo_name,
+                logo_width=logo_width,
+                logo_height=logo_height,
                 default_language_code=default_language_code,
                 translations=translations,
             ),

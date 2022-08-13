@@ -12,10 +12,9 @@
                     <font-awesome-icon icon="times" v-else />
                 </a>
             </span>
-
+            <CustomLogo />
             <h1>
                 <router-link to="/">
-                    <font-awesome-icon icon="tools" />
                     {{ siteName }}
                 </router-link>
             </h1>
@@ -68,6 +67,7 @@ import Vue from "vue"
 import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 import NavTranslationsMenu from "./NavTranslationsMenu.vue"
+import CustomLogo from "./CustomLogo.vue"
 
 export default Vue.extend({
     props: {
@@ -100,7 +100,8 @@ export default Vue.extend({
     components: {
         SidebarOverlay,
         NavDropDownMenu,
-        NavTranslationsMenu
+        NavTranslationsMenu,
+        CustomLogo
     },
     methods: {
         closeDropdown(value) {

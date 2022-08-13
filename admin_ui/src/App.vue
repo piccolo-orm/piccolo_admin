@@ -25,6 +25,9 @@ export default Vue.extend({
         },
         showAboutModal() {
             return this.$store.state.aboutModalModule.showAboutModal
+        },
+        siteName() {
+            return this.$store.state.metaModule.siteName
         }
     },
     async created() {
@@ -37,6 +40,8 @@ export default Vue.extend({
         this.$store.commit("updateDarkMode", darkMode)
 
         await this.$store.dispatch("fetchMeta")
+
+        document.title = this.siteName
     },
     async beforeCreate() {
         let app = this
