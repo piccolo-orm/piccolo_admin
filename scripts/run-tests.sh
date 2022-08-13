@@ -7,6 +7,7 @@
 export PICCOLO_CONF="tests.piccolo_conf"
 mkdir -p piccolo_admin/dist/css
 mkdir -p piccolo_admin/dist/js
+mkdir -p piccolo_admin/dist/icons
 touch piccolo_admin/dist/index.html
 
 python -m pytest --cov=piccolo_admin --cov-report xml --cov-report html --cov-fail-under 85 -s $@
