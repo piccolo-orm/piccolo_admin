@@ -28,6 +28,9 @@ export default Vue.extend({
         },
         siteName() {
             return this.$store.state.metaModule.siteName
+        },
+        faviconPath() {
+            return this.$store.state.metaModule.faviconPath
         }
     },
     async created() {
@@ -41,7 +44,16 @@ export default Vue.extend({
 
         await this.$store.dispatch("fetchMeta")
 
+        // site title
         document.title = this.siteName
+
+        // site favicon
+        let link = document.querySelector(
+            "link[rel*='icon']"
+        ) as HTMLAnchorElement
+
+        link.href = this.faviconPath
+        document.getElementsByTagName("head")[0].appendChild(link)
     },
     async beforeCreate() {
         let app = this

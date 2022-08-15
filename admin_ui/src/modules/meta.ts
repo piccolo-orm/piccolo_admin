@@ -4,14 +4,18 @@ export default {
     state: {
         siteName: "Piccolo Admin",
         piccoloAdminVersion: "Unknown",
-        logoImage: "logo.jpg",
+        logoPath: "icons/logo.jpg",
+        faviconPath: "icons/favicon.ico",
     },
     mutations: {
         updateSiteName(state, value: string) {
             state.siteName = value
         },
-        updateLogoImage(state, value: string) {
-            state.logoImage = value
+        updateLogoPath(state, value: string) {
+            state.logoPath = value
+        },
+        updateFaviconPath(state, value: string) {
+            state.faviconPath = value
         },
         updatePiccoloAdminVersion(state, value: string) {
             state.piccoloAdminVersion = value
@@ -21,7 +25,8 @@ export default {
         async fetchMeta(context) {
             const response = await axios.get(`./public/meta/`)
             context.commit("updateSiteName", response.data.site_name)
-            context.commit("updateLogoImage", response.data.logo_image)
+            context.commit("updateLogoPath", response.data.logo_path)
+            context.commit("updateFaviconPath", response.data.favicon_path)
             context.commit(
                 "updatePiccoloAdminVersion",
                 response.data.piccolo_admin_version

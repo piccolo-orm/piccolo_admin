@@ -1,12 +1,12 @@
 <template>
-    <img :src="'icons/' + logoImage" />
+    <img :src="logoPath" />
 </template>
 
 <script lang="ts">
 export default {
     computed: {
-        logoImage() {
-            return this.$store.state.metaModule.logoImage
+        logoPath() {
+            return this.$store.state.metaModule.logoPath
         }
     }
 }

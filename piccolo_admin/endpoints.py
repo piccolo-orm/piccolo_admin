@@ -61,7 +61,8 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
-    logo_image: str
+    logo_path: str
+    favicon_path: str
 
 
 class StoreFileResponseModel(BaseModel):
@@ -306,7 +307,8 @@ class AdminRouter(FastAPI):
         rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
-        logo_image: str = "logo.jpg",
+        logo_path: str = "icons/logo.jpg",
+        favicon_path: str = "icons/favicon.ico",
         default_language_code: str = "auto",
         translations: t.List[Translation] = None,
     ) -> None:
@@ -379,7 +381,8 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
-        self.logo_image = logo_image
+        self.logo_path = logo_path
+        self.favicon_path = favicon_path
         self.forms = forms
         self.read_only = read_only
         self.form_config_map = {form.slug: form for form in self.forms}
@@ -792,7 +795,8 @@ class AdminRouter(FastAPI):
         return MetaResponseModel(
             piccolo_admin_version=PICCOLO_ADMIN_VERSION,
             site_name=self.site_name,
-            logo_image=self.logo_image,
+            logo_path=self.logo_path,
+            favicon_path=self.favicon_path,
         )
 
     ###########################################################################
@@ -879,7 +883,8 @@ def create_admin(
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
-    logo_image: str = "logo.jpg",
+    logo_path: str = "icons/logo.jpg",
+    favicon_path: str = "icons/favicon.ico",
     default_language_code: str = "auto",
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
@@ -928,9 +933,12 @@ def create_admin(
     :param site_name:
         Specify a different site name in the admin UI (default
         ``'Piccolo Admin'``).
-    :param logo_image:
+    :param logo_path:
         The path to an image on the server which will be used as the logo in the UI.
         It not specified, a default logo is used.
+    :param favicon_path:
+        The path to an image on the server which will be used as the favicon in the UI.
+        It not specified, a default favicon is used.
     :param default_language_code:
         Specify the default language used in the admin UI. The value should be
         an `IETF language tag <https://en.wikipedia.org/wiki/IETF_language_tag>`_,
@@ -1027,7 +1035,8 @@ def create_admin(
                 rate_limit_provider=rate_limit_provider,
                 production=production,
                 site_name=site_name,
-                logo_image=logo_image,
+                logo_path=logo_path,
+                favicon_path=favicon_path,
                 default_language_code=default_language_code,
                 translations=translations,
             ),
