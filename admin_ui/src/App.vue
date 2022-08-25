@@ -50,10 +50,8 @@ export default Vue.extend({
         // site favicon
         let link = document.querySelector(
             "link[rel*='icon']"
-        ) as HTMLAnchorElement
-
+        ) as HTMLLinkElement
         link.href = this.faviconPath
-        document.getElementsByTagName("head")[0].appendChild(link)
     },
     async beforeCreate() {
         let app = this
