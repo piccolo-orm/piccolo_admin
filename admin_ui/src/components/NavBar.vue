@@ -12,7 +12,9 @@
                     <font-awesome-icon icon="times" v-else />
                 </a>
             </span>
-            <CustomLogo />
+            <router-link to="/">
+                <CustomLogo />
+            </router-link>
             <h1>
                 <router-link to="/">
                     {{ siteName }}
@@ -60,7 +62,6 @@
         <SidebarOverlay v-if="showSidebar" />
     </div>
 </template>
-
 
 <script lang="ts">
 import Vue from "vue"
@@ -110,7 +111,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";
