@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.30.0
+------
+
+Added translations for simplified Chinese characters (courtesy @mnixry).
+
+-------------------------------------------------------------------------------
+
 0.29.1
 ------
 
