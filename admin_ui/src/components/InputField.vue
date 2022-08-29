@@ -226,6 +226,10 @@ export default Vue.extend({
         choices: {
             type: Object as PropType<Choices>,
             default: null
+        },
+        isMediaColumn: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     components: {
@@ -269,11 +273,6 @@ export default Vue.extend({
         },
         currentTableName() {
             return this.$store.state.currentTableName
-        },
-        isMediaColumn() {
-            return this.schema.media_columns.includes(
-                this.getFieldName(this.title).toLowerCase()
-            )
         }
     },
     methods: {
