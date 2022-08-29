@@ -69,6 +69,7 @@
                     v-bind:value="getValue(property.title)"
                     v-bind:choices="property.extra.choices"
                     v-bind:isMediaColumn="isMediaColumn(keyName)"
+                    v-bind:isRichText="isRichText(keyName)"
                 />
             </template>
         </div>
@@ -131,6 +132,9 @@ export default Vue.extend({
         },
         isMediaColumn(keyName: string) {
             return this.schema.media_columns.includes(keyName)
+        },
+        isRichText(keyName: string) {
+            return this.schema.rich_text_columns.includes(keyName)
         }
     },
     mounted() {

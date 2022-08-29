@@ -62,9 +62,7 @@
 
             <div v-else-if="format == 'text-area' && isFilter == false">
                 <vue-editor
-                    v-if="
-                        schema.rich_text_columns.includes(getFieldName(title))
-                    "
+                    v-if="isRichText"
                     v-model="localValue"
                     v-bind:name="getFieldName(title)"
                     :editor-toolbar="customToolbar"
@@ -230,6 +228,10 @@ export default Vue.extend({
         isMediaColumn: {
             type: Boolean as PropType<boolean>,
             default: false
+        },
+        isRichText: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     components: {
@@ -267,9 +269,6 @@ export default Vue.extend({
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
-        },
-        schema() {
-            return this.$store.state.schema
         },
         currentTableName() {
             return this.$store.state.currentTableName
