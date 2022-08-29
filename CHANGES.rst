@@ -1,6 +1,16 @@
 Changes
 =======
 
+0.31.1
+------
+
+Fixed a bug with custom forms - under some situations they would fail to
+render. Thanks to @sinisaos for discovering this issue. See
+`PR 208 <https://github.com/piccolo-orm/piccolo_admin/pull/208>`_ for more
+info.
+
+-------------------------------------------------------------------------------
+
 0.31.0
 ------
 
