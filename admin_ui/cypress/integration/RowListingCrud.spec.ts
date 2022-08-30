@@ -72,7 +72,7 @@ context('Startup', () => {
 
         // Fill field with new years nominated value
         cy.get('a[href*="#"]')
-            .contains('Add')
+            .contains('Add ')
             .click();
 
         cy.get('[id="choice"]')
@@ -90,6 +90,8 @@ context('Startup', () => {
         cy.contains('Back')
             .click();
 
+        cy.wait(3000);
+
         // Delete single selected row 
         cy.get('input[type="checkbox"]').check('5')
             .check({ force: true })
@@ -97,18 +99,20 @@ context('Startup', () => {
 
         cy.wait(2000);
 
-        cy.contains('Delete 1 selected')
+        cy.contains('Delete 1 rows')
             .click();
 
-        cy.wait(2000);
+        cy.wait(3000);
 
         // Delete all selected rows 
         cy.get('input[type="checkbox"]')
             .check({ force: true })
             .should('be.checked')
 
-        cy.contains('Delete 8 selected')
+        cy.contains('Delete 8 rows')
             .click();
+
+        cy.wait(1000);
 
     });
 
