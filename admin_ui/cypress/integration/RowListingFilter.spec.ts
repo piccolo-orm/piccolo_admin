@@ -33,7 +33,7 @@ context('Startup', () => {
         cy.contains('director')
             .click();
 
-        cy.contains('Show Filters')
+        cy.contains('Show filters')
             .click();
 
         // Clear name field
@@ -67,7 +67,7 @@ context('Startup', () => {
 
         cy.wait(2000);
 
-        cy.contains('Show Filters')
+        cy.contains('Show filters')
             .click();
 
         // Clear filters to get all rows
@@ -88,7 +88,7 @@ context('Startup', () => {
         cy.get('button').contains('Sort')
             .click();
 
-        cy.wait(2000);
+        cy.wait(3000);
 
         // Sort descending
         cy.contains('Sort')

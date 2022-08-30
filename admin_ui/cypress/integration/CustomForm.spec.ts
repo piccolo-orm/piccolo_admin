@@ -40,6 +40,7 @@ context('Startup', () => {
             .should('have.value', 'director@director.com')
 
         cy.get('[name="title"]')
+            .clear()
             .type('Hello')
             .should('have.value', 'Hello')
 
@@ -52,20 +53,23 @@ context('Startup', () => {
 
         cy.wait(2000)
 
+        cy.contains('Back').click()
+
         cy.contains('Booking form').click()
 
         cy.wait(2000)
 
         // Fill custom form
         cy.get('[name="email"]')
-            .type('friend@friend.com')
-            .should('have.value', 'friend@friend.com')
+            .type('customer@customer.com')
+            .should('have.value', 'customer@customer.com')
 
         cy.get('[name="name"]')
             .type('Bob')
             .should('have.value', 'Bob')
 
         cy.get('[name="notes"]')
+            .clear()
             .type('Star Wars please')
             .should('have.value', 'Star Wars please')
 
