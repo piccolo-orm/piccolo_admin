@@ -747,7 +747,7 @@ SIMPLIFIED_CHINESE = Translation(
         "New password": "新密码",
         "New value": "新的值",
         "No results found": "没有找到结果",
-        "of": "于", # prep. is hard to translate in Chinese
+        "of": "于",  # prep. is hard to translate in Chinese
         "page": "页",
         "Password": "密码",
         "result(s)": "结果",
@@ -761,7 +761,7 @@ SIMPLIFIED_CHINESE = Translation(
         "Show Filters": "显示过滤器",
         "Show referencing tables": "显示引用的表",
         "Showing": "正在显示",
-        "Sort by": "使用排序", # it should be 使用...排序
+        "Sort by": "使用排序",  # it should be 使用...排序
         "Sort": "排序",
         "Submit": "提交",
         "Tables": "表",
@@ -772,7 +772,7 @@ SIMPLIFIED_CHINESE = Translation(
         "Version": "版本",
         "Weeks": "周",
         "Welcome to": "欢迎来到",
-        "with a matching": "匹配了", # it should be 与...匹配
+        "with a matching": "匹配了",  # it should be 与...匹配
     },
 )
 
