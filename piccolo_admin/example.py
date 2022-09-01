@@ -36,7 +36,7 @@ from piccolo.columns import (
 from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
-from piccolo.table import Table
+from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
@@ -340,11 +340,9 @@ def set_engine(engine: str = "sqlite"):
 
 def create_schema(persist: bool = False):
     if not persist:
-        for table_class in reversed(TABLE_CLASSES):
-            table_class.alter().drop_table(if_exists=True).run_sync()
+        drop_db_tables_sync(*TABLE_CLASSES)
 
-    for table_class in TABLE_CLASSES:
-        table_class.create_table(if_not_exists=True).run_sync()
+    create_db_tables_sync(*TABLE_CLASSES, if_not_exists=True)
 
 
 def populate_data(inflate: int = 0, engine: str = "sqlite"):
