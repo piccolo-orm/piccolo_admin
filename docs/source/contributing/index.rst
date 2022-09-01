@@ -3,7 +3,8 @@ Contributing
 
 The backend is just vanilla Python.
 
-The front end is built using Vue.js. To make modifications, clone the repo, and cd into the `admin_ui` directory.
+The front end is built using Vue.js. To make modifications, clone the repo, and
+``cd`` into the ``admin_ui`` directory.
 
 Install the npm dependencies:
 
@@ -21,7 +22,8 @@ And then you can launch the admin as follows:
 
 It will auto refresh the UI as you make changes to the source files.
 
-The UI needs an API to interact with - the easiest way to do this is to use the demo app.
+The UI needs an API to interact with - the easiest way to do this is to use the
+demo app.
 
 .. code-block:: bash
 
@@ -37,7 +39,8 @@ The UI needs an API to interact with - the easiest way to do this is to use the 
     python -m piccolo_admin.example --help
 
 
-You will need to configure a local webserver as a proxy - see extra/piccolo_admin.
+You will need to configure a local webserver as a proxy - see
+``extra/piccolo_admin``.
 
 -------------------------------------------------------------------------------
 
@@ -103,8 +106,8 @@ Add the following to your VSCode ``settings.json``:
 Storybook
 ---------
 
-The project uses `Storybook JS <https://storybook.js.org/>`_, which is a nice tool
-for viewing UI components in isolation. To launch it:
+The project uses `Storybook JS <https://storybook.js.org/>`_, which is a nice
+tool for viewing UI components in isolation. To launch it:
 
 .. code-block:: bash
 
