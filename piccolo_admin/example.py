@@ -134,7 +134,7 @@ class Director(Table, help_text="The main director for a movie."):
 
 class Studio(Table, help_text="A movie studio."):
     pk = UUID(primary_key=True)
-    name = Varchar()
+    name = Varchar(unique=True)
     facilities = JSON()
 
     @classmethod
