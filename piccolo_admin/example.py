@@ -355,9 +355,9 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
 
     """
     # Add some rows
-    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()  # type: ignore # noqa: E501
-    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()  # type: ignore
-    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()  # type: ignore
+    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
+    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
+    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the

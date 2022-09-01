@@ -1,7 +1,8 @@
 import datetime
+import typing as t
 from decimal import Decimal
 
-DIRECTORS = [
+DIRECTORS: t.List[t.Dict[str, t.Any]] = [
     {
         "id": 1,
         "name": "Peter Jackson",
@@ -33,7 +34,7 @@ DIRECTORS = [
 ]
 
 
-MOVIES = [
+MOVIES: t.List[t.Dict[str, t.Any]] = [
     {
         "name": "Star Wars: Episode IV - A New Hope",
         "rating": 93.3,
@@ -330,7 +331,7 @@ MOVIES = [
 ]
 
 
-STUDIOS = [
+STUDIOS: t.List[t.Dict[str, t.Any]] = [
     {
         "name": "Shepperton Studios",
         "facilities": {
@@ -343,7 +344,7 @@ STUDIOS = [
 
 
 # Some random words used to generate fake movie names.
-MOVIE_WORDS = [
+MOVIE_WORDS: t.List[str] = [
     "Adventure",
     "Alien",
     "Armageddon",
