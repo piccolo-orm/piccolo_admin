@@ -4,4 +4,4 @@ set -e
 set -x
 
 export PYTHONPATH='..':$PYTHONPATH
-python -m piccolo_admin.example --inflate=10000 &
+python -m piccolo_admin.example &
