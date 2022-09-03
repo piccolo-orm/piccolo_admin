@@ -96,6 +96,7 @@ jobs:
           sudo systemctl restart nginx
           sudo nginx -s reload
           cat /etc/nginx/sites-enabled/piccolo_admin
+          sudo lsof -i tcp:80
       - name: "Run Cypress tests"
         uses: "cypress-io/github-action@v4"
         with:
