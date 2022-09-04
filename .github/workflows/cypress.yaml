@@ -33,7 +33,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements/requirements.txt
           pip install -r requirements/test-requirements.txt
-          pip install piccolo_admin[faker]
           cd admin_ui/
           npm install
       - name: "NPM Serve"
