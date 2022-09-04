@@ -12,13 +12,11 @@ Install the npm dependencies:
 
     npm install
 
-
 And then you can launch the admin as follows:
 
 .. code-block:: bash
 
     npm run serve
-
 
 It will auto refresh the UI as you make changes to the source files.
 
@@ -37,10 +35,6 @@ demo app.
 
     # To find out all available options:
     python -m piccolo_admin.example --help
-
-
-You will need to configure a local webserver as a proxy - see
-``extra/piccolo_admin``.
 
 -------------------------------------------------------------------------------
 
@@ -129,7 +123,6 @@ Then launch Cypress as follows:
 .. code-block:: bash
 
     npm run cypress:open
-
 
 This will launch the Cypress app, which is basically a wrapper around Chrome,
 from which you can start the automated tests.

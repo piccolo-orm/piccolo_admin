@@ -2,7 +2,7 @@
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F');
+        cy.visit('/#/login?nextURL=%2F');
     });
 
     it('Fill login form and redirect to admin page and then logout', () => {

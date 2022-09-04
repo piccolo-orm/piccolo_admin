@@ -1,0 +1,49 @@
+name: "Cypress tests"
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  server-run:
+    name: "Setup local server and run Cypress tests"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@v2"
+      - name: "Setup Python"
+        uses: "actions/setup-python@v2"
+        with:
+          python-version: 3.7
+      - name: "Setup Node"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: "Install all dependencies"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/requirements.txt
+          pip install -r requirements/test-requirements.txt
+          cd admin_ui && npm install
+      - name: Build front end assets
+        run: cd admin_ui && npm run build
+      - name: "Run Cypress tests"
+        uses: "cypress-io/github-action@v4"
+        with:
+          browser: chrome
+          working-directory: ./admin_ui
+          start: python -m piccolo_admin.example
+          config: baseUrl=http://localhost:8000
+        env:
+          PYTHONPATH: ..
+      - name: "Upload Cypress Screenshots and Videos"
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-artifacts
+          path: |
+            /home/runner/work/piccolo_admin/piccolo_admin/admin_ui/cypress/videos/
+            /home/runner/work/piccolo_admin/piccolo_admin/admin_ui/cypress/screenshots/
+        if: always()

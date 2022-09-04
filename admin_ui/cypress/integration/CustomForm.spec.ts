@@ -1,11 +1,12 @@
 /// <reference types="Cypress" />
 
-// to run test we have to setting up a Local SMTP Server
+// The custom form sends emails - if you want to see these, set up a
+// Local SMTP Server:
 // python -m smtpd -c DebuggingServer -n localhost:1025
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F')
+        cy.visit('/#/login?nextURL=%2F')
     })
 
     it('Fill custom forms', () => {
