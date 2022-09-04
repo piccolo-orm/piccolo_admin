@@ -35,8 +35,10 @@ jobs:
         with:
           browser: chrome
           working-directory: ./admin_ui
-          start: export PYTHONPATH=".." && python -m piccolo_admin.example
+          start: python -m piccolo_admin.example
           config: baseUrl=http://localhost:8000
+        env:
+          PYTHONPATH: ..
       - name: "Upload Cypress Screenshots and Videos"
         uses: actions/upload-artifact@v3
         with:
