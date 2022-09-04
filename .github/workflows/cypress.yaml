@@ -35,6 +35,8 @@ jobs:
           pip install -r requirements/test-requirements.txt
           cd admin_ui/
           npm install
+      - name: List node_modules
+        run: ls admin_ui/node_modules
       - name: "NPM Serve"
         run: |
           cd admin_ui
