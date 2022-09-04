@@ -41,69 +41,13 @@ jobs:
           cd admin_ui
           npm run serve &
           cd ..
-      - name: "Setup Nginx"
-        run: |
-      - name: "Add entry in the local hosts file for being able to resolve the piccolo_admin host name"
-        run: |
-          cat > ~/.hosts << EOF
-          127.0.0.1    piccolo_admin
-          EOF
-          cat ~/.hosts
-          sudo unshare --mount
-          sudo mount ~/.hosts /etc/hosts --bind
-          cat /etc/hosts
-      - name: "Add an Nginx virtualhost, we need some proxy pass here and there"
-        run: |
-          cat > ~/.virtualhost << EOF
-           server {
-               listen 80;
-               server_name piccolo_admin;
-
-               client_max_body_size 20M;
-
-               location / {
-                   proxy_pass http://127.0.0.1:80;
-               }
-
-               location /js {
-                   proxy_pass http://127.0.0.1:80;
-               }
-
-               location /css {
-                   proxy_pass http://127.0.0.1:80;
-               }
-
-               location /sockjs-node {
-                   proxy_pass http://127.0.0.1:80;
-                   proxy_http_version 1.1;
-                   proxy_set_header Upgrade \$http_upgrade;
-                   proxy_set_header Connection 'Upgrade';
-               }
-
-               location /api {
-                   proxy_pass http://127.0.0.1:8000;
-               }
-
-               location /public {
-                   proxy_pass http://127.0.0.1:8000;
-               }
-           }
-          EOF
-          sudo unshare --mount
-          sudo touch /etc/nginx/sites-enabled/piccolo_admin
-          sudo mount ~/.virtualhost /etc/nginx/sites-enabled/piccolo_admin --bind
-          sudo nginx -t
-          sudo systemctl restart nginx
-          sudo nginx -s reload
-          cat /etc/nginx/sites-enabled/piccolo_admin
-          sudo lsof -i tcp:80
       - name: "Run Cypress tests"
         uses: "cypress-io/github-action@v4"
         with:
           browser: chrome
           working-directory: ./admin_ui
           start: bash ../scripts/start_server.sh
-          config: pageLoadTimeout=100000,baseUrl=http://piccolo_admin
+          config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
       - name: "Upload Cypress Screenshots and Videos"
         uses: actions/upload-artifact@v3
         with:

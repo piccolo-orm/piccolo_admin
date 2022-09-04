@@ -5,7 +5,7 @@
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F')
+        cy.visit('/#/login?nextURL=%2F')
     })
 
     it('Fill custom forms', () => {

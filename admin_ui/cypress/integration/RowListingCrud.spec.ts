@@ -2,7 +2,7 @@
 
 context('Startup', () => {
     beforeEach(() => {
-        cy.visit('http://piccolo_admin/#/login?nextURL=%2F');
+        cy.visit('/#/login?nextURL=%2F');
     });
 
     it('Open director table and made basic crud operations', () => {
@@ -30,7 +30,7 @@ context('Startup', () => {
 
         cy.contains('director').click();
 
-        // Update record 
+        // Update record
 
         cy.wait(2000);
 
@@ -92,7 +92,7 @@ context('Startup', () => {
 
         cy.wait(3000);
 
-        // Delete single selected row 
+        // Delete single selected row
         cy.get('input[type="checkbox"]').check('5')
             .check({ force: true })
             .should('be.checked')
@@ -104,7 +104,7 @@ context('Startup', () => {
 
         cy.wait(3000);
 
-        // Delete all selected rows 
+        // Delete all selected rows
         cy.get('input[type="checkbox"]')
             .check({ force: true })
             .should('be.checked')
