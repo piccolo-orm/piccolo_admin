@@ -36,7 +36,7 @@ jobs:
           cd admin_ui/
           npm install
       - name: List node_modules
-        run: ls admin_ui/node_modules
+        run: ls admin_ui/node_modules/webpack/hot
       - name: "NPM Serve"
         run: |
           cd admin_ui
