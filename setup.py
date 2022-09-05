@@ -60,7 +60,7 @@ def extras_require() -> t.Dict[str, t.List[str]]:
 setup(
     name="piccolo_admin",
     version=VERSION,
-    description="A simple and powerful admin for Piccolo models, using ASGI.",
+    description="A powerful and modern admin interface / CMS, powered by Piccolo and ASGI.",  # noqa: E501
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     author="Daniel Townsend",
