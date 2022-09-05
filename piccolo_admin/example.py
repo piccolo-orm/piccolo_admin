@@ -100,6 +100,8 @@ except ImportError:
 
 
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
+if not USE_S3 and not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
 
 
 class Sessions(SessionsBase):
