@@ -1,6 +1,16 @@
 Changes
 =======
 
+0.31.2
+------
+
+When ``piccolo_admin`` is installed, an ``admin_demo`` script is made available
+on the command line, which launches a Piccolo Admin demo.
+
+It wasn't working due to a missing folder, which has now been fixed.
+
+-------------------------------------------------------------------------------
+
 0.31.1
 ------
 
