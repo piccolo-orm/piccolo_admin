@@ -23,7 +23,7 @@
             </p>
         </div>
 
-        <pre>{{ errors }}</pre>
+        <RowFormErrors v-if="errors" v-bind:errors="errors" />
 
         <form v-on:submit.prevent="submitForm($event)">
             <RowFormSelect :row="selectedRow" :schema="schema" />
@@ -42,6 +42,7 @@ import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
+import RowFormErrors from "./RowFormErrors.vue"
 
 import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
 
@@ -51,7 +52,8 @@ export default Vue.extend({
         DeleteButton,
         DropDownMenu,
         RowFormSelect,
-        ReferencingTables
+        ReferencingTables,
+        RowFormErrors
     },
     data: function () {
         return {
@@ -110,7 +112,13 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
-                const data = error.response.data
+                let data = error.response.data
+
+                if (data["db_error"]) {
+                    data = data["db_error"]
+                } else {
+                    data = data["detail"][0]["msg"]
+                }
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",

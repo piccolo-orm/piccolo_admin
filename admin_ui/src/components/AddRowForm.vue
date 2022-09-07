@@ -2,7 +2,7 @@
     <div>
         <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
 
-        <pre>{{ errors }}</pre>
+        <RowFormErrors v-if="errors" v-bind:errors="errors" />
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
             <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import RowFormSelect from "./RowFormSelect.vue"
+import RowFormErrors from "./RowFormErrors.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default {
@@ -21,7 +22,8 @@ export default {
         schema: Object
     },
     components: {
-        RowFormSelect
+        RowFormSelect,
+        RowFormErrors
     },
     data: function () {
         return {
@@ -66,7 +68,13 @@ export default {
                     data: json
                 })
             } catch (error) {
-                const data = error.response.data
+                let data = error.response.data
+
+                if (data["db_error"]) {
+                    data = data["db_error"]
+                } else {
+                    data = data["detail"][0]["msg"]
+                }
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
