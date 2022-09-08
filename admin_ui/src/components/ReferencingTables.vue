@@ -31,12 +31,19 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 import { Location } from "vue-router"
 import { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
-export default Vue.extend({
-    props: ["tableName", "rowID"],
+export default {
+    props: {
+        tableName: {
+            type: String as PropType<string>,
+        },
+        rowID: {
+            type: undefined as PropType<number | string>,
+        }
+    },
     data: function () {
         return {
             references: [] as TableReference[],
@@ -73,7 +80,7 @@ export default Vue.extend({
     async mounted() {
         await this.fetchTableReferences()
     }
-})
+}
 </script>
 
 <style scoped lang="less">
