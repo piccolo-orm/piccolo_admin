@@ -77,16 +77,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
+import {Schema} from "@/interfaces"
 
 export default Vue.extend({
     props: {
         row: Object,
-        schema: Object,
+        schema: Object as PropType<Schema>,
         isFilter: {
             type: Boolean,
             default: false

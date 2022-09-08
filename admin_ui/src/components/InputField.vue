@@ -203,22 +203,25 @@ export default Vue.extend({
             default: ""
         },
         type: {
-            type: String,
+            type: String  as PropType<string>,
             default: "string"
         },
         value: {
-            type: undefined,
+            type: undefined as PropType<any>,
             default: undefined
         },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
-        format: String,
+        format: {
+            type: String as PropType<string | undefined>,
+            default: undefined
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: true
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         choices: {

@@ -17,12 +17,13 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 import InputField from "./InputField.vue"
+import {Schema} from "@/interfaces"
 
 export default Vue.extend({
     props: {
-        schema: Object,
+        schema: Object as PropType<Schema>,
     },
     components: {
         InputField,
