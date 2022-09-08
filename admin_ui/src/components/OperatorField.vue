@@ -1,5 +1,5 @@
 <template>
-    <select :name="fieldName + '__operator'">
+    <select :name="columnName + '__operator'">
         <option
             :key="operator.label"
             :selected="operator.value == 'e'"
@@ -12,11 +12,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 
 export default Vue.extend({
     props: {
-        fieldName: String
+        columnName: {
+            type: String as PropType<string>,
+            required: true
+        }
     },
     data() {
         return {
