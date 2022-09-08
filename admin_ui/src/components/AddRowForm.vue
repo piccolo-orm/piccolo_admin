@@ -2,7 +2,7 @@
     <div>
         <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
 
-        <RowFormErrors v-if="errors" v-bind:errors="errors" />
+        <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
             <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
@@ -12,24 +12,26 @@
 </template>
 
 <script lang="ts">
+import Vue, { PropType } from 'vue'
 import RowFormSelect from "./RowFormSelect.vue"
-import RowFormErrors from "./RowFormErrors.vue"
+import FormErrors from "./FormErrors.vue"
 import { APIResponseMessage } from "../interfaces"
 import { parseErrorResponse } from "../utils"
+import {Schema} from "@/interfaces"
 
-export default {
+export default Vue.extend({
     props: {
-        tableName: String,
-        schema: Object
+        tableName: String as PropType<string>,
+        schema: Object  as PropType<Schema>
     },
     components: {
         RowFormSelect,
-        RowFormErrors
+        FormErrors
     },
     data() {
         return {
-            defaults: {},
-            errors: ""
+            defaults: {} as {[key: string]: any},
+            errors: [] as string[]
         }
     },
     methods: {
@@ -69,18 +71,7 @@ export default {
                     data: json
                 })
             } catch (error) {
-                const data = error.response.data
-
-                let errorsArray: string[] = []
-
-                if (error.response.status == 422) {
-                    this.errors = parseErrorResponse(data)
-                } else if (error.response.status == 405) {
-                    this.errors = data
-                } else {
-                    errorsArray.push(data)
-                    this.errors = errorsArray
-                }
+                this.errors = parseErrorResponse(error.response.data, error.response.status)
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
@@ -90,7 +81,7 @@ export default {
 
                 return
             }
-            this.errors = ""
+            this.errors = []
 
             var message: APIResponseMessage = {
                 contents: "Successfully added row",
@@ -109,7 +100,7 @@ export default {
         let response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
     }
-}
+})
 </script>
 
 <style scoped lang="less">

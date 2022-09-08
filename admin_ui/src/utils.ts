@@ -37,20 +37,57 @@ export function titleCase(value: string) {
         .join(" ")
 }
 
-export function parseErrorResponse(error: Object) {
-    let errorsArray: string[] = []
-
-    const databaseError = error["db_error"]
-    const validationError = error["detail"]
-
-    if (databaseError) {
-        errorsArray.push(databaseError)
+/**
+ * We need to parse the error resposne from the server when submitting forms
+ * so we can display something useful and visually pleasant to the user.
+ *
+ * @param error The response from the API which we need to parse.
+ * @param statusCode The HTTP status code returned by the server.
+ * @returns A list of error codes
+ */
+export function parseErrorResponse(
+    error: string | { [key: string]: any },
+    statusCode: number
+): string[] {
+    if (statusCode == 422) {
+        // A validation error
+        if (typeof error == "object") {
+            if (error["db_error"]) {
+                // Database error
+                return [`Database error: ${error["db_error"]}`]
+            } else if (error["detail"]) {
+                // Pydantic Error
+                return error["detail"].map((item: { [key: string]: any }) => {
+                    // The last element is the column name
+                    const fieldName = item.loc[item.loc.length - 1]
+                    return `${fieldName} field - ${item.msg}`
+                })
+            } else if (error["custom_form_error"]) {
+                // Custom form response
+                return [error["custom_form_error"]]
+            } else {
+                return [JSON.stringify(error)]
+            }
+        } else {
+            return [error]
+        }
+    } else if (statusCode == 405) {
+        // Method not allowed
+        if (typeof error == "object") {
+            if (error["detail"]) {
+                return [error["detail"]]
+            } else {
+                return [JSON.stringify(error)]
+            }
+        } else {
+            return [error]
+        }
     } else {
-        validationError.forEach((item: any) => {
-            errorsArray.push(
-                `Field ${item.loc[1]} - ${item.msg}`
-            )
-        })
+        // Something like a 500 error
+        if (typeof error == "object") {
+            return [JSON.stringify(error)]
+        } else {
+            return [error]
+        }
     }
-    return errorsArray
 }

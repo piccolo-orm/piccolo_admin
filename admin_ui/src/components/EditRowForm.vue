@@ -23,7 +23,7 @@
             </p>
         </div>
 
-        <RowFormErrors v-if="errors" v-bind:errors="errors" />
+        <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-on:submit.prevent="submitForm($event)">
             <RowFormSelect :row="selectedRow" :schema="schema" />
@@ -36,29 +36,36 @@
 
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 
 import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowFormSelect from "./RowFormSelect.vue"
-import RowFormErrors from "./RowFormErrors.vue"
+import FormErrors from "./FormErrors.vue"
 
 import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
 import { parseErrorResponse } from "../utils"
 
 export default Vue.extend({
-    props: ["tableName", "rowID"],
+    props: {
+        tableName: {
+            type: String as PropType<string>,
+        },
+        rowID: {
+            type: undefined as PropType<number | string>,
+        }
+    },
     components: {
         DeleteButton,
         DropDownMenu,
         RowFormSelect,
         ReferencingTables,
-        RowFormErrors
+        FormErrors
     },
     data: function () {
         return {
-            errors: "",
+            errors: [] as string[],
             showDropdown: false
         }
     },
@@ -113,18 +120,7 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
-                const data = error.response.data
-
-                let errorsArray: string[] = []
-
-                if (error.response.status == 422) {
-                    this.errors = parseErrorResponse(data)
-                } else if (error.response.status == 405) {
-                    this.errors = data
-                } else {
-                    errorsArray.push(data)
-                    this.errors = errorsArray
-                }
+                this.errors = parseErrorResponse(error.response.data, error.response.status)
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
@@ -134,7 +130,8 @@ export default Vue.extend({
 
                 return
             }
-            this.errors = ""
+
+            this.errors = []
 
             if (opener) {
                 opener.postMessage("edited row", document.location.origin)

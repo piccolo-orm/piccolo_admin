@@ -712,6 +712,7 @@ class AdminRouter(FastAPI):
         )
 
     ###########################################################################
+    # Custom forms
 
     def get_forms(self) -> t.List[FormConfigResponseModel]:
         """
@@ -749,6 +750,9 @@ class AdminRouter(FastAPI):
     async def post_single_form(
         self, request: Request, form_slug: str
     ) -> JSONResponse:
+        """
+        Handles posting of custom forms.
+        """
         form_config = self.form_config_map.get(form_slug)
         data = await request.json()
 
@@ -758,8 +762,11 @@ class AdminRouter(FastAPI):
         try:
             model_instance = form_config.pydantic_model(**data)
         except ValidationError as exception:
+            # We use 'detail' as it mirrors what FastAPI returns for Pydantic
+            # errors, allowing us to use the same error display logic in the
+            # front end.
             return JSONResponse(
-                {"message": json.loads(exception.json())}, status_code=400
+                {"detail": json.loads(exception.json())}, status_code=422
             )
 
         try:
@@ -771,12 +778,14 @@ class AdminRouter(FastAPI):
             else:
                 response = endpoint(request, model_instance)
         except ValueError as exception:
-            return JSONResponse({"message": str(exception)}, status_code=400)
+            return JSONResponse(
+                {"custom_form_error": str(exception)}, status_code=422
+            )
 
         message = (
             response if isinstance(response, str) else "Successfully submitted"
         )
-        return JSONResponse({"message": message})
+        return JSONResponse({"custom_form_success": message})
 
     ###########################################################################
 
