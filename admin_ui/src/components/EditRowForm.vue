@@ -112,12 +112,17 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
-                let data = error.response.data
+                const data = error.response.data
+                const databaseError = data["db_error"]
+                const validationError = data["detail"]
+                let errorsArray = []
 
-                if (data["db_error"]) {
-                    data = data["db_error"]
+                if (databaseError) {
+                    errorsArray.push(databaseError)
                 } else {
-                    data = data["detail"][0]["msg"]
+                    validationError.forEach((item: any) => {
+                        errorsArray.push(`Field ${item.loc[1]} - ${item.msg}`)
+                    })
                 }
 
                 var message: APIResponseMessage = {
@@ -126,11 +131,8 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
-                if (typeof data != "string") {
-                    this.errors = JSON.stringify(data, null, 2)
-                } else {
-                    this.errors = data
-                }
+                this.errors = errorsArray
+
                 return
             }
             this.errors = ""

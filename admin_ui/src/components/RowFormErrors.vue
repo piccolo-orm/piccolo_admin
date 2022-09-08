@@ -1,8 +1,10 @@
 <template>
     <div class="errors">
-        <font-awesome-icon icon="exclamation-triangle" />
         <span>
-            <b> {{ errors }}</b>
+            <font-awesome-icon icon="exclamation-triangle" />Error
+            <ul>
+                <li v-for="error in errors" :key="error">{{ error }}</li>
+            </ul>
         </span>
     </div>
 </template>
@@ -11,7 +13,12 @@
 import Vue from "vue"
 
 export default Vue.extend({
-    props: { errors: String }
+    props: {
+        errors: {
+            type: Array,
+            default: () => []
+        }
+    }
 })
 </script>
 
