@@ -1,13 +1,13 @@
 <template>
     <div v-if="row">
         <div
-            v-bind:key="property.title"
-            v-for="(property, keyName) in schema.properties"
+            v-bind:key="columnName"
+            v-for="(property, columnName) in schema.properties"
         >
             <template v-if="property.extra.foreign_key">
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span class="required" v-if="isRequired(String(columnName))">*</span>
                     <Tooltip
                         v-if="property.extra.help_text"
                         :content="property.extra.help_text"
@@ -41,35 +41,34 @@
                     </router-link>
                 </label>
                 <KeySearch
-                    v-bind:fieldName="property.title.toLowerCase()"
-                    v-bind:key="getValue(property.title)"
+                    v-bind:fieldName="columnName"
                     v-bind:tableName="property.extra.to"
-                    v-bind:rowID="getValue(property.title)"
-                    v-bind:readable="getValue(property.title + '_readable')"
+                    v-bind:rowID="getValue(String(columnName))"
+                    v-bind:readable="getValue(columnName + '_readable')"
                     v-bind:isNullable="property.nullable"
                 />
             </template>
             <template v-else>
                 <label>
                     {{ property.title }}
-                    <span class="required" v-if="isRequired(keyName)">*</span>
+                    <span class="required" v-if="isRequired(String(columnName))">*</span>
                     <Tooltip
                         v-if="property.extra.help_text"
                         :content="property.extra.help_text"
                     />
                 </label>
                 <InputField
+                    v-bind:columnName="columnName"
                     v-bind:format="property.format"
                     v-bind:isFilter="isFilter"
                     v-bind:isNullable="property.nullable"
-                    v-bind:key="property.title"
-                    v-bind:required="isRequired(keyName)"
+                    v-bind:required="isRequired(String(columnName))"
                     v-bind:title="property.title"
                     v-bind:type="property.type || property.anyOf[0].type"
-                    v-bind:value="getValue(property.title)"
+                    v-bind:value="getValue(String(columnName))"
                     v-bind:choices="property.extra.choices"
-                    v-bind:isMediaColumn="isMediaColumn(keyName)"
-                    v-bind:isRichText="isRichText(keyName)"
+                    v-bind:isMediaColumn="isMediaColumn(String(columnName))"
+                    v-bind:isRichText="isRichText(String(columnName))"
                 />
             </template>
         </div>
@@ -106,9 +105,9 @@ export default Vue.extend({
         }
     },
     methods: {
-        getValue(propertyTitle: string) {
+        getValue(columnName: string) {
             let value = this.row
-                ? this.row[propertyTitle.toLowerCase().split(" ").join("_")]
+                ? this.row[columnName]
                 : undefined
             return value
         },

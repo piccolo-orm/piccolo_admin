@@ -2,12 +2,13 @@
     <div>
         <div
             v-bind:key="property.title"
-            v-for="(property, keyName) in schema.properties"
+            v-for="(property, columnName) in schema.properties"
         >
             <label>{{ property.title }}</label>
             <InputField
                 v-bind:isFilter="false"
-                v-bind:key="keyName"
+                v-bind:key="columnName"
+                v-bind:columnName="columnName"
                 v-bind:title="property.title"
                 v-bind:type="property.type || property.anyOf[0].type"
                 v-bind:value="property.default"

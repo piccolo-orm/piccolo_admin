@@ -7,11 +7,11 @@
                 <option value="null" disabled>
                     {{ $t("Select a Column") }}
                 </option>
-                <template v-for="(property, key) in schema.properties">
+                <template v-for="(property, columnName) in schema.properties">
                     <option
-                        :key="key"
-                        :value="key"
-                        v-if="key != schema.primary_key_name"
+                        :key="columnName"
+                        :value="columnName"
+                        v-if="columnName != schema.primary_key_name"
                     >
                         {{ property.title }}
                     </option>
@@ -33,6 +33,7 @@
                 />
 
                 <InputField
+                    v-bind:columnName="selectedPropertyName"
                     v-bind:format="selectedProperty.format"
                     v-bind:isFilter="false"
                     v-bind:title="selectedProperty.title"

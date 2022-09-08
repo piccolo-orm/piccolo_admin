@@ -1,16 +1,16 @@
 <template>
     <div>
-        <template v-for="(property, keyName) in schema.properties">
+        <template v-for="(property, columnName) in schema.properties">
             <div
                 v-bind:key="property.title"
-                v-if="schema.visible_filter_names.includes(keyName)"
+                v-if="schema.visible_filter_names.includes(String(columnName))"
             >
                 <template v-if="property.extra.foreign_key">
                     <label>
                         {{ property.title }}
                     </label>
                     <KeySearch
-                        v-bind:fieldName="property.title.toLowerCase()"
+                        v-bind:fieldName="columnName"
                         v-bind:isFilter="true"
                         v-bind:key="getValue(property.title)"
                         v-bind:readable="getValue(property.title)"
@@ -25,12 +25,13 @@
                     </label>
 
                     <InputField
+                        v-bind:columnName="columnName"
                         v-bind:choices="property.extra.choices"
                         v-bind:format="property.format"
                         v-bind:isFilter="true"
                         v-bind:isNullable="property.nullable"
                         v-bind:key="property.title"
-                        v-bind:required="isRequired(keyName)"
+                        v-bind:required="isRequired(String(columnName))"
                         v-bind:title="property.title"
                         v-bind:type="property.type || property.anyOf[0].type"
                         v-bind:value="getValue(property.title)"
