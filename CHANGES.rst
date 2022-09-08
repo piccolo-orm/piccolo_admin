@@ -1,6 +1,24 @@
 Changes
 =======
 
+0.32.0
+------
+
+Camelcase column names could break parts of Piccolo Admin. It now works as
+expected:
+
+.. code-block:: python
+
+  class Person(Table):
+      # This now works:
+      firstName = Varchar()
+
+Even though camelcase is unusual in Python, a user may be using an existing
+database, so it makes sense to support it. Thanks to @sumitsharansatsangi for
+reporting this issue.
+
+-------------------------------------------------------------------------------
+
 0.31.2
 ------
 
