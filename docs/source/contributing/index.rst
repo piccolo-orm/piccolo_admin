@@ -118,14 +118,27 @@ entire application is working as expected.
 Before launching it, make sure that the Piccolo Admin front end code and
 backend code are running (see above).
 
-Then launch Cypress as follows:
+Run all tests
+~~~~~~~~~~~~~
+
+From within the ``admin_ui`` folder, use the following command to run all of
+the Cypress tests:
+
+.. code-block:: bash
+
+    npm run cypress:run
+
+Run tests interactively
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Instead, you can run this command to launch the Cypress app:
 
 .. code-block:: bash
 
     npm run cypress:open
 
-This will launch the Cypress app, which is basically a wrapper around Chrome,
-from which you can start the automated tests.
+The app runs within Chrome. It allows you to run the Cypress tests, and to
+see them working in real time (clicking around Piccolo Admin).
 
 -------------------------------------------------------------------------------
 
