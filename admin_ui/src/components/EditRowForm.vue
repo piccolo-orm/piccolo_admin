@@ -45,6 +45,7 @@ import RowFormSelect from "./RowFormSelect.vue"
 import RowFormErrors from "./RowFormErrors.vue"
 
 import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
+import { parseErrorResponse } from "../utils"
 
 export default Vue.extend({
     props: ["tableName", "rowID"],
@@ -113,16 +114,16 @@ export default Vue.extend({
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
                 const data = error.response.data
-                const databaseError = data["db_error"]
-                const validationError = data["detail"]
-                let errorsArray = []
 
-                if (databaseError) {
-                    errorsArray.push(databaseError)
+                let errorsArray: string[] = []
+
+                if (error.response.status == 422) {
+                    this.errors = parseErrorResponse(data)
+                } else if (error.response.status == 405) {
+                    this.errors = data
                 } else {
-                    validationError.forEach((item: any) => {
-                        errorsArray.push(`Field ${item.loc[1]} - ${item.msg}`)
-                    })
+                    errorsArray.push(data)
+                    this.errors = errorsArray
                 }
 
                 var message: APIResponseMessage = {
@@ -130,8 +131,6 @@ export default Vue.extend({
                     type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
-
-                this.errors = errorsArray
 
                 return
             }

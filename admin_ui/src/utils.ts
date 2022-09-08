@@ -31,8 +31,26 @@ export function titleCase(value: string) {
     return value
         .toLowerCase()
         .split(" ")
-        .map(function(word) {
+        .map(function (word) {
             return word.replace(word[0], word[0].toUpperCase())
         })
         .join(" ")
+}
+
+export function parseErrorResponse(error: Object) {
+    let errorsArray: string[] = []
+
+    const databaseError = error["db_error"]
+    const validationError = error["detail"]
+
+    if (databaseError) {
+        errorsArray.push(databaseError)
+    } else {
+        validationError.forEach((item: any) => {
+            errorsArray.push(
+                `Field ${item.loc[1]} - ${item.msg}`
+            )
+        })
+    }
+    return errorsArray
 }
