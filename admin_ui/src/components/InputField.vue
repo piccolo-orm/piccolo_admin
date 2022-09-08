@@ -21,10 +21,10 @@
         </template>
 
         <template v-if="choices">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField :columnName="columnName" v-if="isFilter" />
             <ChoiceSelect
                 :choices="choices"
-                :fieldName="getFieldName(title)"
+                :fieldName="columnName"
                 :isFilter="isFilter"
                 :isNullable="isNullable"
                 :value="value"
@@ -32,11 +32,11 @@
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField :columnName="columnName" v-if="isFilter" />
             <input
                 step="1"
                 type="number"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
                 v-bind:value="value"
             />
@@ -45,7 +45,7 @@
         <template v-else-if="type == 'string'">
             <template v-if="format == 'date-time'">
                 <OperatorField
-                    :fieldName="getFieldName(title)"
+                    :columnName="columnName"
                     v-if="isFilter"
                 />
                 <!--
@@ -55,7 +55,7 @@
                 -->
                 <flat-pickr
                     v-bind:config="{ enableTime: true, disableMobile: 'true' }"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-model="localValue"
                 ></flat-pickr>
             </template>
@@ -64,14 +64,14 @@
                 <vue-editor
                     v-if="isRichText"
                     v-model="localValue"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     :editor-toolbar="customToolbar"
                 />
                 <textarea
                     v-else
                     autocomplete="off"
                     ref="textarea"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
@@ -81,7 +81,7 @@
                 <textarea
                     id="editor"
                     v-model.lazy="localValue"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                 ></textarea>
             </div>
 
@@ -90,7 +90,7 @@
                     :value="JSON.stringify(JSON.parse(value), null, 2)"
                     autocomplete="off"
                     ref="textarea"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:style="{ height: textareaHeight }"
                     v-on:input="setTextareaHeight"
                 />
@@ -98,7 +98,7 @@
 
             <input
                 type="text"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
                 v-else
                 v-model="localValue"
@@ -106,7 +106,7 @@
         </template>
 
         <template v-else-if="type == 'boolean'">
-            <select v-bind:name="getFieldName(title)">
+            <select v-bind:name="columnName">
                 <option
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
@@ -133,7 +133,7 @@
         <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
                 <OperatorField
-                    :fieldName="getFieldName(title)"
+                    :columnName="columnName"
                     v-if="isFilter"
                 />
                 <DurationWidget
@@ -142,18 +142,18 @@
                 />
                 <input
                     type="hidden"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-model="localValue"
                 />
             </template>
             <template v-else>
                 <OperatorField
-                    :fieldName="title.toLowerCase()"
+                    :columnName="columnName"
                     v-if="isFilter"
                 />
                 <input
                     type="text"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-model="localValue"
                 />
@@ -165,13 +165,13 @@
                 :array="localValue"
                 :enableAddButton="isFilter || !isMediaColumn"
                 v-on:updateArray="localValue = $event"
-                :fieldName="getFieldName(title)"
+                :fieldName="columnName"
                 :isFilter="isFilter"
             />
             <input
                 :value="JSON.stringify(localValue)"
                 type="hidden"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
             />
         </template>
     </div>
@@ -198,27 +198,35 @@ import {
 
 export default Vue.extend({
     props: {
+        // A nicely formatted column name, for example 'First Name'
         title: {
-            type: String,
-            default: ""
+            type: String as PropType<string>,
+            required: true
+        },
+        columnName: {
+            type: String  as PropType<string>,
+            required: true
         },
         type: {
-            type: String,
+            type: String  as PropType<string>,
             default: "string"
         },
         value: {
-            type: undefined,
+            type: undefined as PropType<any>,
             default: undefined
         },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
-        format: String,
+        format: {
+            type: String as PropType<string | undefined>,
+            default: undefined
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: true
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         choices: {
@@ -275,9 +283,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        getFieldName(name: string) {
-            return name.toLowerCase().split(" ").join("_")
-        },
         setTextareaHeight() {
             let element = this.$refs.textarea
             if (element) {
@@ -292,7 +297,7 @@ export default Vue.extend({
         showMedia() {
             const mediaViewerConfig: MediaViewerConfig = {
                 fileKey: this.localValue,
-                columnName: this.getFieldName(this.title),
+                columnName: this.columnName,
                 tableName: this.currentTableName
             }
             this.mediaViewerConfig = mediaViewerConfig
@@ -307,7 +312,7 @@ export default Vue.extend({
 
             let formData = new FormData()
             formData.append("table_name", this.currentTableName)
-            formData.append("column_name", this.getFieldName(this.title))
+            formData.append("column_name", this.columnName)
             formData.append("file", file)
 
             this.showLoadingOverlay = true

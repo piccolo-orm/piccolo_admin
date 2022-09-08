@@ -23,7 +23,7 @@ export default {
     components: {
         RowFormSelect
     },
-    data: function () {
+    data () {
         return {
             defaults: {},
             errors: ""
@@ -36,7 +36,7 @@ export default {
 
             const json = {}
             for (const i of form.entries()) {
-                const key = i[0].split(" ").join("_")
+                const key = i[0]
                 let value = i[1]
 
                 if (value == "null") {

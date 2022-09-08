@@ -7,11 +7,11 @@
                 <option value="null" disabled>
                     {{ $t("Select a Column") }}
                 </option>
-                <template v-for="(property, key) in schema.properties">
+                <template v-for="(property, columnName) in schema.properties">
                     <option
-                        :key="key"
-                        :value="key"
-                        v-if="key != schema.primary_key_name"
+                        :key="columnName"
+                        :value="columnName"
+                        v-if="columnName != schema.primary_key_name"
                     >
                         {{ property.title }}
                     </option>
@@ -33,6 +33,7 @@
                 />
 
                 <InputField
+                    v-bind:columnName="selectedPropertyName"
                     v-bind:format="selectedProperty.format"
                     v-bind:isFilter="false"
                     v-bind:title="selectedProperty.title"
@@ -55,18 +56,19 @@
 </template>
 
 <script lang="ts">
+import Vue, {PropType} from "vue"
 import InputField from "../components/InputField.vue"
 import KeySearch from "../components/KeySearch.vue"
 import Modal from "../components/Modal.vue"
 import * as i from "../interfaces"
 
-export default {
+export default Vue.extend({
     props: {
-        schema: Object,
+        schema: Object as PropType<i.Schema>,
         tableName: String,
         selectedRows: {
             type: Array,
-            defult: () => []
+            default: () => []
         }
     },
     components: {
@@ -141,7 +143,7 @@ export default {
             this.buttonEnabled = true
         }
     }
-}
+})
 </script>
 
 <style lang="less">

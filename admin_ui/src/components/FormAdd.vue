@@ -86,7 +86,7 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                const key = i[0].split(" ").join("_")
+                const key = i[0]
                 let value: any = i[1]
 
                 if (value == "null") {
