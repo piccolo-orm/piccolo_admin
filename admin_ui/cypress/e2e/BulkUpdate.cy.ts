@@ -29,6 +29,10 @@ context('Startup', () => {
 
         cy.contains('director').click();
 
+        cy.get('table')
+            .contains('tr td span', ' Male ')
+            .should('be.visible');
+
         // Update record in bulk
         cy.get('input[type="checkbox"]')
             .check({ force: true })
@@ -48,6 +52,15 @@ context('Startup', () => {
 
         // Locate and submit the form
         cy.get('form').submit();
+
+        cy.wait(1000);
+
+        // Values are updated
+        cy.get('table')
+            .contains('tr td span', ' Female ')
+            .should('be.visible');
+
+        cy.contains('Successfully updated rows');
 
     });
 
