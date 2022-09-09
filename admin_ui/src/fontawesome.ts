@@ -15,6 +15,7 @@ import {
     faDownload,
     faEdit,
     faEllipsisV,
+    faExclamationTriangle,
     faExternalLinkAlt,
     faEye,
     faFile,
@@ -36,7 +37,7 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser
+    faUser,
 } from "@fortawesome/free-solid-svg-icons"
 
 library.add(
@@ -54,6 +55,7 @@ library.add(
     faEdit,
     faEllipsisV,
     faEye,
+    faExclamationTriangle,
     faExternalLinkAlt,
     faFile,
     faFileCsv,

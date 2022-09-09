@@ -295,7 +295,9 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"message": "Email sent"})
+        self.assertEqual(
+            response.json(), {"custom_form_success": "Email sent"}
+        )
 
         #######################################################################
         # Make sure async endpoints also work.
@@ -313,7 +315,9 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"message": "Booking complete"})
+        self.assertEqual(
+            response.json(), {"custom_form_success": "Booking complete"}
+        )
 
     def test_post_form_fail(self):
         client = TestClient(APP)
@@ -344,7 +348,7 @@ class TestForms(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
 
 class TestMediaStorage(TestCase):

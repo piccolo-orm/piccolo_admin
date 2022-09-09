@@ -26,7 +26,8 @@
         </div>
 
         <div v-show="!successMessage">
-            <pre>{{ errors }}</pre>
+
+            <FormErrors :errors="errors" v-if="errors.length > 0" />
 
             <form
                 v-if="schema"
@@ -45,6 +46,8 @@ import axios from "axios"
 import Vue from "vue"
 import NewForm from "./NewForm.vue"
 import { APIResponseMessage, FormConfig } from "../interfaces"
+import { parseErrorResponse } from "../utils"
+import  FormErrors from "./FormErrors.vue"
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
 
@@ -54,11 +57,12 @@ export default Vue.extend({
         schema: Object
     },
     components: {
-        NewForm
+        NewForm,
+        FormErrors
     },
     data() {
         return {
-            errors: "",
+            errors: [] as string[],
             formConfig: undefined as FormConfig,
             successMessage: null
         }
@@ -72,7 +76,7 @@ export default Vue.extend({
         resetForm() {
             this.$refs.form.reset()
             this.successMessage = null
-            this.errors = ""
+            this.errors = []
         },
         async fetchFormConfig() {
             const response = await this.$store.dispatch(
@@ -103,23 +107,21 @@ export default Vue.extend({
                     json
                 )
             } catch (error) {
-                const data = error.response.data
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
                     type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
-                if (typeof data != "string") {
-                    this.errors = JSON.stringify(data, null, 2)
-                } else {
-                    this.errors = data
-                }
+                this.errors = parseErrorResponse(error.response.data, error.response.status)
+
                 return
             }
 
+            this.errors = []
+
             this.successMessage =
-                response.data.message || "Successfully submitted form"
+                response.data.custom_form_success || "Successfully submitted form"
         }
     },
     async mounted() {

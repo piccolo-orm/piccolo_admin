@@ -87,7 +87,7 @@
 
             <div v-else-if="format == 'json'">
                 <textarea
-                    :value="JSON.stringify(JSON.parse(value), null, 2)"
+                    :value="localValue ? JSON.stringify(JSON.parse(localValue), null, 2) : null"
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="columnName"
@@ -169,7 +169,7 @@
                 :isFilter="isFilter"
             />
             <input
-                :value="JSON.stringify(localValue)"
+                :value="localValue ? JSON.stringify(localValue) : null"
                 type="hidden"
                 v-bind:name="columnName"
             />

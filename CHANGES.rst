@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.33.0
+------
+
+Improved the UI for error messages. Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
 0.32.0
 ------
 
