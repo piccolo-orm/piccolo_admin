@@ -39,11 +39,11 @@ context('Startup', () => {
 
         // Select file to upload
         cy.get('input[type=file]').selectFile({
-            contents: 'cypress/fixtures/piccolo.png',
+            contents: 'cypress/fixtures/piccolo.jpg',
             mimeType: 'image/png'
         })
 
-        cy.wait(2000);
+        cy.wait(3000);
 
         // Locate and submit the form
         cy.get('form').submit();
@@ -54,7 +54,7 @@ context('Startup', () => {
         cy.wait(2000);
 
         // View the uploaded file
-        cy.contains('table tr td span a', '.png')
+        cy.contains('table tr td span a', '.jpg')
             .click();
 
         cy.wait(3000);
