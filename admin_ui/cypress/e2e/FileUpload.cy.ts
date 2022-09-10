@@ -40,7 +40,7 @@ context('Startup', () => {
         // Select file to upload
         cy.get('input[type=file]').selectFile({
             contents: 'cypress/fixtures/piccolo.jpg',
-            mimeType: 'image/png'
+            mimeType: 'image/jpeg'
         })
 
         cy.wait(3000);
