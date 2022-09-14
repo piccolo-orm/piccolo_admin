@@ -6,7 +6,7 @@ Changes
 
 Fixed an issue with installing ``piccolo_admin`` in editable mode with ``pip``.
 
-Thanks to @peterschutt for reporing this issue.
+Thanks to @peterschutt for reporting this issue.
 
 -------------------------------------------------------------------------------
 
