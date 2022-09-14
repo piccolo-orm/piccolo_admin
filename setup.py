@@ -7,17 +7,15 @@ import typing as t
 
 from setuptools import find_packages, setup
 
-from piccolo_admin.version import __VERSION__ as VERSION
-
-directory = os.path.abspath(os.path.dirname(__file__))
+DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 
 
-with open(os.path.join(directory, "requirements/requirements.txt")) as f:
+with open(os.path.join(DIRECTORY, "requirements/requirements.txt")) as f:
     contents = f.read()
     REQUIREMENTS = [i.strip() for i in contents.strip().split("\n")]
 
 
-with open(os.path.join(directory, "README.md")) as f:
+with open(os.path.join(DIRECTORY, "README.md")) as f:
     LONG_DESCRIPTION = f.read()
 
 
@@ -36,7 +34,7 @@ def parse_requirement(req_path: str) -> t.List[str]:
     :returns: A list of requirements specified in the file.
 
     """  # noqa: E501
-    with open(os.path.join(directory, "requirements", req_path)) as f:
+    with open(os.path.join(DIRECTORY, "requirements", req_path)) as f:
         contents = f.read()
         return [i.strip() for i in contents.strip().split("\n")]
 
@@ -57,9 +55,14 @@ def extras_require() -> t.Dict[str, t.List[str]]:
     return extra_requirements
 
 
+def get_version():
+    with open(os.path.join(DIRECTORY, "piccolo_admin", "version.txt")) as f:
+        return f.read().strip()
+
+
 setup(
     name="piccolo_admin",
-    version=VERSION,
+    version=get_version(),
     description="A powerful and modern admin interface / CMS, powered by Piccolo and ASGI.",  # noqa: E501
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
