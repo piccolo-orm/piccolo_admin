@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.33.1
+------
+
+Fixed an issue with installing ``piccolo_admin`` in editable mode with ``pip``.
+
+Thanks to @peterschutt for reporing this issue.
+
+-------------------------------------------------------------------------------
+
 0.33.0
 ------
 
