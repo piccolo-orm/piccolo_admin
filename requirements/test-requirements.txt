@@ -3,3 +3,4 @@ pytest-cov==3.0.0
 flake8==4.0.1
 piccolo[postgres,sqlite]>=0.30.0
 requests==2.27.1
+pytest-playwright==0.3.0
