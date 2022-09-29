@@ -38,5 +38,5 @@ jobs:
         with:
           name: playwright-artifacts
           path: |
-            /home/runner/work/piccolo_admin/piccolo_admin/e2e/screenshots/
+            /home/runner/work/piccolo_admin/piccolo_admin/e2e/test-results/
         if: always()
