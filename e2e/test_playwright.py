@@ -1,22 +1,54 @@
 import pytest
+import time
+from subprocess import Popen, PIPE
+from http.client import HTTPConnection
+
 from piccolo_admin.example import Director
 from piccolo_admin.example_data import DIRECTORS
+
 from playwright.sync_api import Playwright, sync_playwright
 
 
 @pytest.fixture
-def reset_database() -> None:
+def dev_server():
+    """
+    Running dev server and Playwright test in parallel.
+    More info https://til.simonwillison.net/pytest/playwright-pytest
+    """
+    process = Popen(
+        ["python", "-m", "piccolo_admin.example"],
+        stdout=PIPE,
+    )
+    retries = 5
+    while retries > 0:
+        conn = HTTPConnection("localhost:8000")
+        try:
+            conn.request("HEAD", "/")
+            response = conn.getresponse()
+            if response is not None:
+                yield process
+                break
+        except ConnectionRefusedError:
+            time.sleep(1)
+            retries -= 1
+
     Director.delete(force=True).run_sync()
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
 
+    if not retries:
+        raise RuntimeError("Failed to start http server")
+    else:
+        process.terminate()
+        process.wait()
 
-def test_login_logout(playwright: Playwright, reset_database) -> None:
+
+def test_login_logout(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -27,7 +59,7 @@ def test_login_logout(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click #user
     page.locator("#user").click()
     # Click text=Log out
@@ -38,13 +70,13 @@ def test_login_logout(playwright: Playwright, reset_database) -> None:
     browser.close()
 
 
-def test_row_listing_filter(playwright: Playwright, reset_database) -> None:
+def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -55,10 +87,10 @@ def test_row_listing_filter(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=director
     page.locator("text=director").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Click text=Show filters
     page.locator("text=Show filters").click()
     # Click input[name="name"]
@@ -90,19 +122,19 @@ def test_row_listing_filter(playwright: Playwright, reset_database) -> None:
     # Click text=Log out
     page.once("dialog", lambda dialog: dialog.accept())
     page.locator("text=Log out").click()
-    page.wait_for_url("http://localhost:3000/#/login?nextURL=%2F")
+    page.wait_for_url("http://localhost:8000/#/login?nextURL=%2F")
     # ---------------------
     context.close()
     browser.close()
 
 
-def test_custom_form(playwright: Playwright, reset_database) -> None:
+def test_custom_form(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -113,10 +145,10 @@ def test_custom_form(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=Business email form
     page.locator("text=Business email form").click()
-    page.wait_for_url("http://localhost:3000/#/forms/business-email-form")
+    page.wait_for_url("http://localhost:8000/#/forms/business-email-form")
     # Click input[name="email"]
     page.locator('input[name="email"]').click()
     # Fill input[name="email"]
@@ -139,10 +171,10 @@ def test_custom_form(playwright: Playwright, reset_database) -> None:
     page.locator('button:has-text("Submit")').click()
     # Click text=Back >> nth=0
     page.locator("text=Back").first.click()
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=Booking form
     page.locator("text=Booking form").click()
-    page.wait_for_url("http://localhost:3000/#/forms/booking-form")
+    page.wait_for_url("http://localhost:8000/#/forms/booking-form")
     # Click input[name="email"]
     page.locator('input[name="email"]').click()
     # Fill input[name="email"]
@@ -164,19 +196,19 @@ def test_custom_form(playwright: Playwright, reset_database) -> None:
     # Click text=Log out
     page.once("dialog", lambda dialog: dialog.accept())
     page.locator("text=Log out").click()
-    page.wait_for_url("http://localhost:3000/#/login?nextURL=%2F")
+    page.wait_for_url("http://localhost:8000/#/login?nextURL=%2F")
     # ---------------------
     context.close()
     browser.close()
 
 
-def test_file_upload(playwright: Playwright, reset_database) -> None:
+def test_file_upload(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -187,13 +219,13 @@ def test_file_upload(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=director
     page.locator("text=director").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Click a:has-text("8")
     page.locator('a:has-text("8")').click()
-    page.wait_for_url("http://localhost:3000/#/director/8")
+    page.wait_for_url("http://localhost:8000/#/director/8")
     # Upload piccolo.jpg
     page.locator('input[type="file"]').set_input_files(
         "./e2e/upload/piccolo.jpg"
@@ -202,7 +234,7 @@ def test_file_upload(playwright: Playwright, reset_database) -> None:
     page.locator("text=Save").click()
     # Click text=Back
     page.locator("text=Back").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Click image link
     page.locator("text=piccolo-").click()
     # Close image preview
@@ -212,13 +244,13 @@ def test_file_upload(playwright: Playwright, reset_database) -> None:
     browser.close()
 
 
-def test_bulk_update(playwright: Playwright, reset_database) -> None:
+def test_bulk_update(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -229,10 +261,10 @@ def test_bulk_update(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=director
     page.locator("text=director").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Check text=id Name Gender Photo >> input[type="checkbox"]
     page.locator('text=id Name Gender Photo >> input[type="checkbox"]').check()
     # Click a:has-text("Update 8 rows")
@@ -249,19 +281,19 @@ def test_bulk_update(playwright: Playwright, reset_database) -> None:
     # Click text=Log out
     page.once("dialog", lambda dialog: dialog.accept())
     page.locator("text=Log out").click()
-    page.wait_for_url("http://localhost:3000/#/login?nextURL=%2F")
+    page.wait_for_url("http://localhost:8000/#/login?nextURL=%2F")
     # ---------------------
     context.close()
     browser.close()
 
 
-def test_table_crud(playwright: Playwright, reset_database) -> None:
+def test_table_crud(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context()
     # Open new page
     page = context.new_page()
-    # Go to http://localhost:3000/#/login?nextURL=%2F
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    # Go to http://localhost:8000/#/login?nextURL=%2F
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     # Click input[name="username"]
     page.locator('input[name="username"]').click()
     # Fill input[name="username"]
@@ -272,13 +304,13 @@ def test_table_crud(playwright: Playwright, reset_database) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     # Press Enter
     page.locator('input[name="password"]').press("Enter")
-    page.wait_for_url("http://localhost:3000/#/")
+    page.wait_for_url("http://localhost:8000/#/")
     # Click text=director
     page.locator("text=director").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Click a:has-text("8")
     page.locator('a:has-text("8")').click()
-    page.wait_for_url("http://localhost:3000/#/director/8")
+    page.wait_for_url("http://localhost:8000/#/director/8")
     # Click text=Piccolo Admin piccolo Back Edit director Name Years Nominated Which years this d
     page.locator(
         "text=Piccolo Admin piccolo Back Edit director Name Years Nominated Which years this d"
@@ -295,10 +327,10 @@ def test_table_crud(playwright: Playwright, reset_database) -> None:
     page.locator("text=Save").click()
     # Click text=Back
     page.locator("text=Back").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Click text=Add Row
     page.locator("text=Add Row").click()
-    page.wait_for_url("http://localhost:3000/#/director/add")
+    page.wait_for_url("http://localhost:8000/#/director/add")
     # Click input[name="name"]
     page.locator('input[name="name"]').click()
     # Fill input[name="name"]
@@ -315,7 +347,7 @@ def test_table_crud(playwright: Playwright, reset_database) -> None:
     page.locator("text=Create").click()
     # Click text=Back
     page.locator("text=Back").click()
-    page.wait_for_url("http://localhost:3000/#/director")
+    page.wait_for_url("http://localhost:8000/#/director")
     # Check text=5Irvin Kershner Male >> input[type="checkbox"]
     page.locator('text=5Irvin Kershner Male >> input[type="checkbox"]').check()
     # Click text=Delete 1 rows
