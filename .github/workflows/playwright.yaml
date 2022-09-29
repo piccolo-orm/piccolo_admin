@@ -33,3 +33,10 @@ jobs:
         run: python -m playwright install chromium --with-deps
       - name: Start Playwright tests
         run: ./scripts/run-e2e-test.sh
+      - name: "Upload Playwright Screenshots"
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-artifacts
+          path: |
+            /home/runner/work/piccolo_admin/piccolo_admin/e2e/screenshots/
+        if: always()
