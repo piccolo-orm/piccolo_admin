@@ -9,4 +9,4 @@ mkdir -p piccolo_admin/dist/css
 mkdir -p piccolo_admin/dist/js
 touch piccolo_admin/dist/index.html
 
-python -m pytest tests --cov=piccolo_admin --cov-report xml --cov-report html --cov-fail-under 85 -s $@
+python -m pytest --ignore=e2e --cov=piccolo_admin --cov-report xml --cov-report html --cov-fail-under 85 -s $@

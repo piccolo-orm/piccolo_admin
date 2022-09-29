@@ -3,9 +3,6 @@ import time
 from subprocess import Popen, PIPE
 from http.client import HTTPConnection
 
-from piccolo_admin.example import Director
-from piccolo_admin.example_data import DIRECTORS
-
 from playwright.sync_api import Playwright, sync_playwright
 
 
@@ -31,9 +28,6 @@ def dev_server():
         except ConnectionRefusedError:
             time.sleep(1)
             retries -= 1
-
-    Director.delete(force=True).run_sync()
-    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
 
     if not retries:
         raise RuntimeError("Failed to start http server")
