@@ -347,6 +347,7 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     page.locator("text=Create").click()
     # Click text=Back
     page.locator("text=Back").click()
+    page.wait_for_timeout(3000)
     page.wait_for_url("http://localhost:8000/#/director")
     # Check text=5Irvin Kershner Male >> input[type="checkbox"]
     page.locator('text=5Irvin Kershner Male >> input[type="checkbox"]').check()
