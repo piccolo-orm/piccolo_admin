@@ -348,6 +348,7 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     # Click text=Delete 1 rows
     page.once("dialog", lambda dialog: dialog.accept())
     page.locator("text=Delete 1 rows").click()
+    page.wait_for_timeout(3000)
     # Check text=id Name Gender Photo >> input[type="checkbox"]
     page.locator('text=id Name Gender Photo >> input[type="checkbox"]').check()
     # Click text=Delete 8 rows
