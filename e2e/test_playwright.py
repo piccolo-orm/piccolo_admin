@@ -38,7 +38,7 @@ def dev_server():
 
 def test_login_logout(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
@@ -66,7 +66,7 @@ def test_login_logout(playwright: Playwright, dev_server) -> None:
 
 def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
@@ -124,7 +124,7 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
 
 def test_custom_form(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
@@ -198,7 +198,7 @@ def test_custom_form(playwright: Playwright, dev_server) -> None:
 
 def test_file_upload(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
@@ -240,7 +240,7 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
 
 def test_bulk_update(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
@@ -283,7 +283,7 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
 
 def test_table_crud(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
     # Go to http://localhost:8000/#/login?nextURL=%2F
