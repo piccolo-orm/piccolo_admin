@@ -109,36 +109,21 @@ tool for viewing UI components in isolation. To launch it:
 
 -------------------------------------------------------------------------------
 
-Cypress
--------
+Playwright
+----------
 
-Cypress is a tool for running end to end tests. It enables us to check that the
+Playwright is a tool for running end to end tests. It enables us to check that the
 entire application is working as expected.
-
-Before launching it, make sure that the Piccolo Admin front end code and
-backend code are running (see above).
 
 Run all tests
 ~~~~~~~~~~~~~
 
-From within the ``admin_ui`` folder, use the following command to run all of
-the Cypress tests:
+From within the ``root`` folder, use the following command to run all of
+the Playwright tests with dev server in parallel:
 
 .. code-block:: bash
 
-    npm run cypress:run
-
-Run tests interactively
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Instead, you can run this command to launch the Cypress app:
-
-.. code-block:: bash
-
-    npm run cypress:open
-
-The app runs within Chrome. It allows you to run the Cypress tests, and to
-see them working in real time (clicking around Piccolo Admin).
+    ./scripts/run-e2e-test.sh
 
 -------------------------------------------------------------------------------
 
