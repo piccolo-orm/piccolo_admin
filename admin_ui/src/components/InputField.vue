@@ -43,7 +43,7 @@
         </template>
 
         <template v-else-if="type == 'string'">
-            <template v-if="format == 'date-time'">
+            <template v-if="format == 'date-time' || format == 'date'">
                 <OperatorField
                     :columnName="columnName"
                     v-if="isFilter"
@@ -54,7 +54,7 @@
                 iOS, so an alternative picker is needed.
                 -->
                 <flat-pickr
-                    v-bind:config="{ enableTime: true, disableMobile: 'true' }"
+                    v-bind:config="{ enableTime: format == 'date-time', disableMobile: true }"
                     v-bind:name="columnName"
                     v-model="localValue"
                 ></flat-pickr>
