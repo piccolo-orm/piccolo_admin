@@ -17,12 +17,13 @@ import targ
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns import (
+from piccolo.columns.column_types import (
     JSON,
     UUID,
     Array,
     BigInt,
     Boolean,
+    Date,
     ForeignKey,
     Integer,
     Interval,
@@ -30,6 +31,7 @@ from piccolo.columns import (
     Real,
     SmallInt,
     Text,
+    Time,
     Timestamp,
     Varchar,
 )
@@ -43,7 +45,13 @@ from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
+from piccolo_admin.example_data import (
+    DIRECTORS,
+    MOVIE_WORDS,
+    MOVIES,
+    STUDIOS,
+    TICKETS,
+)
 
 try:
     """
@@ -164,7 +172,7 @@ class Movie(Table):
     description = Text()
     poster = Varchar()
     screenshots = Array(base_column=Varchar())
-    release_date = Timestamp(null=True)
+    release_date = Date(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
@@ -174,6 +182,14 @@ class Movie(Table):
     @classmethod
     def get_readable(cls):
         return Readable(template="%s", columns=[cls.name])
+
+
+class Ticket(Table):
+    booked_by = Varchar(length=255)
+    movie = ForeignKey(Movie)
+    start_date = Date()
+    start_time = Time()
+    booked_on = Timestamp()
 
 
 class BusinessEmailModel(BaseModel):
@@ -249,6 +265,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Studio,
     User,
     Sessions,
+    Ticket,
 )
 
 
@@ -271,6 +288,7 @@ movie_config = TableConfig(
         Movie.genre,
         Movie.screenshots,
         Movie.poster,
+        Movie.release_date,
     ],
     rich_text_columns=[Movie.description],
     media_storage=(
@@ -309,7 +327,7 @@ director_config = TableConfig(
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio],
+    [movie_config, director_config, Studio, Ticket],
     forms=[
         FormConfig(
             name="Business email form",
@@ -360,6 +378,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
     Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
+    Ticket.insert(*[Ticket(**t) for t in TICKETS]).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the
@@ -457,7 +476,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                         oscar_nominations=oscar_nominations,
                         won_oscar=won_oscar,
                         description=fake.sentence(30),
-                        release_date=fake.date_time(),
+                        release_date=fake.date(),
                         box_office=decimal.Decimal(
                             str(random.randint(10, 1500) / 10)
                         ),
