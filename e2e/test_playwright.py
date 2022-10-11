@@ -1,9 +1,9 @@
-import pytest
 import time
-from subprocess import Popen, PIPE
 from http.client import HTTPConnection
+from subprocess import PIPE, Popen
 
-from playwright.sync_api import Playwright, sync_playwright
+import pytest
+from playwright.sync_api import Playwright
 
 
 @pytest.fixture
