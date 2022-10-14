@@ -1,6 +1,50 @@
 Changes
 =======
 
+0.35.0
+------
+
+``Validators`` can now be specified in ``TableConfig``.
+
+This allows fine grained access control - for example, only allowing some users
+to send ``POST`` requests to certain API endpoints:
+
+.. code-block:: python
+
+  from piccolo_api.crud.endpoints import PiccoloCRUD
+  from starlette.exceptions import HTTPException
+  from starlette.requests import Request
+
+
+  async def manager_only(
+      piccolo_crud: PiccoloCRUD,
+      request: Request
+  ):
+      # The Piccolo `BaseUser` can be accessed from the request.
+      user = request.user.user
+
+      # Assuming we have another database table where we record
+      # users with certain permissions.
+      manager = await Manager.exists().where(manager.user == user)
+
+      if not manager:
+          # Raise a Starlette exception if we want to reject the
+          # request.
+          raise HTTPException(
+              status_code=403,
+              detail="Only managers are allowed to do this"
+          )
+
+
+  admin = create_admin(
+      tables=TableConfig(
+          Movie,
+          validators=Validators(post_single=manager_only)
+      )
+  )
+
+-------------------------------------------------------------------------------
+
 0.34.0
 ------
 
