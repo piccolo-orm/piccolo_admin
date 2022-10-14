@@ -105,9 +105,9 @@ class TableConfig:
         tag in the UI.
     :param hooks:
         These are passed directly to
-        :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
-        Admin under the hood. It allows you to run custom logic when a row
-        is modified.
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows you to run custom logic
+        when a row is modified.
     :param media_storage:
         These columns will be used to store media. We don't directly store the
         media in the database, but instead store a string, which is a unique
@@ -115,21 +115,34 @@ class TableConfig:
         Piccolo Admin automatically renders a file upload widget for each media
         column in the UI.
     :param validators:
-        This allows fine grained control over each endpoint. For example,
-        limiting which users can perform certain actions::
+        The :class:`Validators <piccolo_api.crud.endpoints.Validators>` are
+        passed directly to
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows fine grained access
+        control over each API endpoint. For example, limiting which users can
+        ``POST`` data::
 
+            from piccolo_api.crud.endpoints import PiccoloCRUD
             from starlette.exceptions import HTTPException
+            from starlette.requests import Request
 
-            async def manager_only(piccolo_crud, request):
+
+            async def manager_only(
+                piccolo_crud: PiccoloCRUD,
+                request: Request
+            ):
                 # The Piccolo `BaseUser` can be accessed from the request.
                 user = request.user.user
+
                 # Assuming we have another database table where we record
                 # users with certain permissions.
-                manager = await Manager.exists().where(manager.user = user)
+                manager = await Manager.exists().where(manager.user == user)
+
                 if not manager:
                     # Raise a Starlette exception if we want to reject the
                     # request.
                     raise HTTPException("Only managers are allowed to do this")
+
 
             admin = create_admin(
                 tables=TableConfig(
@@ -137,8 +150,6 @@ class TableConfig:
                     validators=Validators(post_single=manager_only)
                 )
             )
-
-        See :class:`Validators <piccolo_api.crud.endpoints.Validators>`.
 
     """
 

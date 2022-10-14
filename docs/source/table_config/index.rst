@@ -129,6 +129,23 @@ docs in Piccolo API.
 
 -------------------------------------------------------------------------------
 
+media_storage
+-------------
+
+Allows you store files (video / media / audio etc) in certain columns. See
+:ref:`MediaStorage`.
+
+-------------------------------------------------------------------------------
+
+validators
+----------
+
+Allows fine grained access control over each API endpoint. See
+:class:`TableConfig <piccolo_admin.endpoints.TableConfig>` for more
+information.
+
+-------------------------------------------------------------------------------
+
 Source
 ------
 

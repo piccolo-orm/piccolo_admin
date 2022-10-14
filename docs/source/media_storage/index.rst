@@ -1,3 +1,5 @@
+.. _MediaStorage:
+
 Media Storage
 =============
 
