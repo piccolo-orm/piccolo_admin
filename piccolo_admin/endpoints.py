@@ -105,15 +105,53 @@ class TableConfig:
         tag in the UI.
     :param hooks:
         These are passed directly to
-        :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
-        Admin under the hood. It allows you to run custom logic when a row
-        is modified.
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows you to run custom logic
+        when a row is modified.
     :param media_storage:
         These columns will be used to store media. We don't directly store the
         media in the database, but instead store a string, which is a unique
         identifier, and can be used to retrieve a URL for accessing the file.
         Piccolo Admin automatically renders a file upload widget for each media
         column in the UI.
+    :param validators:
+        The :class:`Validators <piccolo_api.crud.endpoints.Validators>` are
+        passed directly to
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows fine grained access
+        control over each API endpoint. For example, limiting which users can
+        ``POST`` data::
+
+            from piccolo_api.crud.endpoints import PiccoloCRUD
+            from starlette.exceptions import HTTPException
+            from starlette.requests import Request
+
+
+            async def manager_only(
+                piccolo_crud: PiccoloCRUD,
+                request: Request
+            ):
+                # The Piccolo `BaseUser` can be accessed from the request.
+                user = request.user.user
+
+                # Assuming we have another database table where we record
+                # users with certain permissions.
+                manager = await Manager.exists().where(manager.user == user)
+
+                if not manager:
+                    # Raise a Starlette exception if we want to reject the
+                    # request.
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Only managers are allowed to do this"
+                    )
+
+            admin = create_admin(
+                tables=TableConfig(
+                    Movie,
+                    validators=Validators(post_single=manager_only)
+                )
+            )
 
     """
 
@@ -125,6 +163,7 @@ class TableConfig:
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
+    validators: t.Optional[Validators] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -398,11 +437,10 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
 
-            validators = (
-                Validators(every=[superuser_validators])
-                if table_class in (auth_table, session_table)
-                else None
-            )
+            validators = table_config.validators
+            if table_class in (auth_table, session_table):
+                validators = validators or Validators()
+                validators.every = [superuser_validators, *validators.every]
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
