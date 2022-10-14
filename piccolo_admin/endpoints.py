@@ -141,8 +141,10 @@ class TableConfig:
                 if not manager:
                     # Raise a Starlette exception if we want to reject the
                     # request.
-                    raise HTTPException("Only managers are allowed to do this")
-
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Only managers are allowed to do this"
+                    )
 
             admin = create_admin(
                 tables=TableConfig(
