@@ -114,6 +114,31 @@ class TableConfig:
         identifier, and can be used to retrieve a URL for accessing the file.
         Piccolo Admin automatically renders a file upload widget for each media
         column in the UI.
+    :param validators:
+        This allows fine grained control over each endpoint. For example,
+        limiting which users can perform certain actions::
+
+            from starlette.exceptions import HTTPException
+
+            async def manager_only(piccolo_crud, request):
+                # The Piccolo `BaseUser` can be accessed from the request.
+                user = request.user.user
+                # Assuming we have another database table where we record
+                # users with certain permissions.
+                manager = await Manager.exists().where(manager.user = user)
+                if not manager:
+                    # Raise a Starlette exception if we want to reject the
+                    # request.
+                    raise HTTPException("Only managers are allowed to do this")
+
+            admin = create_admin(
+                tables=TableConfig(
+                    Movie,
+                    validators=Validators(post_single=manager_only)
+                )
+            )
+
+        See :class:`Validators <piccolo_api.crud.endpoints.Validators>`.
 
     """
 
@@ -125,6 +150,7 @@ class TableConfig:
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
+    validators: t.Optional[Validators] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -398,11 +424,10 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
 
-            validators = (
-                Validators(every=[superuser_validators])
-                if table_class in (auth_table, session_table)
-                else None
-            )
+            validators = table_config.validators
+            if table_class in (auth_table, session_table):
+                validators = validators or Validators()
+                validators.every.append(superuser_validators)
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
