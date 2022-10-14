@@ -438,7 +438,7 @@ class AdminRouter(FastAPI):
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
-                validators.every.append(superuser_validators)
+                validators.every = [superuser_validators, *validators.every]
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
