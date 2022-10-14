@@ -15,8 +15,10 @@ from piccolo.columns.column_types import (
 )
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.crud.hooks import Hook, HookType
+from piccolo_api.crud.validators import Validators
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
+from starlette.exceptions import HTTPException
 from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
@@ -726,3 +728,62 @@ class TestHooks(TestCase):
 
         # Make sure the hook was only called once.
         mock.assert_called_once()
+
+
+class TestValidators(TestCase):
+
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, Post, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser, Post)
+
+    def test_validators(self):
+        """
+        Make sure validators can be used to control access to an API endpoint.
+        """
+
+        def post_single_validator(piccolo_crud, request):
+            raise HTTPException(detail="Not allowed!", status_code=403)
+
+        app = create_admin(
+            tables=[
+                TableConfig(
+                    Post,
+                    validators=Validators(post_single=[post_single_validator]),
+                ),
+            ]
+        )
+
+        client = TestClient(app)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        # Make sure some requests pass
+        response = client.get("/api/tables/post/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"rows": []})
+
+        # Make sure the endpoint with validation returns an error code.
+        response = client.post(
+            "/api/tables/post/",
+            json={"csrftoken": "csrftoken"},
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, b'{"detail":"Not allowed!"}')
