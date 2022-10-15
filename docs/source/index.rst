@@ -51,5 +51,6 @@ Table of Contents
    ../internationalization/index
    ../contributing/index
    ../rest_documentation/index
+   ../help/index
    ../api_reference/index
    ../changes/index
