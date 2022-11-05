@@ -229,6 +229,16 @@ export default new Vuex.Store({
             )
             return response
         },
+        async executeCallback(context, config: i.ExecuteCallback) {
+            const response = await axios.post(
+                `${BASE_URL}tables/${config.tableName}/callback/execute`,
+                {
+                    table_name: config.tableName,
+                    row_id: config.rowID
+                }
+            )
+            return response
+        },
         async updateRow(context, config: i.UpdateRow) {
             const response = await axios.patch(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`,

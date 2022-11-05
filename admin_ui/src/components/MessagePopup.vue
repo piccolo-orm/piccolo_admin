@@ -53,7 +53,7 @@ export default Vue.extend({
                 if (now - app.timeLastAppeared >= 3000) {
                     app.visible = false
                 }
-            }, 3000)
+            }, this.$store.state.apiResponseMessage.timeout ? this.$store.state.apiResponseMessage.timeout : 3000)
         }
     }
 })

@@ -8,6 +8,11 @@ export interface DeleteRow {
     rowID: number
 }
 
+export interface ExecuteCallback {
+    tableName: string
+    rowID: number
+}
+
 export interface UpdateRow {
     tableName: string
     rowID: number
@@ -34,6 +39,7 @@ export interface FetchSingleRowConfig {
 export interface APIResponseMessage {
     contents: string
     type: string
+    timeout?: number
 }
 
 export interface SortByConfig {

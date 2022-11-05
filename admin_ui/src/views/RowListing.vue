@@ -299,6 +299,17 @@
                                                             "
                                                         />
                                                     </li>
+                                                    <li>
+                                                        <CallbackButton
+                                                            :includeTitle="true"
+                                                            class=""
+                                                            v-on:triggered="
+                                                                executeCallback(
+                                                                    row[pkName]
+                                                                )
+                                                            "
+                                                        />
+                                                    </li>
                                                 </DropDownMenu>
                                             </span>
                                         </td>
@@ -370,6 +381,7 @@ import BulkUpdateModal from "../components/BulkUpdateModal.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
+import CallbackButton from "../components/CallbackButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
 import ChangePageSize from "../components/ChangePageSize.vue"
 import MediaViewer from "../components/MediaViewer.vue"
@@ -408,6 +420,7 @@ export default Vue.extend({
         ChangePageSize,
         CSVButton,
         DeleteButton,
+        CallbackButton,
         DropDownMenu,
         MediaViewer,
         Pagination,
@@ -538,10 +551,11 @@ export default Vue.extend({
                 this.selectedRows = []
             }
         },
-        showSuccess(contents: string) {
+        showSuccess(contents: string, timeout?: number) {
             var message: APIResponseMessage = {
                 contents: contents,
-                type: "success"
+                type: "success",
+                timeout: timeout ? timeout : 3000
             }
             this.$store.commit("updateApiResponseMessage", message)
         },
@@ -563,6 +577,32 @@ export default Vue.extend({
                 })
                 await this.fetchRows()
                 this.showSuccess("Successfully deleted row")
+            }
+        },
+        async executeCallback(rowID) {
+            if (confirm(`Are you sure you want to run callback for this row?`)) {
+                console.log("Requesting to run callback!")
+                try {
+                    let response = await this.$store.dispatch("executeCallback", {
+                        tableName: this.tableName,
+                        rowID
+                    })
+                    this.showSuccess(`Successfully ran callback and got response: ${response.data}`, 10000)
+                } catch (error) {
+                    if (error.response.status == 404) {
+                        console.log(error.response.status)
+                        this.$store.commit("updateApiResponseMessage", {
+                            contents: "This table is not configured for callback action",
+                            type: "error"
+                        })
+                    } else {
+                        console.log(error.response.status)
+                        this.$store.commit("updateApiResponseMessage", {
+                            contents: "Something went wrong",
+                            type: "error"
+                        })
+                    }
+                }
             }
         },
         async deleteRows() {

@@ -43,6 +43,7 @@ from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
+from starlette.responses import JSONResponse
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import (
@@ -258,6 +259,11 @@ async def booking_endpoint(request, data):
 
     return "Booking complete"
 
+async def my_callback_fn(**kwargs) -> JSONResponse:
+    request_data = kwargs['request_params']
+    table_name = request_data['table_name']
+    row_id = request_data['row_id']
+    return JSONResponse(f"My API received the row_id: {row_id} from table: {table_name}")
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
@@ -301,6 +307,7 @@ movie_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
         ),
     ),
+    custom_callback=my_callback_fn
 )
 
 director_config = TableConfig(
