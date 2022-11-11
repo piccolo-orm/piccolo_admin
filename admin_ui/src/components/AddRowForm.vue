@@ -5,38 +5,37 @@
         <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
+            <RowForm v-bind:row="defaults" v-bind:schema="schema" />
             <button>{{ $t("Create") }}</button>
         </form>
     </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
-import RowFormSelect from "./RowFormSelect.vue"
+import Vue, { PropType } from "vue"
+import RowForm from "./RowForm.vue"
 import FormErrors from "./FormErrors.vue"
 import { APIResponseMessage } from "../interfaces"
 import { parseErrorResponse } from "../utils"
-import {Schema} from "@/interfaces"
+import { Schema } from "@/interfaces"
 
 export default Vue.extend({
     props: {
         tableName: String as PropType<string>,
-        schema: Object  as PropType<Schema>
+        schema: Object as PropType<Schema>
     },
     components: {
-        RowFormSelect,
+        RowForm,
         FormErrors
     },
     data() {
         return {
-            defaults: {} as {[key: string]: any},
+            defaults: {} as { [key: string]: any },
             errors: [] as string[]
         }
     },
     methods: {
         async submitForm(event) {
-            console.log("I was pressed")
             const form = new FormData(event.target)
 
             const json = {}
@@ -71,7 +70,10 @@ export default Vue.extend({
                     data: json
                 })
             } catch (error) {
-                this.errors = parseErrorResponse(error.response.data, error.response.status)
+                this.errors = parseErrorResponse(
+                    error.response.data,
+                    error.response.status
+                )
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
@@ -91,9 +93,6 @@ export default Vue.extend({
 
             this.$emit("addedRow")
             this.$emit("close")
-            if (opener) {
-                opener.postMessage("edited row", document.location.origin)
-            }
         }
     },
     async mounted() {

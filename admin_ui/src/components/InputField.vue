@@ -43,18 +43,21 @@
         </template>
 
         <template v-else-if="type == 'string'">
-            <template v-if="['date-time', 'date', 'time'].indexOf(format) != -1">
-                <OperatorField
-                    :columnName="columnName"
-                    v-if="isFilter"
-                />
+            <template
+                v-if="['date-time', 'date', 'time'].indexOf(format) != -1"
+            >
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <!--
                 `disableMobile` is very poorly named - setting it to 'true'
                 enables the picker on mobile devices. It doesn't work great on
                 iOS, so an alternative picker is needed.
                 -->
                 <flat-pickr
-                    v-bind:config="{ enableTime: ['date-time', 'time'].indexOf(format) != -1, disableMobile: true , noCalendar: format == 'time'}"
+                    v-bind:config="{
+                        enableTime: ['date-time', 'time'].indexOf(format) != -1,
+                        disableMobile: true,
+                        noCalendar: format == 'time'
+                    }"
                     v-bind:name="columnName"
                     v-model="localValue"
                 ></flat-pickr>
@@ -87,7 +90,11 @@
 
             <div v-else-if="format == 'json'">
                 <textarea
-                    :value="localValue ? JSON.stringify(JSON.parse(localValue), null, 2) : null"
+                    :value="
+                        localValue
+                            ? JSON.stringify(JSON.parse(localValue), null, 2)
+                            : null
+                    "
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="columnName"
@@ -132,10 +139,7 @@
 
         <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
-                <OperatorField
-                    :columnName="columnName"
-                    v-if="isFilter"
-                />
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <DurationWidget
                     v-bind:timedelta="localValue"
                     v-on:newTimedelta="updateLocalValue($event)"
@@ -147,10 +151,7 @@
                 />
             </template>
             <template v-else>
-                <OperatorField
-                    :columnName="columnName"
-                    v-if="isFilter"
-                />
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <input
                     type="text"
                     v-bind:name="columnName"
@@ -204,11 +205,11 @@ export default Vue.extend({
             required: true
         },
         columnName: {
-            type: String  as PropType<string>,
+            type: String as PropType<string>,
             required: true
         },
         type: {
-            type: String  as PropType<string>,
+            type: String as PropType<string>,
             default: "string"
         },
         value: {
@@ -366,6 +367,9 @@ export default Vue.extend({
         value() {
             this.localValue = this.value
             this.setTextareaHeight()
+        },
+        currentTableName() {
+            this.localValue = undefined
         }
     },
     mounted() {

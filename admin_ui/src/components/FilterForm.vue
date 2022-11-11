@@ -10,11 +10,11 @@
                         {{ property.title }}
                     </label>
                     <KeySearch
-                        v-bind:fieldName="columnName"
+                        v-bind:fieldName="String(columnName)"
                         v-bind:isFilter="true"
                         v-bind:key="getValue(property.title)"
                         v-bind:readable="getValue(property.title)"
-                        v-bind:rowID="getKeySelectID(property.title)"
+                        v-bind:rowID="getValue(property.title)"
                         v-bind:tableName="property.extra.to"
                         v-bind:isNullable="property.nullable"
                     />
@@ -34,7 +34,7 @@
                         v-bind:required="isRequired(String(columnName))"
                         v-bind:title="property.title"
                         v-bind:type="property.type || property.anyOf[0].type"
-                        v-bind:value="getValue(property.title)"
+                        v-bind:value="getValue(String(columnName))"
                     />
                 </template>
             </div>
@@ -43,12 +43,11 @@
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from "vue"
+import Vue, { PropType } from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import { Schema } from "@/interfaces"
-
 
 export default Vue.extend({
     props: {
@@ -60,14 +59,8 @@ export default Vue.extend({
         KeySearch
     },
     methods: {
-        getValue(propertyTitle: string) {
-            let value = this.row
-                ? this.row[propertyTitle.toLowerCase().split(" ").join("_")]
-                : undefined
-            return value
-        },
-        getKeySelectID(propertyTitle: string) {
-            return this.getValue(propertyTitle)
+        getValue(columnName: string) {
+            return this.row ? this.row[columnName] : undefined
         },
         isRequired(keyName: string) {
             return (

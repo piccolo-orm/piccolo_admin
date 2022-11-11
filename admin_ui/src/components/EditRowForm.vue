@@ -26,7 +26,7 @@
         <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect :row="selectedRow" :schema="schema" />
+            <RowForm :row="selectedRow" :schema="schema" />
             <button>{{ $t("Save") }}</button>
         </form>
 
@@ -34,14 +34,13 @@
     </div>
 </template>
 
-
 <script lang="ts">
-import Vue, {PropType} from "vue"
+import Vue, { PropType } from "vue"
 
 import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
-import RowFormSelect from "./RowFormSelect.vue"
+import RowForm from "./RowForm.vue"
 import FormErrors from "./FormErrors.vue"
 
 import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
@@ -50,16 +49,16 @@ import { parseErrorResponse } from "../utils"
 export default Vue.extend({
     props: {
         tableName: {
-            type: String as PropType<string>,
+            type: String as PropType<string>
         },
         rowID: {
-            type: undefined as PropType<number | string>,
+            type: undefined as PropType<number | string>
         }
     },
     components: {
         DeleteButton,
         DropDownMenu,
-        RowFormSelect,
+        RowForm,
         ReferencingTables,
         FormErrors
     },
@@ -120,7 +119,10 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
-                this.errors = parseErrorResponse(error.response.data, error.response.status)
+                this.errors = parseErrorResponse(
+                    error.response.data,
+                    error.response.status
+                )
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
@@ -132,10 +134,6 @@ export default Vue.extend({
             }
 
             this.errors = []
-
-            if (opener) {
-                opener.postMessage("edited row", document.location.origin)
-            }
         },
         async deleteRow() {
             if (window.confirm("Are you sure you want to delete this row?")) {
@@ -178,7 +176,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style scoped lang="less">
 @import "../vars.less";
