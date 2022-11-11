@@ -1,6 +1,21 @@
 Changes
 =======
 
+0.36.0
+------
+
+Lots of small enhancements.
+
+* Fixed bugs with the foreign key selector. Sometimes the edit button didn't
+  work. Also, sometimes the value shown in the input box wasn't refreshing when
+  navigating to a new page.
+* The HTML title now matches the ``site_name`` parameter in ``create_admin``
+  (thanks to @sinisaos for this).
+* Updated Vue to the latest version.
+* Internal code refactoring.
+
+-------------------------------------------------------------------------------
+
 0.35.0
 ------
 
