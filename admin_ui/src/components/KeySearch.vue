@@ -20,7 +20,10 @@
             :isFilter="isFilter"
             :tableName="tableName"
             @close="showModal = false"
-            @update="handleUpdate($event)"
+            @update="
+                handleUpdate($event)
+                $emit('update', $event)
+            "
         />
     </div>
 </template>
@@ -60,6 +63,14 @@ export default {
     },
     components: {
         KeySearchModal
+    },
+    watch: {
+        readable(newValue) {
+            this.selectedValue = newValue
+        },
+        rowID(newValue) {
+            this.hiddenSelectedValue = newValue
+        }
     },
     async mounted() {
         this.selectedValue = this.readable
