@@ -54,7 +54,7 @@ to send ``POST`` requests to certain API endpoints:
   admin = create_admin(
       tables=TableConfig(
           Movie,
-          validators=Validators(post_single=manager_only)
+          validators=Validators(post_single=[manager_only])
       )
   )
 
