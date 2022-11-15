@@ -456,7 +456,7 @@ class TestMediaStorage(TestCase):
         response = client.post(
             "/api/media/",
             data={"table_name": "movie", "column_name": "poster"},
-            files={"file": ("bulb.jpg", "file", "image/jpeg")},
+            files={"file": ("bulb.jpg", b"file", "image/jpeg")},
             headers={"X-CSRFToken": csrftoken},
         )
         self.assertEqual(response.status_code, 405)
