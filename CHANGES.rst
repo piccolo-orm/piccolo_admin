@@ -1,6 +1,20 @@
 Changes
 =======
 
+0.37.0
+------
+
+* Python 3.11 is now officially supported.
+* Added debug mode: ``create_admin(tables=[MyTable], debug=True)``.
+* Logging exceptions for 500 errors.
+* Fixed a typo in the docs about how to use validators (thanks to @sinisaos for
+  reporting this).
+* Updated the tests for Starlette / FastAPI's new test client. This means that
+  ``fastapi==0.87.0`` / ``starlette==0.21.0`` are now the minimum versions
+  supported. Thanks to @sinisaos for this.
+
+-------------------------------------------------------------------------------
+
 0.36.0
 ------
 
