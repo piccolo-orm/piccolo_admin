@@ -36,8 +36,9 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, Field, ValidationError
+from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.exceptions import ExceptionMiddleware, HTTPException
+from starlette.middleware.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
@@ -346,9 +347,16 @@ class AdminRouter(FastAPI):
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
         translations: t.List[Translation] = None,
+        allowed_hosts: t.Sequence[str] = [],
+        debug: bool = False,
     ) -> None:
         super().__init__(
-            title=site_name, description="Piccolo API documentation"
+            title=site_name,
+            description=f"{site_name} documentation",
+            middleware=[
+                Middleware(CSRFMiddleware, allowed_hosts=allowed_hosts)
+            ],
+            debug=debug,
         )
 
         #######################################################################
@@ -425,7 +433,7 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        private_app = FastAPI(docs_url=None)
+        private_app = FastAPI(docs_url=None, debug=debug)
         private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
@@ -921,6 +929,7 @@ def create_admin(
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
+    debug: bool = False,
 ):
     """
     :param tables:
@@ -1019,6 +1028,11 @@ def create_admin(
         This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
         as an additional layer of protection when the admin is run under HTTPS.
         It must be a sequence of strings, such as ``['my_site.com']``.
+    :param debug:
+        If ``True``, debug mode is enabled. Any unhandled exceptions will
+        return a stack trace, rather than a generic 500 error. Don't use this
+        in production!
+
     """  # noqa: E501
     auth_table = auth_table or BaseUser
     session_table = session_table or SessionsBase
@@ -1046,24 +1060,21 @@ def create_admin(
 
         tables = all_table_classes_with_configs
 
-    return ExceptionMiddleware(
-        CSRFMiddleware(
-            AdminRouter(
-                *tables,
-                forms=forms,
-                auth_table=auth_table,
-                session_table=session_table,
-                session_expiry=session_expiry,
-                max_session_expiry=max_session_expiry,
-                increase_expiry=increase_expiry,
-                page_size=page_size,
-                read_only=read_only,
-                rate_limit_provider=rate_limit_provider,
-                production=production,
-                site_name=site_name,
-                default_language_code=default_language_code,
-                translations=translations,
-            ),
-            allowed_hosts=allowed_hosts,
-        )
+    return AdminRouter(
+        *tables,
+        forms=forms,
+        auth_table=auth_table,
+        session_table=session_table,
+        session_expiry=session_expiry,
+        max_session_expiry=max_session_expiry,
+        increase_expiry=increase_expiry,
+        page_size=page_size,
+        read_only=read_only,
+        rate_limit_provider=rate_limit_provider,
+        production=production,
+        site_name=site_name,
+        default_language_code=default_language_code,
+        translations=translations,
+        allowed_hosts=allowed_hosts,
+        debug=debug,
     )
