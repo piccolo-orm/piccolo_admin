@@ -367,6 +367,8 @@ class AdminRouter(FastAPI):
             ],
             debug=debug,
             exception_handlers={500: log_error},
+            docs_url=None,
+            redoc_url=None,
         )
 
         #######################################################################
@@ -445,6 +447,7 @@ class AdminRouter(FastAPI):
 
         private_app = FastAPI(
             docs_url=None,
+            redoc_url=None,
             debug=debug,
             exception_handlers={500: log_error},
         )
@@ -578,6 +581,7 @@ class AdminRouter(FastAPI):
         #######################################################################
 
         public_app = FastAPI(
+            redoc_url=None,
             docs_url=None,
             debug=debug,
             exception_handlers={500: log_error},
