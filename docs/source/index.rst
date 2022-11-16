@@ -49,8 +49,8 @@ Table of Contents
    ../actions/index
    ../media_storage/index
    ../internationalization/index
-   ../contributing/index
-   ../rest_documentation/index
+   ../rest_api_documentation/index
    ../help/index
    ../api_reference/index
+   ../contributing/index
    ../changes/index
