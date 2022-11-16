@@ -20,7 +20,7 @@ During development, you can run Piccolo Admin in debug mode.
 
 .. code-block:: python
 
-    app = create_admin(tables=[MyTable] debug=True)
+    app = create_admin(tables=[MyTable], debug=True)
 
 When a ``500`` error is returned via the API, a stack trace is included.
 
