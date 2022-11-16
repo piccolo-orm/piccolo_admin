@@ -7,7 +7,7 @@ Logging
 If Piccolo Admin encounters a ``500`` error, for example:
 
 * The database is unavailable
-* A table don't exist
+* A table doesn't exist
 
 Then Piccolo Admin will use Python's :meth:`exception logger <logging.Logger.exception>`
 to log the exception. If running the app via uvicorn, you will then see the
