@@ -6,6 +6,7 @@ from __future__ import annotations
 import inspect
 import itertools
 import json
+import logging
 import os
 import typing as t
 from dataclasses import dataclass
@@ -50,6 +51,9 @@ from .translations.models import (
     TranslationListResponse,
 )
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
+
+logger = logging.getLogger(__name__)
+
 
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
@@ -322,6 +326,11 @@ def superuser_validators(piccolo_crud: PiccoloCRUD, request: Request):
         )
 
 
+async def log_error(request: Request, exc: HTTPException):
+    logger.exception("Server error")
+    raise exc
+
+
 class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -357,6 +366,7 @@ class AdminRouter(FastAPI):
                 Middleware(CSRFMiddleware, allowed_hosts=allowed_hosts)
             ],
             debug=debug,
+            exception_handlers={500: log_error},
         )
 
         #######################################################################
@@ -433,7 +443,11 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        private_app = FastAPI(docs_url=None, debug=debug)
+        private_app = FastAPI(
+            docs_url=None,
+            debug=debug,
+            exception_handlers={500: log_error},
+        )
         private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
@@ -563,7 +577,11 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        public_app = FastAPI(docs_url=None)
+        public_app = FastAPI(
+            docs_url=None,
+            debug=debug,
+            exception_handlers={500: log_error},
+        )
         public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         if not rate_limit_provider:
