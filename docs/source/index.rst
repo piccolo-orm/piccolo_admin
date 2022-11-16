@@ -50,6 +50,7 @@ Table of Contents
    ../media_storage/index
    ../internationalization/index
    ../rest_api_documentation/index
+   ../debugging/index
    ../help/index
    ../api_reference/index
    ../contributing/index
