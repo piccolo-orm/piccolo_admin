@@ -73,6 +73,16 @@ class TestTableConfig(TestCase):
             ("content", "created", "rating"),
         )
 
+    def test_exclude_visible_columns_without_pk(self):
+        post_table = TableConfig(
+            table_class=Post,
+            exclude_visible_columns=[Post.name],
+        )
+        self.assertEqual(
+            tuple(i._meta.name for i in post_table.get_visible_columns()),
+            ("id", "content", "created", "rating"),
+        )
+
     def test_visible_exclude_columns_error(self):
         with self.assertRaises(ValueError):
             post_table = TableConfig(
