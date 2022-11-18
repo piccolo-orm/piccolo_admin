@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.38.0
+------
+
+Fixed a bug with ``TableConfig`` and ``exclude_visible_columns``. Thanks to
+@web-maker for this fix.
+
+-------------------------------------------------------------------------------
+
 0.37.0
 ------
 
