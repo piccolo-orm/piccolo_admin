@@ -199,7 +199,7 @@ class TableConfig:
             return include_columns
 
         if exclude_columns and not include_columns:
-            column_names = (i._meta.name for i in exclude_columns)
+            column_names = [i._meta.name for i in exclude_columns]
             return [i for i in all_columns if i._meta.name not in column_names]
 
         return all_columns
