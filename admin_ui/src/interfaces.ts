@@ -8,9 +8,10 @@ export interface DeleteRow {
     rowID: number
 }
 
-export interface ExecuteCallback {
+export interface ExecuteAction {
     tableName: string
-    rowID: number
+    rowIDs: number
+    actionId: number
 }
 
 export interface UpdateRow {
@@ -148,4 +149,9 @@ export interface FormConfig {
     name: string
     slug: string
     description: string
+}
+
+export interface Action {
+    actionID: number
+    actionName: string
 }

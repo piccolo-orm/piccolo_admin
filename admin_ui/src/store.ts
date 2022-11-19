@@ -33,7 +33,8 @@ export default new Vuex.Store({
         tableNames: [],
         formConfigs: [] as i.FormConfig[],
         user: undefined,
-        loadingStatus: false
+        loadingStatus: false,
+        actions: [] as i.Action[]
     },
     mutations: {
         updateTableNames(state, value) {
@@ -65,6 +66,9 @@ export default new Vuex.Store({
         },
         updateSortBy(state, config: i.SortByConfig) {
             state.sortBy = config
+        },
+        updateActions(state, actions) {
+            state.actions = actions
         },
         reset(state) {
             state.sortBy = null
@@ -229,12 +233,19 @@ export default new Vuex.Store({
             )
             return response
         },
-        async executeCallback(context, config: i.ExecuteCallback) {
+        async fetchActions(context, tableName: string) {
+            const response = await axios.get(
+                `${BASE_URL}tables/${tableName}/actions`
+            )
+            context.commit("updateActions", response.data)
+            return response
+        },
+        async executeAction(context, config: i.ExecuteAction) {
             const response = await axios.post(
-                `${BASE_URL}tables/${config.tableName}/callback/execute`,
+                `${BASE_URL}tables/${config.tableName}/actions/${config.actionId}/execute`,
                 {
                     table_name: config.tableName,
-                    row_id: config.rowID
+                    row_ids: config.rowIDs
                 }
             )
             return response

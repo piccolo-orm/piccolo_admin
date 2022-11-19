@@ -11,6 +11,20 @@
                         />
                     </div>
                     <div class="buttons">
+                        <a class="button" v-on:click.prevent="showActionDropDown = !showActionDropDown">
+                            <font-awesome-icon icon="angle-right" v-if="!showActionDropDown"/>
+                            <font-awesome-icon icon="angle-down" v-if="showActionDropDown"/>
+                            Actions
+                            <a class="actions-dropdown">
+                                <DropDownMenu v-if="showActionDropDown">
+                                    <li v-for="action in allActions">
+                                        <a href="#" class="button" v-on:click="executeAction(action.action_id)">
+                                            <span>{{ action.action_name }}</span>
+                                        </a>
+                                    </li>
+                                </DropDownMenu>
+                            </a>
+                        </a>
                         <a
                             class="button"
                             href="#"
@@ -27,7 +41,8 @@
                             v-if="selectedRows.length > 0"
                             v-on:triggered="deleteRows"
                         />
-
+                        
+                        
                         <router-link
                             :to="{
                                 name: 'addRow',
@@ -39,6 +54,7 @@
                             <font-awesome-icon icon="plus" />
                             <span>{{ $t("Add Row") }}</span>
                         </router-link>
+
 
                         <a
                             class="button"
@@ -299,17 +315,6 @@
                                                             "
                                                         />
                                                     </li>
-                                                    <li>
-                                                        <CallbackButton
-                                                            :includeTitle="true"
-                                                            class=""
-                                                            v-on:triggered="
-                                                                executeCallback(
-                                                                    row[pkName]
-                                                                )
-                                                            "
-                                                        />
-                                                    </li>
                                                 </DropDownMenu>
                                             </span>
                                         </td>
@@ -381,7 +386,6 @@ import BulkUpdateModal from "../components/BulkUpdateModal.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
 import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
-import CallbackButton from "../components/CallbackButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
 import ChangePageSize from "../components/ChangePageSize.vue"
 import MediaViewer from "../components/MediaViewer.vue"
@@ -409,7 +413,8 @@ export default Vue.extend({
             showUpdateModal: false,
             visibleDropdown: null,
             showMediaViewer: false,
-            mediaViewerConfig: null as MediaViewerConfig
+            mediaViewerConfig: null as MediaViewerConfig,
+            showActionDropDown: false,
         }
     },
     components: {
@@ -420,7 +425,6 @@ export default Vue.extend({
         ChangePageSize,
         CSVButton,
         DeleteButton,
-        CallbackButton,
         DropDownMenu,
         MediaViewer,
         Pagination,
@@ -447,6 +451,9 @@ export default Vue.extend({
         },
         schema() {
             return this.$store.state.schema
+        },
+        allActions() {
+            return this.$store.state.actions
         },
         rowCount() {
             return this.$store.state.rowCount
@@ -579,24 +586,22 @@ export default Vue.extend({
                 this.showSuccess("Successfully deleted row")
             }
         },
-        async executeCallback(rowID) {
-            if (confirm(`Are you sure you want to run callback for this row?`)) {
-                console.log("Requesting to run callback!")
+        async executeAction(action_id) {
+            if (confirm(`Are you sure you want to run action for this row?`)) {
                 try {
-                    let response = await this.$store.dispatch("executeCallback", {
+                    let response = await this.$store.dispatch("executeAction", {
                         tableName: this.tableName,
-                        rowID
+                        rowIDs: this.selectedRows,
+                        actionId: action_id
                     })
-                    this.showSuccess(`Successfully ran callback and got response: ${response.data}`, 10000)
+                    this.showSuccess(`Successfully ran action and got response: ${response.data}`, 10000)
                 } catch (error) {
                     if (error.response.status == 404) {
-                        console.log(error.response.status)
                         this.$store.commit("updateApiResponseMessage", {
-                            contents: "This table is not configured for callback action",
+                            contents: "This table is not configured for any actions",
                             type: "error"
                         })
                     } else {
-                        console.log(error.response.status)
                         this.$store.commit("updateApiResponseMessage", {
                             contents: "Something went wrong",
                             type: "error"
@@ -623,6 +628,9 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
+        },
+        async fetchActions() {
+            await this.$store.dispatch("fetchActions", this.tableName)
         }
     },
     watch: {
@@ -650,7 +658,7 @@ export default Vue.extend({
             this.$router.currentRoute.query
         )
 
-        await Promise.all([this.fetchRows(), this.fetchSchema()])
+        await Promise.all([this.fetchRows(), this.fetchSchema(), this.fetchActions()])
     }
 })
 </script>
@@ -726,6 +734,10 @@ div.wrapper {
 
                 &:first-child {
                     margin-left: 0;
+                }
+
+                a.actions-dropdown {
+                    position: relative;
                 }
             }
         }

@@ -152,6 +152,7 @@ class TableConfig:
                     validators=Validators(post_single=manager_only)
                 )
             )
+    :param custom_actions: Optional list of custom actions handler function
 
     """
 
@@ -164,7 +165,7 @@ class TableConfig:
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
     validators: t.Optional[Validators] = None
-    custom_callback: t.Optional[t.Callable] = None
+    custom_actions: t.Optional[t.List[t.Callable]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -464,7 +465,7 @@ class AdminRouter(FastAPI):
                         "tags": [f"{table_class._meta.tablename.capitalize()}"]
                     },
                 ),
-                callback=table_config.custom_callback,
+                actions=table_config.custom_actions,
             )
 
         private_app.add_api_route(
