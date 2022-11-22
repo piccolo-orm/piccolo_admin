@@ -39,6 +39,9 @@ master_doc = "index"
 
 html_theme = "piccolo_theme"
 html_short_title = "Piccolo Admin"
+html_theme_options = {
+    "source_url": "https://github.com/piccolo-orm/piccolo_admin/"
+}
 
 # -- Autodoc -----------------------------------------------------------------
 
@@ -46,6 +49,11 @@ extensions += ["sphinx.ext.autodoc"]
 autodoc_typehints = "signature"
 autodoc_typehints_format = "short"
 autoclass_content = "both"
+autodoc_preserve_defaults = True
+
+# -- Viewcode -------------------------------------------------------------
+
+extensions += ["sphinx.ext.viewcode"]
 
 # -- Intersphinx -------------------------------------------------------------
 

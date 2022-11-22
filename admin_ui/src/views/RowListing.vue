@@ -199,6 +199,42 @@
                                                         | abbreviate
                                                 }}</pre>
                                             </span>
+                                            <span
+                                                v-else-if="isMediaColumn(name)"
+                                            >
+                                                <template v-if="isArray(name)">
+                                                    <a
+                                                        style="display: block"
+                                                        href="#"
+                                                        v-for="item in row[
+                                                            name
+                                                        ]"
+                                                        :key="item"
+                                                        @click.prevent="
+                                                            showMedia(
+                                                                item,
+                                                                name
+                                                            )
+                                                        "
+                                                        >{{ item | abbreviate }}
+                                                    </a>
+                                                </template>
+                                                <template v-else>
+                                                    <a
+                                                        href="#"
+                                                        @click.prevent="
+                                                            showMedia(
+                                                                row[name],
+                                                                name
+                                                            )
+                                                        "
+                                                        >{{
+                                                            row[name]
+                                                                | abbreviate
+                                                        }}
+                                                    </a>
+                                                </template>
+                                            </span>
                                             <span v-else>{{
                                                 row[name] | abbreviate
                                             }}</span>
@@ -314,6 +350,12 @@
                 v-if="showUpdateModal"
                 v-on:close="showUpdateModal = false"
             />
+
+            <MediaViewer
+                v-if="showMediaViewer"
+                :mediaViewerConfig="mediaViewerConfig"
+                @close="showMediaViewer = false"
+            />
         </template>
     </BaseView>
 </template>
@@ -330,11 +372,18 @@ import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
 import ChangePageSize from "../components/ChangePageSize.vue"
+import MediaViewer from "../components/MediaViewer.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
 import RowSortModal from "../components/RowSortModal.vue"
 import Tooltip from "../components/Tooltip.vue"
-import { APIResponseMessage, Choice, Choices, Schema } from "../interfaces"
+import {
+    APIResponseMessage,
+    Choice,
+    Choices,
+    Schema,
+    MediaViewerConfig
+} from "../interfaces"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -346,19 +395,22 @@ export default Vue.extend({
             showFilter: false,
             showSortModal: false,
             showUpdateModal: false,
-            visibleDropdown: null
+            visibleDropdown: null,
+            showMediaViewer: false,
+            mediaViewerConfig: null as MediaViewerConfig
         }
     },
     components: {
         AddRowModal,
         BaseView,
-        BulkUpdateModal,
         BulkDeleteButton,
+        BulkUpdateModal,
+        ChangePageSize,
         CSVButton,
         DeleteButton,
         DropDownMenu,
+        MediaViewer,
         Pagination,
-        ChangePageSize,
         RowFilter,
         RowSortModal,
         Tooltip
@@ -445,18 +497,24 @@ export default Vue.extend({
         }
     },
     methods: {
-        isForeignKey(name: string) {
+        isForeignKey(name: string): boolean {
             let property = this.schema.properties[name]
             return property != undefined ? property.extra.foreign_key : false
         },
-        isBoolean(name: string) {
+        isBoolean(name: string): boolean {
             return this.schema.properties[name]["type"] == "boolean"
         },
-        isInterval(name: string) {
+        isInterval(name: string): boolean {
             return this.schema.properties[name]["format"] == "time-delta"
         },
-        isJSON(name: string) {
+        isJSON(name: string): boolean {
             return this.schema.properties[name]["format"] == "json"
+        },
+        isArray(name: string): boolean {
+            return this.schema.properties[name]["type"] == "array"
+        },
+        isMediaColumn(name: string): boolean {
+            return this.schema.media_columns.includes(name)
         },
         getTableName(name: string) {
             // Find the table name a foreign key refers to:
@@ -486,6 +544,15 @@ export default Vue.extend({
                 type: "success"
             }
             this.$store.commit("updateApiResponseMessage", message)
+        },
+        async showMedia(fileKey: string, columnName: string) {
+            const tableName = this.$store.state.currentTableName
+            this.mediaViewerConfig = {
+                fileKey,
+                columnName,
+                tableName
+            }
+            this.showMediaViewer = true
         },
         async deleteRow(rowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {

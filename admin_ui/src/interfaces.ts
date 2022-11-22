@@ -56,7 +56,7 @@ export interface TableReferencesAPIResponse {
 }
 
 /*****************************************************************************/
-
+// Translations
 export interface TranslationListItemAPI {
     language_name: string
     language_code: string
@@ -71,6 +71,19 @@ export interface TranslationAPIResponse {
     language_name: string
     language_code: string
     translations: { [key: string]: string }
+}
+
+/*****************************************************************************/
+// File storage
+
+export interface StoreFileAPIResponse {
+    file_key: string
+}
+
+export interface MediaViewerConfig {
+    fileKey: string
+    columnName: string
+    tableName: string
 }
 
 /*****************************************************************************/
@@ -91,6 +104,12 @@ export interface Schema {
     type: string
     properties: Properties
     help_text: null
+    visible_column_names: string[]
+    visible_filter_names: string[]
+    rich_text_columns: string[]
+    media_columns: string[]
+    visible_fields_options: string[]
+    primary_key_name: string
 }
 
 export interface Properties {
@@ -99,6 +118,7 @@ export interface Properties {
 
 export interface RowConfig {
     title: string
+    default?: any
     extra: RowConfigExtra
     nullable: boolean
     type: string
@@ -110,6 +130,8 @@ export interface RowConfig {
 export interface RowConfigExtra {
     help_text: null | string
     choices: Choices | null
+    foreign_key?: boolean
+    to?: string
 }
 
 export interface ArrayItems {

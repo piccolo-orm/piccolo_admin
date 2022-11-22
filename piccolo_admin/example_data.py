@@ -1,7 +1,8 @@
 import datetime
+import typing as t
 from decimal import Decimal
 
-DIRECTORS = [
+DIRECTORS: t.List[t.Dict[str, t.Any]] = [
     {
         "id": 1,
         "name": "Peter Jackson",
@@ -33,7 +34,7 @@ DIRECTORS = [
 ]
 
 
-MOVIES = [
+MOVIES: t.List[t.Dict[str, t.Any]] = [
     {
         "name": "Star Wars: Episode IV - A New Hope",
         "rating": 93.3,
@@ -44,7 +45,7 @@ MOVIES = [
             "hostage by Darth Vader, Luke and Han Solo must free her and "
             "destroy the powerful weapon created by the Galactic Empire."
         ),
-        "release_date": datetime.datetime(year=1977, month=12, day=27),
+        "release_date": datetime.date(year=1977, month=12, day=27),
         "oscar_nominations": 11,
         "won_oscar": True,
         "box_office": Decimal("775.5"),
@@ -61,7 +62,7 @@ MOVIES = [
             "side. Master Yoda trains Luke to become a Jedi Knight while his "
             "friends try to fend off the Imperial fleet."
         ),
-        "release_date": datetime.datetime(year=1980, month=5, day=20),
+        "release_date": datetime.date(year=1980, month=5, day=20),
         "oscar_nominations": 4,
         "won_oscar": True,
         "box_office": Decimal("547.9"),
@@ -78,7 +79,7 @@ MOVIES = [
             "side of the 'Force'. At the same time, the rebels hatch a plan "
             "to destroy the second Death Star."
         ),
-        "release_date": datetime.datetime(year=1983, month=6, day=2),
+        "release_date": datetime.date(year=1983, month=6, day=2),
         "oscar_nominations": 5,
         "won_oscar": True,
         "box_office": Decimal("475.3"),
@@ -96,7 +97,7 @@ MOVIES = [
             "across a young, gifted boy. But the Sith returns to stake claim "
             "to the Force."
         ),
-        "release_date": datetime.datetime(year=1999, month=7, day=16),
+        "release_date": datetime.date(year=1999, month=7, day=16),
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1027.0"),
@@ -113,7 +114,7 @@ MOVIES = [
             "destroy the Republic. With the fate of the galaxy hanging in the "
             "balance, the Jedi must defend the galaxy against the evil Sith."
         ),
-        "release_date": datetime.datetime(year=2002, month=5, day=16),
+        "release_date": datetime.date(year=2002, month=5, day=16),
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("653.0"),
@@ -131,7 +132,7 @@ MOVIES = [
             "that are played by Palpatine and the Jedis and gives into "
             "temptation."
         ),
-        "release_date": datetime.datetime(year=2005, month=5, day=19),
+        "release_date": datetime.date(year=2005, month=5, day=19),
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("868.4"),
@@ -148,7 +149,7 @@ MOVIES = [
             "Poe, backed by the Resistance and the Republic, must find a way "
             "to stop them and find Luke, the last surviving Jedi."
         ),
-        "release_date": datetime.datetime(year=2015, month=12, day=17),
+        "release_date": datetime.date(year=2015, month=12, day=17),
         "oscar_nominations": 5,
         "won_oscar": False,
         "box_office": Decimal("2068.0"),
@@ -165,7 +166,7 @@ MOVIES = [
             "to help them complete the Death Star. As an adult, she joins a "
             "group of resistance fighters, who aim to steal its blueprints."
         ),
-        "release_date": datetime.datetime(year=2016, month=12, day=13),
+        "release_date": datetime.date(year=2016, month=12, day=13),
         "oscar_nominations": 2,
         "won_oscar": False,
         "box_office": Decimal("1056.0"),
@@ -182,7 +183,7 @@ MOVIES = [
             "its remaining member, to reinvigorate the Resistance's war "
             "against the First Order."
         ),
-        "release_date": datetime.datetime(year=2017, month=12, day=14),
+        "release_date": datetime.date(year=2017, month=12, day=14),
         "oscar_nominations": 4,
         "won_oscar": False,
         "box_office": Decimal("1333.0"),
@@ -199,7 +200,7 @@ MOVIES = [
             "involved in a large-scale heist within the criminal underworld "
             "and meets individuals who change his life."
         ),
-        "release_date": datetime.datetime(year=2018, month=5, day=25),
+        "release_date": datetime.date(year=2018, month=5, day=25),
         "oscar_nominations": 0,
         "won_oscar": False,
         "box_office": Decimal("393.2"),
@@ -216,7 +217,7 @@ MOVIES = [
             "Finn and Poe Dameron's journey continues. With the power and "
             "knowledge of generations behind them, the final battle commences."
         ),
-        "release_date": datetime.datetime(year=2019, month=12, day=19),
+        "release_date": datetime.date(year=2019, month=12, day=19),
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1074.0"),
@@ -234,7 +235,7 @@ MOVIES = [
             "companions to Mount Doom, the only place where it can be "
             "destroyed."
         ),
-        "release_date": datetime.datetime(year=2001, month=12, day=10),
+        "release_date": datetime.date(year=2001, month=12, day=10),
         "oscar_nominations": 12,
         "won_oscar": True,
         "box_office": Decimal("887.8"),
@@ -251,7 +252,7 @@ MOVIES = [
             "of new allies join their former companions to defend Isengard as "
             "Saruman launches an assault on it."
         ),
-        "release_date": datetime.datetime(year=2002, month=12, day=11),
+        "release_date": datetime.date(year=2002, month=12, day=11),
         "oscar_nominations": 6,
         "won_oscar": True,
         "box_office": Decimal("951.2"),
@@ -268,7 +269,7 @@ MOVIES = [
             "While Frodo and Sam approach Mount Doom to destroy the One Ring, "
             "they follow Gollum unaware of the path he is leading them to."
         ),
-        "release_date": datetime.datetime(year=2003, month=12, day=17),
+        "release_date": datetime.date(year=2003, month=12, day=17),
         "oscar_nominations": 12,
         "won_oscar": True,
         "box_office": Decimal("1142.0"),
@@ -285,7 +286,7 @@ MOVIES = [
             "and a group of dwarves on a journey to reclaim the city of "
             "Erebor and all its riches from the dragon Smaug."
         ),
-        "release_date": datetime.datetime(year=2012, month=12, day=12),
+        "release_date": datetime.date(year=2012, month=12, day=12),
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("1021.0"),
@@ -303,7 +304,7 @@ MOVIES = [
             "Mountain, where Bilbo comes face-to-face with the fearsome "
             "dragon Smaug."
         ),
-        "release_date": datetime.datetime(year=2013, month=12, day=13),
+        "release_date": datetime.date(year=2013, month=12, day=13),
         "oscar_nominations": 3,
         "won_oscar": False,
         "box_office": Decimal("958.0"),
@@ -320,7 +321,7 @@ MOVIES = [
             "Dwarf friends and protects the Lonely Mountain after a conflict "
             "arises."
         ),
-        "release_date": datetime.datetime(year=2014, month=12, day=1),
+        "release_date": datetime.date(year=2014, month=12, day=1),
         "oscar_nominations": 1,
         "won_oscar": False,
         "box_office": Decimal("956.0"),
@@ -330,7 +331,7 @@ MOVIES = [
 ]
 
 
-STUDIOS = [
+STUDIOS: t.List[t.Dict[str, t.Any]] = [
     {
         "name": "Shepperton Studios",
         "facilities": {
@@ -342,8 +343,30 @@ STUDIOS = [
 ]
 
 
+TICKETS: t.List[t.Dict[str, t.Any]] = [
+    {
+        "booked_by": "star_wars_super_fan_1",
+        "movie": 1,
+        "start_date": datetime.date(year=2022, month=1, day=20),
+        "start_time": datetime.time(hour=16, minute=15),
+        "booked_on": datetime.datetime(
+            year=2022, month=1, day=12, hour=9, minute=30
+        ),
+    },
+    {
+        "booked_by": "bilbo_63",
+        "movie": 15,
+        "start_date": datetime.date(year=2022, month=2, day=22),
+        "start_time": datetime.time(hour=19, minute=30),
+        "booked_on": datetime.datetime(
+            year=2022, month=2, day=11, hour=16, minute=30
+        ),
+    },
+]
+
+
 # Some random words used to generate fake movie names.
-MOVIE_WORDS = [
+MOVIE_WORDS: t.List[str] = [
     "Adventure",
     "Alien",
     "Armageddon",

@@ -1,3 +1,8 @@
+// This story doesn't currently work because we need the following Babel
+// plugins installed:
+// '@babel/plugin-proposal-nullish-coalescing-operator'
+// '@babel/plugin-proposal-optional-chaining'
+
 import InputField from '../InputField.vue'
 import '!style-loader!css-loader!less-loader!../../main.less';
 

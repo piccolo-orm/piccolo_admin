@@ -2,12 +2,13 @@
     <div>
         <div
             v-bind:key="property.title"
-            v-for="(property, keyName) in schema.properties"
+            v-for="(property, columnName) in schema.properties"
         >
             <label>{{ property.title }}</label>
             <InputField
                 v-bind:isFilter="false"
-                v-bind:key="keyName"
+                v-bind:key="columnName"
+                v-bind:columnName="columnName"
                 v-bind:title="property.title"
                 v-bind:type="property.type || property.anyOf[0].type"
                 v-bind:value="property.default"
@@ -17,12 +18,13 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import Vue, {PropType} from "vue"
 import InputField from "./InputField.vue"
+import {Schema} from "@/interfaces"
 
 export default Vue.extend({
     props: {
-        schema: Object,
+        schema: Object as PropType<Schema>,
     },
     components: {
         InputField,

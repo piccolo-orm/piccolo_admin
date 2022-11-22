@@ -17,12 +17,13 @@ import targ
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns import (
+from piccolo.columns.column_types import (
     JSON,
     UUID,
     Array,
     BigInt,
     Boolean,
+    Date,
     ForeignKey,
     Integer,
     Interval,
@@ -30,18 +31,85 @@ from piccolo.columns import (
     Real,
     SmallInt,
     Text,
+    Time,
     Timestamp,
     Varchar,
 )
 from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
-from piccolo.table import Table
+from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
+from piccolo_api.media.local import LocalMediaStorage
+from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
-from piccolo_admin.example_data import DIRECTORS, MOVIE_WORDS, MOVIES, STUDIOS
+from piccolo_admin.example_data import (
+    DIRECTORS,
+    MOVIE_WORDS,
+    MOVIES,
+    STUDIOS,
+    TICKETS,
+)
+
+try:
+    """
+    If you want to try out S3, create a .env file in this folder, with the
+    following contents (inserting your S3 credentials where appropriate):
+
+        AWS_ACCESS_KEY_ID=abc123
+        AWS_SECRET_ACCESS_KEY=abc123
+        BUCKET_NAME=bucket123
+
+    These values can also be added if required:
+
+        ENDPOINT_URL=s3.cloudprovider.com
+        REGION_NAME=my-region
+
+    The ``Director.photo`` column will then use S3 for storage.
+
+    """
+
+    import dotenv
+
+    dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    BUCKET_NAME = os.environ.get("BUCKET_NAME")
+
+    USE_S3 = all(
+        (
+            AWS_SECRET_ACCESS_KEY,
+            AWS_SECRET_ACCESS_KEY,
+            BUCKET_NAME,
+        )
+    )
+
+    if USE_S3:
+        print("Using S3")
+
+        S3_CONFIG = {
+            "aws_access_key_id": AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": AWS_SECRET_ACCESS_KEY,
+        }
+
+        ENDPOINT_URL = os.environ.get("ENDPOINT_URL")
+        if ENDPOINT_URL:
+            S3_CONFIG["endpoint_url"] = ENDPOINT_URL
+
+        REGION_NAME = os.environ.get("REGION_NAME")
+        if REGION_NAME:
+            S3_CONFIG["region_name"] = REGION_NAME
+
+except ImportError:
+    USE_S3 = False
+
+
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
+if not USE_S3 and not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT)
 
 
 class Sessions(SessionsBase):
@@ -67,6 +135,7 @@ class Director(Table, help_text="The main director for a movie."):
         ),
     )
     gender = Varchar(length=1, choices=Gender)
+    photo = Varchar()
 
     @classmethod
     def get_readable(cls):
@@ -75,7 +144,7 @@ class Director(Table, help_text="The main director for a movie."):
 
 class Studio(Table, help_text="A movie studio."):
     pk = UUID(primary_key=True)
-    name = Varchar()
+    name = Varchar(unique=True)
     facilities = JSON()
 
     @classmethod
@@ -101,7 +170,9 @@ class Movie(Table):
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
-    release_date = Timestamp(null=True)
+    poster = Varchar()
+    screenshots = Array(base_column=Varchar())
+    release_date = Date(null=True)
     box_office = Numeric(digits=(5, 1), help_text="In millions of US dollars.")
     tags = Array(base_column=Varchar())
     barcode = BigInt(default=0)
@@ -111,6 +182,14 @@ class Movie(Table):
     @classmethod
     def get_readable(cls):
         return Readable(template="%s", columns=[cls.name])
+
+
+class Ticket(Table):
+    booked_by = Varchar(length=255)
+    movie = ForeignKey(Movie)
+    start_date = Date()
+    start_time = Time()
+    booked_on = Timestamp()
 
 
 class BusinessEmailModel(BaseModel):
@@ -186,7 +265,9 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Studio,
     User,
     Sessions,
+    Ticket,
 )
+
 
 movie_config = TableConfig(
     table_class=Movie,
@@ -195,7 +276,9 @@ movie_config = TableConfig(
         Movie.name,
         Movie.rating,
         Movie.director,
-        Movie.studio,
+        Movie.poster,
+        Movie.tags,
+        Movie.screenshots,
     ],
     visible_filters=[
         Movie.name,
@@ -203,8 +286,21 @@ movie_config = TableConfig(
         Movie.director,
         Movie.duration,
         Movie.genre,
+        Movie.screenshots,
+        Movie.poster,
+        Movie.release_date,
     ],
     rich_text_columns=[Movie.description],
+    media_storage=(
+        LocalMediaStorage(
+            column=Movie.poster,
+            media_path=os.path.join(MEDIA_ROOT, "movie_poster"),
+        ),
+        LocalMediaStorage(
+            column=Movie.screenshots,
+            media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
+        ),
+    ),
 )
 
 director_config = TableConfig(
@@ -213,11 +309,25 @@ director_config = TableConfig(
         Director._meta.primary_key,
         Director.name,
         Director.gender,
+        Director.photo,
     ],
+    media_storage=(
+        S3MediaStorage(
+            column=Director.photo,
+            bucket_name=t.cast(str, BUCKET_NAME),
+            folder_name="director_photo",
+            connection_kwargs=S3_CONFIG,
+        )
+        if USE_S3
+        else LocalMediaStorage(
+            column=Director.photo,
+            media_path=os.path.join(MEDIA_ROOT, "photo"),
+        ),
+    ),
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio],
+    [movie_config, director_config, Studio, Ticket],
     forms=[
         FormConfig(
             name="Business email form",
@@ -250,11 +360,9 @@ def set_engine(engine: str = "sqlite"):
 
 def create_schema(persist: bool = False):
     if not persist:
-        for table_class in reversed(TABLE_CLASSES):
-            table_class.alter().drop_table(if_exists=True).run_sync()
+        drop_db_tables_sync(*TABLE_CLASSES)
 
-    for table_class in TABLE_CLASSES:
-        table_class.create_table(if_not_exists=True).run_sync()
+    create_db_tables_sync(*TABLE_CLASSES, if_not_exists=True)
 
 
 def populate_data(inflate: int = 0, engine: str = "sqlite"):
@@ -267,9 +375,10 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
 
     """
     # Add some rows
-    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()  # type: ignore # noqa: E501
-    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()  # type: ignore
-    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()  # type: ignore
+    Director.insert(*[Director(**d) for d in DIRECTORS]).run_sync()
+    Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
+    Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
+    Ticket.insert(*[Ticket(**t) for t in TICKETS]).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the
@@ -367,7 +476,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                         oscar_nominations=oscar_nominations,
                         won_oscar=won_oscar,
                         description=fake.sentence(30),
-                        release_date=fake.date_time(),
+                        release_date=fake.date(),
                         box_office=decimal.Decimal(
                             str(random.randint(10, 1500) / 10)
                         ),

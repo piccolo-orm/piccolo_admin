@@ -22,7 +22,7 @@ import { Choices } from "../interfaces"
 export default Vue.extend({
     props: {
         fieldName: {
-            type: String,
+            type: String as PropType<string>,
             default: ""
         },
         value: {
@@ -36,11 +36,11 @@ export default Vue.extend({
             }
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         }
     },

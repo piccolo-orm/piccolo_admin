@@ -1,7 +1,7 @@
 piccolo>=0.58.0
-piccolo_api>=0.39.0
+piccolo_api>=0.41.0
 uvicorn
 aiofiles>=0.5.0
 Hypercorn
 targ>=0.1.9
-fastapi>=0.62.0
+fastapi>=0.87.0

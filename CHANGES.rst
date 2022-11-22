@@ -1,6 +1,206 @@
 Changes
 =======
 
+0.38.0
+------
+
+Fixed a bug with ``TableConfig`` and ``exclude_visible_columns``. Thanks to
+@web-maker for this fix.
+
+-------------------------------------------------------------------------------
+
+0.37.0
+------
+
+* Python 3.11 is now officially supported.
+* Added debug mode: ``create_admin(tables=[MyTable], debug=True)``.
+* Logging exceptions for 500 errors.
+* Fixed a typo in the docs about how to use validators (thanks to @sinisaos for
+  reporting this).
+* Updated the tests for Starlette / FastAPI's new test client. This means that
+  ``fastapi==0.87.0`` / ``starlette==0.21.0`` are now the minimum versions
+  supported. Thanks to @sinisaos for this.
+
+-------------------------------------------------------------------------------
+
+0.36.0
+------
+
+Lots of small enhancements.
+
+* Fixed bugs with the foreign key selector. Sometimes the edit button didn't
+  work. Also, sometimes the value shown in the input box wasn't refreshing when
+  navigating to a new page.
+* The HTML title now matches the ``site_name`` parameter in ``create_admin``
+  (thanks to @sinisaos for this).
+* Updated Vue to the latest version.
+* Internal code refactoring.
+
+-------------------------------------------------------------------------------
+
+0.35.0
+------
+
+``Validators`` can now be specified in ``TableConfig``.
+
+This allows fine grained access control - for example, only allowing some users
+to send ``POST`` requests to certain API endpoints:
+
+.. code-block:: python
+
+  from piccolo_api.crud.endpoints import PiccoloCRUD
+  from starlette.exceptions import HTTPException
+  from starlette.requests import Request
+
+
+  async def manager_only(
+      piccolo_crud: PiccoloCRUD,
+      request: Request
+  ):
+      # The Piccolo `BaseUser` can be accessed from the request.
+      user = request.user.user
+
+      # Assuming we have another database table where we record
+      # users with certain permissions.
+      manager = await Manager.exists().where(manager.user == user)
+
+      if not manager:
+          # Raise a Starlette exception if we want to reject the
+          # request.
+          raise HTTPException(
+              status_code=403,
+              detail="Only managers are allowed to do this"
+          )
+
+
+  admin = create_admin(
+      tables=TableConfig(
+          Movie,
+          validators=Validators(post_single=[manager_only])
+      )
+  )
+
+-------------------------------------------------------------------------------
+
+0.34.0
+------
+
+Updated the date / datetime / time picker.
+
+-------------------------------------------------------------------------------
+
+0.33.1
+------
+
+Fixed an issue with installing ``piccolo_admin`` in editable mode with ``pip``.
+
+Thanks to @peterschutt for reporting this issue.
+
+-------------------------------------------------------------------------------
+
+0.33.0
+------
+
+Improved the UI for error messages. Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
+0.32.0
+------
+
+Camelcase column names could break parts of Piccolo Admin. It now works as
+expected:
+
+.. code-block:: python
+
+  class Person(Table):
+      # This now works:
+      firstName = Varchar()
+
+Even though camelcase is unusual in Python, a user may be using an existing
+database, so it makes sense to support it. Thanks to @sumitsharansatsangi for
+reporting this issue.
+
+-------------------------------------------------------------------------------
+
+0.31.2
+------
+
+When ``piccolo_admin`` is installed, an ``admin_demo`` script is made available
+on the command line, which launches a Piccolo Admin demo.
+
+It wasn't working due to a missing folder, which has now been fixed.
+
+-------------------------------------------------------------------------------
+
+0.31.1
+------
+
+Fixed a bug with custom forms - under some situations they would fail to
+render. Thanks to @sinisaos for discovering this issue. See
+`PR 208 <https://github.com/piccolo-orm/piccolo_admin/pull/208>`_ for more
+info.
+
+-------------------------------------------------------------------------------
+
+0.31.0
+------
+
+Improved the French translations (courtesy @LeMeteore).
+
+-------------------------------------------------------------------------------
+
+0.30.0
+------
+
+Added translations for simplified Chinese characters (courtesy @mnixry).
+
+-------------------------------------------------------------------------------
+
+0.29.1
+------
+
+The media endpoints now obey the ``read_only`` option of ``create_admin``.
+Read only mode is used for online demos.
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
+0.29.0
+------
+
+Added media upload support - to both a local folder, and S3.
+
+Images, videos, PDFs, and audio files can be viewed within the UI.
+
+This is the one of the biggest updates we've ever made!
+
+Thanks to @sinisaos for all of the help.
+
+-------------------------------------------------------------------------------
+
+0.28.0
+------
+
+Added Ukrainian translations (courtesy @ruslan-rv-ua).
+
+-------------------------------------------------------------------------------
+
+0.27.0
+------
+
+Added Russian translations (courtesy @northpowered).
+
+-------------------------------------------------------------------------------
+
+0.26.1
+------
+
+Modified the release process, so it works on GitHub (courtesy @olliglorioso).
+
+-------------------------------------------------------------------------------
+
 0.26.0
 ------
 

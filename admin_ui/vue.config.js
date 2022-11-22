@@ -4,9 +4,14 @@ module.exports = {
     publicPath: './',
 
     devServer: {
-        host: 'piccolo_admin',
-        public: 'piccolo_admin',
-        disableHostCheck: true,
-        port: 8080
+        port: 3000,
+        proxy: {
+            '^/api': {
+                target: 'http://localhost:8000'
+            },
+            '^/public': {
+                target: 'http://localhost:8000'
+            }
+        },
     }
 }

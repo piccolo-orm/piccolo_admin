@@ -4,14 +4,16 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import inspect
+import itertools
 import json
+import logging
 import os
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
 from piccolo.columns.reference import LazyTableReference
@@ -23,6 +25,8 @@ from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
+from piccolo_api.media.base import MediaStorage
+from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.openapi.endpoints import swagger_ui
 from piccolo_api.rate_limiting.middleware import (
     InMemoryLimitProvider,
@@ -32,9 +36,10 @@ from piccolo_api.rate_limiting.middleware import (
 from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, ValidationError
-from starlette.exceptions import ExceptionMiddleware, HTTPException
+from pydantic import BaseModel, Field, ValidationError
+from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.middleware.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
@@ -47,6 +52,9 @@ from .translations.models import (
 )
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
+logger = logging.getLogger(__name__)
+
+
 ASSET_PATH = os.path.join(os.path.dirname(__file__), "dist")
 
 
@@ -58,6 +66,20 @@ class UserResponseModel(BaseModel):
 class MetaResponseModel(BaseModel):
     piccolo_admin_version: str
     site_name: str
+
+
+class StoreFileResponseModel(BaseModel):
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
+
+
+class GenerateFileURLRequestModel(BaseModel):
+    column_name: str
+    table_name: str
+    file_key: str = Field(description="For example `my_file-some-uuid.jpeg`.")
+
+
+class GenerateFileURLResponseModel(BaseModel):
+    file_url: str = Field(description="A URL which the file is accessible on.")
 
 
 @dataclass
@@ -88,9 +110,53 @@ class TableConfig:
         tag in the UI.
     :param hooks:
         These are passed directly to
-        :class:`PiccoloCRUD <piccolo_api.crud.endpoints>`, which powers Piccolo
-        Admin under the hood. It allows you to run custom logic when a row
-        is modified.
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows you to run custom logic
+        when a row is modified.
+    :param media_storage:
+        These columns will be used to store media. We don't directly store the
+        media in the database, but instead store a string, which is a unique
+        identifier, and can be used to retrieve a URL for accessing the file.
+        Piccolo Admin automatically renders a file upload widget for each media
+        column in the UI.
+    :param validators:
+        The :class:`Validators <piccolo_api.crud.endpoints.Validators>` are
+        passed directly to
+        :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
+        powers Piccolo Admin under the hood. It allows fine grained access
+        control over each API endpoint. For example, limiting which users can
+        ``POST`` data::
+
+            from piccolo_api.crud.endpoints import PiccoloCRUD
+            from starlette.exceptions import HTTPException
+            from starlette.requests import Request
+
+
+            async def manager_only(
+                piccolo_crud: PiccoloCRUD,
+                request: Request
+            ):
+                # The Piccolo `BaseUser` can be accessed from the request.
+                user = request.user.user
+
+                # Assuming we have another database table where we record
+                # users with certain permissions.
+                manager = await Manager.exists().where(manager.user == user)
+
+                if not manager:
+                    # Raise a Starlette exception if we want to reject the
+                    # request.
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Only managers are allowed to do this"
+                    )
+
+            admin = create_admin(
+                tables=TableConfig(
+                    Movie,
+                    validators=Validators(post_single=[manager_only])
+                )
+            )
 
     """
 
@@ -101,19 +167,27 @@ class TableConfig:
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
+    media_storage: t.Optional[t.Sequence[MediaStorage]] = None
+    validators: t.Optional[Validators] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
             raise ValueError(
-                "Only specify ``visible_columns`` or "
-                "``exclude_visible_columns``."
+                "Only specify `visible_columns` or "
+                "`exclude_visible_columns`."
             )
 
         if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
-                "Only specify ``visible_filters`` or "
-                "``exclude_visible_filters``."
+                "Only specify `visible_filters` or `exclude_visible_filters`."
             )
+
+        # Create a mapping for faster lookups
+        self.media_columns = (
+            {i.column: i for i in self.media_storage}
+            if self.media_storage
+            else None
+        )
 
     def _get_columns(
         self,
@@ -125,7 +199,7 @@ class TableConfig:
             return include_columns
 
         if exclude_columns and not include_columns:
-            column_names = (i._meta.name for i in exclude_columns)
+            column_names = [i._meta.name for i in exclude_columns]
             return [i for i in all_columns if i._meta.name not in column_names]
 
         return all_columns
@@ -154,6 +228,13 @@ class TableConfig:
         return (
             tuple(i._meta.name for i in self.rich_text_columns)
             if self.rich_text_columns
+            else ()
+        )
+
+    def get_media_columns_names(self) -> t.Tuple[str, ...]:
+        return (
+            tuple(i._meta.name for i in self.media_columns)
+            if self.media_columns
             else ()
         )
 
@@ -245,6 +326,11 @@ def superuser_validators(piccolo_crud: PiccoloCRUD, request: Request):
         )
 
 
+async def log_error(request: Request, exc: HTTPException):
+    logger.exception("Server error")
+    raise exc
+
+
 class AdminRouter(FastAPI):
     """
     The root returns a single page app. The other URLs are REST endpoints.
@@ -270,9 +356,19 @@ class AdminRouter(FastAPI):
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
         translations: t.List[Translation] = None,
+        allowed_hosts: t.Sequence[str] = [],
+        debug: bool = False,
     ) -> None:
         super().__init__(
-            title=site_name, description="Piccolo API documentation"
+            title=site_name,
+            description=f"{site_name} documentation",
+            middleware=[
+                Middleware(CSRFMiddleware, allowed_hosts=allowed_hosts)
+            ],
+            debug=debug,
+            exception_handlers={500: log_error},
+            docs_url=None,
+            redoc_url=None,
         )
 
         #######################################################################
@@ -288,6 +384,13 @@ class AdminRouter(FastAPI):
                 table_configs.append(TableConfig(table_class=table))
 
         self.table_configs = table_configs
+        self.table_config_map = {
+            table_config.table_class._meta.tablename: table_config
+            for table_config in table_configs
+        }
+
+        #######################################################################
+        # Make sure columns are configured properly.
 
         for table_config in table_configs:
             table_class = table_config.table_class
@@ -303,6 +406,25 @@ class AdminRouter(FastAPI):
                     colored_warning(message, level=Level.high)
 
         #######################################################################
+        # Make sure media storage is configured properly.
+
+        media_storage = [
+            i
+            for i in itertools.chain(
+                *[
+                    table_config.media_storage or []
+                    for table_config in table_configs
+                ]
+            )
+        ]
+
+        if len(media_storage) != len(set(media_storage)):
+            raise ValueError(
+                "Media storage is misconfigured - multiple columns are saving "
+                "to the same location."
+            )
+
+        #######################################################################
 
         self.default_language_code = default_language_code
         self.translations_map = {
@@ -315,6 +437,7 @@ class AdminRouter(FastAPI):
         self.auth_table = auth_table
         self.site_name = site_name
         self.forms = forms
+        self.read_only = read_only
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -322,7 +445,12 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        private_app = FastAPI(docs_url=None)
+        private_app = FastAPI(
+            docs_url=None,
+            redoc_url=None,
+            debug=debug,
+            exception_handlers={500: log_error},
+        )
         private_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         for table_config in table_configs:
@@ -332,12 +460,12 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+            media_columns_names = table_config.get_media_columns_names()
 
-            validators = (
-                Validators(every=[superuser_validators])
-                if table_class in (auth_table, session_table)
-                else None
-            )
+            validators = table_config.validators
+            if table_class in (auth_table, session_table):
+                validators = validators or Validators()
+                validators.every = [superuser_validators, *validators.every]
 
             FastAPIWrapper(
                 root_url=f"/tables/{table_class._meta.tablename}/",
@@ -350,6 +478,7 @@ class AdminRouter(FastAPI):
                         "visible_column_names": visible_column_names,
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
+                        "media_columns": media_columns_names,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
@@ -417,8 +546,46 @@ class AdminRouter(FastAPI):
         )
 
         #######################################################################
+        # Media
 
-        public_app = FastAPI(docs_url=None)
+        private_app.add_api_route(
+            path="/media/",
+            endpoint=self.store_file,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+            response_model=StoreFileResponseModel,
+        )
+
+        private_app.add_api_route(
+            path="/media/generate-file-url/",
+            endpoint=self.generate_file_url,  # type: ignore
+            methods=["POST"],
+            tags=["Media"],
+            response_model=GenerateFileURLResponseModel,
+        )
+
+        for table_config in self.table_configs:
+            if table_config.media_columns:
+                for (
+                    column,
+                    media_storage,
+                ) in table_config.media_columns.items():
+                    if isinstance(media_storage, LocalMediaStorage):
+                        private_app.mount(
+                            path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",  # noqa: E501
+                            app=StaticFiles(
+                                directory=media_storage.media_path
+                            ),
+                        )
+
+        #######################################################################
+
+        public_app = FastAPI(
+            redoc_url=None,
+            docs_url=None,
+            debug=debug,
+            exception_handlers={500: log_error},
+        )
         public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
         if not rate_limit_provider:
@@ -505,6 +672,107 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    def _get_media_storage(
+        self, table_name: str, column_name: str
+    ) -> MediaStorage:
+        """
+        Retrieve the ``MediaStorage`` for the given column.
+
+        :raises HTTPException:
+            If a matching ``MediaStorage`` can't be found.
+
+        """
+        table_config = self.table_config_map.get(table_name)
+        if not table_config:
+            raise HTTPException(status_code=404, detail="No such table found.")
+
+        media_columns = table_config.media_columns
+
+        if media_columns is None:
+            raise HTTPException(
+                status_code=422,
+                detail="No media columns are configured for this table.",
+            )
+
+        try:
+            column = table_config.table_class._meta.get_column_by_name(
+                column_name
+            )
+        except ValueError:
+            raise HTTPException(
+                status_code=404,
+                detail="No such column found.",
+            )
+
+        media_storage = media_columns.get(column)
+
+        if not media_storage:
+            raise HTTPException(
+                status_code=422,
+                detail="This column is not configured as a media_column.",
+            )
+
+        return media_storage
+
+    async def store_file(
+        self,
+        request: Request,
+        table_name: str = Form(None),
+        column_name: str = Form(None),
+        file: UploadFile = File(...),
+    ) -> StoreFileResponseModel:
+        """
+        Stores in the file in the configured ``MediaStorage``, and returns a
+        unique key for identifying that file.
+        """
+        if self.read_only:
+            raise HTTPException(
+                status_code=405, detail="Running in read-only mode."
+            )
+
+        media_storage = self._get_media_storage(
+            table_name=table_name, column_name=column_name
+        )
+
+        try:
+            file_key = await media_storage.store_file(
+                file_name=file.filename,
+                file=file.file,
+                user=request.user.user,
+            )
+        except ValueError as exception:
+            raise HTTPException(status_code=422, detail=str(exception))
+        return StoreFileResponseModel(file_key=file_key)
+
+    async def generate_file_url(
+        self, request: Request, model: GenerateFileURLRequestModel
+    ) -> GenerateFileURLResponseModel:
+        """
+        Returns a URL for accessing the given file.
+
+        We don't use a GET for this endpoint, as using a GET param to pass the
+        ``file_key`` is too restrictive on which characters can be used.
+        """
+        if self.read_only:
+            raise HTTPException(
+                status_code=405, detail="Running in read-only mode."
+            )
+
+        media_storage = self._get_media_storage(
+            table_name=model.table_name, column_name=model.column_name
+        )
+        file_url = await media_storage.generate_file_url(
+            file_key=model.file_key,
+            root_url=(
+                f"./api/media-files/{model.table_name}"
+                f"/{model.column_name}/"
+            ),
+            user=request.user.user,
+        )
+        return GenerateFileURLResponseModel(file_url=file_url)
+
+    ###########################################################################
+
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
             username=request.user.display_name,
@@ -512,6 +780,7 @@ class AdminRouter(FastAPI):
         )
 
     ###########################################################################
+    # Custom forms
 
     def get_forms(self) -> t.List[FormConfigResponseModel]:
         """
@@ -549,6 +818,9 @@ class AdminRouter(FastAPI):
     async def post_single_form(
         self, request: Request, form_slug: str
     ) -> JSONResponse:
+        """
+        Handles posting of custom forms.
+        """
         form_config = self.form_config_map.get(form_slug)
         data = await request.json()
 
@@ -558,8 +830,11 @@ class AdminRouter(FastAPI):
         try:
             model_instance = form_config.pydantic_model(**data)
         except ValidationError as exception:
+            # We use 'detail' as it mirrors what FastAPI returns for Pydantic
+            # errors, allowing us to use the same error display logic in the
+            # front end.
             return JSONResponse(
-                {"message": json.loads(exception.json())}, status_code=400
+                {"detail": json.loads(exception.json())}, status_code=422
             )
 
         try:
@@ -571,12 +846,14 @@ class AdminRouter(FastAPI):
             else:
                 response = endpoint(request, model_instance)
         except ValueError as exception:
-            return JSONResponse({"message": str(exception)}, status_code=400)
+            return JSONResponse(
+                {"custom_form_error": str(exception)}, status_code=422
+            )
 
         message = (
             response if isinstance(response, str) else "Successfully submitted"
         )
-        return JSONResponse({"message": message})
+        return JSONResponse({"custom_form_success": message})
 
     ###########################################################################
 
@@ -674,6 +951,7 @@ def create_admin(
     translations: t.List[Translation] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
+    debug: bool = False,
 ):
     """
     :param tables:
@@ -772,6 +1050,11 @@ def create_admin(
         This is used by the :class:`CSRFMiddleware <piccolo_api.csrf.middleware.CSRFMiddleware>`
         as an additional layer of protection when the admin is run under HTTPS.
         It must be a sequence of strings, such as ``['my_site.com']``.
+    :param debug:
+        If ``True``, debug mode is enabled. Any unhandled exceptions will
+        return a stack trace, rather than a generic 500 error. Don't use this
+        in production!
+
     """  # noqa: E501
     auth_table = auth_table or BaseUser
     session_table = session_table or SessionsBase
@@ -799,24 +1082,21 @@ def create_admin(
 
         tables = all_table_classes_with_configs
 
-    return ExceptionMiddleware(
-        CSRFMiddleware(
-            AdminRouter(
-                *tables,
-                forms=forms,
-                auth_table=auth_table,
-                session_table=session_table,
-                session_expiry=session_expiry,
-                max_session_expiry=max_session_expiry,
-                increase_expiry=increase_expiry,
-                page_size=page_size,
-                read_only=read_only,
-                rate_limit_provider=rate_limit_provider,
-                production=production,
-                site_name=site_name,
-                default_language_code=default_language_code,
-                translations=translations,
-            ),
-            allowed_hosts=allowed_hosts,
-        )
+    return AdminRouter(
+        *tables,
+        forms=forms,
+        auth_table=auth_table,
+        session_table=session_table,
+        session_expiry=session_expiry,
+        max_session_expiry=max_session_expiry,
+        increase_expiry=increase_expiry,
+        page_size=page_size,
+        read_only=read_only,
+        rate_limit_provider=rate_limit_provider,
+        production=production,
+        site_name=site_name,
+        default_language_code=default_language_code,
+        translations=translations,
+        allowed_hosts=allowed_hosts,
+        debug=debug,
     )

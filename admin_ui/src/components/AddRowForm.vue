@@ -2,41 +2,45 @@
     <div>
         <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
 
-        <pre>{{ errors }}</pre>
+        <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
-            <RowFormSelect v-bind:row="defaults" v-bind:schema="schema" />
+            <RowForm v-bind:row="defaults" v-bind:schema="schema" />
             <button>{{ $t("Create") }}</button>
         </form>
     </div>
 </template>
 
 <script lang="ts">
-import RowFormSelect from "./RowFormSelect.vue"
+import Vue, { PropType } from "vue"
+import RowForm from "./RowForm.vue"
+import FormErrors from "./FormErrors.vue"
 import { APIResponseMessage } from "../interfaces"
+import { parseErrorResponse } from "../utils"
+import { Schema } from "@/interfaces"
 
-export default {
+export default Vue.extend({
     props: {
-        tableName: String,
-        schema: Object
+        tableName: String as PropType<string>,
+        schema: Object as PropType<Schema>
     },
     components: {
-        RowFormSelect
+        RowForm,
+        FormErrors
     },
-    data: function () {
+    data() {
         return {
-            defaults: {},
-            errors: ""
+            defaults: {} as { [key: string]: any },
+            errors: [] as string[]
         }
     },
     methods: {
         async submitForm(event) {
-            console.log("I was pressed")
             const form = new FormData(event.target)
 
             const json = {}
             for (const i of form.entries()) {
-                const key = i[0].split(" ").join("_")
+                const key = i[0]
                 let value = i[1]
 
                 if (value == "null") {
@@ -66,7 +70,10 @@ export default {
                     data: json
                 })
             } catch (error) {
-                const data = error.response.data
+                this.errors = parseErrorResponse(
+                    error.response.data,
+                    error.response.status
+                )
 
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
@@ -74,14 +81,9 @@ export default {
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
-                if (typeof data != "string") {
-                    this.errors = JSON.stringify(data, null, 2)
-                } else {
-                    this.errors = data
-                }
                 return
             }
-            this.errors = ""
+            this.errors = []
 
             var message: APIResponseMessage = {
                 contents: "Successfully added row",
@@ -91,16 +93,13 @@ export default {
 
             this.$emit("addedRow")
             this.$emit("close")
-            if (opener) {
-                opener.postMessage("edited row", document.location.origin)
-            }
         }
     },
     async mounted() {
         let response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
     }
-}
+})
 </script>
 
 <style scoped lang="less">

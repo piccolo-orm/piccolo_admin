@@ -1,10 +1,30 @@
 <template>
     <div>
+        <template v-if="isMediaColumn && !isFilter">
+            <div class="media_block">
+                <input type="file" @change="uploadFile($event)" />
+                <a
+                    href="#"
+                    @click.prevent="showMedia"
+                    v-if="localValue && type != 'array'"
+                    ><font-awesome-icon icon="eye" title="View"
+                /></a>
+            </div>
+
+            <MediaViewer
+                v-if="showMediaViewer"
+                :mediaViewerConfig="mediaViewerConfig"
+                @close="showMediaViewer = false"
+            />
+
+            <LoadingOverlay v-if="showLoadingOverlay" />
+        </template>
+
         <template v-if="choices">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField :columnName="columnName" v-if="isFilter" />
             <ChoiceSelect
                 :choices="choices"
-                :fieldName="getFieldName(title)"
+                :fieldName="columnName"
                 :isFilter="isFilter"
                 :isNullable="isNullable"
                 :value="value"
@@ -12,69 +32,72 @@
         </template>
 
         <template v-else-if="type == 'integer'">
-            <OperatorField :fieldName="getFieldName(title)" v-if="isFilter" />
+            <OperatorField :columnName="columnName" v-if="isFilter" />
             <input
                 step="1"
                 type="number"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
                 v-bind:value="value"
             />
         </template>
 
         <template v-else-if="type == 'string'">
-            <template v-if="format == 'date-time'">
-                <OperatorField
-                    :fieldName="getFieldName(title)"
-                    v-if="isFilter"
-                />
+            <template
+                v-if="['date-time', 'date', 'time'].indexOf(format) != -1"
+            >
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <!--
                 `disableMobile` is very poorly named - setting it to 'true'
                 enables the picker on mobile devices. It doesn't work great on
                 iOS, so an alternative picker is needed.
                 -->
                 <flat-pickr
-                    v-bind:config="{ enableTime: true, disableMobile: 'true' }"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:config="{
+                        enableTime: ['date-time', 'time'].indexOf(format) != -1,
+                        disableMobile: true,
+                        noCalendar: format == 'time'
+                    }"
+                    v-bind:name="columnName"
                     v-model="localValue"
                 ></flat-pickr>
             </template>
 
             <div v-else-if="format == 'text-area' && isFilter == false">
+                <vue-editor
+                    v-if="isRichText"
+                    v-model="localValue"
+                    v-bind:name="columnName"
+                    :editor-toolbar="customToolbar"
+                />
                 <textarea
-                    v-if="
-                        !schema.rich_text_columns.includes(
-                            getFieldName(title).toLowerCase()
-                        )
-                    "
+                    v-else
                     autocomplete="off"
                     ref="textarea"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
                 />
-                <vue-editor
-                    v-else
-                    v-model="localValue"
-                    v-bind:name="getFieldName(title)"
-                    :editor-toolbar="customToolbar"
-                />
 
                 <textarea
                     id="editor"
                     v-model.lazy="localValue"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                 ></textarea>
             </div>
 
             <div v-else-if="format == 'json'">
                 <textarea
-                    :value="JSON.stringify(JSON.parse(value), null, 2)"
+                    :value="
+                        localValue
+                            ? JSON.stringify(JSON.parse(localValue), null, 2)
+                            : null
+                    "
                     autocomplete="off"
                     ref="textarea"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:style="{ height: textareaHeight }"
                     v-on:input="setTextareaHeight"
                 />
@@ -82,7 +105,7 @@
 
             <input
                 type="text"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
                 v-else
                 v-model="localValue"
@@ -90,7 +113,7 @@
         </template>
 
         <template v-else-if="type == 'boolean'">
-            <select v-bind:name="getFieldName(title)">
+            <select v-bind:name="columnName">
                 <option
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
@@ -116,28 +139,22 @@
 
         <template v-else-if="type == 'number'">
             <template v-if="format == 'time-delta'">
-                <OperatorField
-                    :fieldName="title.toLowerCase()"
-                    v-if="isFilter"
-                />
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <DurationWidget
                     v-bind:timedelta="localValue"
                     v-on:newTimedelta="updateLocalValue($event)"
                 />
                 <input
                     type="hidden"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-model="localValue"
                 />
             </template>
             <template v-else>
-                <OperatorField
-                    :fieldName="title.toLowerCase()"
-                    v-if="isFilter"
-                />
+                <OperatorField :columnName="columnName" v-if="isFilter" />
                 <input
                     type="text"
-                    v-bind:name="getFieldName(title)"
+                    v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-model="localValue"
                 />
@@ -147,12 +164,15 @@
         <template v-else-if="type == 'array'">
             <ArrayWidget
                 :array="localValue"
+                :enableAddButton="isFilter || !isMediaColumn"
                 v-on:updateArray="localValue = $event"
+                :fieldName="columnName"
+                :isFilter="isFilter"
             />
             <input
-                :value="JSON.stringify(localValue)"
+                :value="localValue ? JSON.stringify(localValue) : null"
                 type="hidden"
-                v-bind:name="getFieldName(title)"
+                v-bind:name="columnName"
             />
         </template>
     </div>
@@ -160,44 +180,67 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
-
+import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
+import { VueEditor } from "vue2-editor"
 
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
+import LoadingOverlay from "./LoadingOverlay.vue"
+import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
-import { Choices } from "../interfaces"
-import { VueEditor } from "vue2-editor"
+import {
+    Choices,
+    StoreFileAPIResponse,
+    APIResponseMessage,
+    MediaViewerConfig
+} from "@/interfaces"
 
 export default Vue.extend({
     props: {
+        // A nicely formatted column name, for example 'First Name'
         title: {
-            type: String,
-            default: ""
+            type: String as PropType<string>,
+            required: true
+        },
+        columnName: {
+            type: String as PropType<string>,
+            required: true
         },
         type: {
-            type: String,
+            type: String as PropType<string>,
             default: "string"
         },
         value: {
-            type: undefined,
+            type: undefined as PropType<any>,
             default: undefined
         },
         // Fields can share the same type, but have different formats. For
         // example, 'text-area', when type is 'string'.
-        format: String,
+        format: {
+            type: String as PropType<string | undefined>,
+            default: undefined
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: true
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         choices: {
             type: Object as PropType<Choices>,
             default: null
+        },
+        isMediaColumn: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        isRichText: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     components: {
@@ -205,6 +248,8 @@ export default Vue.extend({
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
+        LoadingOverlay,
+        MediaViewer,
         OperatorField,
         VueEditor
     },
@@ -212,6 +257,8 @@ export default Vue.extend({
         return {
             localValue: undefined,
             textareaHeight: "50px",
+            showMediaViewer: false,
+            mediaViewerConfig: null as MediaViewerConfig,
             customToolbar: [
                 ["bold", "italic", "underline", "strike", "blockquote"],
                 [{ list: "ordered" }, { list: "bullet" }],
@@ -224,21 +271,19 @@ export default Vue.extend({
                 ],
                 ["link", "image", "code-block"],
                 [{ header: [false, 1, 2, 3] }]
-            ]
+            ],
+            showLoadingOverlay: false
         }
     },
     computed: {
         placeholder() {
             return this.isFilter ? "All" : ""
         },
-        schema() {
-            return this.$store.state.schema
+        currentTableName() {
+            return this.$store.state.currentTableName
         }
     },
     methods: {
-        getFieldName(name: string) {
-            return name.toLowerCase().split(" ").join("_")
-        },
         setTextareaHeight() {
             let element = this.$refs.textarea
             if (element) {
@@ -249,12 +294,82 @@ export default Vue.extend({
         },
         updateLocalValue(event) {
             this.localValue = event
+        },
+        showMedia() {
+            const mediaViewerConfig: MediaViewerConfig = {
+                fileKey: this.localValue,
+                columnName: this.columnName,
+                tableName: this.currentTableName
+            }
+            this.mediaViewerConfig = mediaViewerConfig
+            this.showMediaViewer = true
+        },
+        async uploadFile(event) {
+            const file = event.target.files[0]
+
+            if (!file) {
+                return
+            }
+
+            let formData = new FormData()
+            formData.append("table_name", this.currentTableName)
+            formData.append("column_name", this.columnName)
+            formData.append("file", file)
+
+            this.showLoadingOverlay = true
+
+            try {
+                const response = await axios.post<StoreFileAPIResponse>(
+                    "./api/media/",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }
+                )
+                if (this.type == "array") {
+                    if (this.localValue) {
+                        this.localValue.push(response.data.file_key)
+                    } else {
+                        this.localValue = [response.data.file_key]
+                    }
+                } else {
+                    this.localValue = response.data.file_key
+                }
+            } catch (error) {
+                let errorMessage = "The request failed."
+                const statusCode = error.response?.status
+
+                if (statusCode) {
+                    if (statusCode == 413) {
+                        errorMessage = "The file is too large."
+                    } else if (statusCode == 500) {
+                        errorMessage = "An error happened on the server."
+                    } else {
+                        errorMessage =
+                            error.response?.data?.detail ?? "Unknown error"
+                    }
+                }
+
+                let message: APIResponseMessage = {
+                    contents: errorMessage,
+                    type: "error"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
+            }
+
+            event.target.value = ""
+            this.showLoadingOverlay = false
         }
     },
     watch: {
         value() {
             this.localValue = this.value
             this.setTextareaHeight()
+        },
+        currentTableName() {
+            this.localValue = undefined
         }
     },
     mounted() {
@@ -269,6 +384,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="less">
+@import "../vars.less";
+
 pre {
     white-space: pre-wrap;
     word-break: break-all;
@@ -280,7 +397,26 @@ input.flatpicker-input {
     width: 100%;
 }
 
+input[type="file"] {
+    margin-bottom: 0.5rem;
+}
+
 textarea#editor {
     display: none;
+}
+
+div.media_block {
+    display: flex;
+    flex-direction: row;
+
+    input {
+        flex-grow: 1;
+    }
+
+    a {
+        text-align: right;
+        flex-shrink: 0;
+        text-decoration: none;
+    }
 }
 </style>

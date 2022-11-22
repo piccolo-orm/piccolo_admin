@@ -1,6 +1,9 @@
 import datetime
+import os
+import uuid
+from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.column_types import (
@@ -12,11 +15,14 @@ from piccolo.columns.column_types import (
 )
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.crud.hooks import Hook, HookType
+from piccolo_api.crud.validators import Validators
+from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
+from starlette.exceptions import HTTPException
 from starlette.testclient import TestClient
 
 from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
-from piccolo_admin.example import APP
+from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -67,6 +73,16 @@ class TestTableConfig(TestCase):
             ("content", "created", "rating"),
         )
 
+    def test_exclude_visible_columns_without_pk(self):
+        post_table = TableConfig(
+            table_class=Post,
+            exclude_visible_columns=[Post.name],
+        )
+        self.assertEqual(
+            tuple(i._meta.name for i in post_table.get_visible_columns()),
+            ("id", "content", "created", "rating"),
+        )
+
     def test_visible_exclude_columns_error(self):
         with self.assertRaises(ValueError):
             post_table = TableConfig(
@@ -107,6 +123,34 @@ class TestTableConfig(TestCase):
 
 
 class TestAdminRouter(TestCase):
+    def test_init(self):
+        with self.assertRaises(ValueError) as manager:
+            create_admin(
+                tables=[
+                    TableConfig(
+                        Movie,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.poster, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                    TableConfig(
+                        Director,
+                        media_storage=[
+                            LocalMediaStorage(
+                                column=Movie.screenshots, media_path="/tmp/"
+                            )
+                        ],
+                    ),
+                ]
+            )
+        self.assertEqual(
+            str(manager.exception),
+            "Media storage is misconfigured - multiple columns are saving "
+            "to the same location.",
+        )
+
     def test_get_meta(self):
         client = TestClient(APP)
 
@@ -263,7 +307,9 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"message": "Email sent"})
+        self.assertEqual(
+            response.json(), {"custom_form_success": "Email sent"}
+        )
 
         #######################################################################
         # Make sure async endpoints also work.
@@ -281,7 +327,9 @@ class TestForms(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"message": "Booking complete"})
+        self.assertEqual(
+            response.json(), {"custom_form_success": "Booking complete"}
+        )
 
     def test_post_form_fail(self):
         client = TestClient(APP)
@@ -312,7 +360,166 @@ class TestForms(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
+
+
+class TestMediaStorage(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser)
+
+    @patch("piccolo_api.media.base.uuid")
+    def test_image_upload(self, uuid_module: MagicMock):
+        uuid_value = uuid.uuid4()
+        uuid_module.uuid4.return_value = uuid_value
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "files/bulb.jpg"
+        )
+
+        with open(test_file_path, "rb") as test_file:
+            response = client.post(
+                "/api/media/",
+                data={"table_name": "movie", "column_name": "poster"},
+                files={"file": ("bulb.jpg", test_file, "image/jpeg")},
+                headers={"X-CSRFToken": csrftoken},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        file_key: str = response.json().get("file_key")
+        self.assertIsNotNone(file_key)
+
+        # Make sure that we can retrieve the URL
+        response = client.post(
+            "/api/media/generate-file-url/",
+            json={
+                "table_name": "movie",
+                "column_name": "poster",
+                "file_key": file_key,
+            },
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(
+            response.json(),
+            {
+                "file_url": f"./api/media-files/movie/poster"
+                f"/bulb-{uuid_value}.jpg"
+            },
+        )
+
+        # Remove the test file from the media directory
+        Path(MEDIA_ROOT, "movie_poster", file_key).unlink()
+
+    def test_store_file_read_only(self):
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "example_media"
+        )
+
+        MOVIE_POSTER_MEDIA = LocalMediaStorage(
+            column=Movie.poster,
+            media_path=os.path.join(test_file_path),
+        )
+
+        movie_config = TableConfig(
+            table_class=Movie,
+            media_storage=[MOVIE_POSTER_MEDIA],
+        )
+
+        APP = create_admin([movie_config], read_only=True)
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.post(
+            "/api/media/",
+            data={"table_name": "movie", "column_name": "poster"},
+            files={"file": ("bulb.jpg", b"file", "image/jpeg")},
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(
+            response.content,
+            b'{"detail":"Running in read-only mode."}',
+        )
+
+    def test_generate_file_url_read_only(self):
+        test_file_path = os.path.join(
+            os.path.dirname(__file__), "example_media"
+        )
+
+        MOVIE_POSTER_MEDIA = LocalMediaStorage(
+            column=Movie.poster,
+            media_path=os.path.join(test_file_path),
+        )
+
+        movie_config = TableConfig(
+            table_class=Movie,
+            media_storage=[MOVIE_POSTER_MEDIA],
+        )
+
+        APP = create_admin([movie_config], read_only=True)
+
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.post(
+            "/api/media/generate-file-url/",
+            json={
+                "table_name": "movie",
+                "column_name": "poster",
+                "file_key": "file_key",
+            },
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(
+            response.content,
+            b'{"detail":"Running in read-only mode."}',
+        )
 
 
 class TestTables(TestCase):
@@ -352,7 +559,7 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["movie", "director", "studio"],
+            ["movie", "director", "studio", "ticket"],
         )
 
     def test_get_user(self):
@@ -531,3 +738,62 @@ class TestHooks(TestCase):
 
         # Make sure the hook was only called once.
         mock.assert_called_once()
+
+
+class TestValidators(TestCase):
+
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, Post, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser, Post)
+
+    def test_validators(self):
+        """
+        Make sure validators can be used to control access to an API endpoint.
+        """
+
+        def post_single_validator(piccolo_crud, request):
+            raise HTTPException(detail="Not allowed!", status_code=403)
+
+        app = create_admin(
+            tables=[
+                TableConfig(
+                    Post,
+                    validators=Validators(post_single=[post_single_validator]),
+                ),
+            ]
+        )
+
+        client = TestClient(app)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        # Make sure some requests pass
+        response = client.get("/api/tables/post/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"rows": []})
+
+        # Make sure the endpoint with validation returns an error code.
+        response = client.post(
+            "/api/tables/post/",
+            json={"csrftoken": "csrftoken"},
+            headers={"X-CSRFToken": csrftoken},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, b'{"detail":"Not allowed!"}')

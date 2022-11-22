@@ -4,13 +4,27 @@
 
 [![Documentation Status](https://readthedocs.org/projects/piccolo-admin/badge/?version=latest)](https://piccolo-admin.readthedocs.io/en/latest/?badge=latest)
 
-Piccolo Admin provides a simple yet powerful admin interface on top of Piccolo tables - allowing you to easily add / edit / filter your data.
+Piccolo Admin is a powerful admin interface / content management system for Python, built on top of Piccolo.
 
 ![Screenshot](https://raw.githubusercontent.com/piccolo-orm/piccolo_admin/master/docs/images/screenshot.png "Screenshot")
 
-It was created at a design agency to serve the needs of customers who demand a high quality, beautiful admin interface for their websites. Our goal is to create a world class admin interface, akin to Wordpress or Django.
+It was created at a design agency to serve the needs of customers who demand a high quality, beautiful admin interface for their websites. It's a modern alternative to tools like Wordpress and Django Admin.
 
-It's built using the latest technologies, with Vue JS on the front end, and a modern REST backend.
+It's built using the latest technologies, with Vue.js on the front end, and a powerful REST backend.
+
+Some of it's standout features:
+
+* Powerful data filtering
+* Builtin security
+* Media support, both locally and in S3 compatible services
+* Dark mode support
+* CSV exports
+* Easily create custom forms
+* Works on mobile and desktop
+* Use standalone, or integrate it easily with ASGI apps like FastAPI, and Starlette
+* Multilingual out of box
+* Bulk actions, like updating and deleting data
+* Flexible UI - only show the columns you want your users to see
 
 ## Try it
 

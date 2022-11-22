@@ -7,7 +7,7 @@
         </a>
 
         <form ref="form" v-on:submit.prevent="submitForm($event)">
-            <RowFormSearch v-bind:schema="schema" />
+            <FilterForm v-bind:schema="schema" />
             <button>{{ $t("Apply") }}</button>
         </form>
         <button v-on:click.prevent="clearFilters">
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from "vue"
-import RowFormSearch from "./RowFormSearch.vue"
+import FilterForm from "./FilterForm.vue"
 import { APIResponseMessage } from "../interfaces"
 
 export default Vue.extend({
@@ -26,7 +26,7 @@ export default Vue.extend({
         showFilterSidebar: Boolean
     },
     components: {
-        RowFormSearch
+        FilterForm
     },
     computed: {
         schema() {
@@ -49,7 +49,7 @@ export default Vue.extend({
 
             const json = {}
             for (const i of form.entries()) {
-                const key = i[0].split(" ").join("_")
+                const key = i[0]
                 let value: any = i[1]
 
                 if (value && value != "all") {
