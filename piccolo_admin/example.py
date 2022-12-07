@@ -121,10 +121,16 @@ class User(BaseUser, tablename="piccolo_user"):
 
 
 class Director(Table, help_text="The main director for a movie."):
-    class Gender(enum.Enum):
+    class Gender(str, enum.Enum):
         male = "m"
         female = "f"
         non_binary = "n"
+
+    class Skill(str, enum.Enum):
+        producer = "producer"
+        actor = "actor"
+        director_of_photography = "director of photography"
+        special_effects = "special effects"
 
     name = Varchar(length=300, null=False)
     years_nominated = Array(
@@ -136,6 +142,13 @@ class Director(Table, help_text="The main director for a movie."):
     )
     gender = Varchar(length=1, choices=Gender)
     photo = Varchar()
+    additional_skills = Array(
+        base_column=Varchar(),
+        choices=Skill,
+        help_text=(
+            "Additional skills which the director has besides directing."
+        ),
+    )
 
     @classmethod
     def get_readable(cls):

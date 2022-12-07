@@ -20,7 +20,7 @@
             <LoadingOverlay v-if="showLoadingOverlay" />
         </template>
 
-        <template v-if="choices">
+        <template v-if="choices && type != 'array'">
             <OperatorField :columnName="columnName" v-if="isFilter" />
             <ChoiceSelect
                 :choices="choices"
@@ -168,6 +168,8 @@
                 v-on:updateArray="localValue = $event"
                 :fieldName="columnName"
                 :isFilter="isFilter"
+                :choices="choices"
+                :isNullable="isNullable"
             />
             <input
                 :value="localValue ? JSON.stringify(localValue) : null"
