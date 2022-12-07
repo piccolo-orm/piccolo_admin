@@ -330,11 +330,14 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     # Fill input[name="name"]
     page.locator('input[name="name"]').fill("Emerald Fennell")
     # Click text=AddAdd
-    page.locator("text=AddAdd").click()
-    # Click text=RemoveAddAdd >> input[type="text"]
-    page.locator('text=RemoveAddAdd >> input[type="text"]').click()
-    # Fill text=RemoveAddAdd >> input[type="text"]
-    page.locator('text=RemoveAddAdd >> input[type="text"]').fill("2020")
+    page.get_by_role("link", name="Add Add").first.click()
+    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
+        "textbox"
+    ).click()
+    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
+        "textbox"
+    ).fill("2022")
+    page.get_by_role("link", name="Remove").click()
     # Select f
     page.locator('select[name="gender"]').select_option("f")
     # Click text=Create
