@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.39.0
+------
+
+If an ``Array`` column has ``choices`` specified, then Piccolo Admin will
+show dropdowns, so the user can pick one of the choices.
+
+-------------------------------------------------------------------------------
+
 0.38.0
 ------
 
