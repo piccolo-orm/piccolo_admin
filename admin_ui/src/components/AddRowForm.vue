@@ -75,6 +75,8 @@ export default Vue.extend({
                     error.response.status
                 )
 
+                window.scrollTo(0, 0)
+
                 var message: APIResponseMessage = {
                     contents: "The form has errors.",
                     type: "error"
