@@ -776,7 +776,7 @@ class AdminRouter(FastAPI):
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
             username=request.user.display_name,
-            user_id=request.user.user_id,
+            user_id=str(request.user.user_id),
         )
 
     ###########################################################################
