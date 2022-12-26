@@ -126,27 +126,7 @@
                                         >
                                             <span
                                                 class="link"
-                                                v-if="name == pkName"
-                                            >
-                                                <router-link
-                                                    :to="{
-                                                        name: 'editRow',
-                                                        params: {
-                                                            tableName:
-                                                                tableName,
-                                                            rowID: row[name]
-                                                        }
-                                                    }"
-                                                    >{{
-                                                        row[name]
-                                                    }}</router-link
-                                                >
-                                            </span>
-                                            <span
-                                                v-else-if="
-                                                    name != pkName &&
-                                                    name == cellNames[0]
-                                                "
+                                                v-if="name == cellNames[0]"
                                             >
                                                 <router-link
                                                     :to="{
