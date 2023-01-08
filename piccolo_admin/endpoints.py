@@ -817,7 +817,7 @@ class AdminRouter(FastAPI):
 
     async def post_single_form(
         self, request: Request, form_slug: str
-    ) -> JSONResponse:
+    ) -> t.Any:
         """
         Handles posting of custom forms.
         """
