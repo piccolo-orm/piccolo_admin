@@ -8,6 +8,12 @@ export interface DeleteRow {
     rowID: number
 }
 
+export interface ExecuteAction {
+    tableName: string
+    rowIDs: number
+    actionId: number
+}
+
 export interface UpdateRow {
     tableName: string
     rowID: number
@@ -34,6 +40,7 @@ export interface FetchSingleRowConfig {
 export interface APIResponseMessage {
     contents: string
     type: string
+    timeout?: number
 }
 
 export interface SortByConfig {
@@ -142,4 +149,9 @@ export interface FormConfig {
     name: string
     slug: string
     description: string
+}
+
+export interface Action {
+    actionID: number
+    actionName: string
 }

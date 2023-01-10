@@ -43,6 +43,8 @@ from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
+from starlette.responses import JSONResponse
+from piccolo_api.fastapi.endpoints import TableRowDataSchema
 
 from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
 from piccolo_admin.example_data import (
@@ -176,6 +178,7 @@ class Movie(Table):
         romance = 7
         musical = 8
 
+    id = BigInt
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
@@ -282,6 +285,19 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
 )
 
 
+# CUSTOM ACTIONS
+async def my_custom_action(data: TableRowDataSchema) -> JSONResponse:
+    row_ids = data.row_ids
+
+    # Use the selected row ids to fetch rows from db
+    movies = await Movie.select().where(Movie.id == row_ids[0])
+
+    # Return a JSONResponse which can be displayed back to the frontend
+    return JSONResponse(f"My API received the row_id: {row_ids}")
+
+async def custom_action_2(data) -> JSONResponse:
+    return JSONResponse("This is the second action")
+
 movie_config = TableConfig(
     table_class=Movie,
     visible_columns=[
@@ -314,6 +330,7 @@ movie_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
         ),
     ),
+    custom_actions=[my_custom_action, custom_action_2]
 )
 
 director_config = TableConfig(
