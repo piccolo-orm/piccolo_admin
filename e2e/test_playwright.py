@@ -41,7 +41,7 @@ def test_login_logout(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
@@ -61,7 +61,7 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     # Open new page
     page = context.new_page()
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
@@ -95,7 +95,7 @@ def test_custom_form(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
@@ -132,7 +132,7 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
@@ -166,7 +166,7 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
@@ -194,7 +194,7 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page.goto("http://localhost:3000/#/login?nextURL=%2F")
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
     page.locator('input[name="username"]').press("Tab")
