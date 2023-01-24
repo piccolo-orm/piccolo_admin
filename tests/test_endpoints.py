@@ -559,7 +559,11 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["movie", "director", "studio", "ticket"],
+            {
+                "Movies": ["director", "movie"],
+                "Music": ["studio"],
+                "null": ["ticket"],
+            },
         )
 
     def test_get_user(self):

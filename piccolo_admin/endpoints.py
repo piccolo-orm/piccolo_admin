@@ -157,6 +157,10 @@ class TableConfig:
                     validators=Validators(post_single=[manager_only])
                 )
             )
+    :param menu_group:
+        If specified, tables can be divided into groups in the table
+        menu. This is useful when you have many tables that you
+        can organize into groups for better visibility.
 
     """
 
@@ -169,6 +173,7 @@ class TableConfig:
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
     validators: t.Optional[Validators] = None
+    menu_group: t.Optional[str] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -865,11 +870,19 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self) -> t.List[str]:
+    def get_table_list(self) -> JSONResponse:
         """
-        Returns a list of all tables registered with the admin.
+        Returns a list of all apps with tables registered with the admin.
         """
-        return [i.table_class._meta.tablename for i in self.table_configs]
+        app_names: t.Dict[t.Optional[str], t.List[str]] = {}
+        table_config_data = {
+            i.table_class._meta.tablename: i.menu_group
+            for i in self.table_configs
+        }
+        for k, v in sorted(table_config_data.items()):
+            app_names.setdefault(v, []).append(k)
+
+        return JSONResponse(app_names)
 
     ###########################################################################
 

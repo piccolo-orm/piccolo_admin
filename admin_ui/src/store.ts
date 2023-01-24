@@ -30,7 +30,7 @@ export default new Vuex.Store({
         formSchema: undefined,
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
-        tableNames: [],
+        tableNames: {},
         formConfigs: [] as i.FormConfig[],
         user: undefined,
         loadingStatus: false

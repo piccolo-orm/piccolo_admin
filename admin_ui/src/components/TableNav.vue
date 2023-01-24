@@ -1,16 +1,26 @@
 <template>
-    <ul class="table_list">
-        <li v-bind:key="tableName" v-for="tableName in tableNames">
-            <router-link
-                :to="{ name: 'rowListing', params: { tableName } }"
-                class="subtle"
-                v-bind:class="{ active: isActive(tableName) }"
-            >
-                <font-awesome-icon icon="level-up-alt" />
-                <span>{{ tableName | readable }}</span>
-            </router-link>
-        </li>
-    </ul>
+    <div>
+        <ul
+            class="table_list"
+            v-bind:key="index"
+            v-for="(tableName, index) in tableNames"
+        >
+            <p v-if="index != 'null'" class="group">
+                <font-awesome-icon icon="layer-group" />
+                <span>{{ index }}</span>
+            </p>
+            <li v-bind:key="name" v-for="name in tableName">
+                <router-link
+                    :to="{ name: 'rowListing', params: { tableName: name } }"
+                    class="subtle"
+                    v-bind:class="{ active: isActive(name) }"
+                >
+                    <font-awesome-icon icon="level-up-alt" />
+                    <span>{{ name | readable }}</span>
+                </router-link>
+            </li>
+        </ul>
+    </div>
 </template>
 
 
@@ -24,7 +34,7 @@ export default Vue.extend({
         },
         currentTableName() {
             return this.$store.state.currentTableName
-        },
+        }
     },
     methods: {
         showListing(tableName: string) {
@@ -33,15 +43,25 @@ export default Vue.extend({
         },
         isActive(tableName: string): boolean {
             return this.currentTableName === tableName
-        },
+        }
     },
     filters: {
         readable(value) {
             return value.split("_").join(" ")
-        },
+        }
     },
     async mounted() {
         await this.$store.dispatch("fetchTableNames")
-    },
+    }
 })
 </script>
+
+<style scoped lang="less">
+.group {
+    cursor: auto;
+
+    span {
+        font-weight: bold;
+    }
+}
+</style>
