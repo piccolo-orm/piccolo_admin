@@ -60,7 +60,6 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     context = browser.new_context(record_video_dir="videos/")
     # Open new page
     page = context.new_page()
-    page = context.new_page()
     page.goto("http://localhost:8000/#/login?nextURL=%2F")
     page.locator('input[name="username"]').click()
     page.locator('input[name="username"]').fill("piccolo")
