@@ -872,17 +872,17 @@ class AdminRouter(FastAPI):
 
     def get_table_list(self) -> JSONResponse:
         """
-        Returns a list of all apps with tables registered with the admin.
+        Returns the list of table groups registered with the admin.
         """
-        app_names: t.Dict[t.Optional[str], t.List[str]] = {}
+        group_names: t.Dict[t.Optional[str], t.List[str]] = {}
         table_config_data = {
             i.table_class._meta.tablename: i.menu_group
             for i in self.table_configs
         }
         for k, v in sorted(table_config_data.items()):
-            app_names.setdefault(v, []).append(k)
+            group_names.setdefault(v, []).append(k)
 
-        return JSONResponse(app_names)
+        return JSONResponse(group_names)
 
     ###########################################################################
 
