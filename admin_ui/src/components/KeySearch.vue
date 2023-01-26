@@ -29,9 +29,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import KeySearchModal from "./KeySearchModal.vue"
 
-export default {
+export default defineComponent({
     props: {
         fieldName: String,
         tableName: String,
@@ -76,5 +77,5 @@ export default {
         this.selectedValue = this.readable
         this.hiddenSelectedValue = this.rowID
     }
-}
+})
 </script>

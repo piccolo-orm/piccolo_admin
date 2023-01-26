@@ -203,6 +203,7 @@ class Ticket(Table):
     start_date = Date()
     start_time = Time()
     booked_on = Timestamp()
+    vip = Boolean(null=True, default=None)
 
 
 class BusinessEmailModel(BaseModel):
