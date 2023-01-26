@@ -13,6 +13,7 @@
                         href="#"
                         class="subtle"
                         @click.prevent="toggleGroup(groupName)"
+                        title="Click to toggle children."
                     >
                         <font-awesome-icon icon="layer-group" />
                         <span class="name">{{ groupName }}</span>
