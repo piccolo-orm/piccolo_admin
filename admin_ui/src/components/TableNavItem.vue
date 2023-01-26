@@ -8,7 +8,7 @@
             class="subtle"
             v-bind:class="{ active: isActive(tableName) }"
         >
-            <font-awesome-icon icon="level-up-alt" />
+            <font-awesome-icon icon="level-up-alt" class="rotated90" />
             <span>{{ readableTableName }}</span>
         </router-link>
     </li>

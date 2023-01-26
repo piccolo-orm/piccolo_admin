@@ -7,19 +7,25 @@
                 :tableName="tableName"
             />
 
-            <template
-                v-for="(tableNames, tableGroupName) in tableGroups.grouped"
-            >
+            <template v-for="(tableNames, groupName) in tableGroups.grouped">
                 <li class="group">
-                    <font-awesome-icon icon="layer-group" />
-                    <span>{{ tableGroupName }}</span>
+                    <a
+                        href="#"
+                        class="subtle"
+                        @click.prevent="toggleGroup(groupName)"
+                    >
+                        <font-awesome-icon icon="layer-group" />
+                        <span>{{ groupName }}</span>
+                    </a>
                 </li>
 
-                <TableNavItem
-                    v-bind:key="tableName"
-                    v-for="tableName in tableNames"
-                    :tableName="tableName"
-                />
+                <template v-if="hiddenGroups.indexOf(groupName) == -1">
+                    <TableNavItem
+                        v-bind:key="tableName"
+                        v-for="tableName in tableNames"
+                        :tableName="tableName"
+                    />
+                </template>
             </template>
         </ul>
     </div>
@@ -33,12 +39,27 @@ export default Vue.extend({
     components: {
         TableNavItem
     },
+    data() {
+        return { hiddenGroups: [] }
+    },
     computed: {
         tableGroups() {
             return this.$store.state.tableGroups
         },
         currentTableName() {
             return this.$store.state.currentTableName
+        }
+    },
+    methods: {
+        toggleGroup(groupName: string) {
+            const hiddenGroups: string[] = this.hiddenGroups
+            const index = hiddenGroups.indexOf(groupName)
+            if (index == -1) {
+                hiddenGroups.push(groupName)
+            } else {
+                hiddenGroups.splice(index, 1)
+            }
+            this.hiddenGroups = hiddenGroups
         }
     },
     async mounted() {
@@ -49,8 +70,14 @@ export default Vue.extend({
 
 <style scoped lang="less">
 li.group {
-    padding: 0.5rem;
-    text-transform: uppercase;
     font-size: 0.7em;
+
+    a {
+        text-transform: uppercase;
+
+        span {
+            padding-left: 0;
+        }
+    }
 }
 </style>
