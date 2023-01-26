@@ -30,12 +30,16 @@ export default new Vuex.Store({
         formSchema: undefined,
         selectedRow: undefined,
         sortBy: null as i.SortByConfig | null,
-        tableNames: {},
+        tableNames: [],
+        tableGroups: {},
         formConfigs: [] as i.FormConfig[],
         user: undefined,
         loadingStatus: false
     },
     mutations: {
+        updateTableGroups(state, value) {
+            state.tableGroups = value
+        },
         updateTableNames(state, value) {
             state.tableNames = value
         },
@@ -114,6 +118,10 @@ export default new Vuex.Store({
         async fetchTableNames(context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit("updateTableNames", response.data)
+        },
+        async fetchTableGroups(context) {
+            const response = await axios.get(`${BASE_URL}tables/grouped/`)
+            context.commit("updateTableGroups", response.data)
         },
         async fetchCount(context) {
             const tableName = context.state.currentTableName

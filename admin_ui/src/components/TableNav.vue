@@ -1,85 +1,56 @@
 <template>
     <div>
-        <ul
-            class="table_list"
-            v-bind:key="index"
-            v-for="(tableName, index) in tableNames"
-        >
-            <p v-if="index != 'null'" class="group">
-                <font-awesome-icon icon="layer-group" />
-                <span>{{ index }}</span>
-            </p>
-            <li v-bind:key="name" v-for="name in tableName">
-                <router-link
-                    v-if="index != 'null'"
-                    :to="{ name: 'rowListing', params: { tableName: name } }"
-                    class="subtle"
-                    v-bind:style="[
-                        darkMode
-                            ? { background: '#202020' }
-                            : { background: '#c6d8e7' }
-                    ]"
-                    v-bind:class="{ active: isActive(name) }"
-                >
-                    <font-awesome-icon icon="level-up-alt" />
-                    <span>{{ name | readable }}</span>
-                </router-link>
-                <router-link
-                    v-else
-                    :to="{ name: 'rowListing', params: { tableName: name } }"
-                    class="subtle"
-                    v-bind:class="{ active: isActive(name) }"
-                >
-                    <font-awesome-icon icon="level-up-alt" />
-                    <span>{{ name | readable }}</span>
-                </router-link>
-            </li>
+        <ul class="table_list">
+            <TableNavItem
+                v-bind:key="tableName"
+                v-for="tableName in tableGroups.ungrouped"
+                :tableName="tableName"
+            />
+
+            <template
+                v-for="(tableNames, tableGroupName) in tableGroups.grouped"
+            >
+                <li class="group">
+                    <font-awesome-icon icon="layer-group" />
+                    <span>{{ tableGroupName }}</span>
+                </li>
+
+                <TableNavItem
+                    v-bind:key="tableName"
+                    v-for="tableName in tableNames"
+                    :tableName="tableName"
+                />
+            </template>
         </ul>
     </div>
 </template>
 
-
 <script lang="ts">
 import Vue from "vue"
+import TableNavItem from "./TableNavItem.vue"
 
 export default Vue.extend({
+    components: {
+        TableNavItem
+    },
     computed: {
-        tableNames() {
-            return this.$store.state.tableNames
+        tableGroups() {
+            return this.$store.state.tableGroups
         },
         currentTableName() {
             return this.$store.state.currentTableName
-        },
-        darkMode() {
-            return this.$store.state.darkMode
-        }
-    },
-    methods: {
-        showListing(tableName: string) {
-            this.$store.commit("updateCurrentTablename", tableName)
-            this.$router.push({ name: "rowListing", params: { tableName } })
-        },
-        isActive(tableName: string): boolean {
-            return this.currentTableName === tableName
-        }
-    },
-    filters: {
-        readable(value) {
-            return value.split("_").join(" ")
         }
     },
     async mounted() {
-        await this.$store.dispatch("fetchTableNames")
+        await this.$store.dispatch("fetchTableGroups")
     }
 })
 </script>
 
 <style scoped lang="less">
-.group {
-    cursor: auto;
-
-    span {
-        font-weight: bold;
-    }
+li.group {
+    padding: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.7em;
 }
 </style>

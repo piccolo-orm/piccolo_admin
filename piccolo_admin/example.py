@@ -343,11 +343,13 @@ director_config = TableConfig(
 
 studio_config = TableConfig(
     table_class=Studio,
-    menu_group="Music",
+    menu_group="Movies",
 )
 
+ticket_config = TableConfig(table_class=Ticket, menu_group="Booking")
+
 APP = create_admin(
-    [movie_config, director_config, studio_config, Ticket],
+    [movie_config, director_config, studio_config, ticket_config],
     forms=[
         FormConfig(
             name="Business email form",
