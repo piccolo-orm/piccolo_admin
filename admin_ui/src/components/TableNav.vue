@@ -11,6 +11,21 @@
             </p>
             <li v-bind:key="name" v-for="name in tableName">
                 <router-link
+                    v-if="index != 'null'"
+                    :to="{ name: 'rowListing', params: { tableName: name } }"
+                    class="subtle"
+                    v-bind:style="[
+                        darkMode
+                            ? { background: '#202020' }
+                            : { background: '#c6d8e7' }
+                    ]"
+                    v-bind:class="{ active: isActive(name) }"
+                >
+                    <font-awesome-icon icon="level-up-alt" />
+                    <span>{{ name | readable }}</span>
+                </router-link>
+                <router-link
+                    v-else
                     :to="{ name: 'rowListing', params: { tableName: name } }"
                     class="subtle"
                     v-bind:class="{ active: isActive(name) }"
@@ -34,6 +49,9 @@ export default Vue.extend({
         },
         currentTableName() {
             return this.$store.state.currentTableName
+        },
+        darkMode() {
+            return this.$store.state.darkMode
         }
     },
     methods: {
