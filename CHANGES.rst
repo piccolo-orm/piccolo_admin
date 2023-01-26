@@ -1,6 +1,16 @@
 Changes
 =======
 
+0.42.0
+------
+
+Tables can now be grouped in the sidebar - this is helpful if you have lots of
+tables. To do this, use the ``menu_group`` argument of ``TableConfig``.
+
+Thanks to @sinisaos and @sumitsharansatsangi for their help with this.
+
+-------------------------------------------------------------------------------
+
 0.41.0
 ------
 
