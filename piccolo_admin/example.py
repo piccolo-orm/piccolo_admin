@@ -314,6 +314,7 @@ movie_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
         ),
     ),
+    menu_group="Movies",
 )
 
 director_config = TableConfig(
@@ -337,10 +338,18 @@ director_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "photo"),
         ),
     ),
+    menu_group="Movies",
 )
 
+studio_config = TableConfig(
+    table_class=Studio,
+    menu_group="Movies",
+)
+
+ticket_config = TableConfig(table_class=Ticket, menu_group="Booking")
+
 APP = create_admin(
-    [movie_config, director_config, Studio, Ticket],
+    [movie_config, director_config, studio_config, ticket_config],
     forms=[
         FormConfig(
             name="Business email form",
