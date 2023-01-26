@@ -146,6 +146,31 @@ information.
 
 -------------------------------------------------------------------------------
 
+menu_group
+----------
+
+We can set groups of tables in the table navigation sidebar. This is useful
+when we have many tables and in this way we can organize the tables into 
+groups for better visibility:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        menu_group="Movies"
+    )
+
+    director_config = TableConfig(
+        Director,
+        menu_group="Movies"
+    )
+
+    create_admin([director_config, movie_config])
+
+-------------------------------------------------------------------------------
+
 Source
 ------
 

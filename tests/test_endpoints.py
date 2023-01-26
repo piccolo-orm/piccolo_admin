@@ -558,8 +558,41 @@ class TestTables(TestCase):
         response = client.get("/api/tables/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
+            response.json(), ["director", "movie", "studio", "ticket"]
+        )
+
+    def test_tables_grouped(self):
+        """
+        Make sure the grouped table listing can be retrieved.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        #######################################################################
+        # List all tables
+
+        response = client.get("/api/tables/grouped/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
             response.json(),
-            ["movie", "director", "studio", "ticket"],
+            {
+                "grouped": {
+                    "Booking": ["ticket"],
+                    "Movies": ["director", "movie", "studio"],
+                },
+                "ungrouped": [],
+            },
         )
 
     def test_get_user(self):

@@ -1,6 +1,24 @@
 Changes
 =======
 
+0.41.0
+------
+
+A fix to make Piccolo Admin work with ``fastapi>=0.89.0``.
+
+-------------------------------------------------------------------------------
+
+0.40.0
+------
+
+* Improved German translations (thanks to @hblunck for this).
+* When submitting a form, scroll to the top of the page if an error occurs so
+  the error box is visible (thanks to @sinisaos for this).
+* If a custom ``BaseUser`` table is used for authentication, which uses a
+  ``UUID`` as the primary key, it now works.
+
+-------------------------------------------------------------------------------
+
 0.39.0
 ------
 
