@@ -96,7 +96,7 @@
                                         </th>
                                         <th
                                             v-bind:key="name"
-                                            v-for="name in cellNames"
+                                            v-for="name in visibleColumnNames"
                                         >
                                             {{
                                                 schema.properties[name]
@@ -122,7 +122,7 @@
                                         </td>
                                         <td
                                             v-bind:key="name"
-                                            v-for="name in cellNames"
+                                            v-for="name in visibleColumnNames"
                                         >
                                             <span
                                                 class="link"
@@ -422,18 +422,8 @@ export default Vue.extend({
         Tooltip
     },
     computed: {
-        cellNames() {
-            const keys = []
-            for (const key in this.rows[0]) {
-                if (!key.endsWith("_readable")) {
-                    keys.push(key)
-                }
-            }
-            // display Piccolo ORM visible_columns
-            const visibleColumns = keys.filter((column) =>
-                this.schema.visible_column_names.includes(column)
-            )
-            return visibleColumns
+        visibleColumnNames() {
+            return this.schema.visible_column_names
         },
         rows() {
             return this.$store.state.rows
