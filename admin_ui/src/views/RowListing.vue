@@ -126,7 +126,7 @@
                                         >
                                             <span
                                                 class="link"
-                                                v-if="name == cellNames[0]"
+                                                v-if="name == linkColumnName"
                                             >
                                                 <router-link
                                                     :to="{
@@ -142,6 +142,9 @@
                                                     }}</router-link
                                                 >
                                             </span>
+                                            <span v-else-if="name == pkName">{{
+                                                row[name] | abbreviate
+                                            }}</span>
                                             <span
                                                 v-else-if="choicesLookup[name]"
                                             >
@@ -154,8 +157,8 @@
                                             <span
                                                 class="link"
                                                 v-else-if="
-                                                    isForeignKey(name) &
-                                                    (row[name] !== null)
+                                                    isForeignKey(name) &&
+                                                    row[name] !== null
                                                 "
                                             >
                                                 <router-link
@@ -435,7 +438,7 @@ export default Vue.extend({
         rows() {
             return this.$store.state.rows
         },
-        schema() {
+        schema(): Schema {
             return this.$store.state.schema
         },
         rowCount() {
@@ -449,6 +452,10 @@ export default Vue.extend({
         },
         pkName() {
             return this.schema?.primary_key_name || "id"
+        },
+        linkColumnName(): string {
+            let schema: Schema = this.schema
+            return schema.link_column_name
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.

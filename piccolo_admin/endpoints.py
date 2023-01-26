@@ -166,6 +166,11 @@ class TableConfig:
         If specified, tables can be divided into groups in the table
         menu. This is useful when you have many tables that you
         can organize into groups for better visibility.
+    :param link_column:
+        In the list view of Piccolo Admin, we use the primary key to link to
+        the edit page. However, if the primary key column is hidden, due to
+        ``visible_columns`` or ``exclude_visible_columns``, then we need to
+        specify an alternative column to use as the link.
 
     """
 
@@ -179,6 +184,7 @@ class TableConfig:
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
     validators: t.Optional[Validators] = None
     menu_group: t.Optional[str] = None
+    link_column: t.Optional[Column] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -247,6 +253,9 @@ class TableConfig:
             if self.media_columns
             else ()
         )
+
+    def get_link_column(self) -> Column:
+        return self.link_column or self.table_class._meta.primary_key
 
 
 @dataclass
@@ -474,6 +483,7 @@ class AdminRouter(FastAPI):
                 table_config.get_rich_text_columns_names()
             )
             media_columns_names = table_config.get_media_columns_names()
+            link_column_name = table_config.get_link_column()._meta.name
 
             validators = table_config.validators
             if table_class in (auth_table, session_table):
@@ -492,6 +502,7 @@ class AdminRouter(FastAPI):
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
                         "media_columns": media_columns_names,
+                        "link_column_name": link_column_name,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
