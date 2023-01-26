@@ -15,7 +15,12 @@
                         @click.prevent="toggleGroup(groupName)"
                     >
                         <font-awesome-icon icon="layer-group" />
-                        <span>{{ groupName }}</span>
+                        <span class="name">{{ groupName }}</span>
+                        <span
+                            class="ellipsis"
+                            v-if="hiddenGroups.indexOf(groupName) != -1"
+                            >...</span
+                        >
                     </a>
                 </li>
 
@@ -76,7 +81,14 @@ li.group {
         text-transform: uppercase;
 
         span {
-            padding-left: 0;
+            &.name {
+                padding-left: 0;
+            }
+
+            &.ellipsis {
+                flex-grow: 1;
+                text-align: right;
+            }
         }
     }
 }
