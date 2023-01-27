@@ -484,6 +484,13 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
+            fk_column_names = [
+                i._meta.name for i in table_class._meta.foreign_key_columns
+            ]
+            if link_column_name in fk_column_names:
+                raise ValueError(
+                    "Cannot use foreign key column as `link_column`."
+                )
 
             validators = table_config.validators
             if table_class in (auth_table, session_table):
