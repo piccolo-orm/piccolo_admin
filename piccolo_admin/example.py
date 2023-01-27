@@ -29,6 +29,7 @@ from piccolo.columns.column_types import (
     Interval,
     Numeric,
     Real,
+    Serial,
     SmallInt,
     Text,
     Time,
@@ -132,6 +133,7 @@ class Director(Table, help_text="The main director for a movie."):
         director_of_photography = "director of photography"
         special_effects = "special effects"
 
+    id: Serial
     name = Varchar(length=300, null=False)
     years_nominated = Array(
         base_column=Integer(),
@@ -176,6 +178,7 @@ class Movie(Table):
         romance = 7
         musical = 8
 
+    id: Serial
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
@@ -198,6 +201,7 @@ class Movie(Table):
 
 
 class Ticket(Table):
+    id: Serial
     booked_by = Varchar(length=255)
     movie = ForeignKey(Movie)
     start_date = Date()
@@ -346,7 +350,17 @@ studio_config = TableConfig(
     menu_group="Movies",
 )
 
-ticket_config = TableConfig(table_class=Ticket, menu_group="Booking")
+ticket_config = TableConfig(
+    table_class=Ticket,
+    menu_group="Booking",
+    link_column=Ticket.booked_by,
+    visible_columns=[
+        Ticket.booked_by,
+        Ticket.movie,
+        Ticket.start_date,
+        Ticket.start_time,
+    ],
+)
 
 APP = create_admin(
     [movie_config, director_config, studio_config, ticket_config],

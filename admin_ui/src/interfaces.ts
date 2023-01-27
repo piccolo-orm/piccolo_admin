@@ -110,6 +110,7 @@ export interface Schema {
     media_columns: string[]
     visible_fields_options: string[]
     primary_key_name: string
+    link_column_name: string
 }
 
 export interface Properties {

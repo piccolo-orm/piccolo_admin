@@ -121,6 +121,33 @@ class TestTableConfig(TestCase):
             )
             post_table.get_visible_filters()
 
+    def test_link_column(self):
+        """
+        Make sure the custom `link_column` is returned.
+        """
+        config = TableConfig(
+            table_class=Post,
+            link_column=Post.name,
+        )
+        self.assertIs(config.get_link_column(), Post.name)
+
+    def test_link_column_default(self):
+        """
+        Make sure the `link_column` defaults to the primary key.
+        """
+        config = TableConfig(table_class=Post)
+        self.assertIs(config.get_link_column(), Post._meta.primary_key)
+
+    def test_link_column_error(self):
+        """
+        Make sure foreign key columns aren't allowed as the `link_column`.
+        """
+        with self.assertRaises(ValueError):
+            TableConfig(
+                table_class=TableB,
+                link_column=TableB.table_a,
+            )
+
 
 class TestAdminRouter(TestCase):
     def test_init(self):
@@ -597,7 +624,7 @@ class TestTables(TestCase):
 
     def test_get_user(self):
         """
-        Make sure the authenticaded user can be retrieved.
+        Make sure the authenticated user can be retrieved.
         """
         client = TestClient(APP)
 
@@ -622,6 +649,48 @@ class TestTables(TestCase):
             response.json(),
             {"username": "Bob", "user_id": "1"},
         )
+
+    def test_schema(self):
+        """
+        We add some additonal attributes to the table schema.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.get("/api/tables/director/schema/")
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertEqual(data["link_column_name"], "id")
+        self.assertEqual(data["rich_text_columns"], [])
+        self.assertEqual(
+            data["visible_column_names"],
+            ["id", "name", "gender", "photo"],
+        )
+        self.assertEqual(
+            data["visible_filter_names"],
+            [
+                "id",
+                "name",
+                "years_nominated",
+                "gender",
+                "photo",
+                "additional_skills",
+            ],
+        )
+        self.assertEqual(data["media_columns"], ["photo"])
 
 
 class TestTranslations(TestCase):
