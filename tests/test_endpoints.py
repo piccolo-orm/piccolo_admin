@@ -121,6 +121,33 @@ class TestTableConfig(TestCase):
             )
             post_table.get_visible_filters()
 
+    def test_link_column(self):
+        """
+        Make sure the custom `link_column` is returned.
+        """
+        config = TableConfig(
+            table_class=Post,
+            link_column=Post.name,
+        )
+        self.assertIs(config.get_link_column(), Post.name)
+
+    def test_link_column_default(self):
+        """
+        Make sure the `link_column` defaults to the primary key.
+        """
+        config = TableConfig(table_class=Post)
+        self.assertIs(config.get_link_column(), Post.id)
+
+    def test_link_column_error(self):
+        """
+        Make sure foreign key columns aren't allowed as the `link_column`.
+        """
+        with self.assertRaises(ValueError):
+            TableConfig(
+                table_class=TableB,
+                link_column=TableB.table_a,
+            )
+
 
 class TestAdminRouter(TestCase):
     def test_init(self):
