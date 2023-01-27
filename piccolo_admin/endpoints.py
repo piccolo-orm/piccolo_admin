@@ -16,6 +16,7 @@ from functools import partial
 from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
+from piccolo.columns.column_types import ForeignKey
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
@@ -196,6 +197,12 @@ class TableConfig:
         if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
                 "Only specify `visible_filters` or `exclude_visible_filters`."
+            )
+
+        if isinstance(self.link_column, ForeignKey):
+            raise ValueError(
+                "Don't use a foreign key column for `link_column`, as they "
+                "are already displayed as a link in the UI."
             )
 
         # Create a mapping for faster lookups
@@ -484,14 +491,6 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
-            fk_column_names = [
-                i._meta.name for i in table_class._meta.foreign_key_columns
-            ]
-            if link_column_name in fk_column_names:
-                raise ValueError(
-                    "Cannot use foreign key column as `link_column`."
-                )
-
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
