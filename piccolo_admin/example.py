@@ -354,7 +354,12 @@ ticket_config = TableConfig(
     table_class=Ticket,
     menu_group="Booking",
     link_column=Ticket.booked_by,
-    exclude_visible_columns=[Ticket.id],
+    visible_columns=[
+        Ticket.booked_by,
+        Ticket.movie,
+        Ticket.start_date,
+        Ticket.start_time
+    ],
 )
 
 APP = create_admin(
