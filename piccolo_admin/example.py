@@ -358,7 +358,7 @@ ticket_config = TableConfig(
         Ticket.booked_by,
         Ticket.movie,
         Ticket.start_date,
-        Ticket.start_time
+        Ticket.start_time,
     ],
 )
 
