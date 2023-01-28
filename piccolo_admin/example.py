@@ -319,6 +319,7 @@ movie_config = TableConfig(
         ),
     ),
     menu_group="Movies",
+    sort_column=Movie.rating,
 )
 
 director_config = TableConfig(

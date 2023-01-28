@@ -148,6 +148,23 @@ class TestTableConfig(TestCase):
                 link_column=TableB.table_a,
             )
 
+    def test_sort_column(self):
+        """
+        Make sure the custom `sort_column` is returned.
+        """
+        config = TableConfig(
+            table_class=Post,
+            sort_column=Post.name,
+        )
+        self.assertIs(config.get_sort_column(), Post.name)
+
+    def test_sort_column_default(self):
+        """
+        Make sure the `sort_column` defaults to the primary key.
+        """
+        config = TableConfig(table_class=Post)
+        self.assertIs(config.get_sort_column(), Post._meta.primary_key)
+
 
 class TestAdminRouter(TestCase):
     def test_init(self):

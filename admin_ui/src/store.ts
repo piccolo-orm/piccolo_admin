@@ -141,6 +141,10 @@ export default new Vuex.Store({
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
+            // Sort rows by sort_column if specified:
+            const rowSortResponse = await context.dispatch("fetchSchema")
+            params["__order"] = "-" + rowSortResponse.data.sort_column_name
+
             const sortBy = context.state.sortBy
             if (sortBy) {
                 let prefix = sortBy.ascending ? "" : "-"
@@ -217,7 +221,8 @@ export default new Vuex.Store({
             context.commit("updateSelectedRow", response.data)
             return response
         },
-        async fetchSchema(context, tableName: string) {
+        async fetchSchema(context) {
+            const tableName = context.state.currentTableName
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/schema/`
             )

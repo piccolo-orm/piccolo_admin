@@ -171,6 +171,45 @@ groups for better visibility:
 
 -------------------------------------------------------------------------------
 
+link_column
+-----------
+
+We use the primary key as the link to the edit page, but we can specify
+an alternative column to use as a link. If we specify the foreign key column as
+link Piccolo Admin will raise ``ValueError``:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        link_column=Movie.name
+    )
+
+    create_admin([movie_config])
+
+-------------------------------------------------------------------------------
+
+sort_column
+-----------
+
+We use the primary key as default sorting column, but we can specify
+an alternative sorting column:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        sort_column=Movie.rating
+    )
+
+    create_admin([movie_config])
+
+-------------------------------------------------------------------------------
+
 Source
 ------
 
