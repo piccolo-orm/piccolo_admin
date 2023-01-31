@@ -1,6 +1,17 @@
 Changes
 =======
 
+0.43.0
+------
+
+Added the ``link_column`` option to ``TableConfig``. By default, the primary key
+is used in the list view of Piccolo Admin to link to the edit page. Using
+``link_column`` you can specify a different column (for example, if you hid
+the primary key using ``visible_columns``). Thanks to @sinisaos for helping
+with this.
+
+-------------------------------------------------------------------------------
+
 0.42.0
 ------
 
