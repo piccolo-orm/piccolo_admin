@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.44.0
+------
+
+Fixed a bug with nullable ``Boolean`` columns - filtering wasn't working in the
+sidebar.
+
+-------------------------------------------------------------------------------
+
 0.43.0
 ------
 
