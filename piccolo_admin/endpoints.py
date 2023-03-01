@@ -114,6 +114,10 @@ class TableConfig:
         on certain Piccolo :class:`Text <piccolo.columns.column_types.Text>`
         columns. Any columns not specified will use a standard HTML textarea
         tag in the UI.
+    :param read_only_columns:
+        You can specify ``read_only_columns'' to be read-only fields on edit
+        page. It is useful if you want to enable posting data but disable data
+        modification for certain form fields in UI.
     :param hooks:
         These are passed directly to
         :class:`PiccoloCRUD <piccolo_api.crud.endpoints.PiccoloCRUD>`, which
@@ -181,6 +185,7 @@ class TableConfig:
     visible_filters: t.Optional[t.List[Column]] = None
     exclude_visible_filters: t.Optional[t.List[Column]] = None
     rich_text_columns: t.Optional[t.List[Column]] = None
+    read_only_columns: t.Optional[t.List[Column]] = None
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
     validators: t.Optional[Validators] = None
@@ -251,6 +256,13 @@ class TableConfig:
         return (
             tuple(i._meta.name for i in self.rich_text_columns)
             if self.rich_text_columns
+            else ()
+        )
+
+    def get_read_only_columns_names(self) -> t.Tuple[str, ...]:
+        return (
+            tuple(i._meta.name for i in self.read_only_columns)
+            if self.read_only_columns
             else ()
         )
 
@@ -489,6 +501,9 @@ class AdminRouter(FastAPI):
             rich_text_columns_names = (
                 table_config.get_rich_text_columns_names()
             )
+            read_only_columns_names = (
+                table_config.get_read_only_columns_names()
+            )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
             validators = table_config.validators
@@ -507,6 +522,7 @@ class AdminRouter(FastAPI):
                         "visible_column_names": visible_column_names,
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
+                        "read_only_columns": read_only_columns_names,
                         "media_columns": media_columns_names,
                         "link_column_name": link_column_name,
                     },
@@ -774,7 +790,7 @@ class AdminRouter(FastAPI):
 
         try:
             file_key = await media_storage.store_file(
-                file_name=file.filename,
+                file_name=file.filename,  # type: ignore
                 file=file.file,
                 user=request.user.user,
             )

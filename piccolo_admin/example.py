@@ -309,6 +309,10 @@ movie_config = TableConfig(
         Movie.release_date,
     ],
     rich_text_columns=[Movie.description],
+    read_only_columns=[
+        Movie.release_date,
+        Movie.won_oscar,
+    ],
     media_storage=(
         LocalMediaStorage(
             column=Movie.poster,

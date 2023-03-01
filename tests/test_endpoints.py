@@ -148,6 +148,19 @@ class TestTableConfig(TestCase):
                 link_column=TableB.table_a,
             )
 
+    def test_read_only_columns(self):
+        """
+        Make sure the `read_only_columns` is returned.
+        """
+        post_table = TableConfig(
+            table_class=Post,
+            read_only_columns=[Post.name, Post.created],
+        )
+        self.assertEqual(
+            post_table.get_read_only_columns_names(),
+            ("name", "created"),
+        )
+
 
 class TestAdminRouter(TestCase):
     def test_init(self):
