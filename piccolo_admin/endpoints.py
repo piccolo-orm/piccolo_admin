@@ -115,7 +115,7 @@ class TableConfig:
         columns. Any columns not specified will use a standard HTML textarea
         tag in the UI.
     :param read_only_columns:
-        You can specify ``read_only_columns'' to be read-only fields on edit
+        You can specify ``read_only_columns`` to be read-only fields on edit
         page. It is useful if you want to enable posting data but disable data
         modification for certain form fields in UI.
     :param hooks:

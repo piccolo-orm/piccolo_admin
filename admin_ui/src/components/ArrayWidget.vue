@@ -15,6 +15,7 @@
                         :isNullable="isNullable"
                         :isFilter="isFilter"
                         :isArray="true"
+                        :disabled="isReadOnly(fieldName)"
                         @updated="updateArray($event, index)"
                     />
                 </template>
@@ -22,6 +23,7 @@
                     <input
                         :type="inputType"
                         :value="value"
+                        :readonly="isReadOnly(fieldName)"
                         @change="updateArray(getValueFromEvent($event), index)"
                     />
                 </template>
@@ -141,6 +143,13 @@ export default Vue.extend({
             }
             this.mediaViewerConfig = mediaViewerConfig
             this.showMediaViewer = true
+        },
+        isReadOnly(columnName: string) {
+            return (
+                this.$store.state.schema.read_only_columns.includes(
+                    columnName
+                ) && this.$route.params.rowID !== undefined
+            )
         }
     },
     watch: {

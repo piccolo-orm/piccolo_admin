@@ -4,11 +4,7 @@
             v-bind:key="columnName"
             v-for="(property, columnName) in schema.properties"
         >
-            <label
-                v-bind:style="
-                    isReadOnly(String(columnName)) ? 'display:none' : ''
-                "
-            >
+            <label>
                 {{ property.title }}
                 <span class="required" v-if="isRequired(String(columnName))"
                     >*</span
@@ -18,12 +14,7 @@
                     :content="property.extra.help_text"
                 />
 
-                <template
-                    v-if="property.extra.foreign_key"
-                    v-bind:style="
-                        isReadOnly(String(columnName)) ? 'display:none' : ''
-                    "
-                >
+                <template v-if="property.extra.foreign_key">
                     <router-link
                         :to="{
                             name: 'addRow',
@@ -60,9 +51,6 @@
                 v-bind:rowID="getValue(String(columnName))"
                 v-bind:readable="getValue(columnName + '_readable')"
                 v-bind:isNullable="property.nullable"
-                v-bind:style="
-                    isReadOnly(String(columnName)) ? 'display:none' : ''
-                "
                 @update="$set(foreignKeyIDs, String(columnName), $event.id)"
             />
             <InputField
@@ -78,9 +66,6 @@
                 v-bind:choices="property.extra.choices"
                 v-bind:isMediaColumn="isMediaColumn(String(columnName))"
                 v-bind:isRichText="isRichText(String(columnName))"
-                v-bind:style="
-                    isReadOnly(String(columnName)) ? 'display:none' : ''
-                "
             />
         </div>
     </div>
@@ -153,12 +138,6 @@ export default Vue.extend({
         },
         isRichText(columnName: string) {
             return this.schema.rich_text_columns.includes(columnName)
-        },
-        isReadOnly(columnName: string) {
-            return (
-                this.schema.read_only_columns.includes(columnName) &&
-                this.$route.params.rowID
-            )
         }
     }
 })
