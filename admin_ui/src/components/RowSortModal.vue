@@ -39,7 +39,7 @@ export default {
     data() {
         return {
             ascending: "descending",
-            propertyName: this.schema.primary_key_name
+            propertyName: this.schema.sort_column_name
         }
     },
     components: {
