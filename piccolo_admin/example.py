@@ -210,6 +210,15 @@ class Ticket(Table):
     vip = Boolean(null=True, default=None)
 
 
+class NullableColumns(Table):
+    id: Serial
+    number = Integer(
+        null=True,
+        default=None,
+        required=False,
+    )
+
+
 class BusinessEmailModel(BaseModel):
     email: str
     title: str = "Enquiry"
@@ -284,6 +293,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     User,
     Sessions,
     Ticket,
+    NullableColumns,
 )
 
 
@@ -363,8 +373,19 @@ ticket_config = TableConfig(
     ],
 )
 
+nullable_config = TableConfig(
+    table_class=NullableColumns,
+    menu_group="Testing",
+)
+
 APP = create_admin(
-    [movie_config, director_config, studio_config, ticket_config],
+    [
+        movie_config,
+        director_config,
+        studio_config,
+        ticket_config,
+        nullable_config,
+    ],
     forms=[
         FormConfig(
             name="Business email form",

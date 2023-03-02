@@ -55,6 +55,11 @@ export default Vue.extend({
                     value == ""
                 ) {
                     value = null
+                } else if (
+                    this.schema?.properties[key].type == "integer" &&
+                    value == ""
+                ) {
+                    value = null
                     // @ts-ignore
                 } else if (
                     this.schema?.properties[key].extra.foreign_key == true &&
