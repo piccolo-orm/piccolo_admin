@@ -189,8 +189,11 @@
                                                 <font-awesome-icon
                                                     class="incorrect"
                                                     icon="times"
-                                                    v-else
+                                                    v-else-if="
+                                                        row[name] === false
+                                                    "
                                                 />
+                                                <code v-else>NULL</code>
                                             </span>
                                             <span v-else-if="isInterval(name)">
                                                 {{ row[name] | humanReadable }}
@@ -731,8 +734,6 @@ div.wrapper {
                     text-align: left;
 
                     span.boolean {
-                        padding-left: 0.5rem;
-
                         svg.correct {
                             color: @green;
                         }
