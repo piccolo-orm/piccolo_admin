@@ -212,11 +212,13 @@ class Ticket(Table):
 
 class NullableColumns(Table):
     id: Serial
-    number = Integer(
+    integer = Integer(
         null=True,
         default=None,
         required=False,
     )
+    real = Real(null=True, default=None)
+    numeric = Numeric(null=True, default=None)
 
 
 class BusinessEmailModel(BaseModel):

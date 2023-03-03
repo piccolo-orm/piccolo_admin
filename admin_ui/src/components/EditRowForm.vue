@@ -42,6 +42,7 @@ import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowForm from "./RowForm.vue"
 import FormErrors from "./FormErrors.vue"
+import { convertFormValue } from "@/utils"
 
 import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
 import { parseErrorResponse } from "../utils"
@@ -87,28 +88,11 @@ export default Vue.extend({
                 const key = i[0]
                 let value = i[1]
 
-                if (value == "null") {
-                    value = null
-                } else if (this.schema.properties[key].type == "array") {
-                    // @ts-ignore
-                    value = JSON.parse(value)
-                } else if (
-                    this.schema?.properties[key].format == "date-time" &&
-                    value == ""
-                ) {
-                    value = null
-                } else if (
-                    this.schema?.properties[key].type == "integer" &&
-                    value == ""
-                ) {
-                    value = null
-                } else if (
-                    this.schema?.properties[key].extra.foreign_key == true &&
-                    value == ""
-                ) {
-                    value = null
-                }
-                json[key] = value
+                json[key] = convertFormValue({
+                    key,
+                    value,
+                    schema: this.schema
+                })
             }
 
             let config: UpdateRow = {
