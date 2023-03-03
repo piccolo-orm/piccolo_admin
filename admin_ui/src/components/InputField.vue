@@ -279,7 +279,13 @@ export default Vue.extend({
     },
     computed: {
         placeholder() {
-            return this.isFilter ? "All" : ""
+            if (this.isFilter) {
+                return "All"
+            } else if (this.isNullable && this.value === null) {
+                return "NULL"
+            } else {
+                return ""
+            }
         },
         currentTableName() {
             return this.$store.state.currentTableName
