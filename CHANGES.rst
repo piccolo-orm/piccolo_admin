@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.45.1
+------
+
+Add back JSON formatting in list view which was removed by accident.
+
+-------------------------------------------------------------------------------
+
 0.45.0
 ------
 
