@@ -198,13 +198,6 @@
                                             <span v-else-if="isInterval(name)">
                                                 {{ row[name] | humanReadable }}
                                             </span>
-                                            <span v-else-if="isJSON(name)">
-                                                <pre>{{
-                                                    row[name]
-                                                        | formatJSON
-                                                        | abbreviate
-                                                }}</pre>
-                                            </span>
                                             <span
                                                 v-else-if="isMediaColumn(name)"
                                             >
@@ -241,9 +234,14 @@
                                                     </a>
                                                 </template>
                                             </span>
-                                            <span v-else>{{
-                                                row[name] | abbreviate
-                                            }}</span>
+                                            <span v-else>
+                                                <code v-if="row[name] === null"
+                                                    >NULL</code
+                                                >
+                                                <span v-else>
+                                                    {{ row[name] | abbreviate }}
+                                                </span>
+                                            </span>
                                         </td>
 
                                         <td>

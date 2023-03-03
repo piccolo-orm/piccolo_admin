@@ -18,6 +18,7 @@ import FormErrors from "./FormErrors.vue"
 import { APIResponseMessage } from "../interfaces"
 import { parseErrorResponse } from "../utils"
 import { Schema } from "@/interfaces"
+import { convertFormValue } from "@/utils"
 
 export default Vue.extend({
     props: {
@@ -43,26 +44,11 @@ export default Vue.extend({
                 const key = i[0]
                 let value = i[1]
 
-                if (value == "null") {
-                    value = null
-                    // @ts-ignore
-                } else if (this.schema.properties[key].type == "array") {
-                    // @ts-ignore
-                    value = JSON.parse(value)
-                    // @ts-ignore
-                } else if (
-                    this.schema?.properties[key].format == "date-time" &&
-                    value == ""
-                ) {
-                    value = null
-                    // @ts-ignore
-                } else if (
-                    this.schema?.properties[key].extra.foreign_key == true &&
-                    value == ""
-                ) {
-                    value = null
-                }
-                json[key] = value
+                json[key] = convertFormValue({
+                    key,
+                    value,
+                    schema: this.schema
+                })
             }
             try {
                 await this.$store.dispatch("createRow", {
