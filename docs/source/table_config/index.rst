@@ -99,6 +99,30 @@ without having to write HTML.
 
 -------------------------------------------------------------------------------
 
+read_only_columns
+-----------------
+
+We can specify which columns will be ``read-only`` in edit forms.
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        read_only_columns=[
+            Movie.release_date,
+            Movie.won_oscar,
+        ]
+    )
+
+    create_admin([Director, movie_config])
+
+This can be useful if you want to enable publishing data, but disable data 
+modification for certain form fields in UI.
+
+-------------------------------------------------------------------------------
+
 hooks
 -----
 
