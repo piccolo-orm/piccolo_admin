@@ -241,9 +241,14 @@
                                                     </a>
                                                 </template>
                                             </span>
-                                            <span v-else>{{
-                                                row[name] | abbreviate
-                                            }}</span>
+                                            <span v-else>
+                                                <code v-if="row[name] === null"
+                                                    >NULL</code
+                                                >
+                                                <span v-else>
+                                                    {{ row[name] | abbreviate }}
+                                                </span>
+                                            </span>
                                         </td>
 
                                         <td>
