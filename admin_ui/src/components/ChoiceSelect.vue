@@ -1,5 +1,9 @@
 <template>
-    <select v-bind:name="fieldName" v-model="localValue">
+    <select
+        v-bind:name="fieldName"
+        v-model="localValue"
+        v-bind:disabled="isReadOnly"
+    >
         <option
             v-bind:selected="value == 'all'"
             v-if="isFilter && !isArray"
@@ -50,6 +54,10 @@ export default defineComponent({
             default: false
         },
         isArray: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        isReadOnly: {
             type: Boolean as PropType<boolean>,
             default: false
         }

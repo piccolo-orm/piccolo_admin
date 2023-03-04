@@ -27,7 +27,7 @@
                 :fieldName="columnName"
                 :isFilter="isFilter"
                 :isNullable="isNullable"
-                :disabled="isReadOnly(columnName)"
+                :disabled="isReadOnly"
                 :value="value"
             />
         </template>
@@ -39,8 +39,8 @@
                 type="number"
                 v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
-                v-bind:readonly="isReadOnly(columnName)"
                 v-bind:value="value"
+                v-bind:readonly="isReadOnly"
             />
         </template>
 
@@ -61,7 +61,7 @@
                         noCalendar: format == 'time'
                     }"
                     v-bind:name="columnName"
-                    v-bind:disabled="isReadOnly(columnName)"
+                    v-bind:disabled="isReadOnly"
                     v-model="localValue"
                 ></flat-pickr>
             </template>
@@ -71,7 +71,7 @@
                     v-if="isRichText"
                     v-model="localValue"
                     v-bind:name="columnName"
-                    v-bind:disabled="isReadOnly(columnName)"
+                    v-bind:disabled="isReadOnly"
                     :editor-toolbar="customToolbar"
                 />
                 <textarea
@@ -80,8 +80,8 @@
                     ref="textarea"
                     v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
+                    v-bind:readonly="isReadOnly"
                     v-bind:style="{ height: textareaHeight }"
-                    v-bind:readonly="isReadOnly(columnName)"
                     v-model="localValue"
                     v-on:input="setTextareaHeight"
                 />
@@ -103,7 +103,7 @@
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="columnName"
-                    v-bind:readonly="isReadOnly(columnName)"
+                    v-bind:readonly="isReadOnly"
                     v-bind:style="{ height: textareaHeight }"
                     v-on:input="setTextareaHeight"
                 />
@@ -113,17 +113,14 @@
                 type="text"
                 v-bind:name="columnName"
                 v-bind:placeholder="placeholder"
-                v-bind:readonly="isReadOnly(columnName)"
+                v-bind:readonly="isReadOnly"
                 v-else
                 v-model="localValue"
             />
         </template>
 
         <template v-else-if="type == 'boolean'">
-            <select
-                v-bind:name="columnName"
-                v-bind:disabled="isReadOnly(columnName)"
-            >
+            <select v-bind:name="columnName" v-bind:disabled="isReadOnly">
                 <option
                     v-bind:selected="value == 'all'"
                     v-if="isFilter"
@@ -152,7 +149,7 @@
                 <OperatorField :columnName="columnName" v-if="isFilter" />
                 <DurationWidget
                     v-bind:timedelta="localValue"
-                    v-bind:fieldName="columnName"
+                    v-bind:isReadOnly="isReadOnly"
                     v-on:newTimedelta="updateLocalValue($event)"
                 />
                 <input
@@ -167,7 +164,7 @@
                     type="text"
                     v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
-                    v-bind:readonly="isReadOnly(columnName)"
+                    v-bind:readonly="isReadOnly"
                     v-model="localValue"
                 />
             </template>
@@ -182,11 +179,13 @@
                 :isFilter="isFilter"
                 :choices="choices"
                 :isNullable="isNullable"
+                :isReadOnly="isReadOnly"
             />
             <input
                 :value="localValue ? JSON.stringify(localValue) : null"
                 type="hidden"
                 v-bind:name="columnName"
+                v-bind:readonly="isReadOnly"
             />
         </template>
     </div>
@@ -253,6 +252,10 @@ export default Vue.extend({
             default: false
         },
         isRichText: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        isReadOnly: {
             type: Boolean as PropType<boolean>,
             default: false
         }
@@ -381,13 +384,6 @@ export default Vue.extend({
 
             event.target.value = ""
             this.showLoadingOverlay = false
-        },
-        isReadOnly(columnName: string) {
-            return (
-                this.$store.state.schema.read_only_columns.includes(
-                    columnName
-                ) && this.$route.params.rowID !== undefined
-            )
         }
     },
     watch: {

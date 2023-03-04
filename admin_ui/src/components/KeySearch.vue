@@ -7,7 +7,7 @@
             v-model="selectedValue"
             v-on:focus="showModal = true"
             v-on:keydown.enter.prevent
-            :disabled="isReadOnly(fieldName)"
+            v-bind:disabled="isReadOnly"
         />
 
         <input
@@ -46,6 +46,10 @@ export default defineComponent({
         isNullable: {
             type: Boolean,
             default: false
+        },
+        isReadOnly: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -61,13 +65,6 @@ export default defineComponent({
             this.selectedValue = event.readable
             this.hiddenSelectedValue = event.id
             this.showModal = false
-        },
-        isReadOnly(columnName: string) {
-            return (
-                this.$store.state.schema.read_only_columns.includes(
-                    columnName
-                ) && this.$route.params.rowID !== undefined
-            )
         }
     },
     components: {

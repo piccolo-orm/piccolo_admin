@@ -51,6 +51,7 @@
                 v-bind:rowID="getValue(String(columnName))"
                 v-bind:readable="getValue(columnName + '_readable')"
                 v-bind:isNullable="property.nullable"
+                v-bind:isReadOnly="isReadOnly(String(columnName))"
                 @update="$set(foreignKeyIDs, String(columnName), $event.id)"
             />
             <InputField
@@ -66,6 +67,7 @@
                 v-bind:choices="property.extra.choices"
                 v-bind:isMediaColumn="isMediaColumn(String(columnName))"
                 v-bind:isRichText="isRichText(String(columnName))"
+                v-bind:isReadOnly="isReadOnly(String(columnName))"
             />
         </div>
     </div>
@@ -138,6 +140,12 @@ export default Vue.extend({
         },
         isRichText(columnName: string) {
             return this.schema.rich_text_columns.includes(columnName)
+        },
+        isReadOnly(columnName: string) {
+            return (
+                this.schema.read_only_columns.includes(columnName) &&
+                this.$route.params.rowID !== undefined
+            )
         }
     }
 })

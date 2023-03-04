@@ -5,7 +5,7 @@
             <select
                 v-model.number="weeks"
                 v-on:change="emitEvent"
-                v-bind:disabled="isReadOnly(fieldName)"
+                v-bind:disabled="isReadOnly"
             >
                 <option :key="'w' + week" v-for="week in weekRange">
                     {{ week }}
@@ -18,7 +18,7 @@
             <select
                 v-model.number="days"
                 v-on:change="emitEvent"
-                v-bind:disabled="isReadOnly(fieldName)"
+                v-bind:disabled="isReadOnly"
             >
                 <option :key="'d' + day" v-for="day in dayRange">
                     {{ day }}
@@ -31,7 +31,7 @@
             <select
                 v-model.number="hours"
                 v-on:change="emitEvent"
-                v-bind:disabled="isReadOnly(fieldName)"
+                v-bind:disabled="isReadOnly"
             >
                 <option :key="'h' + hour" v-for="hour in hourRange">
                     {{ hour }}
@@ -44,7 +44,7 @@
             <select
                 v-model.number="minutes"
                 v-on:change="emitEvent"
-                v-bind:disabled="isReadOnly(fieldName)"
+                v-bind:disabled="isReadOnly"
             >
                 <option :key="'m' + minute" v-for="minute in minuteRange">
                     {{ minute }}
@@ -57,7 +57,7 @@
             <select
                 v-model.number="seconds"
                 v-on:change="emitEvent"
-                v-bind:disabled="isReadOnly(fieldName)"
+                v-bind:disabled="isReadOnly"
             >
                 <option :key="'s' + second" v-for="second in secondRange">
                     {{ second }}
@@ -80,9 +80,9 @@ export default {
             default: 0,
             type: Number
         },
-        fieldName: {
-            default: "",
-            type: String
+        isReadOnly: {
+            default: false,
+            type: Boolean
         }
     },
     data() {
@@ -123,13 +123,6 @@ export default {
             timedelta += -this.minutes * MINUTE
 
             this.seconds = timedelta
-        },
-        isReadOnly(columnName) {
-            return (
-                this.$store.state.schema.read_only_columns.includes(
-                    columnName
-                ) && this.$route.params.rowID !== undefined
-            )
         }
     },
     watch: {
