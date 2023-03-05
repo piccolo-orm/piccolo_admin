@@ -219,6 +219,7 @@ class NullableColumns(Table):
     )
     real = Real(null=True, default=None)
     numeric = Numeric(null=True, default=None)
+    uuid = UUID(null=True, default=None)
 
 
 class BusinessEmailModel(BaseModel):
