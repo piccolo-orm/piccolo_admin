@@ -790,7 +790,7 @@ class AdminRouter(FastAPI):
 
         try:
             file_key = await media_storage.store_file(
-                file_name=file.filename,  # type: ignore
+                file_name=file.filename,
                 file=file.file,
                 user=request.user.user,
             )

@@ -24,6 +24,7 @@ from piccolo.columns.column_types import (
     BigInt,
     Boolean,
     Date,
+    DoublePrecision,
     ForeignKey,
     Integer,
     Interval,
@@ -34,6 +35,7 @@ from piccolo.columns.column_types import (
     Text,
     Time,
     Timestamp,
+    Timestamptz,
     Varchar,
 )
 from piccolo.columns.readable import Readable
@@ -222,6 +224,32 @@ class NullableColumns(Table):
     uuid = UUID(null=True, default=None)
 
 
+class ReadOnlyColumns(Table):
+    class Genre(int, enum.Enum):
+        fantasy = 1
+        sci_fi = 2
+        documentary = 3
+
+    array_col = Array(base_column=Varchar())
+    bigint_col = BigInt()
+    boolean_col = Boolean()
+    choice_col = SmallInt(choices=Genre)
+    date_col = Date()
+    foreignkey_col = ForeignKey(Director)
+    integer_col = Integer()
+    interval_col = Interval()
+    json_col = JSON()
+    numeric_col = Numeric(digits=(5, 2))
+    real_col = Real()
+    double_precision_col = DoublePrecision()
+    smallint_col = SmallInt()
+    text_col = Text()
+    timestamp_col = Timestamp()
+    timestamptz_col = Timestamptz()
+    uuid_col = UUID()
+    varchar_col = Varchar()
+
+
 class BusinessEmailModel(BaseModel):
     email: str
     title: str = "Enquiry"
@@ -297,6 +325,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
     Ticket,
     NullableColumns,
+    ReadOnlyColumns,
 )
 
 
@@ -322,10 +351,6 @@ movie_config = TableConfig(
         Movie.release_date,
     ],
     rich_text_columns=[Movie.description],
-    read_only_columns=[
-        Movie.release_date,
-        Movie.won_oscar,
-    ],
     media_storage=(
         LocalMediaStorage(
             column=Movie.poster,
@@ -385,6 +410,31 @@ nullable_config = TableConfig(
     menu_group="Testing",
 )
 
+read_only_config = TableConfig(
+    table_class=ReadOnlyColumns,
+    read_only_columns=[
+        ReadOnlyColumns.array_col,
+        ReadOnlyColumns.bigint_col,
+        ReadOnlyColumns.boolean_col,
+        ReadOnlyColumns.choice_col,
+        ReadOnlyColumns.date_col,
+        ReadOnlyColumns.foreignkey_col,
+        ReadOnlyColumns.integer_col,
+        ReadOnlyColumns.interval_col,
+        ReadOnlyColumns.json_col,
+        ReadOnlyColumns.numeric_col,
+        ReadOnlyColumns.real_col,
+        ReadOnlyColumns.double_precision_col,
+        ReadOnlyColumns.smallint_col,
+        ReadOnlyColumns.text_col,
+        ReadOnlyColumns.timestamp_col,
+        ReadOnlyColumns.timestamptz_col,
+        ReadOnlyColumns.uuid_col,
+        ReadOnlyColumns.varchar_col,
+    ],
+    menu_group="Readonly",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -392,6 +442,7 @@ APP = create_admin(
         studio_config,
         ticket_config,
         nullable_config,
+        read_only_config,
     ],
     forms=[
         FormConfig(

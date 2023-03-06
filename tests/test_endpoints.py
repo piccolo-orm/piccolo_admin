@@ -599,7 +599,14 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["director", "movie", "nullable_columns", "studio", "ticket"],
+            [
+                "director",
+                "movie",
+                "nullable_columns",
+                "read_only_columns",
+                "studio",
+                "ticket",
+            ],
         )
 
     def test_tables_grouped(self):
@@ -631,6 +638,7 @@ class TestTables(TestCase):
                 "grouped": {
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
+                    "Readonly": ["read_only_columns"],
                     "Testing": ["nullable_columns"],
                 },
                 "ungrouped": [],
@@ -785,7 +793,6 @@ class TestTranslations(TestCase):
 
 
 class TestHooks(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
@@ -858,7 +865,6 @@ class TestHooks(TestCase):
 
 
 class TestValidators(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
