@@ -9,6 +9,9 @@
                 <span class="required" v-if="isRequired(String(columnName))"
                     >*</span
                 >
+                <span class="readonly" v-if="isReadOnly(String(columnName))"
+                    >(read-only)</span
+                >
                 <Tooltip
                     v-if="property.extra.help_text"
                     :content="property.extra.help_text"

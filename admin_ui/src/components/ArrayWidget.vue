@@ -33,9 +33,18 @@
                     v-on:click.prevent="showMedia(index)"
                     :value="value"
                     v-if="isMediaColumn && !isFilter"
+                    :style="
+                        isReadOnly ? 'pointer-events: none' : 'cursor: pointer'
+                    "
                     ><font-awesome-icon icon="eye" title="View"
                 /></a>
-                <a href="#" v-on:click.prevent="removeArrayElement(index)">
+                <a
+                    href="#"
+                    :style="
+                        isReadOnly ? 'pointer-events: none' : 'cursor: pointer'
+                    "
+                    v-on:click.prevent="removeArrayElement(index)"
+                >
                     <font-awesome-icon icon="times" title="Remove" />
                 </a>
             </li>
@@ -45,6 +54,9 @@
                     href="#"
                     v-on:click.prevent="addArrayElement"
                     v-if="enableAddButton"
+                    :style="
+                        isReadOnly ? 'pointer-events: none' : 'cursor: pointer'
+                    "
                 >
                     <font-awesome-icon icon="plus" title="Add" />{{ $t("Add") }}
                 </a>

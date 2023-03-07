@@ -638,8 +638,10 @@ class TestTables(TestCase):
                 "grouped": {
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
-                    "Readonly": ["read_only_columns"],
-                    "Testing": ["nullable_columns"],
+                    "Testing": [
+                        "nullable_columns",
+                        "read_only_columns",
+                    ],
                 },
                 "ungrouped": [],
             },
