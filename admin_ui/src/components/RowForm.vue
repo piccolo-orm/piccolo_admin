@@ -26,12 +26,22 @@
                         class="add"
                         target="_blank"
                         v-if="!isFilter"
+                        :style="
+                            isReadOnly(String(columnName))
+                                ? 'pointer-events: none'
+                                : 'cursor: pointer'
+                        "
                     >
                         <font-awesome-icon icon="plus" />
                     </router-link>
 
                     <router-link
                         v-if="!isFilter && foreignKeyIDs[columnName]"
+                        :style="
+                            isReadOnly(String(columnName))
+                                ? 'pointer-events: none'
+                                : 'cursor: pointer'
+                        "
                         :to="{
                             name: 'editRow',
                             params: {
@@ -147,7 +157,7 @@ export default Vue.extend({
         isReadOnly(columnName: string) {
             return (
                 this.schema.read_only_columns.includes(columnName) &&
-                this.$route.params.rowID !== undefined
+                this.$route.params.rowID
             )
         }
     }

@@ -62,6 +62,9 @@
                     }"
                     v-bind:name="columnName"
                     v-bind:disabled="isReadOnly"
+                    :style="
+                        isReadOnly ? 'pointer-events: none' : 'cursor: pointer'
+                    "
                     v-model="localValue"
                 ></flat-pickr>
             </template>
