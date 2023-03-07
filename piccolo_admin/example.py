@@ -432,7 +432,7 @@ read_only_config = TableConfig(
         ReadOnlyColumns.uuid_col,
         ReadOnlyColumns.varchar_col,
     ],
-    menu_group="Readonly",
+    menu_group="Testing",
 )
 
 APP = create_admin(
