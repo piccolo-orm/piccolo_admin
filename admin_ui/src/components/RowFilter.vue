@@ -62,7 +62,11 @@ export default Vue.extend({
                             : value
                     }
 
-                    json[key] = value
+                    if (value == "null") {
+                        json[`${key}__operator`] = "is_null"
+                    } else {
+                        json[key] = value
+                    }
                 }
             }
 

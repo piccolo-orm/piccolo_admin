@@ -96,7 +96,7 @@
                                         </th>
                                         <th
                                             v-bind:key="name"
-                                            v-for="name in cellNames"
+                                            v-for="name in visibleColumnNames"
                                         >
                                             {{
                                                 schema.properties[name]
@@ -122,11 +122,11 @@
                                         </td>
                                         <td
                                             v-bind:key="name"
-                                            v-for="name in cellNames"
+                                            v-for="name in visibleColumnNames"
                                         >
                                             <span
                                                 class="link"
-                                                v-if="name == pkName"
+                                                v-if="name == linkColumnName"
                                             >
                                                 <router-link
                                                     :to="{
@@ -134,7 +134,7 @@
                                                         params: {
                                                             tableName:
                                                                 tableName,
-                                                            rowID: row[name]
+                                                            rowID: row[pkName]
                                                         }
                                                     }"
                                                     >{{
@@ -142,6 +142,9 @@
                                                     }}</router-link
                                                 >
                                             </span>
+                                            <span v-else-if="name == pkName">{{
+                                                row[name] | abbreviate
+                                            }}</span>
                                             <span
                                                 v-else-if="choicesLookup[name]"
                                             >
@@ -154,8 +157,8 @@
                                             <span
                                                 class="link"
                                                 v-else-if="
-                                                    isForeignKey(name) &
-                                                    (row[name] !== null)
+                                                    isForeignKey(name) &&
+                                                    row[name] !== null
                                                 "
                                             >
                                                 <router-link
@@ -186,8 +189,11 @@
                                                 <font-awesome-icon
                                                     class="incorrect"
                                                     icon="times"
-                                                    v-else
+                                                    v-else-if="
+                                                        row[name] === false
+                                                    "
                                                 />
+                                                <code v-else>NULL</code>
                                             </span>
                                             <span v-else-if="isInterval(name)">
                                                 {{ row[name] | humanReadable }}
@@ -235,9 +241,14 @@
                                                     </a>
                                                 </template>
                                             </span>
-                                            <span v-else>{{
-                                                row[name] | abbreviate
-                                            }}</span>
+                                            <span v-else>
+                                                <code v-if="row[name] === null"
+                                                    >NULL</code
+                                                >
+                                                <span v-else>
+                                                    {{ row[name] | abbreviate }}
+                                                </span>
+                                            </span>
                                         </td>
 
                                         <td>
@@ -291,7 +302,10 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="subtle delete"
+                                                            class="
+                                                                subtle
+                                                                delete
+                                                            "
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -416,23 +430,13 @@ export default Vue.extend({
         Tooltip
     },
     computed: {
-        cellNames() {
-            const keys = []
-            for (const key in this.rows[0]) {
-                if (!key.endsWith("_readable")) {
-                    keys.push(key)
-                }
-            }
-            // display Piccolo ORM visible_columns
-            const visibleColumns = keys.filter((column) =>
-                this.schema.visible_column_names.includes(column)
-            )
-            return visibleColumns
+        visibleColumnNames() {
+            return this.schema.visible_column_names
         },
         rows() {
             return this.$store.state.rows
         },
-        schema() {
+        schema(): Schema {
             return this.$store.state.schema
         },
         rowCount() {
@@ -446,6 +450,10 @@ export default Vue.extend({
         },
         pkName() {
             return this.schema?.primary_key_name || "id"
+        },
+        linkColumnName(): string {
+            let schema: Schema = this.schema
+            return schema.link_column_name
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
@@ -731,8 +739,6 @@ div.wrapper {
                     text-align: left;
 
                     span.boolean {
-                        padding-left: 0.5rem;
-
                         svg.correct {
                             color: @green;
                         }

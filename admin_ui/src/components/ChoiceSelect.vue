@@ -1,6 +1,12 @@
 <template>
     <select v-bind:name="fieldName" v-model="localValue">
-        <option v-if="isFilter" value="">All</option>
+        <option
+            v-bind:selected="value == 'all'"
+            v-if="isFilter && !isArray"
+            value="all"
+        >
+            All
+        </option>
         <option v-bind:selected="value == null" v-if="isNullable" value="null">
             Null
         </option>
@@ -16,10 +22,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { PropType, defineComponent } from "vue"
 import { Choices } from "../interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         fieldName: {
             type: String as PropType<string>,
@@ -42,6 +48,10 @@ export default Vue.extend({
         isFilter: {
             type: Boolean as PropType<boolean>,
             default: false
+        },
+        isArray: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     data() {
@@ -49,13 +59,19 @@ export default Vue.extend({
             localValue: ""
         }
     },
+    emits: ["updated"],
+    mounted() {
+        this.localValue = this.isFilter ? "all" : this.value
+    },
     watch: {
         value(newValue) {
             this.localValue = this.isFilter ? "all" : newValue
+        localValue(newValue) {
+            this.$emit("updated", newValue)
+
         }
     }
 })
 </script>
 
-<style>
-</style>
+<style></style>

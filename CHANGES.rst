@@ -1,6 +1,82 @@
 Changes
 =======
 
+0.45.2
+------
+
+Nullable UUID fields now work correctly.
+
+-------------------------------------------------------------------------------
+
+0.45.1
+------
+
+Add back JSON formatting in list view which was removed by accident.
+
+-------------------------------------------------------------------------------
+
+0.45.0
+------
+
+Nullable number fields now work correctly.
+
+-------------------------------------------------------------------------------
+
+0.44.0
+------
+
+Fixed a bug with nullable ``Boolean`` columns - filtering wasn't working in the
+sidebar.
+
+-------------------------------------------------------------------------------
+
+0.43.0
+------
+
+Added the ``link_column`` option to ``TableConfig``. By default, the primary key
+is used in the list view of Piccolo Admin to link to the edit page. Using
+``link_column`` you can specify a different column (for example, if you hid
+the primary key using ``visible_columns``). Thanks to @sinisaos for helping
+with this.
+
+-------------------------------------------------------------------------------
+
+0.42.0
+------
+
+Tables can now be grouped in the sidebar - this is helpful if you have lots of
+tables. To do this, use the ``menu_group`` argument of ``TableConfig``.
+
+Thanks to @sinisaos and @sumitsharansatsangi for their help with this.
+
+-------------------------------------------------------------------------------
+
+0.41.0
+------
+
+A fix to make Piccolo Admin work with ``fastapi>=0.89.0``.
+
+-------------------------------------------------------------------------------
+
+0.40.0
+------
+
+* Improved German translations (thanks to @hblunck for this).
+* When submitting a form, scroll to the top of the page if an error occurs so
+  the error box is visible (thanks to @sinisaos for this).
+* If a custom ``BaseUser`` table is used for authentication, which uses a
+  ``UUID`` as the primary key, it now works.
+
+-------------------------------------------------------------------------------
+
+0.39.0
+------
+
+If an ``Array`` column has ``choices`` specified, then Piccolo Admin will
+show dropdowns, so the user can pick one of the choices.
+
+-------------------------------------------------------------------------------
+
 0.38.0
 ------
 

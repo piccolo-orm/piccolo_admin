@@ -1,3 +1,5 @@
+import { Schema } from "@/interfaces"
+
 export function readableInterval(timeRange: number) {
     if (timeRange === 0) {
         return "0 seconds"
@@ -90,4 +92,32 @@ export function parseErrorResponse(
             return [error]
         }
     }
+}
+
+export function convertFormValue(params: {
+    key: string
+    value: any
+    schema: Schema
+}): any {
+    let { key, value, schema } = params
+
+    if (value == "null") {
+        value = null
+    } else if (schema.properties[key].type == "array") {
+        value = JSON.parse(String(value))
+    } else if (schema?.properties[key].format == "uuid" && value == "") {
+        value = null
+    } else if (schema?.properties[key].format == "date-time" && value == "") {
+        value = null
+    } else if (schema?.properties[key].type == "integer" && value == "") {
+        value = null
+    } else if (schema?.properties[key].type == "number" && value == "") {
+        value = null
+    } else if (
+        schema?.properties[key].extra.foreign_key == true &&
+        value == ""
+    ) {
+        value = null
+    }
+    return value
 }

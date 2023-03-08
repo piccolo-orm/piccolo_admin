@@ -29,6 +29,7 @@ from piccolo.columns.column_types import (
     Interval,
     Numeric,
     Real,
+    Serial,
     SmallInt,
     Text,
     Time,
@@ -121,11 +122,18 @@ class User(BaseUser, tablename="piccolo_user"):
 
 
 class Director(Table, help_text="The main director for a movie."):
-    class Gender(enum.Enum):
+    class Gender(str, enum.Enum):
         male = "m"
         female = "f"
         non_binary = "n"
 
+    class Skill(str, enum.Enum):
+        producer = "producer"
+        actor = "actor"
+        director_of_photography = "director of photography"
+        special_effects = "special effects"
+
+    id: Serial
     name = Varchar(length=300, null=False)
     years_nominated = Array(
         base_column=Integer(),
@@ -136,6 +144,13 @@ class Director(Table, help_text="The main director for a movie."):
     )
     gender = Varchar(length=1, choices=Gender)
     photo = Varchar()
+    additional_skills = Array(
+        base_column=Varchar(),
+        choices=Skill,
+        help_text=(
+            "Additional skills which the director has besides directing."
+        ),
+    )
 
     @classmethod
     def get_readable(cls):
@@ -163,6 +178,7 @@ class Movie(Table):
         romance = 7
         musical = 8
 
+    id: Serial
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
@@ -185,11 +201,25 @@ class Movie(Table):
 
 
 class Ticket(Table):
+    id: Serial
     booked_by = Varchar(length=255)
     movie = ForeignKey(Movie)
     start_date = Date()
     start_time = Time()
     booked_on = Timestamp()
+    vip = Boolean(null=True, default=None)
+
+
+class NullableColumns(Table):
+    id: Serial
+    integer = Integer(
+        null=True,
+        default=None,
+        required=False,
+    )
+    real = Real(null=True, default=None)
+    numeric = Numeric(null=True, default=None)
+    uuid = UUID(null=True, default=None)
 
 
 class BusinessEmailModel(BaseModel):
@@ -266,6 +296,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     User,
     Sessions,
     Ticket,
+    NullableColumns,
 )
 
 
@@ -301,6 +332,7 @@ movie_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "movie_screenshots"),
         ),
     ),
+    menu_group="Movies",
 )
 
 director_config = TableConfig(
@@ -324,10 +356,39 @@ director_config = TableConfig(
             media_path=os.path.join(MEDIA_ROOT, "photo"),
         ),
     ),
+    menu_group="Movies",
+)
+
+studio_config = TableConfig(
+    table_class=Studio,
+    menu_group="Movies",
+)
+
+ticket_config = TableConfig(
+    table_class=Ticket,
+    menu_group="Booking",
+    link_column=Ticket.booked_by,
+    visible_columns=[
+        Ticket.booked_by,
+        Ticket.movie,
+        Ticket.start_date,
+        Ticket.start_time,
+    ],
+)
+
+nullable_config = TableConfig(
+    table_class=NullableColumns,
+    menu_group="Testing",
 )
 
 APP = create_admin(
-    [movie_config, director_config, Studio, Ticket],
+    [
+        movie_config,
+        director_config,
+        studio_config,
+        ticket_config,
+        nullable_config,
+    ],
     forms=[
         FormConfig(
             name="Business email form",

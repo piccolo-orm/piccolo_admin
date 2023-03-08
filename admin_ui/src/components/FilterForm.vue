@@ -12,9 +12,9 @@
                     <KeySearch
                         v-bind:fieldName="String(columnName)"
                         v-bind:isFilter="true"
-                        v-bind:key="getValue(property.title)"
-                        v-bind:readable="getValue(property.title)"
-                        v-bind:rowID="getValue(property.title)"
+                        v-bind:key="property.title"
+                        v-bind:readable="null"
+                        v-bind:rowID="null"
                         v-bind:tableName="property.extra.to"
                         v-bind:isNullable="property.nullable"
                     />
@@ -31,7 +31,6 @@
                         v-bind:isFilter="true"
                         v-bind:isNullable="property.nullable"
                         v-bind:key="property.title"
-                        v-bind:required="isRequired(String(columnName))"
                         v-bind:title="property.title"
                         v-bind:type="property.type || property.anyOf[0].type"
                         v-bind:value="getValue(String(columnName))"
@@ -43,15 +42,14 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { PropType, defineComponent } from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import { Schema } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        row: Object,
         schema: Object as PropType<Schema>
     },
     components: {
@@ -60,13 +58,12 @@ export default Vue.extend({
     },
     methods: {
         getValue(columnName: string) {
-            return this.row ? this.row[columnName] : undefined
-        },
-        isRequired(keyName: string) {
-            return (
-                !this.isFilter &&
-                (this.schema.required || []).indexOf(keyName) != -1
-            )
+            const schema: Schema = this.schema
+            if (schema.properties[columnName].type == "boolean") {
+                return "all"
+            } else {
+                return null
+            }
         }
     }
 })

@@ -2,12 +2,30 @@
     <div>
         <ul class="array_items">
             <li :key="index" v-for="(value, index) in internalArray">
-                <input
-                    :type="inputType"
-                    :value="value"
-                    id="choice"
-                    v-on:change="updateArray($event, index)"
-                />
+                <template v-if="choices">
+                    <!--
+                    We deliberately set the fieldName to blank, as we don't
+                    want the value to be submitted. Instead, we combine the
+                    values into an array object and submit that instead.
+                    -->
+                    <ChoiceSelect
+                        :fieldName="''"
+                        :value="value"
+                        :choices="choices"
+                        :isNullable="isNullable"
+                        :isFilter="isFilter"
+                        :isArray="true"
+                        @updated="updateArray($event, index)"
+                    />
+                </template>
+                <template v-else>
+                    <input
+                        :type="inputType"
+                        :value="value"
+                        @change="updateArray(getValueFromEvent($event), index)"
+                    />
+                </template>
+
                 <a
                     href="#"
                     v-on:click.prevent="showMedia(index)"
@@ -40,8 +58,9 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue"
+import ChoiceSelect from "./ChoiceSelect.vue"
 import MediaViewer from "./MediaViewer.vue"
-import { MediaViewerConfig } from "@/interfaces"
+import { Choices, MediaViewerConfig } from "@/interfaces"
 
 export default Vue.extend({
     props: {
@@ -64,9 +83,20 @@ export default Vue.extend({
         isFilter: {
             type: Boolean as PropType<boolean>,
             default: true
+        },
+        choices: {
+            type: Object as PropType<Choices>,
+            default: () => {
+                return {}
+            }
+        },
+        isNullable: {
+            type: Boolean as PropType<boolean>,
+            default: false
         }
     },
     components: {
+        ChoiceSelect,
         MediaViewer
     },
     data() {
@@ -88,8 +118,11 @@ export default Vue.extend({
         }
     },
     methods: {
-        updateArray($event, index: number) {
-            this.$set(this.internalArray, index, $event.target.value)
+        getValueFromEvent(event: Event) {
+            return (event.target as HTMLInputElement).value
+        },
+        updateArray(value: any, index: number) {
+            this.$set(this.internalArray, index, value)
             this.$emit("updateArray", this.internalArray)
         },
         addArrayElement() {
@@ -141,7 +174,8 @@ ul.array_items {
             }
         }
 
-        input {
+        input,
+        select {
             flex-grow: 1;
             margin-right: 0.5rem;
             margin-bottom: 0 !important;

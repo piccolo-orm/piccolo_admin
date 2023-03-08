@@ -102,7 +102,7 @@ div.sidebar {
                     border-left: 3px solid @light_blue;
                 }
 
-                svg {
+                svg.rotated90 {
                     transform: rotate(90deg);
                 }
 

@@ -16,6 +16,7 @@ from functools import partial
 from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
+from piccolo.columns.column_types import ForeignKey
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
@@ -80,6 +81,11 @@ class GenerateFileURLRequestModel(BaseModel):
 
 class GenerateFileURLResponseModel(BaseModel):
     file_url: str = Field(description="A URL which the file is accessible on.")
+
+
+class GroupedTableNamesResponseModel(BaseModel):
+    grouped: t.Dict[str, t.List[str]] = Field(default_factory=list)
+    ungrouped: t.List[str] = Field(default_factory=list)
 
 
 @dataclass
@@ -157,6 +163,15 @@ class TableConfig:
                     validators=Validators(post_single=[manager_only])
                 )
             )
+    :param menu_group:
+        If specified, tables can be divided into groups in the table
+        menu. This is useful when you have many tables that you
+        can organize into groups for better visibility.
+    :param link_column:
+        In the list view of Piccolo Admin, we use the primary key to link to
+        the edit page. However, if the primary key column is hidden, due to
+        ``visible_columns`` or ``exclude_visible_columns``, then we need to
+        specify an alternative column to use as the link.
 
     """
 
@@ -169,6 +184,8 @@ class TableConfig:
     hooks: t.Optional[t.List[Hook]] = None
     media_storage: t.Optional[t.Sequence[MediaStorage]] = None
     validators: t.Optional[Validators] = None
+    menu_group: t.Optional[str] = None
+    link_column: t.Optional[Column] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -180,6 +197,12 @@ class TableConfig:
         if self.visible_filters and self.exclude_visible_filters:
             raise ValueError(
                 "Only specify `visible_filters` or `exclude_visible_filters`."
+            )
+
+        if isinstance(self.link_column, ForeignKey):
+            raise ValueError(
+                "Don't use a foreign key column for `link_column`, as they "
+                "are already displayed as a link in the UI."
             )
 
         # Create a mapping for faster lookups
@@ -237,6 +260,9 @@ class TableConfig:
             if self.media_columns
             else ()
         )
+
+    def get_link_column(self) -> Column:
+        return self.link_column or self.table_class._meta.primary_key
 
 
 @dataclass
@@ -383,10 +409,13 @@ class AdminRouter(FastAPI):
             else:
                 table_configs.append(TableConfig(table_class=table))
 
-        self.table_configs = table_configs
+        self.table_configs = sorted(
+            table_configs,
+            key=lambda table_config: table_config.table_class._meta.tablename,
+        )
         self.table_config_map = {
             table_config.table_class._meta.tablename: table_config
-            for table_config in table_configs
+            for table_config in self.table_configs
         }
 
         #######################################################################
@@ -461,7 +490,7 @@ class AdminRouter(FastAPI):
                 table_config.get_rich_text_columns_names()
             )
             media_columns_names = table_config.get_media_columns_names()
-
+            link_column_name = table_config.get_link_column()._meta.name
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
@@ -479,6 +508,7 @@ class AdminRouter(FastAPI):
                         "visible_filter_names": visible_filter_names,
                         "rich_text_columns": rich_text_columns_names,
                         "media_columns": media_columns_names,
+                        "link_column_name": link_column_name,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
@@ -495,6 +525,14 @@ class AdminRouter(FastAPI):
             endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
             response_model=t.List[str],
+            tags=["Tables"],
+        )
+
+        private_app.add_api_route(
+            path="/tables/grouped/",
+            endpoint=self.get_table_list_grouped,  # type: ignore
+            methods=["GET"],
+            response_model=GroupedTableNamesResponseModel,
             tags=["Tables"],
         )
 
@@ -776,7 +814,7 @@ class AdminRouter(FastAPI):
     def get_user(self, request: Request) -> UserResponseModel:
         return UserResponseModel(
             username=request.user.display_name,
-            user_id=request.user.user_id,
+            user_id=str(request.user.user_id),
         )
 
     ###########################################################################
@@ -817,7 +855,7 @@ class AdminRouter(FastAPI):
 
     async def post_single_form(
         self, request: Request, form_slug: str
-    ) -> JSONResponse:
+    ) -> t.Any:
         """
         Handles posting of custom forms.
         """
@@ -867,9 +905,34 @@ class AdminRouter(FastAPI):
 
     def get_table_list(self) -> t.List[str]:
         """
-        Returns a list of all tables registered with the admin.
+        Returns the list of table groups registered with the admin.
         """
         return [i.table_class._meta.tablename for i in self.table_configs]
+
+    def get_table_list_grouped(self) -> GroupedTableNamesResponseModel:
+        """
+        Returns a list of all apps with tables registered with the admin,
+        grouped using `menu_group`.
+        """
+        response = GroupedTableNamesResponseModel()
+
+        group_names = sorted(
+            {i.menu_group for i in self.table_configs if i.menu_group}
+        )
+        response.grouped = {i: [] for i in group_names}
+
+        for table_config in self.table_configs:
+            menu_group = table_config.menu_group
+            if menu_group is None:
+                response.ungrouped.append(
+                    table_config.table_class._meta.tablename
+                )
+            else:
+                response.grouped[menu_group].append(
+                    table_config.table_class._meta.tablename
+                )
+
+        return response
 
     ###########################################################################
 
