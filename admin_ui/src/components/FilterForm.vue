@@ -50,6 +50,7 @@ import { Schema } from "@/interfaces"
 
 export default defineComponent({
     props: {
+        row: Object,
         schema: Object as PropType<Schema>
     },
     components: {
@@ -61,9 +62,8 @@ export default defineComponent({
             const schema: Schema = this.schema
             if (schema.properties[columnName].type == "boolean") {
                 return "all"
-            } else {
-                return null
             }
+            return this.row ? this.row[columnName] : undefined
         }
     }
 })

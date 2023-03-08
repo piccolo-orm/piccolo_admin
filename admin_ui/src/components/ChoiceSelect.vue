@@ -1,12 +1,6 @@
 <template>
     <select v-bind:name="fieldName" v-model="localValue">
-        <option
-            v-bind:selected="value == 'all'"
-            v-if="isFilter && !isArray"
-            value="all"
-        >
-            All
-        </option>
+        <option v-if="isFilter && !isArray" value="">All</option>
         <option v-bind:selected="value == null" v-if="isNullable" value="null">
             Null
         </option>
@@ -59,19 +53,10 @@ export default defineComponent({
             localValue: ""
         }
     },
-    emits: ["updated"],
-    mounted() {
-        this.localValue = this.isFilter ? "all" : this.value
-    },
     watch: {
         value(newValue) {
             this.localValue = this.isFilter ? "all" : newValue
-        },
-        localValue(newValue) {
-            this.$emit("updated", newValue)
         }
     }
 })
 </script>
-
-<style></style>
