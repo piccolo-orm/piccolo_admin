@@ -66,9 +66,9 @@ export default defineComponent({
     watch: {
         value(newValue) {
             this.localValue = this.isFilter ? "all" : newValue
+        },
         localValue(newValue) {
             this.$emit("updated", newValue)
-
         }
     }
 })
