@@ -6,8 +6,9 @@ import pytest
 
 from piccolo_admin.example import set_engine
 
-HOST_PORT = "localhost:8000"
-BASE_URL = f"http://{HOST_PORT}"
+HOST = "localhost"
+PORT = 8000
+BASE_URL = f"http://{HOST}:{PORT}"
 USERNAME = "piccolo"
 PASSWORD = "piccolo123"
 
@@ -29,7 +30,7 @@ def dev_server():
     )
     retries = 5
     while retries > 0:
-        conn = HTTPConnection(HOST_PORT)
+        conn = HTTPConnection(f"{HOST}:{PORT}")
         try:
             conn.request("HEAD", "/")
             response = conn.getresponse()
