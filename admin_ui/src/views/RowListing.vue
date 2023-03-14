@@ -44,6 +44,7 @@
                             class="button"
                             href="#"
                             v-on:click.prevent="showSortModal = !showSortModal"
+                            data-uitest="sort_button"
                         >
                             <font-awesome-icon icon="sort" />
                             <span>{{ $t("Sort") }}</span>

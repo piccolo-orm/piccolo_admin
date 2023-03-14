@@ -29,11 +29,32 @@ class LoginPage:
         self.login_button.click()
 
 
-class NullableColumnsTableAdd:
-    url = f"{BASE_URL}/#/nullable_columns/add"
-
-    def __init__(self, page: Page):
+class RowListingPage:
+    def __init__(self, page: Page, tablename: str):
         self.page = page
+        self.url = f"{BASE_URL}/#/{tablename}"
+        self.sort_button = page.locator("a[data-uitest=sort_button]")
+        self.sort_by_selector = page.locator(
+            "select[data-uitest=sort_by_selector]"
+        )
+
+    def reset(self):
+        self.page.goto(self.url)
+
+    def open_sort_modal(self):
+        self.sort_button.click()
+
+    def get_sort_by_column(self) -> str:
+        """
+        Returns the name of the column being sorted by.
+        """
+        return self.sort_by_selector.input_value()
+
+
+class AddRowPage:
+    def __init__(self, page: Page, tablename: str):
+        self.page = page
+        self.url = f"{BASE_URL}/#/{tablename}/add"
         self.create_button = page.locator("button[data-uitest=create_button]")
 
     def reset(self):

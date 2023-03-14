@@ -3,7 +3,11 @@
         <template v-if="schema">
             <p>{{ $t("Sort by") }}:</p>
 
-            <select name="property" v-model="propertyName">
+            <select
+                name="property"
+                v-model="propertyName"
+                data-uitest="sort_by_selector"
+            >
                 <option :value="schema.primary_key_name">
                     {{ schema.primary_key_name }}
                 </option>
@@ -68,5 +72,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

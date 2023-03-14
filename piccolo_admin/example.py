@@ -226,6 +226,16 @@ class NullableColumns(Table):
     uuid = UUID(null=True, default=None)
 
 
+class SortedColumns(Table):
+    id: Serial
+    integer = Integer(
+        null=True,
+        default=None,
+        required=False,
+    )
+    integer = Integer()
+
+
 class BusinessEmailModel(BaseModel):
     email: str
     title: str = "Enquiry"
@@ -301,6 +311,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
     Ticket,
     NullableColumns,
+    SortedColumns,
 )
 
 
@@ -386,6 +397,13 @@ nullable_config = TableConfig(
     menu_group="Testing",
 )
 
+
+sorted_columns_config = TableConfig(
+    table_class=SortedColumns,
+    sort_column=SortedColumns.integer,
+    menu_group="Testing",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -393,6 +411,7 @@ APP = create_admin(
         studio_config,
         ticket_config,
         nullable_config,
+        sorted_columns_config,
     ],
     forms=[
         FormConfig(
