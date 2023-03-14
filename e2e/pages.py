@@ -6,7 +6,9 @@ https://playwright.dev/docs/pom
 
 from playwright.sync_api import Page
 
-from .conftest import BASE_URL, PASSWORD, USERNAME
+from piccolo_admin.example import PASSWORD, USERNAME
+
+from .conftest import BASE_URL
 
 
 class LoginPage:

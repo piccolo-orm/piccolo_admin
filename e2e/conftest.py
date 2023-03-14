@@ -9,8 +9,6 @@ from piccolo_admin.example import set_engine
 HOST = "localhost"
 PORT = 8000
 BASE_URL = f"http://{HOST}:{PORT}"
-USERNAME = "piccolo"
-PASSWORD = "piccolo123"
 
 
 @pytest.fixture(scope="session", autouse=True)
