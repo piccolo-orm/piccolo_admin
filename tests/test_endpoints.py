@@ -603,7 +603,14 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["director", "movie", "nullable_columns", "studio", "ticket"],
+            [
+                "director",
+                "movie",
+                "nullable_columns",
+                "sorted_columns",
+                "studio",
+                "ticket",
+            ],
         )
 
     def test_tables_grouped(self):
@@ -635,7 +642,7 @@ class TestTables(TestCase):
                 "grouped": {
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
-                    "Testing": ["nullable_columns"],
+                    "Testing": ["nullable_columns", "sorted_columns"],
                 },
                 "ungrouped": [],
             },
