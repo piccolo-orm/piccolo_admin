@@ -1,39 +1,10 @@
-import time
-from http.client import HTTPConnection
-from subprocess import PIPE, Popen
+"""
+These are auto generated tests.
 
-import pytest
+https://playwright.dev/docs/codegen
+"""
+
 from playwright.sync_api import Playwright
-
-
-@pytest.fixture
-def dev_server():
-    """
-    Running dev server and Playwright test in parallel.
-    More info https://til.simonwillison.net/pytest/playwright-pytest
-    """
-    process = Popen(
-        ["python", "-m", "piccolo_admin.example"],
-        stdout=PIPE,
-    )
-    retries = 5
-    while retries > 0:
-        conn = HTTPConnection("localhost:8000")
-        try:
-            conn.request("HEAD", "/")
-            response = conn.getresponse()
-            if response is not None:
-                yield process
-                break
-        except ConnectionRefusedError:
-            time.sleep(1)
-            retries -= 1
-
-    if not retries:
-        raise RuntimeError("Failed to start http server")
-    else:
-        process.terminate()
-        process.wait()
 
 
 def test_login_logout(playwright: Playwright, dev_server) -> None:
@@ -144,7 +115,8 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
         "./e2e/upload/piccolo.jpg"
     )
     page.get_by_text(
-        "Piccolo Admin piccolo Back Edit director Name Years Nominated Which years this d"
+        "Piccolo Admin piccolo Back Edit director Name Years Nominated Which "
+        "years this d"
     ).click()
     page.get_by_role("button", name="Save").click()
     page.get_by_role("link", name="Back").click()
