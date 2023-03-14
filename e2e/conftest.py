@@ -19,6 +19,11 @@ def set_db_engine():
 
 
 @pytest.fixture
+def browser_context_args():
+    return {"record_video_dir": "videos/"}
+
+
+@pytest.fixture
 def dev_server():
     """
     Running dev server and Playwright test in parallel.
