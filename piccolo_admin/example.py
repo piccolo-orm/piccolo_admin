@@ -113,6 +113,10 @@ if not USE_S3 and not os.path.exists(MEDIA_ROOT):
     os.mkdir(MEDIA_ROOT)
 
 
+USERNAME = "piccolo"
+PASSWORD = "piccolo123"
+
+
 class Sessions(SessionsBase):
     pass
 
@@ -450,8 +454,8 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
 
     # Create a user for testing login
     user = User(
-        username="piccolo",
-        password="piccolo123",
+        username=USERNAME,
+        password=PASSWORD,
         email="admin@test.com",
         admin=True,
         active=True,
