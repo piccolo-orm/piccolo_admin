@@ -34,6 +34,8 @@ class LoginPage:
         ):
             self.login_button.click()
 
+        self.page.wait_for_url(f"{BASE_URL}/#/")
+
 
 class RowListingPage:
     def __init__(self, page: Page, tablename: str):
