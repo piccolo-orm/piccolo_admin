@@ -48,7 +48,7 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     page.get_by_role("button", name="Apply").click()
     page.get_by_role("button", name="Clear filters").click()
     page.get_by_text("Close").click()
-    page.get_by_role("link", name="Sort").click()
+    page.locator("a[data-uitest=sort_button]").click()
     page.locator('select[name="property"]').select_option("name")
     page.locator('select[name="ordering"]').select_option("ascending")
     page.get_by_role("button", name="Sort").click()

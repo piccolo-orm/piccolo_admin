@@ -228,11 +228,6 @@ class NullableColumns(Table):
 
 class SortedColumns(Table):
     id: Serial
-    integer = Integer(
-        null=True,
-        default=None,
-        required=False,
-    )
     integer = Integer()
 
 

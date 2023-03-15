@@ -17,7 +17,7 @@ def test_add_nullable_columns(page: Page, dev_server):
     login_page.login()
 
     # TODO - find a better solution than this.
-    time.sleep(1)
+    time.sleep(3)
 
     test_page = AddRowPage(
         page=page, tablename=NullableColumns._meta.tablename
