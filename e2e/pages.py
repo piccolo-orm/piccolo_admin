@@ -26,8 +26,13 @@ class LoginPage:
     def login(self):
         self.username_input.fill(USERNAME)
         self.password_input.fill(PASSWORD)
-        self.login_button.click()
-        self.page.wait_for_url(f"{BASE_URL}/#/")
+
+        with self.page.expect_response(
+            lambda response: response.url == f"{BASE_URL}/public/login/"
+            and response.request.method == "POST"
+            and response.status == 200
+        ):
+            self.login_button.click()
 
 
 class RowListingPage:
@@ -66,6 +71,7 @@ class AddRowPage:
         with self.page.expect_response(
             lambda response: response.url
             == f"{BASE_URL}/api/tables/{self.tablename}/"
+            and response.request.method == "POST"
             and response.status == 201
         ):
             self.create_button.click()
