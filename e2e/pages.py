@@ -27,6 +27,7 @@ class LoginPage:
         self.username_input.fill(USERNAME)
         self.password_input.fill(PASSWORD)
         self.login_button.click()
+        self.page.wait_for_url(f"{BASE_URL}/#/")
 
 
 class RowListingPage:
@@ -54,6 +55,7 @@ class RowListingPage:
 class AddRowPage:
     def __init__(self, page: Page, tablename: str):
         self.page = page
+        self.tablename = tablename
         self.url = f"{BASE_URL}/#/{tablename}/add"
         self.create_button = page.locator("button[data-uitest=create_button]")
 
@@ -61,4 +63,9 @@ class AddRowPage:
         self.page.goto(self.url)
 
     def submit_form(self):
-        self.create_button.click()
+        with self.page.expect_response(
+            lambda response: response.url
+            == f"{BASE_URL}/api/tables/{self.tablename}/"
+            and response.status == 201
+        ):
+            self.create_button.click()

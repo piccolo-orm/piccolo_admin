@@ -1,5 +1,3 @@
-import time
-
 from playwright.sync_api import Page
 
 from piccolo_admin.example import SortedColumns
@@ -14,9 +12,6 @@ def test_sort_columns(page: Page, dev_server):
     login_page = LoginPage(page=page)
     login_page.reset()
     login_page.login()
-
-    # TODO - find a better solution than this.
-    time.sleep(1)
 
     test_page = RowListingPage(
         page=page, tablename=SortedColumns._meta.tablename
