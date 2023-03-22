@@ -2,7 +2,7 @@ from playwright.sync_api import Page
 
 from piccolo_admin.example import NullableColumns
 
-from .pages import LoginPage, NullableColumnsTableAdd
+from .pages import AddRowPage, LoginPage
 
 
 def test_add_nullable_columns(page: Page, dev_server):
@@ -14,7 +14,9 @@ def test_add_nullable_columns(page: Page, dev_server):
     login_page.reset()
     login_page.login()
 
-    test_page = NullableColumnsTableAdd(page=page)
+    test_page = AddRowPage(
+        page=page, tablename=NullableColumns._meta.tablename
+    )
     test_page.reset()
     test_page.submit_form()
 
