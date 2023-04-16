@@ -17,6 +17,7 @@
 import axios from "axios"
 import downloadexcel from "vue-json-excel"
 import * as i from "../interfaces"
+import { getOrderByString } from "@/utils"
 
 export default {
     props: ["tableName"],
@@ -29,8 +30,7 @@ export default {
             const params = this.$store.state.filterParams
             const orderBy = this.$store.state.orderBy
             if (orderBy) {
-                let prefix = orderBy.ascending ? "" : "-"
-                params["__order"] = prefix + orderBy.property
+                params["__order"] = getOrderByString(orderBy)
             }
             // Get the row counts:
             const response = await axios.get(
