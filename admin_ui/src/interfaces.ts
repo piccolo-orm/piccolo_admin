@@ -99,11 +99,6 @@ export interface Choices {
 
 /*****************************************************************************/
 
-export interface SchemaOrderBy {
-    column: string
-    ascending: boolean
-}
-
 export interface Schema {
     title: string
     type: string
@@ -116,7 +111,7 @@ export interface Schema {
     visible_fields_options: string[]
     primary_key_name: string
     link_column_name: string
-    order_by: SchemaOrderBy[]
+    order_by: OrderByConfig[]
 }
 
 export interface Properties {
