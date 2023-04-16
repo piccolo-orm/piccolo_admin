@@ -55,6 +55,7 @@
 import { defineComponent } from "vue"
 import Modal from "./Modal.vue"
 import * as i from "../interfaces"
+import { syncQueryParams, getOrderByString } from "@/utils"
 
 export default defineComponent({
     props: {
@@ -76,6 +77,7 @@ export default defineComponent({
             const orderByConfigs = localCopy.filter((i) => i.column)
 
             this.$store.commit("updateOrderBy", orderByConfigs)
+            syncQueryParams({ __order: getOrderByString(orderByConfigs) })
 
             await this.$store.dispatch("fetchRows")
 

@@ -7,19 +7,11 @@ import aboutModalModule from "./modules/aboutModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
 import router from "./router"
-import { getOrderByString } from "./utils"
+import { deserialiseOrderByString, getOrderByString } from "./utils"
 
 Vue.use(Vuex)
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
-
-const syncQueryParams = (query: { [key: string]: string }) => {
-    router.replace({
-        name: "rowListing",
-        // query: { ...this.$store.state.filterParams }
-        query
-    })
-}
 
 export default new Vuex.Store({
     modules: {
@@ -79,7 +71,6 @@ export default new Vuex.Store({
         },
         updateOrderBy(state, config: i.OrderByConfig[]) {
             state.orderBy = config
-            // syncQueryParams({ __order: getOrderByString(config) })
         },
         reset(state) {
             state.orderBy = null
@@ -232,7 +223,17 @@ export default new Vuex.Store({
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit("updateSchema", response.data)
-            context.commit("updateOrderBy", response.data.order_by)
+
+            const orderBy = router.currentRoute.query.__order as string
+            if (orderBy) {
+                context.commit(
+                    "updateOrderBy",
+                    deserialiseOrderByString(orderBy)
+                )
+            } else {
+                context.commit("updateOrderBy", response.data.order_by)
+            }
+
             return response
         },
         async createRow(context, config: i.CreateRow) {
