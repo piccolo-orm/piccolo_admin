@@ -399,7 +399,6 @@ import {
     Schema,
     MediaViewerConfig
 } from "../interfaces"
-import router from "@/router"
 import { deserialiseOrderByString } from "@/utils"
 
 export default Vue.extend({
