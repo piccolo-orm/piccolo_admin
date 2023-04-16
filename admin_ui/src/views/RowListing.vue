@@ -613,7 +613,8 @@ export default Vue.extend({
         "$route.params.tableName": async function () {
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
-            await Promise.all([this.fetchRows(), this.fetchSchema()])
+            await this.fetchSchema()
+            await this.fetchRows()
         },
         "$route.query": async function () {
             this.$store.commit(
