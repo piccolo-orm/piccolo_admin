@@ -1,15 +1,25 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import axios from "axios"
-import * as i from "./interfaces"
 
+import * as i from "./interfaces"
 import aboutModalModule from "./modules/aboutModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
+import router from "./router"
+import { getOrderByString } from "./utils"
 
 Vue.use(Vuex)
 
 const BASE_URL = process.env.VUE_APP_BASE_URI
+
+const syncQueryParams = (query: { [key: string]: string }) => {
+    router.replace({
+        name: "rowListing",
+        // query: { ...this.$store.state.filterParams }
+        query
+    })
+}
 
 export default new Vuex.Store({
     modules: {
@@ -26,10 +36,10 @@ export default new Vuex.Store({
         pageSize: 15,
         rowCount: 0,
         rows: [],
-        schema: undefined,
+        schema: undefined as i.Schema | undefined,
         formSchema: undefined,
         selectedRow: undefined,
-        sortBy: null as i.SortByConfig | null,
+        orderBy: null as i.OrderByConfig[] | null,
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
@@ -67,11 +77,12 @@ export default new Vuex.Store({
         updateUser(state, user) {
             state.user = user
         },
-        updateSortBy(state, config: i.SortByConfig) {
-            state.sortBy = config
+        updateOrderBy(state, config: i.OrderByConfig[]) {
+            state.orderBy = config
+            // syncQueryParams({ __order: getOrderByString(config) })
         },
         reset(state) {
-            state.sortBy = null
+            state.orderBy = null
             state.filterParams = {}
             state.currentPageNumber = 1
             state.rows = null
@@ -141,14 +152,9 @@ export default new Vuex.Store({
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
-            // Sort rows by sort_column if specified:
-            const rowSortResponse = await context.dispatch("fetchSchema")
-            params["__order"] = "-" + rowSortResponse.data.sort_column_name
-
-            const sortBy = context.state.sortBy
-            if (sortBy) {
-                let prefix = sortBy.ascending ? "" : "-"
-                params["__order"] = prefix + sortBy.property
+            const orderByConfigs = context.state.orderBy
+            if (orderByConfigs) {
+                params["__order"] = getOrderByString(orderByConfigs)
             }
 
             // Get the row counts:
@@ -221,12 +227,12 @@ export default new Vuex.Store({
             context.commit("updateSelectedRow", response.data)
             return response
         },
-        async fetchSchema(context) {
-            const tableName = context.state.currentTableName
-            const response = await axios.get(
+        async fetchSchema(context, tableName: string) {
+            const response = await axios.get<i.Schema>(
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit("updateSchema", response.data)
+            context.commit("updateOrderBy", response.data.order_by)
             return response
         },
         async createRow(context, config: i.CreateRow) {

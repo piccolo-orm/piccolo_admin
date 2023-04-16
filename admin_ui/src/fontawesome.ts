@@ -27,6 +27,7 @@ import {
     faLanguage,
     faLayerGroup,
     faLevelUpAlt,
+    faMinus,
     faMoon,
     faPlus,
     faQuestionCircle,
@@ -38,7 +39,7 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
+    faUser
 } from "@fortawesome/free-solid-svg-icons"
 
 library.add(
@@ -67,6 +68,7 @@ library.add(
     faLanguage,
     faLayerGroup,
     faLevelUpAlt,
+    faMinus,
     faMoon,
     faPlus,
     faQuestionCircle,

@@ -351,7 +351,7 @@
                 v-on:close="showAddRow = false"
             />
 
-            <RowSortModal
+            <OrderByModal
                 :schema="schema"
                 :tableName="tableName"
                 v-if="showSortModal"
@@ -390,7 +390,7 @@ import ChangePageSize from "../components/ChangePageSize.vue"
 import MediaViewer from "../components/MediaViewer.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
-import RowSortModal from "../components/RowSortModal.vue"
+import OrderByModal from "../components/OrderByModal.vue"
 import Tooltip from "../components/Tooltip.vue"
 import {
     APIResponseMessage,
@@ -427,7 +427,7 @@ export default Vue.extend({
         MediaViewer,
         Pagination,
         RowFilter,
-        RowSortModal,
+        OrderByModal,
         Tooltip
     },
     computed: {

@@ -27,10 +27,10 @@ export default {
         // Export data as csv from json:
         async fetchExportedRows() {
             const params = this.$store.state.filterParams
-            const sortBy = this.$store.state.sortBy
-            if (sortBy) {
-                let prefix = sortBy.ascending ? "" : "-"
-                params["__order"] = prefix + sortBy.property
+            const orderBy = this.$store.state.orderBy
+            if (orderBy) {
+                let prefix = orderBy.ascending ? "" : "-"
+                params["__order"] = prefix + orderBy.property
             }
             // Get the row counts:
             const response = await axios.get(

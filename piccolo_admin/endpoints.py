@@ -21,7 +21,7 @@ from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
 from piccolo_api.change_password.endpoints import change_password
-from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.endpoints import OrderBy, PiccoloCRUD
 from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
@@ -172,8 +172,8 @@ class TableConfig:
         the edit page. However, if the primary key column is hidden, due to
         ``visible_columns`` or ``exclude_visible_columns``, then we need to
         specify an alternative column to use as the link.
-    :param sort_column:
-        If specified, the rows are sorted by ``sort_column``, otherwise
+    :param order_by:
+        If specified, the rows are sorted by ``order_by``, otherwise
         the default ``primary_key`` column is used to sort the rows.
 
     """
@@ -189,7 +189,7 @@ class TableConfig:
     validators: t.Optional[Validators] = None
     menu_group: t.Optional[str] = None
     link_column: t.Optional[Column] = None
-    sort_column: t.Optional[Column] = None
+    order_by: t.Optional[t.List[OrderBy]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -268,8 +268,10 @@ class TableConfig:
     def get_link_column(self) -> Column:
         return self.link_column or self.table_class._meta.primary_key
 
-    def get_sort_column(self) -> Column:
-        return self.sort_column or self.table_class._meta.primary_key
+    def get_order_by(self) -> t.List[OrderBy]:
+        return self.order_by or [
+            OrderBy(column=self.table_class._meta.primary_key, ascending=True)
+        ]
 
 
 @dataclass
@@ -498,7 +500,7 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
-            sort_column_name = table_config.get_sort_column()._meta.name
+            order_by = table_config.get_order_by()
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
@@ -517,7 +519,7 @@ class AdminRouter(FastAPI):
                         "rich_text_columns": rich_text_columns_names,
                         "media_columns": media_columns_names,
                         "link_column_name": link_column_name,
-                        "sort_column_name": sort_column_name,
+                        "order_by": tuple(i.to_dict() for i in order_by),
                     },
                     validators=validators,
                     hooks=table_config.hooks,

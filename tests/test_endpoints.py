@@ -21,7 +21,12 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.exceptions import HTTPException
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
+from piccolo_admin.endpoints import (
+    OrderBy,
+    TableConfig,
+    create_admin,
+    get_all_tables,
+)
 from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
@@ -154,16 +159,16 @@ class TestTableConfig(TestCase):
         """
         config = TableConfig(
             table_class=Post,
-            sort_column=Post.name,
+            order_by=[OrderBy(Post.name)],
         )
-        self.assertIs(config.get_sort_column(), Post.name)
+        self.assertIs(config.get_order_by()[0].column, Post.name)
 
     def test_sort_column_default(self):
         """
         Make sure the `sort_column` defaults to the primary key.
         """
         config = TableConfig(table_class=Post)
-        self.assertIs(config.get_sort_column(), Post._meta.primary_key)
+        self.assertIs(config.get_order_by()[0].column, Post._meta.primary_key)
 
 
 class TestAdminRouter(TestCase):

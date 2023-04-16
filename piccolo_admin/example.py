@@ -45,11 +45,17 @@ from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
 
-from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
+from piccolo_admin.endpoints import (
+    FormConfig,
+    OrderBy,
+    TableConfig,
+    create_admin,
+)
 from piccolo_admin.example_data import (
     DIRECTORS,
     MOVIE_WORDS,
     MOVIES,
+    SORTED_COLUMNS,
     STUDIOS,
     TICKETS,
 )
@@ -215,6 +221,10 @@ class Ticket(Table):
 
 
 class NullableColumns(Table):
+    """
+    A table used for UI tests.
+    """
+
     id: Serial
     integer = Integer(
         null=True,
@@ -227,8 +237,13 @@ class NullableColumns(Table):
 
 
 class SortedColumns(Table):
+    """
+    A table used for UI tests.
+    """
+
     id: Serial
     integer = Integer()
+    letter = Varchar()
 
 
 class BusinessEmailModel(BaseModel):
@@ -343,7 +358,7 @@ movie_config = TableConfig(
         ),
     ),
     menu_group="Movies",
-    sort_column=Movie.rating,
+    order_by=[OrderBy(Movie.rating, ascending=False)],
 )
 
 director_config = TableConfig(
@@ -395,7 +410,7 @@ nullable_config = TableConfig(
 
 sorted_columns_config = TableConfig(
     table_class=SortedColumns,
-    sort_column=SortedColumns.integer,
+    order_by=[OrderBy(SortedColumns.integer, ascending=True)],
     menu_group="Testing",
 )
 
@@ -459,6 +474,9 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
     Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
     Ticket.insert(*[Ticket(**t) for t in TICKETS]).run_sync()
+    SortedColumns.insert(
+        *[SortedColumns(**s) for s in SORTED_COLUMNS]
+    ).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the

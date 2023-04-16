@@ -1,4 +1,4 @@
-import { Schema } from "@/interfaces"
+import { Schema, OrderByConfig } from "@/interfaces"
 
 export function readableInterval(timeRange: number) {
     if (timeRange === 0) {
@@ -120,4 +120,18 @@ export function convertFormValue(params: {
         value = null
     }
     return value
+}
+
+/**
+ * Converts the OrderByConfig array into a string which can be passed as a GET
+ * parameter to PiccoloCRUD.
+ */
+export function getOrderByString(orderByConfigs: OrderByConfig[]): string {
+    return orderByConfigs
+        .map((orderByConfig) => {
+            return orderByConfig.ascending
+                ? orderByConfig.column
+                : `-${orderByConfig.column}`
+        })
+        .join(",")
 }
