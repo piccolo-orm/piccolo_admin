@@ -399,6 +399,8 @@ import {
     Schema,
     MediaViewerConfig
 } from "../interfaces"
+import router from "@/router"
+import { deserialiseOrderByString } from "@/utils"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -592,6 +594,20 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
+
+            const orderBy = this.$route.query.__order as string
+            console.log(orderBy)
+            if (orderBy) {
+                this.$store.commit(
+                    "updateOrderBy",
+                    deserialiseOrderByString(orderBy)
+                )
+            } else {
+                this.$store.commit(
+                    "updateOrderBy",
+                    (this.schema as Schema).order_by
+                )
+            }
         }
     },
     watch: {
@@ -619,7 +635,8 @@ export default Vue.extend({
             this.$router.currentRoute.query
         )
 
-        await Promise.all([this.fetchRows(), this.fetchSchema()])
+        await this.fetchSchema()
+        await this.fetchRows()
     }
 })
 </script>

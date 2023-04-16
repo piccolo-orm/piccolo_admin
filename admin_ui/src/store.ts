@@ -6,8 +6,7 @@ import * as i from "./interfaces"
 import aboutModalModule from "./modules/aboutModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
-import router from "./router"
-import { deserialiseOrderByString, getOrderByString } from "./utils"
+import { getOrderByString } from "./utils"
 
 Vue.use(Vuex)
 
@@ -223,16 +222,6 @@ export default new Vuex.Store({
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit("updateSchema", response.data)
-
-            const orderBy = router.currentRoute.query.__order as string
-            if (orderBy) {
-                context.commit(
-                    "updateOrderBy",
-                    deserialiseOrderByString(orderBy)
-                )
-            } else {
-                context.commit("updateOrderBy", response.data.order_by)
-            }
 
             return response
         },
