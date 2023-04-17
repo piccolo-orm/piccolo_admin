@@ -73,7 +73,7 @@ export default defineComponent({
     methods: {
         async save() {
             const localCopy: i.OrderByConfig[] = this.localCopy
-            // Remove any which didn't specify a property to sort by.
+            // Remove any which didn't specify a column to sort by.
             const orderByConfigs = localCopy.filter((i) => i.column)
 
             this.$store.commit("updateOrderBy", orderByConfigs)

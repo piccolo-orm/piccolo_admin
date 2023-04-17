@@ -105,6 +105,26 @@
                                                           .title
                                                     : name
                                             }}
+
+                                            <a
+                                                href="#"
+                                                @click.prevent="
+                                                    showSortModal = true
+                                                "
+                                                v-if="orderByMapping[name]"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="caret-up"
+                                                    v-if="
+                                                        orderByMapping[name]
+                                                            .ascending
+                                                    "
+                                                />
+                                                <font-awesome-icon
+                                                    icon="caret-down"
+                                                    v-else
+                                                />
+                                            </a>
                                         </th>
                                         <th></th>
                                     </tr>
@@ -397,7 +417,8 @@ import {
     Choice,
     Choices,
     Schema,
-    MediaViewerConfig
+    MediaViewerConfig,
+    OrderByConfig
 } from "../interfaces"
 import { deserialiseOrderByString } from "@/utils"
 
@@ -440,6 +461,18 @@ export default Vue.extend({
         },
         schema(): Schema {
             return this.$store.state.schema
+        },
+        orderBy(): OrderByConfig[] | null {
+            return this.$store.state.orderBy
+        },
+        orderByMapping(): { [key: string]: OrderByConfig } {
+            const orderBy: OrderByConfig[] | null = this.orderBy
+
+            if (!orderBy) {
+                return {}
+            }
+
+            return Object.fromEntries(orderBy.map((i) => [i.column, i]))
         },
         rowCount() {
             return this.$store.state.rowCount
@@ -487,7 +520,7 @@ export default Vue.extend({
         }
     },
     filters: {
-        abbreviate(value) {
+        abbreviate(value: string | null) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
             if (value === null) {
@@ -502,7 +535,7 @@ export default Vue.extend({
         humanReadable(value) {
             return readableInterval(value)
         },
-        formatJSON(value) {
+        formatJSON(value: string) {
             return JSON.stringify(JSON.parse(value), null, 2)
         }
     },
