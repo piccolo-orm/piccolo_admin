@@ -1,6 +1,31 @@
 Changes
 =======
 
+0.47.0
+------
+
+Multiple columns can now be used for sorting the rows in the UI.
+
+Setting the default order for a table is now possible. For example, if we want
+to order movies by rating:
+
+.. code-block:: python
+
+  create_admin(
+      tables=[
+          TableConfig(
+              Movie,
+              order_by=[
+                  OrderBy(Movie.rating, ascending=False)
+              ]
+          )
+      )
+  )
+
+Thanks to @sinisaos and @sumitsharansatsangi for their help with this.
+
+-------------------------------------------------------------------------------
+
 0.46.0
 ------
 
