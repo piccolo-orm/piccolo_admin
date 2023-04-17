@@ -41,7 +41,10 @@
             </div>
 
             <p id="add_sort_column">
-                <a href="#" @click.prevent="addOrderByColumn"
+                <a
+                    href="#"
+                    @click.prevent="addOrderByColumn"
+                    data-uitest="add_sort_column_button"
                     ><font-awesome-icon icon="plus" /> Add sort column</a
                 >
             </p>

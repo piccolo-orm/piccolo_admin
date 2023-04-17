@@ -22,6 +22,17 @@ def browser_context_args():
 
 
 @pytest.fixture
+def context(context):
+    # We don't need a really long timeout.
+    # The timeout determins how long Playwright waits for a HTML element to
+    # become available.
+    # By default it's 30 seconds, which is way too long when testing an app
+    # locally. 3 seconds is enough.
+    context.set_default_timeout(3000)
+    yield context
+
+
+@pytest.fixture
 def dev_server():
     """
     Running dev server and Playwright test in parallel.

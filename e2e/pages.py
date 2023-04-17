@@ -37,26 +37,48 @@ class LoginPage:
         self.page.wait_for_url(f"{BASE_URL}/#/")
 
 
-class RowListingPage:
-    def __init__(self, page: Page, tablename: str):
-        self.page = page
-        self.url = f"{BASE_URL}/#/{tablename}"
-        self.sort_button = page.locator("a[data-uitest=sort_button]")
+class SortModal:
+    """
+    Part of the :class:`RowListingPage`.
+    """
+
+    def __init__(self, page: Page):
         self.sort_by_selector = page.locator(
             "select[data-uitest=sort_by_selector]"
         )
+        self.add_sort_column_button = page.locator(
+            "a[data-uitest=add_sort_column_button]"
+        )
+        self.column_selects = page.locator("select[name=column]")
 
-    def reset(self):
-        self.page.goto(self.url)
-
-    def open_sort_modal(self):
-        self.sort_button.click()
+    def click_add_sort_column_button(self):
+        self.add_sort_column_button.click()
 
     def get_sort_by_column(self) -> str:
         """
         Returns the name of the column being sorted by.
         """
         return self.sort_by_selector.input_value()
+
+    def get_column_count(self) -> int:
+        """
+        Returns the number of columns being sorted by in the UI.
+        """
+        return self.column_selects.count()
+
+
+class RowListingPage:
+    def __init__(self, page: Page, tablename: str):
+        self.page = page
+        self.url = f"{BASE_URL}/#/{tablename}"
+        self.sort_button = page.locator("a[data-uitest=sort_button]")
+        self.sort_modal = SortModal(page=page)
+
+    def reset(self):
+        self.page.goto(self.url)
+
+    def open_sort_modal(self):
+        self.sort_button.click()
 
 
 class AddRowPage:
