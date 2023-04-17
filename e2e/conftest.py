@@ -27,8 +27,8 @@ def context(context):
     # The timeout determins how long Playwright waits for a HTML element to
     # become available.
     # By default it's 30 seconds, which is way too long when testing an app
-    # locally. 3 seconds is enough.
-    context.set_default_timeout(3000)
+    # locally.
+    context.set_default_timeout(5000)
     yield context
 
 

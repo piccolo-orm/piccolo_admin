@@ -3,10 +3,11 @@ By using pages we can make out test more scalable.
 
 https://playwright.dev/docs/pom
 """
+import typing as t
 
 from playwright.sync_api import Page
 
-from piccolo_admin.example import PASSWORD, USERNAME
+from piccolo_admin.example import PASSWORD, USERNAME, OrderBy
 
 from .conftest import BASE_URL
 
@@ -53,6 +54,9 @@ class SortModal:
         self.remove_column_buttons = page.locator(
             "a[data-uitest=remove_column_button]"
         )
+        self.submit_button = page.locator(
+            "button[data-uitest=sort_form_button]"
+        )
 
     def click_add_sort_column_button(self):
         self.add_sort_column_button.click()
@@ -63,6 +67,9 @@ class SortModal:
         bottom one.
         """
         self.remove_column_buttons.last.click()
+
+    def submit_form(self):
+        self.submit_button.click()
 
     def get_sort_by_column(self) -> str:
         """
@@ -75,6 +82,29 @@ class SortModal:
         Returns the number of columns being sorted by in the UI.
         """
         return self.column_selects.count()
+
+    def populate_form(self, order_by_list: t.List[OrderBy]):
+        """
+        Make sure we have enough column select elements, and populate them.
+        """
+        if len(order_by_list) == 0:
+            return
+
+        column_selects = self.column_selects
+
+        existing_count = column_selects.count()
+
+        delta = len(order_by_list) - existing_count
+        if delta > 0:
+            for _ in range(delta):
+                self.click_remove_column_button()
+        else:
+            for _ in range(delta * -1):
+                self.click_add_sort_column_button()
+
+        for index, order_by in enumerate(order_by_list):
+            column_select = self.column_selects.nth(index)
+            column_select.select_option(order_by.column._meta.name)
 
 
 class RowListingPage:

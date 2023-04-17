@@ -50,7 +50,9 @@
                 >
             </p>
 
-            <button @click.prevent="save">{{ $t("Sort") }}</button>
+            <button @click.prevent="save" data-uitest="sort_form_button">
+                {{ $t("Sort") }}
+            </button>
         </template>
     </Modal>
 </template>
