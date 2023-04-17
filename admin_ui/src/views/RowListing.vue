@@ -804,6 +804,7 @@ div.wrapper {
                 th {
                     font-size: 0.7em;
                     text-transform: uppercase;
+                    white-space: nowrap;
 
                     &:last-child {
                         text-align: right;
