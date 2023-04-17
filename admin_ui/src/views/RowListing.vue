@@ -44,6 +44,7 @@
                             class="button"
                             href="#"
                             v-on:click.prevent="showSortModal = !showSortModal"
+                            data-uitest="sort_button"
                         >
                             <font-awesome-icon icon="sort" />
                             <span>{{ $t("Sort") }}</span>
@@ -104,6 +105,26 @@
                                                           .title
                                                     : name
                                             }}
+
+                                            <a
+                                                href="#"
+                                                @click.prevent="
+                                                    showSortModal = true
+                                                "
+                                                v-if="orderByMapping[name]"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="caret-up"
+                                                    v-if="
+                                                        orderByMapping[name]
+                                                            .ascending
+                                                    "
+                                                />
+                                                <font-awesome-icon
+                                                    icon="caret-down"
+                                                    v-else
+                                                />
+                                            </a>
                                         </th>
                                         <th></th>
                                     </tr>
@@ -350,7 +371,7 @@
                 v-on:close="showAddRow = false"
             />
 
-            <RowSortModal
+            <OrderByModal
                 :schema="schema"
                 :tableName="tableName"
                 v-if="showSortModal"
@@ -389,15 +410,17 @@ import ChangePageSize from "../components/ChangePageSize.vue"
 import MediaViewer from "../components/MediaViewer.vue"
 import Pagination from "../components/Pagination.vue"
 import RowFilter from "../components/RowFilter.vue"
-import RowSortModal from "../components/RowSortModal.vue"
+import OrderByModal from "../components/OrderByModal.vue"
 import Tooltip from "../components/Tooltip.vue"
 import {
     APIResponseMessage,
     Choice,
     Choices,
     Schema,
-    MediaViewerConfig
+    MediaViewerConfig,
+    OrderByConfig
 } from "../interfaces"
+import { deserialiseOrderByString } from "@/utils"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -426,7 +449,7 @@ export default Vue.extend({
         MediaViewer,
         Pagination,
         RowFilter,
-        RowSortModal,
+        OrderByModal,
         Tooltip
     },
     computed: {
@@ -438,6 +461,18 @@ export default Vue.extend({
         },
         schema(): Schema {
             return this.$store.state.schema
+        },
+        orderBy(): OrderByConfig[] | null {
+            return this.$store.state.orderBy
+        },
+        orderByMapping(): { [key: string]: OrderByConfig } {
+            const orderBy: OrderByConfig[] | null = this.orderBy
+
+            if (!orderBy) {
+                return {}
+            }
+
+            return Object.fromEntries(orderBy.map((i) => [i.column, i]))
         },
         rowCount() {
             return this.$store.state.rowCount
@@ -485,7 +520,7 @@ export default Vue.extend({
         }
     },
     filters: {
-        abbreviate(value) {
+        abbreviate(value: string | null) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
             if (value === null) {
@@ -500,7 +535,7 @@ export default Vue.extend({
         humanReadable(value) {
             return readableInterval(value)
         },
-        formatJSON(value) {
+        formatJSON(value: string) {
             return JSON.stringify(JSON.parse(value), null, 2)
         }
     },
@@ -591,13 +626,28 @@ export default Vue.extend({
         },
         async fetchSchema() {
             await this.$store.dispatch("fetchSchema", this.tableName)
+
+            const orderBy = this.$route.query.__order as string
+            console.log(orderBy)
+            if (orderBy) {
+                this.$store.commit(
+                    "updateOrderBy",
+                    deserialiseOrderByString(orderBy)
+                )
+            } else {
+                this.$store.commit(
+                    "updateOrderBy",
+                    (this.schema as Schema).order_by
+                )
+            }
         }
     },
     watch: {
         "$route.params.tableName": async function () {
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
-            await Promise.all([this.fetchRows(), this.fetchSchema()])
+            await this.fetchSchema()
+            await this.fetchRows()
         },
         "$route.query": async function () {
             this.$store.commit(
@@ -618,7 +668,8 @@ export default Vue.extend({
             this.$router.currentRoute.query
         )
 
-        await Promise.all([this.fetchRows(), this.fetchSchema()])
+        await this.fetchSchema()
+        await this.fetchRows()
     }
 })
 </script>
@@ -753,6 +804,7 @@ div.wrapper {
                 th {
                     font-size: 0.7em;
                     text-transform: uppercase;
+                    white-space: nowrap;
 
                     &:last-child {
                         text-align: right;

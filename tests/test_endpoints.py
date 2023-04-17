@@ -21,7 +21,12 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.exceptions import HTTPException
 from starlette.testclient import TestClient
 
-from piccolo_admin.endpoints import TableConfig, create_admin, get_all_tables
+from piccolo_admin.endpoints import (
+    OrderBy,
+    TableConfig,
+    create_admin,
+    get_all_tables,
+)
 from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
@@ -147,6 +152,23 @@ class TestTableConfig(TestCase):
                 table_class=TableB,
                 link_column=TableB.table_a,
             )
+
+    def test_sort_column(self):
+        """
+        Make sure the custom `sort_column` is returned.
+        """
+        config = TableConfig(
+            table_class=Post,
+            order_by=[OrderBy(Post.name)],
+        )
+        self.assertIs(config.get_order_by()[0].column, Post.name)
+
+    def test_sort_column_default(self):
+        """
+        Make sure the `sort_column` defaults to the primary key.
+        """
+        config = TableConfig(table_class=Post)
+        self.assertIs(config.get_order_by()[0].column, Post._meta.primary_key)
 
 
 class TestAdminRouter(TestCase):
@@ -586,7 +608,14 @@ class TestTables(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            ["director", "movie", "nullable_columns", "studio", "ticket"],
+            [
+                "director",
+                "movie",
+                "nullable_columns",
+                "sorted_columns",
+                "studio",
+                "ticket",
+            ],
         )
 
     def test_tables_grouped(self):
@@ -618,7 +647,7 @@ class TestTables(TestCase):
                 "grouped": {
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
-                    "Testing": ["nullable_columns"],
+                    "Testing": ["nullable_columns", "sorted_columns"],
                 },
                 "ungrouped": [],
             },

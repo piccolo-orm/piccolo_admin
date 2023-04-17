@@ -365,6 +365,34 @@ TICKETS: t.List[t.Dict[str, t.Any]] = [
 ]
 
 
+SORTED_COLUMNS: t.List[t.Dict[str, t.Any]] = [
+    {
+        "integer": 5,
+        "letter": "a",
+    },
+    {
+        "integer": 2,
+        "letter": "b",
+    },
+    {
+        "integer": 3,
+        "letter": "c",
+    },
+    {
+        "integer": 7,
+        "letter": "b",
+    },
+    {
+        "integer": 1,
+        "letter": "b",
+    },
+    {
+        "integer": 1,
+        "letter": "a",
+    },
+]
+
+
 # Some random words used to generate fake movie names.
 MOVIE_WORDS: t.List[str] = [
     "Adventure",

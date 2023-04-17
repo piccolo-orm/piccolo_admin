@@ -3,10 +3,11 @@ By using pages we can make out test more scalable.
 
 https://playwright.dev/docs/pom
 """
+import typing as t
 
 from playwright.sync_api import Page
 
-from piccolo_admin.example import PASSWORD, USERNAME
+from piccolo_admin.example import PASSWORD, USERNAME, OrderBy
 
 from .conftest import BASE_URL
 
@@ -37,26 +38,87 @@ class LoginPage:
         self.page.wait_for_url(f"{BASE_URL}/#/")
 
 
-class RowListingPage:
-    def __init__(self, page: Page, tablename: str):
-        self.page = page
-        self.url = f"{BASE_URL}/#/{tablename}"
-        self.sort_button = page.locator("a[data-uitest=sort_button]")
+class SortModal:
+    """
+    Part of the :class:`RowListingPage`.
+    """
+
+    def __init__(self, page: Page):
         self.sort_by_selector = page.locator(
             "select[data-uitest=sort_by_selector]"
         )
+        self.add_sort_column_button = page.locator(
+            "a[data-uitest=add_sort_column_button]"
+        )
+        self.column_selects = page.locator("select[name=column]")
+        self.remove_column_buttons = page.locator(
+            "a[data-uitest=remove_column_button]"
+        )
+        self.submit_button = page.locator(
+            "button[data-uitest=sort_form_button]"
+        )
 
-    def reset(self):
-        self.page.goto(self.url)
+    def click_add_sort_column_button(self):
+        self.add_sort_column_button.click()
 
-    def open_sort_modal(self):
-        self.sort_button.click()
+    def click_remove_column_button(self):
+        """
+        As there are potentially multiple remove column buttons, we click the
+        bottom one.
+        """
+        self.remove_column_buttons.last.click()
+
+    def submit_form(self):
+        self.submit_button.click()
 
     def get_sort_by_column(self) -> str:
         """
         Returns the name of the column being sorted by.
         """
         return self.sort_by_selector.input_value()
+
+    def get_column_count(self) -> int:
+        """
+        Returns the number of columns being sorted by in the UI.
+        """
+        return self.column_selects.count()
+
+    def populate_form(self, order_by_list: t.List[OrderBy]):
+        """
+        Make sure we have enough column select elements, and populate them.
+        """
+        if len(order_by_list) == 0:
+            return
+
+        column_selects = self.column_selects
+
+        existing_count = column_selects.count()
+
+        delta = len(order_by_list) - existing_count
+        if delta > 0:
+            for _ in range(delta):
+                self.click_remove_column_button()
+        else:
+            for _ in range(delta * -1):
+                self.click_add_sort_column_button()
+
+        for index, order_by in enumerate(order_by_list):
+            column_select = self.column_selects.nth(index)
+            column_select.select_option(order_by.column._meta.name)
+
+
+class RowListingPage:
+    def __init__(self, page: Page, tablename: str):
+        self.page = page
+        self.url = f"{BASE_URL}/#/{tablename}"
+        self.sort_button = page.locator("a[data-uitest=sort_button]")
+        self.sort_modal = SortModal(page=page)
+
+    def reset(self):
+        self.page.goto(self.url)
+
+    def open_sort_modal(self):
+        self.sort_button.click()
 
 
 class AddRowPage:
