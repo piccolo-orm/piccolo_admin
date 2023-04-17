@@ -10,6 +10,7 @@
                     <a
                         href="#"
                         title="Remove"
+                        data-uitest="remove_column_button"
                         v-if="index > 0"
                         @click.prevent="removeOrderByColumn(index)"
                         ><font-awesome-icon icon="trash-alt"

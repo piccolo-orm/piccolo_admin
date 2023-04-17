@@ -50,9 +50,19 @@ class SortModal:
             "a[data-uitest=add_sort_column_button]"
         )
         self.column_selects = page.locator("select[name=column]")
+        self.remove_column_buttons = page.locator(
+            "a[data-uitest=remove_column_button]"
+        )
 
     def click_add_sort_column_button(self):
         self.add_sort_column_button.click()
+
+    def click_remove_column_button(self):
+        """
+        As there are potentially multiple remove column buttons, we click the
+        bottom one.
+        """
+        self.remove_column_buttons.last.click()
 
     def get_sort_by_column(self) -> str:
         """

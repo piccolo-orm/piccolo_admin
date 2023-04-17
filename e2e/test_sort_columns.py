@@ -40,3 +40,6 @@ def test_add_sort_column(page: Page, dev_server):
     test_page.open_sort_modal()
     test_page.sort_modal.click_add_sort_column_button()
     assert test_page.sort_modal.get_column_count() == 2
+
+    test_page.sort_modal.click_remove_column_button()
+    assert test_page.sort_modal.get_column_count() == 1
