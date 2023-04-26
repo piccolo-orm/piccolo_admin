@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.48.0
+------
+
+* Improved the type annotations for ``FormConfig``.
+* Fixed a bug with array fields in custom forms (thanks to @sinisaos for
+  fixing this).
+
+-------------------------------------------------------------------------------
+
 0.47.0
 ------
 
