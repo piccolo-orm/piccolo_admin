@@ -44,6 +44,7 @@ from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
+from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
     FormConfig,
@@ -270,7 +271,7 @@ class BookingModel(BaseModel):
         return v
 
 
-def business_email_endpoint(request, data):
+def business_email_endpoint(request: Request, data: BusinessEmailModel) -> str:
     sender = "info@example.com"
     receivers = [data.email]
 
@@ -290,7 +291,7 @@ def business_email_endpoint(request, data):
     return "Email sent"
 
 
-async def booking_endpoint(request, data):
+def booking_endpoint(request: Request, data: BookingModel) -> str:
     """
     Testing that async functions works.
     """
