@@ -274,6 +274,9 @@ class TableConfig:
         ]
 
 
+PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
+
+
 @dataclass
 class FormConfig:
     """
@@ -323,15 +326,20 @@ class FormConfig:
 
     """
 
-    name: str
-    pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable[
-        [Request, BaseModel],
-        t.Union[str, None, t.Coroutine],
-    ]
-    description: t.Optional[str] = None
-
-    def __post_init__(self):
+    def __init__(
+        self,
+        name: str,
+        pydantic_model: t.Type[PydanticModel],
+        endpoint: t.Callable[
+            [Request, PydanticModel],
+            t.Union[str, None, t.Coroutine],
+        ],
+        description: t.Optional[str] = None,
+    ):
+        self.name = name
+        self.pydantic_model = pydantic_model
+        self.endpoint = endpoint
+        self.description = description
         self.slug = self.name.replace(" ", "-").lower()
 
 
