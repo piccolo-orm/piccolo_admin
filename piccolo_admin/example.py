@@ -247,6 +247,18 @@ class SortedColumns(Table):
     letter = Varchar()
 
 
+class CustomFormlModel(BaseModel):
+    boolean_field: bool
+    float_field: float
+    integer_field: int
+    string_field: str
+    list_field: t.List[str]
+    time_field: datetime.time
+    date_field: datetime.date
+    datetime_field: datetime.datetime
+    timedelta_field: datetime.timedelta
+
+
 class BusinessEmailModel(BaseModel):
     email: str
     title: str = "Enquiry"
@@ -312,6 +324,10 @@ def booking_endpoint(request: Request, data: BookingModel) -> str:
         print("Error: unable to send email")
 
     return "Booking complete"
+
+
+def custom_forms_endpoint(request: Request, data: CustomFormlModel) -> str:
+    return "Success"
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
@@ -436,6 +452,12 @@ APP = create_admin(
             pydantic_model=BookingModel,
             endpoint=booking_endpoint,
             description="Make a booking for a customer.",
+        ),
+        FormConfig(
+            name="Custom mega form",
+            pydantic_model=CustomFormlModel,
+            endpoint=custom_forms_endpoint,
+            description="Mega form for testing fields.",
         ),
     ],
     auth_table=User,

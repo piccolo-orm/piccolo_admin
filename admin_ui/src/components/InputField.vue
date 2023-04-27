@@ -54,6 +54,7 @@
                 -->
                 <flat-pickr
                     v-bind:config="{
+                        allowInput: true,
                         enableTime: ['date-time', 'time'].indexOf(format) != -1,
                         disableMobile: true,
                         noCalendar: format == 'time'

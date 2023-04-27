@@ -60,6 +60,57 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     browser.close()
 
 
+def test_custom_mega_form(playwright: Playwright, dev_server) -> None:
+    browser = playwright.chromium.launch()
+    context = browser.new_context(record_video_dir="videos/")
+    # Open new page
+    page = context.new_page()
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
+    page.locator('input[name="username"]').fill("piccolo")
+    page.locator('input[name="username"]').press("Tab")
+    page.locator('input[name="password"]').fill("piccolo123")
+    page.locator('input[name="password"]').press("Enter")
+    page.get_by_role("link", name="Custom mega form").click()
+    page.locator('input[name="float_field"]').click()
+    page.locator('input[name="float_field"]').fill("1.25")
+    page.locator('input[name="float_field"]').press("Tab")
+    page.get_by_role("spinbutton").fill("1")
+    page.get_by_role("spinbutton").press("Tab")
+    page.locator('input[name="string_field"]').fill("abc")
+    page.locator('input[name="string_field"]').press("Tab")
+    page.get_by_role("link", name="Add Add").press("Enter")
+    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
+        "textbox"
+    ).click()
+    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
+        "textbox"
+    ).fill("abc")
+    page.locator('input[name="time_field"]').click()
+    page.locator('input[name="time_field"]').press("Enter")
+    page.locator('input[name="time_field"]').click()
+    page.get_by_role("spinbutton", name="Hour").click()
+    page.get_by_role("spinbutton", name="Hour").press("Enter")
+    page.locator('input[name="time_field"]').fill("12:00")
+    page.locator('input[name="date_field"]').click()
+    page.get_by_role("spinbutton", name="Year").click()
+    page.get_by_role("spinbutton", name="Year").fill("2023")
+    page.locator('input[name="date_field"]').fill("2023-04-27")
+    page.locator("span").filter(has_text="27").nth(1).click()
+    page.locator('input[name="datetime_field"]').click()
+    page.get_by_role("spinbutton", name="Year").click()
+    page.get_by_role("spinbutton", name="Year").fill("2023")
+    page.locator("span").filter(has_text="27").nth(3).click()
+    page.get_by_role("spinbutton", name="Hour").press("Enter")
+    page.locator(".segment > select").first.select_option("1")
+    page.get_by_role("button", name="Submit").click()
+    page.get_by_role("link", name="piccolo", exact=True).click()
+    page.once("dialog", lambda dialog: dialog.dismiss())
+    page.get_by_role("link", name="Log out", exact=True).click()
+    # ---------------------
+    context.close()
+    browser.close()
+
+
 def test_custom_form(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context(record_video_dir="videos/")

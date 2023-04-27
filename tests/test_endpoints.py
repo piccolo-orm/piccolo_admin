@@ -280,6 +280,11 @@ class TestForms(TestCase):
                     "slug": "booking-form",
                     "description": "Make a booking for a customer.",
                 },
+                {
+                    "name": "Custom mega form",
+                    "slug": "custom-mega-form",
+                    "description": "Mega form for testing fields.",
+                },
             ],
         )
 
@@ -801,7 +806,6 @@ class TestTranslations(TestCase):
 
 
 class TestHooks(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
@@ -874,7 +878,6 @@ class TestHooks(TestCase):
 
 
 class TestValidators(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
