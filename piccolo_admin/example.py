@@ -327,7 +327,7 @@ def booking_endpoint(request: Request, data: BookingModel) -> str:
 
 
 def custom_forms_endpoint(request: Request, data: CustomFormlModel) -> str:
-    return "Success"
+    return "Successfully submitted form"
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (

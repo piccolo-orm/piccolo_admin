@@ -103,6 +103,7 @@ def test_custom_mega_form(playwright: Playwright, dev_server) -> None:
     page.get_by_role("spinbutton", name="Hour").press("Enter")
     page.locator(".segment > select").first.select_option("1")
     page.get_by_role("button", name="Submit").click()
+    page.get_by_role("p", name="Successfully submitted form")
     page.get_by_role("link", name="piccolo", exact=True).click()
     page.once("dialog", lambda dialog: dialog.dismiss())
     page.get_by_role("link", name="Log out", exact=True).click()
