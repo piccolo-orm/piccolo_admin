@@ -42,10 +42,10 @@
             <span style="float: right">
                 <font-awesome-icon
                     icon="angle-down"
-                    title="Show forms"
+                    title="Show links"
                     v-if="isHiddenLinks"
                 />
-                <font-awesome-icon icon="angle-up" title="Hide forms" v-else />
+                <font-awesome-icon icon="angle-up" title="Hide links" v-else />
             </span>
         </p>
         <LinksNav v-show="!isHiddenLinks" />
