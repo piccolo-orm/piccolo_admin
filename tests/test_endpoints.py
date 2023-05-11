@@ -411,6 +411,30 @@ class TestForms(TestCase):
 
         self.assertEqual(response.status_code, 422)
 
+    def test_sidebar_links(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+        #######################################################################
+        # Get sidebar links
+
+        response = client.get("/api/links/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"Top Movies": "movie?__order=-box_office"},
+        )
+
 
 class TestMediaStorage(TestCase):
     credentials = {"username": "Bob", "password": "bob123"}
@@ -801,7 +825,6 @@ class TestTranslations(TestCase):
 
 
 class TestHooks(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
@@ -874,7 +897,6 @@ class TestHooks(TestCase):
 
 
 class TestValidators(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):

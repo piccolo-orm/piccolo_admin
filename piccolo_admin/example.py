@@ -440,6 +440,9 @@ APP = create_admin(
     ],
     auth_table=User,
     session_table=Sessions,
+    sidebar_links=[
+        ("Top Movies", "movie?__order=-box_office"),
+    ],
 )
 
 

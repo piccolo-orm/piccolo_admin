@@ -401,6 +401,7 @@ class AdminRouter(FastAPI):
         translations: t.List[Translation] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
+        sidebar_links: t.List[t.Tuple[str, str]] = [],
     ) -> None:
         super().__init__(
             title=site_name,
@@ -484,6 +485,7 @@ class AdminRouter(FastAPI):
         self.site_name = site_name
         self.forms = forms
         self.read_only = read_only
+        self.sidebar_links = sidebar_links
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -553,6 +555,13 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             response_model=GroupedTableNamesResponseModel,
             tags=["Tables"],
+        )
+
+        private_app.add_api_route(
+            path="/links/",
+            endpoint=self.get_sidebar_links,  # type: ignore
+            methods=["GET"],
+            tags=["Links"],
         )
 
         private_app.add_api_route(
@@ -922,6 +931,14 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    def get_sidebar_links(self) -> t.Dict[str, str]:
+        """
+        Returns the custom links registered with the admin.
+        """
+        return {k: v for k, v in self.sidebar_links}
+
+    ###########################################################################
+
     def get_table_list(self) -> t.List[str]:
         """
         Returns the list of table groups registered with the admin.
@@ -1034,6 +1051,7 @@ def create_admin(
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
+    sidebar_links: t.List[t.Tuple[str, str]] = [],
 ):
     """
     :param tables:
@@ -1136,6 +1154,8 @@ def create_admin(
         If ``True``, debug mode is enabled. Any unhandled exceptions will
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
+    :param sidebar_links:
+        Custom user links in the navigation sidebar.
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -1181,4 +1201,5 @@ def create_admin(
         translations=translations,
         allowed_hosts=allowed_hosts,
         debug=debug,
+        sidebar_links=sidebar_links,
     )
