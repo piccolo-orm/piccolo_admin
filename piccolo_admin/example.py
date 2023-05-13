@@ -47,6 +47,7 @@ from pydantic import BaseModel, validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
+    ChartConfig,
     FormConfig,
     OrderBy,
     TableConfig,
@@ -440,6 +441,22 @@ APP = create_admin(
     ],
     auth_table=User,
     session_table=Sessions,
+    charts=[
+        ChartConfig(
+            title="Movie count",
+            chart_type="Pie",
+            data=[
+                ["George Lucas", 4],
+                ["Peter Jackson", 6],
+                ["Ron Howard", 1],
+            ],
+        ),
+        ChartConfig(
+            title="Director gender",
+            chart_type="Column",
+            data=[["Male", 7], ["Female", 3]],
+        ),
+    ],
 )
 
 

@@ -4,6 +4,8 @@ import router from "./router"
 import store from "./store"
 import i18n from "./i18n"
 import "./fontawesome"
+import Chartkick from 'vue-chartkick'
+import Highcharts from 'highcharts'
 
 /*****************************************************************************/
 
@@ -30,7 +32,7 @@ axios.defaults.transformResponse = [
         if (typeof data === "string") {
             try {
                 data = JSONBig.parse(data)
-            } catch (e) {}
+            } catch (e) { }
         }
         return data
     }
@@ -45,6 +47,7 @@ Vue.filter("readable", function (value) {
 /*****************************************************************************/
 
 Vue.config.productionTip = false
+Vue.use(Chartkick.use(Highcharts))
 
 new Vue({
     i18n,

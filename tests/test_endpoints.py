@@ -801,7 +801,6 @@ class TestTranslations(TestCase):
 
 
 class TestHooks(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
@@ -874,7 +873,6 @@ class TestHooks(TestCase):
 
 
 class TestValidators(TestCase):
-
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
@@ -930,3 +928,84 @@ class TestValidators(TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, b'{"detail":"Not allowed!"}')
+
+
+class TestCharts(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        SessionsBase.alter().drop_table().run_sync()
+        BaseUser.alter().drop_table().run_sync()
+
+    def test_charts(self):
+        """
+        Make sure the charts listing can be retrieved.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        #######################################################################
+        # List all forms
+
+        response = client.get("/api/charts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "title": "Movie count",
+                    "chart_slug": "movie-count",
+                    "chart_type": "Pie",
+                    "data": [
+                        ["George Lucas", 4],
+                        ["Peter Jackson", 6],
+                        ["Ron Howard", 1],
+                    ],
+                },
+                {
+                    "title": "Director gender",
+                    "chart_slug": "director-gender",
+                    "chart_type": "Column",
+                    "data": [["Male", 7], ["Female", 3]],
+                },
+            ],
+        )
+
+        #######################################################################
+        # Now get the ChartConfig for a single chart
+
+        response = client.get("/api/charts/movie-count/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "title": "Movie count",
+                "chart_slug": "movie-count",
+                "chart_type": "Pie",
+                "data": [
+                    ["George Lucas", 4],
+                    ["Peter Jackson", 6],
+                    ["Ron Howard", 1],
+                ],
+            },
+        )
+        response = client.get("/api/charts/no-such-chart/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content, b'{"detail":"No such chart found"}')

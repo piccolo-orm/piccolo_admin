@@ -8,6 +8,7 @@ import Login from './views/Login.vue'
 import ChangePassword from './views/ChangePassword.vue'
 import RowListing from './views/RowListing.vue'
 import AddForm from './views/AddForm.vue'
+import GetCharts from './views/GetCharts.vue'
 
 Vue.use(Router)
 
@@ -35,6 +36,12 @@ export default new Router({
             path: '/forms/:formSlug/',
             name: 'addForm',
             component: AddForm,
+            props: true
+        },
+        {
+            path: '/charts/:chartSlug/',
+            name: 'getCharts',
+            component: GetCharts,
             props: true
         },
         {

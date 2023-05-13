@@ -46,6 +46,7 @@ Table of Contents
    ../help_text/index
    ../table_config/index
    ../custom_forms/index
+   ../charts/index
    ../actions/index
    ../media_storage/index
    ../internationalization/index

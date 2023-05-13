@@ -349,6 +349,60 @@ class FormConfigResponseModel(BaseModel):
     description: t.Optional[str] = None
 
 
+@dataclass
+class ChartConfig:
+    """
+    Used to specify charts, which are passed into ``create_admin``.
+
+    :param title:
+        This will be displayed in the UI in the sidebar.
+    :param chart_slug:
+        This determines which chart will be displayed.
+    :param chart_type:
+        Available chart types. There are five types: ``Pie``, ``Line``,
+        ``Column``, ``Bar`` and ``Area``.
+    :param data:
+        The data to be passed to the admin ui. The data format must be
+        a ``list of lists`` (eg. ``[["Male", 7], ["Female", 3]]``).
+
+    Here's a full example:
+
+    .. code-block:: python
+
+        async def director_movie_count():
+            movies = await Movie.select(
+                Movie.director.name.as_alias("director"),
+                Count(Movie.id)
+            ).group_by(
+                Movie.director
+            )
+            # Flatten the response so it's a list of lists
+            # like [['George Lucas', 3], ...]
+            return [[i['director'], i['count']] for i in movies]
+
+        director_chart = ChartConfig(
+            title='Movie count',
+            chart_type="Pie", # or Bar or Line etc.
+            data=director_movie_count,
+
+        create_admin(charts=[director_chart])
+
+    """
+
+    def __init__(self, title: str, chart_type: str, data: t.List[t.Any]):
+        self.title = title
+        self.chart_slug = self.title.replace(" ", "-").lower()
+        self.chart_type = chart_type
+        self.data = data
+
+
+class ChartConfigResponseModel(BaseModel):
+    title: str
+    chart_slug: str
+    chart_type: str
+    data: t.List[t.Any]
+
+
 def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
@@ -401,6 +455,7 @@ class AdminRouter(FastAPI):
         translations: t.List[Translation] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
+        charts: t.List[ChartConfig] = [],
     ) -> None:
         super().__init__(
             title=site_name,
@@ -484,6 +539,10 @@ class AdminRouter(FastAPI):
         self.site_name = site_name
         self.forms = forms
         self.read_only = read_only
+        self.charts = charts
+        self.chart_config_map = {
+            chart.chart_slug: chart for chart in self.charts
+        }
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -582,6 +641,22 @@ class AdminRouter(FastAPI):
             endpoint=self.post_single_form,  # type: ignore
             methods=["POST"],
             tags=["Forms"],
+        )
+
+        private_app.add_api_route(
+            path="/charts/",
+            endpoint=self.get_charts,  # type: ignore
+            methods=["GET"],
+            tags=["Charts"],
+            response_model=t.List[ChartConfigResponseModel],
+        )
+
+        private_app.add_api_route(
+            path="/charts/{chart_slug:str}/",
+            endpoint=self.get_single_chart,  # type: ignore
+            methods=["GET"],
+            tags=["Charts"],
+            response_model=ChartConfigResponseModel,
         )
 
         private_app.add_api_route(
@@ -837,6 +912,38 @@ class AdminRouter(FastAPI):
         )
 
     ###########################################################################
+    # Custom charts
+
+    def get_charts(self) -> t.List[ChartConfigResponseModel]:
+        """
+        Returns  all charts registered with the admin.
+        """
+        return [
+            ChartConfigResponseModel(
+                title=chart.title,
+                chart_slug=chart.chart_slug,
+                chart_type=chart.chart_type,
+                data=chart.data,
+            )
+            for chart in self.charts
+        ]
+
+    def get_single_chart(self, chart_slug: str) -> ChartConfigResponseModel:
+        """
+        Returns single chart.
+        """
+        chart = self.chart_config_map.get(chart_slug, None)
+        if chart is None:
+            raise HTTPException(status_code=404, detail="No such chart found")
+        else:
+            return ChartConfigResponseModel(
+                title=chart.title,
+                chart_slug=chart.chart_slug,
+                chart_type=chart.chart_type,
+                data=chart.data,
+            )
+
+    ###########################################################################
     # Custom forms
 
     def get_forms(self) -> t.List[FormConfigResponseModel]:
@@ -845,7 +952,9 @@ class AdminRouter(FastAPI):
         """
         return [
             FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description
+                name=form.name,
+                slug=form.slug,
+                description=form.description,
             )
             for form in self.forms
         ]
@@ -1034,6 +1143,7 @@ def create_admin(
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
+    charts: t.List[ChartConfig] = [],
 ):
     """
     :param tables:
@@ -1136,6 +1246,10 @@ def create_admin(
         If ``True``, debug mode is enabled. Any unhandled exceptions will
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
+    :param charts:
+        For each :class:`ChartConfig <piccolo_admin.endpoints.ChartConfig>`
+        specified, a chart will automatically be rendered in the user interface,
+        accessible via the sidebar.
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -1181,4 +1295,5 @@ def create_admin(
         translations=translations,
         allowed_hosts=allowed_hosts,
         debug=debug,
+        charts=charts,
     )

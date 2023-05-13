@@ -34,6 +34,7 @@ export default new Vuex.Store({
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
+        chartConfigs: [] as i.ChartConfig[],
         user: undefined,
         loadingStatus: false
     },
@@ -61,6 +62,9 @@ export default new Vuex.Store({
         },
         updateFormSchema(state, formSchema) {
             state.formSchema = formSchema
+        },
+        updateChartConfigs(state, value) {
+            state.chartConfigs = value
         },
         updateApiResponseMessage(state, message: i.APIResponseMessage) {
             state.apiResponseMessage = message
@@ -111,6 +115,17 @@ export default new Vuex.Store({
                 `${BASE_URL}forms/${formSlug}/schema/`
             )
             context.commit("updateFormSchema", response.data)
+            return response
+        },
+        async fetchChartConfigs(context) {
+            const response = await axios.get(`${BASE_URL}charts/`)
+            context.commit("updateChartConfigs", response.data)
+        },
+        async fetchChartConfig(context, chartSlug: string) {
+            const response = await axios.get(
+                `${BASE_URL}charts/${chartSlug}/`
+            )
+            context.commit("updateChartConfigs", response.data)
             return response
         },
 
