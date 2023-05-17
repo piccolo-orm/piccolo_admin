@@ -7,8 +7,14 @@
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <input name="password" type="password" v-model="password" />
-
+                <input
+                    name="password"
+                    v-model="password"
+                    v-bind:type="showPassword ? 'text' : 'password'"
+                />
+                <span class="viewer" v-on:click="showPassword = !showPassword">
+                    <font-awesome-icon icon="eye" />
+                </span>
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -19,10 +25,11 @@
 import axios from "axios"
 
 export default {
-    data: function () {
+    data() {
         return {
             username: "",
-            password: ""
+            password: "",
+            showPassword: false
         }
     },
     computed: {
@@ -65,13 +72,25 @@ export default {
 div#login {
     div.inner {
         margin: 0 auto;
-        max-width: 30rem;
-        padding: 0 0.5rem;
+        padding: 3rem;
+        margin-top: 5rem;
+        width: 20rem;
+        max-width: 60%;
+        box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.5);
 
         h1 {
             margin-top: 0;
-            padding-top: 4rem;
             text-align: center;
+            border-bottom-color: aqua;
+        }
+
+        .viewer {
+            float: right;
+            margin-top: -2.1rem;
+            margin-right: 0.4rem;
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
         }
     }
 }
