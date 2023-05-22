@@ -401,7 +401,7 @@ class AdminRouter(FastAPI):
         translations: t.List[Translation] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
-        sidebar_links: t.List[t.Tuple[str, str]] = [],
+        sidebar_links: t.Dict[str, str] = {},
     ) -> None:
         super().__init__(
             title=site_name,
@@ -935,7 +935,7 @@ class AdminRouter(FastAPI):
         """
         Returns the custom links registered with the admin.
         """
-        return {k: v for k, v in self.sidebar_links}
+        return self.sidebar_links
 
     ###########################################################################
 
@@ -1051,7 +1051,7 @@ def create_admin(
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
-    sidebar_links: t.List[t.Tuple[str, str]] = [],
+    sidebar_links: t.Dict[str, str] = {},
 ):
     """
     :param tables:
@@ -1155,7 +1155,18 @@ def create_admin(
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
     :param sidebar_links:
-        Custom user links in the navigation sidebar.
+        Custom user links in the navigation sidebar. For example,
+        we can pass a dictionary, where we provide a quick way to
+        get to specific pages with pre-applied filters/sorting.
+
+        Here is full example:
+
+            create_admin(
+                tables=[Movie, Director],
+                sidebar_links={
+                    "Top Movies": "movie?__order=-box_office",
+                },
+            )
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
