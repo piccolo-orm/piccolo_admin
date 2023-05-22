@@ -13,7 +13,8 @@
                     v-bind:type="showPassword ? 'text' : 'password'"
                 />
                 <span class="viewer" v-on:click="showPassword = !showPassword">
-                    <font-awesome-icon icon="eye" />
+                    <font-awesome-icon v-if="!showPassword" icon="eye" />
+                    <font-awesome-icon v-else icon="eye-slash" />
                 </span>
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
@@ -72,16 +73,15 @@ export default {
 div#login {
     div.inner {
         margin: 0 auto;
-        padding: 3rem;
-        margin-top: 5rem;
-        width: 20rem;
-        max-width: 60%;
-        box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.5);
+        max-width: 30rem;
+        padding: 0 0.5rem;
 
         h1 {
             margin-top: 0;
+            padding-top: 4rem;
             text-align: center;
-            border-bottom-color: aqua;
+            text-underline-offset: 10px;
+            text-decoration: underline 3px solid #009dff;
         }
 
         .viewer {
