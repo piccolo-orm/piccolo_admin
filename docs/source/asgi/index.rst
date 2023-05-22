@@ -32,6 +32,21 @@ Now you can go to `<localhost:8000/admin>`_ and log in as an admin user
 
 -------------------------------------------------------------------------------
 
+Sidebar links
+-------------
+
+We can specify custom links in the navigation sidebar. This feature is 
+useful if we want to enable quick way to get specific pages with 
+pre-applied filters/sorts.
+
+.. image:: ./images/sidebar_links.png
+
+Example code:
+
+.. literalinclude:: ./examples/sidebar_links/app.py
+
+-------------------------------------------------------------------------------
+
 Source
 ------
 

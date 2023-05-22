@@ -1159,7 +1159,9 @@ def create_admin(
         we can pass a dictionary, where we provide a quick way to
         get to specific pages with pre-applied filters/sorting.
 
-        Here is full example:
+        Here is full example::
+
+            from piccolo_admin.endpoints import create_admin
 
             create_admin(
                 tables=[Movie, Director],
