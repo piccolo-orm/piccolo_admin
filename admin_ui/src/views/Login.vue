@@ -13,8 +13,16 @@
                     v-bind:type="showPassword ? 'text' : 'password'"
                 />
                 <span class="viewer" v-on:click="showPassword = !showPassword">
-                    <font-awesome-icon v-if="!showPassword" icon="eye" />
-                    <font-awesome-icon v-else icon="eye-slash" />
+                    <font-awesome-icon
+                        v-if="!showPassword"
+                        icon="eye"
+                        title="Show password"
+                    />
+                    <font-awesome-icon
+                        v-else
+                        icon="eye-slash"
+                        title="Hide password"
+                    />
                 </span>
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
