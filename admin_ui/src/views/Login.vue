@@ -1,29 +1,33 @@
 <template>
     <div id="login">
         <div class="inner">
-            <h1>{{ siteName }}</h1>
+            <div class="heading">
+                <h1>{{ siteName }}</h1>
+            </div>
             <form v-on:submit.prevent="login">
                 <label>{{ $t("Username") }}</label>
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <input
-                    name="password"
-                    v-model="password"
-                    v-bind:type="showPassword ? 'text' : 'password'"
-                />
-                <span class="viewer" v-on:click="showPassword = !showPassword">
-                    <font-awesome-icon
-                        v-if="!showPassword"
-                        icon="eye"
-                        title="Show password"
+                <div class="password_wrapper">
+                    <input
+                        name="password"
+                        v-model="password"
+                        v-bind:type="showPassword ? 'text' : 'password'"
                     />
-                    <font-awesome-icon
-                        v-else
-                        icon="eye-slash"
-                        title="Hide password"
-                    />
-                </span>
+                    <span class="viewer" v-if="password" v-on:click="showPassword = !showPassword">
+                        <font-awesome-icon
+                            v-if="!showPassword"
+                            icon="eye"
+                            title="Show password"
+                        />
+                        <font-awesome-icon
+                            v-else
+                            icon="eye-slash"
+                            title="Hide password"
+                        />
+                    </span>
+                </div>
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -84,21 +88,30 @@ div#login {
         max-width: 30rem;
         padding: 0 0.5rem;
 
-        h1 {
-            margin-top: 0;
-            padding-top: 4rem;
+        div.heading {
             text-align: center;
-            text-underline-offset: 10px;
-            text-decoration: underline 3px solid #009dff;
+
+            h1 {
+                margin-top: 0;
+                padding-top: 4rem;
+                text-align: center;
+                border-bottom: 3px solid #009dff;
+                display: inline-block;
+            }
         }
 
-        .viewer {
-            float: right;
-            margin-top: -2.1rem;
-            margin-right: 0.4rem;
+
+        div.password_wrapper {
             position: relative;
-            z-index: 1;
-            cursor: pointer;
+
+            span.viewer {
+                color: #878787;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                z-index: 1;
+                cursor: pointer;
+            }
         }
     }
 }
