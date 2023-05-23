@@ -1155,18 +1155,21 @@ def create_admin(
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
     :param sidebar_links:
-        Custom user links in the navigation sidebar. For example,
-        we can pass a dictionary, where we provide a quick way to
-        get to specific pages with pre-applied filters/sorting.
+        Custom links in the navigation sidebar. Example uses cases:
 
-        Here is full example::
+        * Providing a quick way to get to specific pages with pre-applied
+          filters/sorting.
+        * Linking to relative external websites.
+
+        Here's a full example::
 
             from piccolo_admin.endpoints import create_admin
 
             create_admin(
                 tables=[Movie, Director],
                 sidebar_links={
-                    "Top Movies": "movie?__order=-box_office",
+                    "Top Movies": "/admin/#/movie?__order=-box_office",
+                    "Google": "https://google.com"
                 },
             )
 

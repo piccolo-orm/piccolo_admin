@@ -432,7 +432,10 @@ class TestForms(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            {"Top Movies": "movie?__order=-box_office"},
+            {
+                "Top Movies": "/#/movie?__order=-box_office",
+                "Google": "https://google.com",
+            },
         )
 
 

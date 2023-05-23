@@ -52,7 +52,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue"
 import TableNav from "./TableNav.vue"
 import FormNav from "./FormNav.vue"

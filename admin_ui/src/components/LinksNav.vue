@@ -1,10 +1,10 @@
 <template>
     <ul>
-        <li v-bind:key="key" v-for="(value, key) in customLinks">
-            <router-link :to="value" class="subtle">
+        <li v-bind:key="title" v-for="(url, title) in customLinks">
+            <a :href="url" class="subtle">
                 <font-awesome-icon icon="level-up-alt" class="rotated90" />
-                <span>{{ key | readable }}</span>
-            </router-link>
+                <span>{{ title }}</span>
+            </a>
         </li>
     </ul>
 </template>

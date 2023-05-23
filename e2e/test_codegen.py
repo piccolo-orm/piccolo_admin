@@ -216,10 +216,10 @@ def test_custom_links(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
     page.get_by_role("link", name="Top Movies").click()
-    page.get_by_role("link", name="7", exact=True).click()
-    page.get_by_role("link", name="piccolo", exact=True).click()
+    page.get_by_role("link", name="7").click()
+    page.get_by_role("link", name="piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_role("link", name="Log out", exact=True).click()
+    page.get_by_role("link", name="Log out").click()
     # ---------------------
     context.close()
     browser.close()
