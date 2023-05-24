@@ -2,7 +2,9 @@
     <div id="change_password">
         <div class="inner">
             <BackButton />
-            <h1>{{ $t("Change password") }}</h1>
+            <div class="heading">
+                <h1>{{ $t("Change password") }}</h1>
+            </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
                 <input
@@ -19,11 +21,29 @@
                 />
 
                 <label>{{ $t("New password confirmation") }}</label>
-                <input
-                    name="confirm_new_password"
-                    type="password"
-                    v-model="confirmNewPassword"
-                />
+                <div class="password_wrapper">
+                    <input
+                        name="confirm_new_password"
+                        v-model="confirmNewPassword"
+                        v-bind:type="showPassword ? 'text' : 'password'"
+                    />
+                    <span
+                        class="viewer"
+                        v-if="confirmNewPassword"
+                        v-on:click="showPassword = !showPassword"
+                    >
+                        <font-awesome-icon
+                            v-if="!showPassword"
+                            icon="eye"
+                            title="Show password"
+                        />
+                        <font-awesome-icon
+                            v-else
+                            icon="eye-slash"
+                            title="Hide password"
+                        />
+                    </span>
+                </div>
 
                 <button>{{ $t("Change password") }}</button>
             </form>
@@ -40,7 +60,8 @@ export default {
         return {
             currentPassword: "",
             newPassword: "",
-            confirmNewPassword: ""
+            confirmNewPassword: "",
+            showPassword: false
         }
     },
     components: {
@@ -84,10 +105,29 @@ div#change_password {
         max-width: 30rem;
         padding: 2rem 2rem;
 
-        h1 {
-            margin-top: 0;
-            padding-top: 0.5rem;
+        div.heading {
             text-align: center;
+
+            h1 {
+                margin-top: 0;
+                padding-top: 0.5rem;
+                text-align: center;
+                border-bottom: 3px solid #009dff;
+                display: inline-block;
+            }
+        }
+
+        div.password_wrapper {
+            position: relative;
+
+            span.viewer {
+                color: #878787;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                z-index: 1;
+                cursor: pointer;
+            }
         }
     }
 }

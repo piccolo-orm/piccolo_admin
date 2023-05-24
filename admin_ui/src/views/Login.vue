@@ -15,7 +15,11 @@
                         v-model="password"
                         v-bind:type="showPassword ? 'text' : 'password'"
                     />
-                    <span class="viewer" v-if="password" v-on:click="showPassword = !showPassword">
+                    <span
+                        class="viewer"
+                        v-if="password"
+                        v-on:click="showPassword = !showPassword"
+                    >
                         <font-awesome-icon
                             v-if="!showPassword"
                             icon="eye"
@@ -99,7 +103,6 @@ div#login {
                 display: inline-block;
             }
         }
-
 
         div.password_wrapper {
             position: relative;
