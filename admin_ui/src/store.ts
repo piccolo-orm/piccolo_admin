@@ -35,7 +35,8 @@ export default new Vuex.Store({
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
         user: undefined,
-        loadingStatus: false
+        loadingStatus: false,
+        customLinks: {}
     },
     mutations: {
         updateTableGroups(state, value) {
@@ -95,6 +96,9 @@ export default new Vuex.Store({
         },
         updateLoadingStatus(state, value) {
             state.loadingStatus = value
+        },
+        updateCustomLinks(state, value) {
+            state.customLinks = value
         }
     },
     actions: {
@@ -123,6 +127,10 @@ export default new Vuex.Store({
         async fetchTableGroups(context) {
             const response = await axios.get(`${BASE_URL}tables/grouped/`)
             context.commit("updateTableGroups", response.data)
+        },
+        async fetchCustomLinks(context) {
+            const response = await axios.get(`${BASE_URL}links/`)
+            context.commit("updateCustomLinks", response.data)
         },
         async fetchCount(context) {
             const tableName = context.state.currentTableName
