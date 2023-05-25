@@ -16,6 +16,8 @@ specific pages in the admin, or to external websites. For example:
       ...
   )
 
+Thanks to @sinisaos for adding this.
+
 -------------------------------------------------------------------------------
 
 0.48.0
