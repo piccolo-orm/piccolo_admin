@@ -7,33 +7,69 @@
             </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
-                <input
-                    name="current_password"
-                    type="password"
-                    v-model="currentPassword"
-                />
+                <div class="password_wrapper">
+                    <input
+                        name="current_password"
+                        v-model="currentPassword"
+                        v-bind:type="showCurrentPassword ? 'text' : 'password'"
+                    />
+                    <span
+                        class="viewer"
+                        v-if="currentPassword"
+                        v-on:click="showCurrentPassword = !showCurrentPassword"
+                    >
+                        <font-awesome-icon
+                            v-if="!showCurrentPassword"
+                            icon="eye"
+                            title="Show password"
+                        />
+                        <font-awesome-icon
+                            v-else
+                            icon="eye-slash"
+                            title="Hide password"
+                        />
+                    </span>
+                </div>
 
                 <label>{{ $t("New password") }}</label>
-                <input
-                    name="new_password"
-                    type="password"
-                    v-model="newPassword"
-                />
+                <div class="password_wrapper">
+                    <input
+                        name="new_password"
+                        v-model="newPassword"
+                        v-bind:type="showNewPassword ? 'text' : 'password'"
+                    />
+                    <span
+                        class="viewer"
+                        v-if="newPassword"
+                        v-on:click="showNewPassword = !showNewPassword"
+                    >
+                        <font-awesome-icon
+                            v-if="!showNewPassword"
+                            icon="eye"
+                            title="Show password"
+                        />
+                        <font-awesome-icon
+                            v-else
+                            icon="eye-slash"
+                            title="Hide password"
+                        />
+                    </span>
+                </div>
 
                 <label>{{ $t("New password confirmation") }}</label>
                 <div class="password_wrapper">
                     <input
                         name="confirm_new_password"
                         v-model="confirmNewPassword"
-                        v-bind:type="showPassword ? 'text' : 'password'"
+                        v-bind:type="showConfirmPassword ? 'text' : 'password'"
                     />
                     <span
                         class="viewer"
                         v-if="confirmNewPassword"
-                        v-on:click="showPassword = !showPassword"
+                        v-on:click="showConfirmPassword = !showConfirmPassword"
                     >
                         <font-awesome-icon
-                            v-if="!showPassword"
+                            v-if="!showConfirmPassword"
                             icon="eye"
                             title="Show password"
                         />
@@ -61,7 +97,9 @@ export default {
             currentPassword: "",
             newPassword: "",
             confirmNewPassword: "",
-            showPassword: false
+            showCurrentPassword: false,
+            showNewPassword: false,
+            showConfirmPassword: false
         }
     },
     components: {
