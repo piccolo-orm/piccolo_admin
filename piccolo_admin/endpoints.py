@@ -456,6 +456,7 @@ class AdminRouter(FastAPI):
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
         charts: t.List[ChartConfig] = [],
+        sidebar_links: t.Dict[str, str] = {},
     ) -> None:
         super().__init__(
             title=site_name,
@@ -543,6 +544,7 @@ class AdminRouter(FastAPI):
         self.chart_config_map = {
             chart.chart_slug: chart for chart in self.charts
         }
+        self.sidebar_links = sidebar_links
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -612,6 +614,13 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             response_model=GroupedTableNamesResponseModel,
             tags=["Tables"],
+        )
+
+        private_app.add_api_route(
+            path="/links/",
+            endpoint=self.get_sidebar_links,  # type: ignore
+            methods=["GET"],
+            tags=["Links"],
         )
 
         private_app.add_api_route(
@@ -1031,6 +1040,14 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    def get_sidebar_links(self) -> t.Dict[str, str]:
+        """
+        Returns the custom links registered with the admin.
+        """
+        return self.sidebar_links
+
+    ###########################################################################
+
     def get_table_list(self) -> t.List[str]:
         """
         Returns the list of table groups registered with the admin.
@@ -1144,6 +1161,7 @@ def create_admin(
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
     charts: t.List[ChartConfig] = [],
+    sidebar_links: t.Dict[str, str] = {},
 ):
     """
     :param tables:
@@ -1250,6 +1268,24 @@ def create_admin(
         For each :class:`ChartConfig <piccolo_admin.endpoints.ChartConfig>`
         specified, a chart will automatically be rendered in the user interface,
         accessible via the sidebar.
+    :param sidebar_links:
+        Custom links in the navigation sidebar. Example uses cases:
+
+        * Providing a quick way to get to specific pages with pre-applied
+          filters/sorting.
+        * Linking to relative external websites.
+
+        Here's a full example::
+
+            from piccolo_admin.endpoints import create_admin
+
+            create_admin(
+                tables=[Movie, Director],
+                sidebar_links={
+                    "Top Movies": "/admin/#/movie?__order=-box_office",
+                    "Google": "https://google.com"
+                },
+            )
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -1296,4 +1332,5 @@ def create_admin(
         allowed_hosts=allowed_hosts,
         debug=debug,
         charts=charts,
+        sidebar_links=sidebar_links,
     )

@@ -47,6 +47,7 @@ Table of Contents
    ../table_config/index
    ../custom_forms/index
    ../charts/index
+   ../sidebar_links/index
    ../actions/index
    ../media_storage/index
    ../internationalization/index

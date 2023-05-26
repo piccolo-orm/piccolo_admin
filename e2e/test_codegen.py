@@ -202,3 +202,24 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     # ---------------------
     context.close()
     browser.close()
+
+
+def test_custom_links(playwright: Playwright, dev_server) -> None:
+    browser = playwright.chromium.launch()
+    context = browser.new_context(record_video_dir="videos/")
+    # Open new page
+    page = context.new_page()
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
+    page.locator('input[name="username"]').click()
+    page.locator('input[name="username"]').fill("piccolo")
+    page.locator('input[name="username"]').press("Tab")
+    page.locator('input[name="password"]').fill("piccolo123")
+    page.locator('input[name="password"]').press("Enter")
+    page.get_by_role("link", name="Top Movies").click()
+    page.get_by_role("link", name="7", exact=True).click()
+    page.get_by_role("link", name="piccolo", exact=True).click()
+    page.once("dialog", lambda dialog: dialog.dismiss())
+    page.get_by_role("link", name="Log out", exact=True).click()
+    # ---------------------
+    context.close()
+    browser.close()

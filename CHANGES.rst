@@ -1,6 +1,25 @@
 Changes
 =======
 
+0.49.0
+------
+
+Custom links can now be added to the sidebar. This allows quick navigation to
+specific pages in the admin, or to external websites. For example:
+
+.. code-block:: python
+
+  create_admin(
+      sidebar_links={
+          "Top Movies": "/admin/#/movies/?__order=-popularity",
+      }
+      ...
+  )
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
 0.48.0
 ------
 

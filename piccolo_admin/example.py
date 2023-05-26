@@ -457,6 +457,10 @@ APP = create_admin(
             data=[["Male", 7], ["Female", 3]],
         ),
     ],
+    sidebar_links={
+        "Top Movies": "/#/movie?__order=-box_office",
+        "Google": "https://google.com",
+    },
 )
 
 
