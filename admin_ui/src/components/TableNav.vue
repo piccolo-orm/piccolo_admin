@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="sidebar_wrapper">
         <ul class="table_list">
             <TableNavItem
                 v-bind:key="tableName"
