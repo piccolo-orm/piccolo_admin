@@ -108,6 +108,8 @@ export function convertFormValue(params: {
         value = JSON.parse(String(value))
     } else if (schema?.properties[key].format == "uuid" && value == "") {
         value = null
+    } else if (schema?.properties[key].format == "email" && value == "") {
+        value = null
     } else if (schema?.properties[key].format == "date-time" && value == "") {
         value = null
     } else if (schema?.properties[key].type == "integer" && value == "") {

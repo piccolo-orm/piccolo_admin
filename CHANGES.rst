@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.50.0
+------
+
+Improved handling of nullable email fields.
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
 0.49.0
 ------
 
