@@ -9,6 +9,8 @@ import {
     faArrowCircleDown,
     faArrowUp,
     faBars,
+    faCaretUp,
+    faCaretDown,
     faCheck,
     faCircleNotch,
     faCogs,
@@ -27,6 +29,7 @@ import {
     faLanguage,
     faLayerGroup,
     faLevelUpAlt,
+    faLink,
     faMoon,
     faPlus,
     faQuestionCircle,
@@ -38,7 +41,7 @@ import {
     faTimes,
     faTools,
     faTrashAlt,
-    faUser,
+    faUser
 } from "@fortawesome/free-solid-svg-icons"
 
 library.add(
@@ -49,6 +52,8 @@ library.add(
     faArrowCircleDown,
     faArrowUp,
     faBars,
+    faCaretUp,
+    faCaretDown,
     faCheck,
     faCircleNotch,
     faCogs,
@@ -67,6 +72,7 @@ library.add(
     faLanguage,
     faLayerGroup,
     faLevelUpAlt,
+    faLink,
     faMoon,
     faPlus,
     faQuestionCircle,

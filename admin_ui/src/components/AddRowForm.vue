@@ -6,7 +6,7 @@
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
             <RowForm v-bind:row="defaults" v-bind:schema="schema" />
-            <button>{{ $t("Create") }}</button>
+            <button data-uitest="create_button">{{ $t("Create") }}</button>
         </form>
     </div>
 </template>

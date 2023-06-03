@@ -174,7 +174,7 @@ menu_group
 ----------
 
 We can set groups of tables in the table navigation sidebar. This is useful
-when we have many tables and in this way we can organize the tables into 
+when we have many tables and in this way we can organize the tables into
 groups for better visibility:
 
 .. code-block:: python
@@ -192,6 +192,64 @@ groups for better visibility:
     )
 
     create_admin([director_config, movie_config])
+
+-------------------------------------------------------------------------------
+
+link_column
+-----------
+
+We use the primary key as the link to the edit page, but we can specify
+an alternative column to use as a link. If we specify the foreign key column as
+link Piccolo Admin will raise ``ValueError``:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig
+
+    movie_config = TableConfig(
+        Movie,
+        link_column=Movie.name
+    )
+
+    create_admin([movie_config])
+
+-------------------------------------------------------------------------------
+
+order_by
+--------
+
+By default, the primary key is used to order the results, but we can specify
+one or more columns to order by instead.
+
+Here we use the ``rating`` column in descending order:
+
+.. code-block:: python
+
+    from piccolo_admin.endpoints import TableConfig, OrderBy
+
+    movie_config = TableConfig(
+        Movie,
+        order_by=[OrderBy(Movie.rating, ascending=False)]
+    )
+
+    create_admin([movie_config])
+
+Here we order by the ``rating`` and ``title`` columns:
+
+.. code-block:: python
+
+    movie_config = TableConfig(
+        Movie,
+        order_by=[
+            OrderBy(Movie.rating, ascending=False),
+            OrderBy(Movie.title, ascending=True)
+        ]
+    )
+
+This means that the results are first ordered by ``rating``, and any rows with
+an equal rating are then sorted by ``title``.
+
+Note you can still override the order in the UI.
 
 -------------------------------------------------------------------------------
 

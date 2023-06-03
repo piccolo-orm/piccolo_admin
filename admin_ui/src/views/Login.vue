@@ -9,7 +9,7 @@
                 <label>{{ $t("Password") }}</label>
                 <input name="password" type="password" v-model="password" />
 
-                <button>{{ $t("Login") }}</button>
+                <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
     </div>

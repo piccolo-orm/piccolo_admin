@@ -21,7 +21,7 @@ from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
 from piccolo_api.change_password.endpoints import change_password
-from piccolo_api.crud.endpoints import PiccoloCRUD
+from piccolo_api.crud.endpoints import OrderBy, PiccoloCRUD
 from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
 from piccolo_api.csrf.middleware import CSRFMiddleware
@@ -176,6 +176,9 @@ class TableConfig:
         the edit page. However, if the primary key column is hidden, due to
         ``visible_columns`` or ``exclude_visible_columns``, then we need to
         specify an alternative column to use as the link.
+    :param order_by:
+        If specified, the rows are sorted by ``order_by``, otherwise
+        the default ``primary_key`` column is used to sort the rows.
 
     """
 
@@ -191,6 +194,7 @@ class TableConfig:
     validators: t.Optional[Validators] = None
     menu_group: t.Optional[str] = None
     link_column: t.Optional[Column] = None
+    order_by: t.Optional[t.List[OrderBy]] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -276,6 +280,14 @@ class TableConfig:
     def get_link_column(self) -> Column:
         return self.link_column or self.table_class._meta.primary_key
 
+    def get_order_by(self) -> t.List[OrderBy]:
+        return self.order_by or [
+            OrderBy(column=self.table_class._meta.primary_key, ascending=True)
+        ]
+
+
+PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
+
 
 @dataclass
 class FormConfig:
@@ -326,15 +338,20 @@ class FormConfig:
 
     """
 
-    name: str
-    pydantic_model: t.Type[BaseModel]
-    endpoint: t.Callable[
-        [Request, BaseModel],
-        t.Union[str, None, t.Coroutine],
-    ]
-    description: t.Optional[str] = None
-
-    def __post_init__(self):
+    def __init__(
+        self,
+        name: str,
+        pydantic_model: t.Type[PydanticModel],
+        endpoint: t.Callable[
+            [Request, PydanticModel],
+            t.Union[str, None, t.Coroutine],
+        ],
+        description: t.Optional[str] = None,
+    ):
+        self.name = name
+        self.pydantic_model = pydantic_model
+        self.endpoint = endpoint
+        self.description = description
         self.slug = self.name.replace(" ", "-").lower()
 
 
@@ -396,6 +413,7 @@ class AdminRouter(FastAPI):
         translations: t.List[Translation] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
+        sidebar_links: t.Dict[str, str] = {},
     ) -> None:
         super().__init__(
             title=site_name,
@@ -479,6 +497,7 @@ class AdminRouter(FastAPI):
         self.site_name = site_name
         self.forms = forms
         self.read_only = read_only
+        self.sidebar_links = sidebar_links
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -506,6 +525,7 @@ class AdminRouter(FastAPI):
             )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
+            order_by = table_config.get_order_by()
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
@@ -525,6 +545,7 @@ class AdminRouter(FastAPI):
                         "read_only_columns": read_only_columns_names,
                         "media_columns": media_columns_names,
                         "link_column_name": link_column_name,
+                        "order_by": tuple(i.to_dict() for i in order_by),
                     },
                     validators=validators,
                     hooks=table_config.hooks,
@@ -550,6 +571,13 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             response_model=GroupedTableNamesResponseModel,
             tags=["Tables"],
+        )
+
+        private_app.add_api_route(
+            path="/links/",
+            endpoint=self.get_sidebar_links,  # type: ignore
+            methods=["GET"],
+            tags=["Links"],
         )
 
         private_app.add_api_route(
@@ -919,6 +947,14 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
+    def get_sidebar_links(self) -> t.Dict[str, str]:
+        """
+        Returns the custom links registered with the admin.
+        """
+        return self.sidebar_links
+
+    ###########################################################################
+
     def get_table_list(self) -> t.List[str]:
         """
         Returns the list of table groups registered with the admin.
@@ -1031,6 +1067,7 @@ def create_admin(
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
+    sidebar_links: t.Dict[str, str] = {},
 ):
     """
     :param tables:
@@ -1133,6 +1170,24 @@ def create_admin(
         If ``True``, debug mode is enabled. Any unhandled exceptions will
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
+    :param sidebar_links:
+        Custom links in the navigation sidebar. Example uses cases:
+
+        * Providing a quick way to get to specific pages with pre-applied
+          filters/sorting.
+        * Linking to relative external websites.
+
+        Here's a full example::
+
+            from piccolo_admin.endpoints import create_admin
+
+            create_admin(
+                tables=[Movie, Director],
+                sidebar_links={
+                    "Top Movies": "/admin/#/movie?__order=-box_office",
+                    "Google": "https://google.com"
+                },
+            )
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -1178,4 +1233,5 @@ def create_admin(
         translations=translations,
         allowed_hosts=allowed_hosts,
         debug=debug,
+        sidebar_links=sidebar_links,
     )

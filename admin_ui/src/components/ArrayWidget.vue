@@ -132,7 +132,7 @@ export default Vue.extend({
             return this.$store.state.currentTableName
         },
         isMediaColumn() {
-            return this.schema.media_columns.includes(this.fieldName)
+            return this.schema?.media_columns.includes(this.fieldName)
         }
     },
     methods: {
