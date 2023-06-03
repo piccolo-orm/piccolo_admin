@@ -22,5 +22,12 @@ def test_add_nullable_columns(page: Page, dev_server):
 
     response = NullableColumns.select().run_sync()
     assert response == [
-        {"id": 1, "integer": None, "real": None, "numeric": None, "uuid": None}
+        {
+            "id": 1,
+            "integer": None,
+            "real": None,
+            "numeric": None,
+            "uuid": None,
+            "email": None,
+        }
     ]

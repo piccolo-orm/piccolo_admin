@@ -24,6 +24,7 @@ from piccolo.columns.column_types import (
     BigInt,
     Boolean,
     Date,
+    Email,
     ForeignKey,
     Integer,
     Interval,
@@ -235,6 +236,7 @@ class NullableColumns(Table):
     real = Real(null=True, default=None)
     numeric = Numeric(null=True, default=None)
     uuid = UUID(null=True, default=None)
+    email = Email(null=True, default=None)
 
 
 class SortedColumns(Table):
@@ -462,6 +464,10 @@ APP = create_admin(
     ],
     auth_table=User,
     session_table=Sessions,
+    sidebar_links={
+        "Top Movies": "/#/movie?__order=-box_office",
+        "Google": "https://google.com",
+    },
 )
 
 
