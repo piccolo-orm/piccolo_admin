@@ -690,8 +690,8 @@ class TestTables(TestCase):
                     "Movies": ["director", "movie", "studio"],
                     "Testing": [
                         "nullable_columns",
-                        "sorted_columns",
                         "read_only_columns",
+                        "sorted_columns",
                     ],
                 },
                 "ungrouped": [],

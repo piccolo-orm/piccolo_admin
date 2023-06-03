@@ -461,6 +461,8 @@ read_only_config = TableConfig(
         ReadOnlyColumns.uuid_col,
         ReadOnlyColumns.varchar_col,
     ],
+    menu_group="Testing",
+)
 
 sorted_columns_config = TableConfig(
     table_class=SortedColumns,
