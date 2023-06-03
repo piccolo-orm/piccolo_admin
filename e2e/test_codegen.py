@@ -1,39 +1,10 @@
-import time
-from http.client import HTTPConnection
-from subprocess import PIPE, Popen
+"""
+These are auto generated tests.
 
-import pytest
+https://playwright.dev/docs/codegen
+"""
+
 from playwright.sync_api import Playwright
-
-
-@pytest.fixture
-def dev_server():
-    """
-    Running dev server and Playwright test in parallel.
-    More info https://til.simonwillison.net/pytest/playwright-pytest
-    """
-    process = Popen(
-        ["python", "-m", "piccolo_admin.example"],
-        stdout=PIPE,
-    )
-    retries = 5
-    while retries > 0:
-        conn = HTTPConnection("localhost:8000")
-        try:
-            conn.request("HEAD", "/")
-            response = conn.getresponse()
-            if response is not None:
-                yield process
-                break
-        except ConnectionRefusedError:
-            time.sleep(1)
-            retries -= 1
-
-    if not retries:
-        raise RuntimeError("Failed to start http server")
-    else:
-        process.terminate()
-        process.wait()
 
 
 def test_login_logout(playwright: Playwright, dev_server) -> None:
@@ -77,9 +48,9 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     page.get_by_role("button", name="Apply").click()
     page.get_by_role("button", name="Clear filters").click()
     page.get_by_text("Close").click()
-    page.get_by_role("link", name="Sort").click()
-    page.locator('select[name="property"]').select_option("name")
-    page.locator('select[name="ordering"]').select_option("ascending")
+    page.locator("a[data-uitest=sort_button]").click()
+    page.locator('select[name="column"]').select_option("name")
+    page.locator('select[name="ordering"]').select_option(label="Ascending")
     page.get_by_role("button", name="Sort").click()
     page.get_by_title("piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
@@ -144,7 +115,8 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
         "./e2e/upload/piccolo.jpg"
     )
     page.get_by_text(
-        "Piccolo Admin piccolo Back Edit director Name Years Nominated Which years this d"
+        "Piccolo Admin piccolo Back Edit director Name Years Nominated Which "
+        "years this d"
     ).click()
     page.get_by_role("button", name="Save").click()
     page.get_by_role("link", name="Back").click()
@@ -227,6 +199,27 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     page.get_by_title("piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
     page.get_by_text("Log out").click()
+    # ---------------------
+    context.close()
+    browser.close()
+
+
+def test_custom_links(playwright: Playwright, dev_server) -> None:
+    browser = playwright.chromium.launch()
+    context = browser.new_context(record_video_dir="videos/")
+    # Open new page
+    page = context.new_page()
+    page.goto("http://localhost:8000/#/login?nextURL=%2F")
+    page.locator('input[name="username"]').click()
+    page.locator('input[name="username"]').fill("piccolo")
+    page.locator('input[name="username"]').press("Tab")
+    page.locator('input[name="password"]').fill("piccolo123")
+    page.locator('input[name="password"]').press("Enter")
+    page.get_by_role("link", name="Top Movies").click()
+    page.get_by_role("link", name="7", exact=True).click()
+    page.get_by_role("link", name="piccolo", exact=True).click()
+    page.once("dialog", lambda dialog: dialog.dismiss())
+    page.get_by_role("link", name="Log out", exact=True).click()
     # ---------------------
     context.close()
     browser.close()

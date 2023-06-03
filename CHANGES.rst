@@ -1,6 +1,75 @@
 Changes
 =======
 
+0.50.0
+------
+
+Improved handling of nullable email fields.
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
+0.49.0
+------
+
+Custom links can now be added to the sidebar. This allows quick navigation to
+specific pages in the admin, or to external websites. For example:
+
+.. code-block:: python
+
+  create_admin(
+      sidebar_links={
+          "Top Movies": "/admin/#/movies/?__order=-popularity",
+      }
+      ...
+  )
+
+Thanks to @sinisaos for adding this.
+
+-------------------------------------------------------------------------------
+
+0.48.0
+------
+
+* Improved the type annotations for ``FormConfig``.
+* Fixed a bug with array fields in custom forms (thanks to @sinisaos for
+  fixing this).
+
+-------------------------------------------------------------------------------
+
+0.47.0
+------
+
+Multiple columns can now be used for sorting the rows in the UI.
+
+Setting the default order for a table is now possible. For example, if we want
+to order movies by rating:
+
+.. code-block:: python
+
+  create_admin(
+      tables=[
+          TableConfig(
+              Movie,
+              order_by=[
+                  OrderBy(Movie.rating, ascending=False)
+              ]
+          )
+      )
+  )
+
+Thanks to @sinisaos and @sumitsharansatsangi for their help with this.
+
+-------------------------------------------------------------------------------
+
+0.46.0
+------
+
+Added Turkish translations (thanks to @omerucel for this).
+
+-------------------------------------------------------------------------------
+
 0.45.2
 ------
 

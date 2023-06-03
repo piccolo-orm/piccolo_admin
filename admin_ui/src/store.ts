@@ -1,11 +1,12 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import axios from "axios"
-import * as i from "./interfaces"
 
+import * as i from "./interfaces"
 import aboutModalModule from "./modules/aboutModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
+import { getOrderByString } from "./utils"
 
 Vue.use(Vuex)
 
@@ -26,15 +27,16 @@ export default new Vuex.Store({
         pageSize: 15,
         rowCount: 0,
         rows: [],
-        schema: undefined,
+        schema: undefined as i.Schema | undefined,
         formSchema: undefined,
         selectedRow: undefined,
-        sortBy: null as i.SortByConfig | null,
+        orderBy: null as i.OrderByConfig[] | null,
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
         user: undefined,
-        loadingStatus: false
+        loadingStatus: false,
+        customLinks: {}
     },
     mutations: {
         updateTableGroups(state, value) {
@@ -67,11 +69,11 @@ export default new Vuex.Store({
         updateUser(state, user) {
             state.user = user
         },
-        updateSortBy(state, config: i.SortByConfig) {
-            state.sortBy = config
+        updateOrderBy(state, config: i.OrderByConfig[]) {
+            state.orderBy = config
         },
         reset(state) {
-            state.sortBy = null
+            state.orderBy = null
             state.filterParams = {}
             state.currentPageNumber = 1
             state.rows = null
@@ -94,6 +96,9 @@ export default new Vuex.Store({
         },
         updateLoadingStatus(state, value) {
             state.loadingStatus = value
+        },
+        updateCustomLinks(state, value) {
+            state.customLinks = value
         }
     },
     actions: {
@@ -123,6 +128,10 @@ export default new Vuex.Store({
             const response = await axios.get(`${BASE_URL}tables/grouped/`)
             context.commit("updateTableGroups", response.data)
         },
+        async fetchCustomLinks(context) {
+            const response = await axios.get(`${BASE_URL}links/`)
+            context.commit("updateCustomLinks", response.data)
+        },
         async fetchCount(context) {
             const tableName = context.state.currentTableName
             const params = context.state.filterParams
@@ -141,10 +150,9 @@ export default new Vuex.Store({
             const params = context.state.filterParams
             const tableName = context.state.currentTableName
 
-            const sortBy = context.state.sortBy
-            if (sortBy) {
-                let prefix = sortBy.ascending ? "" : "-"
-                params["__order"] = prefix + sortBy.property
+            const orderByConfigs = context.state.orderBy
+            if (orderByConfigs) {
+                params["__order"] = getOrderByString(orderByConfigs)
             }
 
             // Get the row counts:
@@ -218,10 +226,11 @@ export default new Vuex.Store({
             return response
         },
         async fetchSchema(context, tableName: string) {
-            const response = await axios.get(
+            const response = await axios.get<i.Schema>(
                 `${BASE_URL}tables/${tableName}/schema/`
             )
             context.commit("updateSchema", response.data)
+
             return response
         },
         async createRow(context, config: i.CreateRow) {

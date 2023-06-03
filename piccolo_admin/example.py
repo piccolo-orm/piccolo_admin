@@ -24,6 +24,7 @@ from piccolo.columns.column_types import (
     BigInt,
     Boolean,
     Date,
+    Email,
     ForeignKey,
     Integer,
     Interval,
@@ -44,12 +45,19 @@ from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, validator
+from starlette.requests import Request
 
-from piccolo_admin.endpoints import FormConfig, TableConfig, create_admin
+from piccolo_admin.endpoints import (
+    FormConfig,
+    OrderBy,
+    TableConfig,
+    create_admin,
+)
 from piccolo_admin.example_data import (
     DIRECTORS,
     MOVIE_WORDS,
     MOVIES,
+    SORTED_COLUMNS,
     STUDIOS,
     TICKETS,
 )
@@ -111,6 +119,10 @@ except ImportError:
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "example_media")
 if not USE_S3 and not os.path.exists(MEDIA_ROOT):
     os.mkdir(MEDIA_ROOT)
+
+
+USERNAME = "piccolo"
+PASSWORD = "piccolo123"
 
 
 class Sessions(SessionsBase):
@@ -211,6 +223,10 @@ class Ticket(Table):
 
 
 class NullableColumns(Table):
+    """
+    A table used for UI tests.
+    """
+
     id: Serial
     integer = Integer(
         null=True,
@@ -220,6 +236,17 @@ class NullableColumns(Table):
     real = Real(null=True, default=None)
     numeric = Numeric(null=True, default=None)
     uuid = UUID(null=True, default=None)
+    email = Email(null=True, default=None)
+
+
+class SortedColumns(Table):
+    """
+    A table used for UI tests.
+    """
+
+    id: Serial
+    integer = Integer()
+    letter = Varchar()
 
 
 class BusinessEmailModel(BaseModel):
@@ -246,7 +273,7 @@ class BookingModel(BaseModel):
         return v
 
 
-def business_email_endpoint(request, data):
+def business_email_endpoint(request: Request, data: BusinessEmailModel) -> str:
     sender = "info@example.com"
     receivers = [data.email]
 
@@ -266,7 +293,7 @@ def business_email_endpoint(request, data):
     return "Email sent"
 
 
-async def booking_endpoint(request, data):
+def booking_endpoint(request: Request, data: BookingModel) -> str:
     """
     Testing that async functions works.
     """
@@ -297,6 +324,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
     Ticket,
     NullableColumns,
+    SortedColumns,
 )
 
 
@@ -333,6 +361,7 @@ movie_config = TableConfig(
         ),
     ),
     menu_group="Movies",
+    order_by=[OrderBy(Movie.rating, ascending=False)],
 )
 
 director_config = TableConfig(
@@ -381,6 +410,13 @@ nullable_config = TableConfig(
     menu_group="Testing",
 )
 
+
+sorted_columns_config = TableConfig(
+    table_class=SortedColumns,
+    order_by=[OrderBy(SortedColumns.integer, ascending=True)],
+    menu_group="Testing",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -388,6 +424,7 @@ APP = create_admin(
         studio_config,
         ticket_config,
         nullable_config,
+        sorted_columns_config,
     ],
     forms=[
         FormConfig(
@@ -405,6 +442,10 @@ APP = create_admin(
     ],
     auth_table=User,
     session_table=Sessions,
+    sidebar_links={
+        "Top Movies": "/#/movie?__order=-box_office",
+        "Google": "https://google.com",
+    },
 )
 
 
@@ -440,6 +481,9 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
     Movie.insert(*[Movie(**m) for m in MOVIES]).run_sync()
     Studio.insert(*[Studio(**s) for s in STUDIOS]).run_sync()
     Ticket.insert(*[Ticket(**t) for t in TICKETS]).run_sync()
+    SortedColumns.insert(
+        *[SortedColumns(**s) for s in SORTED_COLUMNS]
+    ).run_sync()
 
     if engine == "postgres":
         # We need to update the sequence, as we explicitly set the IDs for the
@@ -450,8 +494,8 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
 
     # Create a user for testing login
     user = User(
-        username="piccolo",
-        password="piccolo123",
+        username=USERNAME,
+        password=PASSWORD,
         email="admin@test.com",
         admin=True,
         active=True,

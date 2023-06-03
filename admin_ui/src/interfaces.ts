@@ -36,8 +36,8 @@ export interface APIResponseMessage {
     type: string
 }
 
-export interface SortByConfig {
-    property: string
+export interface OrderByConfig {
+    column: string
     ascending: boolean
 }
 
@@ -111,6 +111,7 @@ export interface Schema {
     visible_fields_options: string[]
     primary_key_name: string
     link_column_name: string
+    order_by: OrderByConfig[]
 }
 
 export interface Properties {

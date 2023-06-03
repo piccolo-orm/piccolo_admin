@@ -33,28 +33,50 @@
             </span>
         </p>
         <FormNav v-show="!isHiddenForms" />
+        <p
+            class="opaque"
+            v-if="Object.keys(customLinks).length > 0"
+            v-on:click="isHiddenLinks = !isHiddenLinks"
+        >
+            <font-awesome-icon icon="link" />{{ $t("Links") }}
+            <span style="float: right">
+                <font-awesome-icon
+                    icon="angle-down"
+                    title="Show links"
+                    v-if="isHiddenLinks"
+                />
+                <font-awesome-icon icon="angle-up" title="Hide links" v-else />
+            </span>
+        </p>
+        <LinksNav v-show="!isHiddenLinks" />
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue"
 import TableNav from "./TableNav.vue"
 import FormNav from "./FormNav.vue"
+import LinksNav from "./LinksNav.vue"
 
 export default Vue.extend({
     data() {
         return {
             isHiddenTables: false,
-            isHiddenForms: false
+            isHiddenForms: false,
+            isHiddenLinks: false
         }
     },
     components: {
         TableNav,
-        FormNav
+        FormNav,
+        LinksNav
     },
     computed: {
         formConfigs() {
             return this.$store.state.formConfigs
+        },
+        customLinks() {
+            return this.$store.state.customLinks
         }
     }
 })

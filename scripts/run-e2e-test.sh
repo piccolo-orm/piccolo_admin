@@ -1,4 +1,6 @@
 #!/bin/bash
 # Run end-to-end tests
 
-python -m pytest e2e
+extraArgs=$@
+
+pytest --ignore=tests -s $extraArgs
