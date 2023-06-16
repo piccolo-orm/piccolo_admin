@@ -23,15 +23,10 @@
 
 <script lang="ts">
 export default {
-    props: {
-        showPassword: {
-            type: Boolean,
-            default: false
-        }
-    },
     data() {
         return {
-            password: ""
+            password: "",
+            showPassword: false
         }
     },
     methods: {
