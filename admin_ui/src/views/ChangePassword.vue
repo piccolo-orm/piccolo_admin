@@ -7,80 +7,17 @@
             </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
-                <div class="password_wrapper">
-                    <input
-                        name="current_password"
-                        v-model="currentPassword"
-                        v-bind:type="showCurrentPassword ? 'text' : 'password'"
-                    />
-                    <span
-                        class="viewer"
-                        v-if="currentPassword"
-                        v-on:click="showCurrentPassword = !showCurrentPassword"
-                    >
-                        <font-awesome-icon
-                            v-if="!showCurrentPassword"
-                            icon="eye"
-                            title="Show password"
-                        />
-                        <font-awesome-icon
-                            v-else
-                            icon="eye-slash"
-                            title="Hide password"
-                        />
-                    </span>
-                </div>
-
+                <Password
+                    v-model="currentPassword"
+                    v-on:input="passwordValue"
+                />
                 <label>{{ $t("New password") }}</label>
-                <div class="password_wrapper">
-                    <input
-                        name="new_password"
-                        v-model="newPassword"
-                        v-bind:type="showNewPassword ? 'text' : 'password'"
-                    />
-                    <span
-                        class="viewer"
-                        v-if="newPassword"
-                        v-on:click="showNewPassword = !showNewPassword"
-                    >
-                        <font-awesome-icon
-                            v-if="!showNewPassword"
-                            icon="eye"
-                            title="Show password"
-                        />
-                        <font-awesome-icon
-                            v-else
-                            icon="eye-slash"
-                            title="Hide password"
-                        />
-                    </span>
-                </div>
-
+                <Password v-model="newPassword" v-on:input="passwordValue" />
                 <label>{{ $t("New password confirmation") }}</label>
-                <div class="password_wrapper">
-                    <input
-                        name="confirm_new_password"
-                        v-model="confirmNewPassword"
-                        v-bind:type="showConfirmPassword ? 'text' : 'password'"
-                    />
-                    <span
-                        class="viewer"
-                        v-if="confirmNewPassword"
-                        v-on:click="showConfirmPassword = !showConfirmPassword"
-                    >
-                        <font-awesome-icon
-                            v-if="!showConfirmPassword"
-                            icon="eye"
-                            title="Show password"
-                        />
-                        <font-awesome-icon
-                            v-else
-                            icon="eye-slash"
-                            title="Hide password"
-                        />
-                    </span>
-                </div>
-
+                <Password
+                    v-model="confirmNewPassword"
+                    v-on:input="passwordValue"
+                />
                 <button>{{ $t("Change password") }}</button>
             </form>
         </div>
@@ -90,20 +27,19 @@
 <script lang="ts">
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
+import Password from "../components/Password.vue"
 
 export default {
     data() {
         return {
             currentPassword: "",
             newPassword: "",
-            confirmNewPassword: "",
-            showCurrentPassword: false,
-            showNewPassword: false,
-            showConfirmPassword: false
+            confirmNewPassword: ""
         }
     },
     components: {
-        BackButton
+        BackButton,
+        Password
     },
     methods: {
         async changePassword() {
@@ -146,19 +82,6 @@ div#change_password {
             margin-top: 0;
             padding-top: 0.5rem;
             text-align: center;
-        }
-
-        div.password_wrapper {
-            position: relative;
-
-            span.viewer {
-                color: #878787;
-                position: absolute;
-                top: 0.5rem;
-                right: 0.5rem;
-                z-index: 1;
-                cursor: pointer;
-            }
         }
     }
 }

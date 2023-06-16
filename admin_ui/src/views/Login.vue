@@ -9,29 +9,7 @@
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <div class="password_wrapper">
-                    <input
-                        name="password"
-                        v-model="password"
-                        v-bind:type="showPassword ? 'text' : 'password'"
-                    />
-                    <span
-                        class="viewer"
-                        v-if="password"
-                        v-on:click="showPassword = !showPassword"
-                    >
-                        <font-awesome-icon
-                            v-if="!showPassword"
-                            icon="eye"
-                            title="Show password"
-                        />
-                        <font-awesome-icon
-                            v-else
-                            icon="eye-slash"
-                            title="Hide password"
-                        />
-                    </span>
-                </div>
+                <Password v-model="password" v-on:input="passwordValue" />
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -40,14 +18,17 @@
 
 <script lang="ts">
 import axios from "axios"
+import Password from "../components/Password.vue"
 
 export default {
     data() {
         return {
             username: "",
-            password: "",
-            showPassword: false
+            password: ""
         }
+    },
+    components: {
+        Password
     },
     computed: {
         siteName() {
@@ -101,19 +82,6 @@ div#login {
                 text-align: center;
                 border-bottom: 3px solid #009dff;
                 display: inline-block;
-            }
-        }
-
-        div.password_wrapper {
-            position: relative;
-
-            span.viewer {
-                color: #878787;
-                position: absolute;
-                top: 0.5rem;
-                right: 0.5rem;
-                z-index: 1;
-                cursor: pointer;
             }
         }
     }
