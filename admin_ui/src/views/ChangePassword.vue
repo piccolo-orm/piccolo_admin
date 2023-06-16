@@ -7,17 +7,11 @@
             </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
-                <Password
-                    v-model="currentPassword"
-                    v-on:input="passwordValue"
-                />
+                <Password v-model="currentPassword" />
                 <label>{{ $t("New password") }}</label>
-                <Password v-model="newPassword" v-on:input="passwordValue" />
+                <Password v-model="newPassword" />
                 <label>{{ $t("New password confirmation") }}</label>
-                <Password
-                    v-model="confirmNewPassword"
-                    v-on:input="passwordValue"
-                />
+                <Password v-model="confirmNewPassword" />
                 <button>{{ $t("Change password") }}</button>
             </form>
         </div>
