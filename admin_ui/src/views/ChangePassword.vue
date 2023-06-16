@@ -107,7 +107,6 @@ export default {
     },
     methods: {
         async changePassword() {
-            console.log("Changing password")
             const payload = {
                 current_password: this.currentPassword,
                 new_password: this.newPassword,
@@ -117,7 +116,7 @@ export default {
                 await axios.post(`./api/change-password/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: `Changed password successfully. You will be redirected
-                        to the login page to log in with your new credentials.`,
+                        to log in with your new credentials.`,
                     type: "success"
                 })
                 setTimeout(() => {
@@ -143,16 +142,10 @@ div#change_password {
         max-width: 30rem;
         padding: 2rem 2rem;
 
-        div.heading {
+        h1 {
+            margin-top: 0;
+            padding-top: 0.5rem;
             text-align: center;
-
-            h1 {
-                margin-top: 0;
-                padding-top: 0.5rem;
-                text-align: center;
-                border-bottom: 3px solid #009dff;
-                display: inline-block;
-            }
         }
 
         div.password_wrapper {
