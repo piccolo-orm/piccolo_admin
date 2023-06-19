@@ -2,29 +2,16 @@
     <div id="change_password">
         <div class="inner">
             <BackButton />
-            <h1>{{ $t("Change password") }}</h1>
+            <div class="heading">
+                <h1>{{ $t("Change password") }}</h1>
+            </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
-                <input
-                    name="current_password"
-                    type="password"
-                    v-model="currentPassword"
-                />
-
+                <PasswordInput v-model="currentPassword" />
                 <label>{{ $t("New password") }}</label>
-                <input
-                    name="new_password"
-                    type="password"
-                    v-model="newPassword"
-                />
-
+                <PasswordInput v-model="newPassword" />
                 <label>{{ $t("New password confirmation") }}</label>
-                <input
-                    name="confirm_new_password"
-                    type="password"
-                    v-model="confirmNewPassword"
-                />
-
+                <PasswordInput v-model="confirmNewPassword" />
                 <button>{{ $t("Change password") }}</button>
             </form>
         </div>
@@ -34,6 +21,7 @@
 <script lang="ts">
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
+import PasswordInput from "../components/PasswordInput.vue"
 
 export default {
     data() {
@@ -44,11 +32,11 @@ export default {
         }
     },
     components: {
-        BackButton
+        BackButton,
+        PasswordInput
     },
     methods: {
         async changePassword() {
-            console.log("Changing password")
             const payload = {
                 current_password: this.currentPassword,
                 new_password: this.newPassword,
@@ -58,7 +46,7 @@ export default {
                 await axios.post(`./api/change-password/`, payload)
                 this.$store.commit("updateApiResponseMessage", {
                     contents: `Changed password successfully. You will be redirected
-                        to the login page to log in with your new credentials.`,
+                        to log in with your new credentials.`,
                     type: "success"
                 })
                 setTimeout(() => {
