@@ -9,7 +9,7 @@
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <Password v-model="password" />
+                <PasswordInput v-model="password" />
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import axios from "axios"
-import Password from "../components/Password.vue"
+import PasswordInput from "../components/PasswordInput.vue"
 
 export default {
     data() {
@@ -28,7 +28,7 @@ export default {
         }
     },
     components: {
-        Password
+        PasswordInput
     },
     computed: {
         siteName() {

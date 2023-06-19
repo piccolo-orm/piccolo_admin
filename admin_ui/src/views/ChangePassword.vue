@@ -7,11 +7,11 @@
             </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
-                <Password v-model="currentPassword" />
+                <PasswordInput v-model="currentPassword" />
                 <label>{{ $t("New password") }}</label>
-                <Password v-model="newPassword" />
+                <PasswordInput v-model="newPassword" />
                 <label>{{ $t("New password confirmation") }}</label>
-                <Password v-model="confirmNewPassword" />
+                <PasswordInput v-model="confirmNewPassword" />
                 <button>{{ $t("Change password") }}</button>
             </form>
         </div>
@@ -21,7 +21,7 @@
 <script lang="ts">
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
-import Password from "../components/Password.vue"
+import PasswordInput from "../components/PasswordInput.vue"
 
 export default {
     data() {
@@ -33,7 +33,7 @@ export default {
     },
     components: {
         BackButton,
-        Password
+        PasswordInput
     },
     methods: {
         async changePassword() {

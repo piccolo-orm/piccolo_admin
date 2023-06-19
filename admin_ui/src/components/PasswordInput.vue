@@ -2,13 +2,13 @@
     <div class="password_wrapper">
         <input
             name="password"
-            v-model="password"
+            v-bind:value="value"
             v-bind:type="showPassword ? 'text' : 'password'"
-            v-on:input="passwordValue"
+            v-on:input="$emit('input', $event.target.value)"
         />
         <span
             class="viewer"
-            v-if="password"
+            v-if="value"
             v-on:click="showPassword = !showPassword"
         >
             <font-awesome-icon
@@ -23,15 +23,12 @@
 
 <script lang="ts">
 export default {
+    props: {
+        value: String
+    },
     data() {
         return {
-            password: "",
             showPassword: false
-        }
-    },
-    methods: {
-        passwordValue() {
-            this.$emit("input", this.password)
         }
     }
 }
