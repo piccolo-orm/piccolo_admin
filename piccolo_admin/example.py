@@ -237,6 +237,8 @@ class NullableColumns(Table):
     numeric = Numeric(null=True, default=None)
     uuid = UUID(null=True, default=None)
     email = Email(null=True, default=None)
+    timestamp = Timestamp(null=True, default=None)
+    date = Date(null=True, default=None)
 
 
 class SortedColumns(Table):

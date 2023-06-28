@@ -59,6 +59,7 @@
                         noCalendar: format == 'time'
                     }"
                     v-bind:name="columnName"
+                    v-bind:placeholder="placeholder"
                     v-model="localValue"
                 ></flat-pickr>
             </template>

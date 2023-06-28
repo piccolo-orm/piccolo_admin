@@ -29,5 +29,7 @@ def test_add_nullable_columns(page: Page, dev_server):
             "numeric": None,
             "uuid": None,
             "email": None,
+            "timestamp": None,
+            "date": None,
         }
     ]
