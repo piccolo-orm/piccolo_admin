@@ -1,6 +1,16 @@
 Changes
 =======
 
+0.51.0
+------
+
+Improved the UI for password inputs (e.g. on the change password page). Thanks
+to @sinisaos for this.
+
+Fixed a bug with nullable date fields.
+
+-------------------------------------------------------------------------------
+
 0.50.0
 ------
 
