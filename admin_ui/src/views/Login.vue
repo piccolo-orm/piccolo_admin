@@ -1,14 +1,15 @@
 <template>
     <div id="login">
         <div class="inner">
-            <h1>{{ siteName }}</h1>
+            <div class="heading">
+                <h1>{{ siteName }}</h1>
+            </div>
             <form v-on:submit.prevent="login">
                 <label>{{ $t("Username") }}</label>
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <input name="password" type="password" v-model="password" />
-
+                <PasswordInput v-model="password" />
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -17,13 +18,17 @@
 
 <script lang="ts">
 import axios from "axios"
+import PasswordInput from "../components/PasswordInput.vue"
 
 export default {
-    data: function () {
+    data() {
         return {
             username: "",
             password: ""
         }
+    },
+    components: {
+        PasswordInput
     },
     computed: {
         siteName() {
@@ -68,10 +73,16 @@ div#login {
         max-width: 30rem;
         padding: 0 0.5rem;
 
-        h1 {
-            margin-top: 0;
-            padding-top: 4rem;
+        div.heading {
             text-align: center;
+
+            h1 {
+                margin-top: 0;
+                padding-top: 4rem;
+                text-align: center;
+                border-bottom: 3px solid #009dff;
+                display: inline-block;
+            }
         }
     }
 }

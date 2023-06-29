@@ -112,6 +112,8 @@ export function convertFormValue(params: {
         value = null
     } else if (schema?.properties[key].format == "date-time" && value == "") {
         value = null
+    } else if (schema?.properties[key].format == "date" && value == "") {
+        value = null
     } else if (schema?.properties[key].type == "integer" && value == "") {
         value = null
     } else if (schema?.properties[key].type == "number" && value == "") {
