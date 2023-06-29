@@ -349,7 +349,6 @@ class FormConfigResponseModel(BaseModel):
     description: t.Optional[str] = None
 
 
-@dataclass
 class ChartConfig:
     """
     Used to specify charts, which are passed into ``create_admin``.
@@ -363,13 +362,24 @@ class ChartConfig:
         ``Column``, ``Bar`` and ``Area``.
     :param data:
         The data to be passed to the admin ui. The data format must be
-        a ``list of lists`` (eg. ``[["Male", 7], ["Female", 3]]``).
+        a list of lists (e.g. ``[["Male", 7], ["Female", 3]]``).
 
     Here's a full example:
 
     .. code-block:: python
 
-        async def director_movie_count():
+        import asyncio
+
+        import typing as t
+        from piccolo.query.methods.select import Count
+        from piccolo_admin.endpoints import (
+            create_admin,
+            ChartConfig,
+            ChartConfigResponseModel,
+        )
+        from movies.tables import Director, Movie
+
+        async def director_movie_count() -> t.List[ChartConfigResponseModel]:
             movies = await Movie.select(
                 Movie.director.name.as_alias("director"),
                 Count(Movie.id)
@@ -380,16 +390,24 @@ class ChartConfig:
             # like [['George Lucas', 3], ...]
             return [[i['director'], i['count']] for i in movies]
 
+        chart_data = asyncio.run(director_movie_count())
+
         director_chart = ChartConfig(
             title='Movie count',
             chart_type="Pie", # or Bar or Line etc.
-            data=director_movie_count,
+            data=chart_data,
+        )
 
         create_admin(charts=[director_chart])
 
     """
 
-    def __init__(self, title: str, chart_type: str, data: t.List[t.Any]):
+    def __init__(
+        self,
+        title: str,
+        chart_type: str,
+        data: t.List[t.List[t.Any]],
+    ):
         self.title = title
         self.chart_slug = self.title.replace(" ", "-").lower()
         self.chart_type = chart_type
@@ -400,7 +418,7 @@ class ChartConfigResponseModel(BaseModel):
     title: str
     chart_slug: str
     chart_type: str
-    data: t.List[t.Any]
+    data: t.List[t.List[t.Any]]
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -925,7 +943,7 @@ class AdminRouter(FastAPI):
 
     def get_charts(self) -> t.List[ChartConfigResponseModel]:
         """
-        Returns  all charts registered with the admin.
+        Returns all charts registered with the admin.
         """
         return [
             ChartConfigResponseModel(
@@ -939,7 +957,7 @@ class AdminRouter(FastAPI):
 
     def get_single_chart(self, chart_slug: str) -> ChartConfigResponseModel:
         """
-        Returns single chart.
+        Returns a single chart.
         """
         chart = self.chart_config_map.get(chart_slug, None)
         if chart is None:

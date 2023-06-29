@@ -11,7 +11,9 @@ import ChartsPage from "../components/ChartsPage.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
 export default Vue.extend({
-    props: ["chartSlug"],
+    props: {
+        chartSlug: String
+    },
     components: {
         ChartsPage,
         DetailViewBase

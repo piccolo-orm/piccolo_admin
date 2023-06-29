@@ -3,7 +3,7 @@
 Charts
 ======
 
-Piccolo Admin can display different types of charts based on yours
+Piccolo Admin can display different types of charts based on your
 data. Five chart types are supported: ``Pie``, ``Line``, ``Column``, 
 ``Bar`` and ``Area``.
 
@@ -11,16 +11,16 @@ Here's an example of charts usage, using FastAPI:
 
 .. literalinclude:: ./examples/app.py
 
-Piccolo Admin will then show a charts in the UI.
+Piccolo Admin will then show a chart in the UI.
 
 .. image:: ./images/charts_sidebar.png
 
 .. image:: ./images/chart.png
 
-.. warning::
+.. hint::
 
-  The data format must be a ``list of lists`` 
-  (eg. ``[["Male", 7], ["Female", 3]]``).
+  The data format must be a list of lists
+  (e.g. ``[["Male", 7], ["Female", 3]]``).
 
 -------------------------------------------------------------------------------
 

@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 from fastapi.routing import Mount
 from home.tables import Director, Movie
@@ -16,10 +18,13 @@ async def director_movie_count():
     return [[i["director"], i["count"]] for i in movies]
 
 
+chart_data = asyncio.run(director_movie_count())
+
+
 director_chart = ChartConfig(
     title="Movie count",
     chart_type="Pie",
-    data=director_movie_count,
+    data=chart_data,
 )
 
 

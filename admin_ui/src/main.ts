@@ -5,7 +5,7 @@ import store from "./store"
 import i18n from "./i18n"
 import "./fontawesome"
 import Chartkick from 'vue-chartkick'
-import Highcharts from 'highcharts'
+import Chart from 'chart.js'
 
 /*****************************************************************************/
 
@@ -47,7 +47,7 @@ Vue.filter("readable", function (value) {
 /*****************************************************************************/
 
 Vue.config.productionTip = false
-Vue.use(Chartkick.use(Highcharts))
+Vue.use(Chartkick.use(Chart))
 
 new Vue({
     i18n,

@@ -997,8 +997,8 @@ class TestCharts(TestCase):
             response.json(),
             [
                 {
-                    "title": "Movie count",
-                    "chart_slug": "movie-count",
+                    "title": "Movie count Pie",
+                    "chart_slug": "movie-count-pie",
                     "chart_type": "Pie",
                     "data": [
                         ["George Lucas", 4],
@@ -1007,10 +1007,44 @@ class TestCharts(TestCase):
                     ],
                 },
                 {
-                    "title": "Director gender",
-                    "chart_slug": "director-gender",
+                    "title": "Movie count Line",
+                    "chart_slug": "movie-count-line",
+                    "chart_type": "Line",
+                    "data": [
+                        ["George Lucas", 4],
+                        ["Peter Jackson", 6],
+                        ["Ron Howard", 1],
+                    ],
+                },
+                {
+                    "title": "Movie count Column",
+                    "chart_slug": "movie-count-column",
                     "chart_type": "Column",
-                    "data": [["Male", 7], ["Female", 3]],
+                    "data": [
+                        ["George Lucas", 4],
+                        ["Peter Jackson", 6],
+                        ["Ron Howard", 1],
+                    ],
+                },
+                {
+                    "title": "Movie count Bar",
+                    "chart_slug": "movie-count-bar",
+                    "chart_type": "Bar",
+                    "data": [
+                        ["George Lucas", 4],
+                        ["Peter Jackson", 6],
+                        ["Ron Howard", 1],
+                    ],
+                },
+                {
+                    "title": "Movie count Area",
+                    "chart_slug": "movie-count-area",
+                    "chart_type": "Area",
+                    "data": [
+                        ["George Lucas", 4],
+                        ["Peter Jackson", 6],
+                        ["Ron Howard", 1],
+                    ],
                 },
             ],
         )
@@ -1018,13 +1052,13 @@ class TestCharts(TestCase):
         #######################################################################
         # Now get the ChartConfig for a single chart
 
-        response = client.get("/api/charts/movie-count/")
+        response = client.get("/api/charts/movie-count-pie/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
             {
-                "title": "Movie count",
-                "chart_slug": "movie-count",
+                "title": "Movie count Pie",
+                "chart_slug": "movie-count-pie",
                 "chart_type": "Pie",
                 "data": [
                     ["George Lucas", 4],

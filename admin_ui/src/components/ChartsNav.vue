@@ -3,7 +3,7 @@
         <li v-bind:key="chartConfig.title" v-for="chartConfig in chartConfigs">
             <router-link
                 :to="{
-                    name: 'getCharts',
+                    name: 'chart',
                     params: { chartSlug: chartConfig.chart_slug }
                 }"
                 class="subtle"

@@ -420,6 +420,17 @@ sorted_columns_config = TableConfig(
     menu_group="Testing",
 )
 
+
+async def fetch_chart_data() -> t.List[t.List[t.Any]]:
+    return [
+        ["George Lucas", 4],
+        ["Peter Jackson", 6],
+        ["Ron Howard", 1],
+    ]
+
+
+chart_data = asyncio.run(fetch_chart_data())
+
 APP = create_admin(
     [
         movie_config,
@@ -447,18 +458,29 @@ APP = create_admin(
     session_table=Sessions,
     charts=[
         ChartConfig(
-            title="Movie count",
+            title="Movie count Pie",
             chart_type="Pie",
-            data=[
-                ["George Lucas", 4],
-                ["Peter Jackson", 6],
-                ["Ron Howard", 1],
-            ],
+            data=chart_data,
         ),
         ChartConfig(
-            title="Director gender",
+            title="Movie count Line",
+            chart_type="Line",
+            data=chart_data,
+        ),
+        ChartConfig(
+            title="Movie count Column",
             chart_type="Column",
-            data=[["Male", 7], ["Female", 3]],
+            data=chart_data,
+        ),
+        ChartConfig(
+            title="Movie count Bar",
+            chart_type="Bar",
+            data=chart_data,
+        ),
+        ChartConfig(
+            title="Movie count Area",
+            chart_type="Area",
+            data=chart_data,
         ),
     ],
     sidebar_links={
