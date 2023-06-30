@@ -40,6 +40,7 @@ from piccolo.columns.column_types import (
 from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
+from piccolo.query.methods.select import Count as CountAgg
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
@@ -421,15 +422,35 @@ sorted_columns_config = TableConfig(
 )
 
 
-async def fetch_chart_data() -> t.List[t.List[t.Any]]:
+async def get_director_movie_count():
+    movies = (
+        await Movie.select(
+            Movie.director.name.as_alias("director"), CountAgg(Movie.id)
+        )
+        .group_by(Movie.director)
+        .order_by(Movie.director.name)
+    )
+
+    return [(i["director"], i["count"]) for i in movies]
+
+
+async def get_movie_genre_count():
+    movies = (
+        await Movie.select(Movie.genre, CountAgg(Movie.id))
+        .group_by(Movie.genre)
+        .order_by(Movie.genre)
+    )
+
+    return [(i["genre"], i["count"]) for i in movies]
+
+
+async def placeholder_data():
     return [
         ["George Lucas", 4],
         ["Peter Jackson", 6],
         ["Ron Howard", 1],
     ]
 
-
-chart_data = asyncio.run(fetch_chart_data())
 
 APP = create_admin(
     [
@@ -458,29 +479,34 @@ APP = create_admin(
     session_table=Sessions,
     charts=[
         ChartConfig(
-            title="Movie count Pie",
+            title="Movies per director",
             chart_type="Pie",
-            data=chart_data,
+            data_source=get_director_movie_count,
+        ),
+        ChartConfig(
+            title="Movies per genre",
+            chart_type="Column",
+            data_source=get_movie_genre_count,
         ),
         ChartConfig(
             title="Movie count Line",
             chart_type="Line",
-            data=chart_data,
+            data=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Column",
             chart_type="Column",
-            data=chart_data,
+            data=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Bar",
             chart_type="Bar",
-            data=chart_data,
+            data=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Area",
             chart_type="Area",
-            data=chart_data,
+            data=placeholder_data,
         ),
     ],
     sidebar_links={

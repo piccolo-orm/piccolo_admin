@@ -3,6 +3,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
 from __future__ import annotations
 
+import decimal
 import inspect
 import itertools
 import json
@@ -349,6 +350,10 @@ class FormConfigResponseModel(BaseModel):
     description: t.Optional[str] = None
 
 
+Number = t.Union[int, float, decimal.Decimal]
+ChartData = t.Sequence[t.Tuple[str, Number]]
+
+
 class ChartConfig:
     """
     Used to specify charts, which are passed into ``create_admin``.
@@ -360,26 +365,26 @@ class ChartConfig:
     :param chart_type:
         Available chart types. There are five types: ``Pie``, ``Line``,
         ``Column``, ``Bar`` and ``Area``.
-    :param data:
-        The data to be passed to the admin ui. The data format must be
-        a list of lists (e.g. ``[["Male", 7], ["Female", 3]]``).
+    :param data_source:
+        A function (async or sync) which returns the data to be displayed in
+        the chart. It must returns a sequence of tuples. The first element is
+        the label, and the second is the value::
+
+            >>> [("Male", 7), ("Female", 3)]
 
     Here's a full example:
 
     .. code-block:: python
 
-        import asyncio
-
-        import typing as t
         from piccolo.query.methods.select import Count
         from piccolo_admin.endpoints import (
             create_admin,
             ChartConfig,
-            ChartConfigResponseModel,
         )
-        from movies.tables import Director, Movie
 
-        async def director_movie_count() -> t.List[ChartConfigResponseModel]:
+        from movies.tables import Movie
+
+        async def get_director_movie_count():
             movies = await Movie.select(
                 Movie.director.name.as_alias("director"),
                 Count(Movie.id)
@@ -387,15 +392,13 @@ class ChartConfig:
                 Movie.director
             )
             # Flatten the response so it's a list of lists
-            # like [['George Lucas', 3], ...]
-            return [[i['director'], i['count']] for i in movies]
-
-        chart_data = asyncio.run(director_movie_count())
+            # like [('George Lucas', 3), ...]
+            return [(i['director'], i['count']) for i in movies]
 
         director_chart = ChartConfig(
             title='Movie count',
-            chart_type="Pie", # or Bar or Line etc.
-            data=chart_data,
+            chart_type="Pie",  # or Bar or Line etc.
+            data_source=get_director_movie_count
         )
 
         create_admin(charts=[director_chart])
@@ -405,20 +408,23 @@ class ChartConfig:
     def __init__(
         self,
         title: str,
-        chart_type: str,
-        data: t.List[t.List[t.Any]],
+        data_source: t.Callable[[], t.Awaitable[ChartData]],
+        chart_type: t.Literal["Pie", "Line", "Column", "Bar", "Area"] = "Bar",
     ):
         self.title = title
         self.chart_slug = self.title.replace(" ", "-").lower()
         self.chart_type = chart_type
-        self.data = data
+        self.data_source = data_source
 
 
-class ChartConfigResponseModel(BaseModel):
+class ChartResponseModel(BaseModel):
     title: str
     chart_slug: str
     chart_type: str
-    data: t.List[t.List[t.Any]]
+
+
+class ChartDataResponseModel(ChartResponseModel):
+    data: ChartData
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -458,7 +464,7 @@ class AdminRouter(FastAPI):
     def __init__(
         self,
         *tables: t.Union[t.Type[Table], TableConfig],
-        forms: t.List[FormConfig] = [],
+        forms: t.Optional[t.List[FormConfig]] = None,
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
         session_expiry: timedelta = timedelta(hours=1),
@@ -470,11 +476,11 @@ class AdminRouter(FastAPI):
         production: bool = False,
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
-        translations: t.List[Translation] = None,
+        translations: t.Optional[t.List[Translation]] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
-        charts: t.List[ChartConfig] = [],
-        sidebar_links: t.Dict[str, str] = {},
+        charts: t.Optional[t.List[ChartConfig]] = None,
+        sidebar_links: t.Optional[t.Dict[str, str]] = None,
     ) -> None:
         super().__init__(
             title=site_name,
@@ -556,13 +562,13 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
-        self.forms = forms
+        self.forms = forms or []
         self.read_only = read_only
-        self.charts = charts
+        self.charts = charts or []
         self.chart_config_map = {
             chart.chart_slug: chart for chart in self.charts
         }
-        self.sidebar_links = sidebar_links
+        self.sidebar_links = sidebar_links or {}
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -675,7 +681,7 @@ class AdminRouter(FastAPI):
             endpoint=self.get_charts,  # type: ignore
             methods=["GET"],
             tags=["Charts"],
-            response_model=t.List[ChartConfigResponseModel],
+            response_model=t.List[ChartResponseModel],
         )
 
         private_app.add_api_route(
@@ -683,7 +689,7 @@ class AdminRouter(FastAPI):
             endpoint=self.get_single_chart,  # type: ignore
             methods=["GET"],
             tags=["Charts"],
-            response_model=ChartConfigResponseModel,
+            response_model=ChartDataResponseModel,
         )
 
         private_app.add_api_route(
@@ -941,21 +947,22 @@ class AdminRouter(FastAPI):
     ###########################################################################
     # Custom charts
 
-    def get_charts(self) -> t.List[ChartConfigResponseModel]:
+    def get_charts(self) -> t.List[ChartResponseModel]:
         """
         Returns all charts registered with the admin.
         """
         return [
-            ChartConfigResponseModel(
+            ChartResponseModel(
                 title=chart.title,
                 chart_slug=chart.chart_slug,
                 chart_type=chart.chart_type,
-                data=chart.data,
             )
             for chart in self.charts
         ]
 
-    def get_single_chart(self, chart_slug: str) -> ChartConfigResponseModel:
+    async def get_single_chart(
+        self, chart_slug: str
+    ) -> ChartDataResponseModel:
         """
         Returns a single chart.
         """
@@ -963,11 +970,12 @@ class AdminRouter(FastAPI):
         if chart is None:
             raise HTTPException(status_code=404, detail="No such chart found")
         else:
-            return ChartConfigResponseModel(
+            data = await chart.data_source()
+            return ChartDataResponseModel(
                 title=chart.title,
                 chart_slug=chart.chart_slug,
                 chart_type=chart.chart_type,
-                data=chart.data,
+                data=data,
             )
 
     ###########################################################################
@@ -1174,7 +1182,7 @@ def create_admin(
     production: bool = False,
     site_name: str = "Piccolo Admin",
     default_language_code: str = "auto",
-    translations: t.List[Translation] = None,
+    translations: t.Optional[t.List[Translation]] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
