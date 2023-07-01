@@ -1,14 +1,15 @@
-import asyncio
-
 from fastapi import FastAPI
 from fastapi.routing import Mount
 from home.tables import Director, Movie
+from piccolo.query.methods.select import Count
 
 from piccolo_admin.endpoints import ChartConfig, create_admin
 
 
-# count directors movies
-async def director_movie_count():
+async def get_director_movie_count():
+    """
+    Returns the number of movies per director.
+    """
     movies = await Movie.select(
         Movie.director.name.as_alias("director"),
         Count(Movie.id),
@@ -18,13 +19,10 @@ async def director_movie_count():
     return [[i["director"], i["count"]] for i in movies]
 
 
-chart_data = asyncio.run(director_movie_count())
-
-
 director_chart = ChartConfig(
     title="Movie count",
     chart_type="Pie",
-    data=chart_data,
+    data_source=get_director_movie_count,
 )
 
 
@@ -40,4 +38,4 @@ app = FastAPI(
     ],
 )
 
-# For Starlette it is identical, just `app = Starlette(...)`
+# For Starlette it is identical, just use `app = Starlette(...)`
