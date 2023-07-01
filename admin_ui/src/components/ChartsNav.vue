@@ -4,7 +4,7 @@
             <router-link
                 :to="{
                     name: 'chart',
-                    params: { chartSlug: chartConfig.chart_slug }
+                    params: { chartSlug: chartConfig.slug }
                 }"
                 class="subtle"
             >

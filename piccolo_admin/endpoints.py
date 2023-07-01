@@ -9,6 +9,7 @@ import itertools
 import json
 import logging
 import os
+import string
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
@@ -278,6 +279,18 @@ class TableConfig:
 PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
 
 
+ALLOWED_URL_CHARACTERS = string.ascii_lowercase + string.digits + "-"
+
+
+def slugify(string: str) -> str:
+    return "".join(
+        [
+            (i if i in ALLOWED_URL_CHARACTERS else "")
+            for i in string.lower().replace(" ", "-").replace("_", "-")
+        ]
+    )
+
+
 @dataclass
 class FormConfig:
     """
@@ -341,7 +354,7 @@ class FormConfig:
         self.pydantic_model = pydantic_model
         self.endpoint = endpoint
         self.description = description
-        self.slug = self.name.replace(" ", "-").lower()
+        self.slug = slugify(self.name)
 
 
 class FormConfigResponseModel(BaseModel):
@@ -360,7 +373,7 @@ class ChartConfig:
 
     :param title:
         This will be displayed in the UI in the sidebar.
-    :param chart_slug:
+    :param slug:
         This determines which chart will be displayed.
     :param chart_type:
         Available chart types. There are five types: ``Pie``, ``Line``,
@@ -412,14 +425,14 @@ class ChartConfig:
         chart_type: t.Literal["Pie", "Line", "Column", "Bar", "Area"] = "Bar",
     ):
         self.title = title
-        self.chart_slug = self.title.replace(" ", "-").lower()
+        self.slug = slugify(self.title)
         self.chart_type = chart_type
         self.data_source = data_source
 
 
 class ChartResponseModel(BaseModel):
     title: str
-    chart_slug: str
+    slug: str
     chart_type: str
 
 
@@ -565,9 +578,7 @@ class AdminRouter(FastAPI):
         self.forms = forms or []
         self.read_only = read_only
         self.charts = charts or []
-        self.chart_config_map = {
-            chart.chart_slug: chart for chart in self.charts
-        }
+        self.chart_config_map = {chart.slug: chart for chart in self.charts}
         self.sidebar_links = sidebar_links or {}
         self.form_config_map = {form.slug: form for form in self.forms}
 
@@ -685,7 +696,7 @@ class AdminRouter(FastAPI):
         )
 
         private_app.add_api_route(
-            path="/charts/{chart_slug:str}/",
+            path="/charts/{slug:str}/",
             endpoint=self.get_single_chart,  # type: ignore
             methods=["GET"],
             tags=["Charts"],
@@ -954,26 +965,24 @@ class AdminRouter(FastAPI):
         return [
             ChartResponseModel(
                 title=chart.title,
-                chart_slug=chart.chart_slug,
+                slug=chart.slug,
                 chart_type=chart.chart_type,
             )
             for chart in self.charts
         ]
 
-    async def get_single_chart(
-        self, chart_slug: str
-    ) -> ChartDataResponseModel:
+    async def get_single_chart(self, slug: str) -> ChartDataResponseModel:
         """
         Returns a single chart.
         """
-        chart = self.chart_config_map.get(chart_slug, None)
+        chart = self.chart_config_map.get(slug, None)
         if chart is None:
             raise HTTPException(status_code=404, detail="No such chart found")
         else:
             data = await chart.data_source()
             return ChartDataResponseModel(
                 title=chart.title,
-                chart_slug=chart.chart_slug,
+                slug=chart.slug,
                 chart_type=chart.chart_type,
                 data=data,
             )

@@ -961,14 +961,15 @@ class TestCharts(TestCase):
     credentials = {"username": "Bob", "password": "bob123"}
 
     def setUp(self):
-        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        create_db_tables_sync(
+            SessionsBase, BaseUser, Movie, Director, if_not_exists=True
+        )
         BaseUser.create_user_sync(
             **self.credentials, active=True, admin=True, superuser=True
         )
 
     def tearDown(self):
-        SessionsBase.alter().drop_table().run_sync()
-        BaseUser.alter().drop_table().run_sync()
+        drop_db_tables_sync(SessionsBase, BaseUser, Movie, Director)
 
     def test_charts(self):
         """
@@ -989,62 +990,43 @@ class TestCharts(TestCase):
         )
 
         #######################################################################
-        # List all forms
+        # List all charts
 
         response = client.get("/api/charts/")
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(
             response.json(),
             [
                 {
-                    "title": "Movie count Pie",
-                    "chart_slug": "movie-count-pie",
+                    "title": "Movies per director (pie)",
+                    "slug": "movies-per-director-pie",
                     "chart_type": "Pie",
-                    "data": [
-                        ["George Lucas", 4],
-                        ["Peter Jackson", 6],
-                        ["Ron Howard", 1],
-                    ],
                 },
                 {
-                    "title": "Movie count Line",
-                    "chart_slug": "movie-count-line",
-                    "chart_type": "Line",
-                    "data": [
-                        ["George Lucas", 4],
-                        ["Peter Jackson", 6],
-                        ["Ron Howard", 1],
-                    ],
-                },
-                {
-                    "title": "Movie count Column",
-                    "chart_slug": "movie-count-column",
+                    "title": "Movies per genre (column)",
+                    "slug": "movies-per-genre-column",
                     "chart_type": "Column",
-                    "data": [
-                        ["George Lucas", 4],
-                        ["Peter Jackson", 6],
-                        ["Ron Howard", 1],
-                    ],
                 },
                 {
-                    "title": "Movie count Bar",
-                    "chart_slug": "movie-count-bar",
+                    "title": "Movies per year (line)",
+                    "slug": "movies-per-year-line",
+                    "chart_type": "Line",
+                },
+                {
+                    "title": "Movies per year (column)",
+                    "slug": "movies-per-year-column",
+                    "chart_type": "Column",
+                },
+                {
+                    "title": "Movies per year (bar)",
+                    "slug": "movies-per-year-bar",
                     "chart_type": "Bar",
-                    "data": [
-                        ["George Lucas", 4],
-                        ["Peter Jackson", 6],
-                        ["Ron Howard", 1],
-                    ],
                 },
                 {
-                    "title": "Movie count Area",
-                    "chart_slug": "movie-count-area",
+                    "title": "Movies per year (area)",
+                    "slug": "movies-per-year-area",
                     "chart_type": "Area",
-                    "data": [
-                        ["George Lucas", 4],
-                        ["Peter Jackson", 6],
-                        ["Ron Howard", 1],
-                    ],
                 },
             ],
         )
@@ -1052,19 +1034,16 @@ class TestCharts(TestCase):
         #######################################################################
         # Now get the ChartConfig for a single chart
 
-        response = client.get("/api/charts/movie-count-pie/")
+        response = client.get("/api/charts/movies-per-director-pie/")
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(
             response.json(),
             {
-                "title": "Movie count Pie",
-                "chart_slug": "movie-count-pie",
+                "title": "Movies per director (pie)",
+                "slug": "movies-per-director-pie",
                 "chart_type": "Pie",
-                "data": [
-                    ["George Lucas", 4],
-                    ["Peter Jackson", 6],
-                    ["Ron Howard", 1],
-                ],
+                "data": [],
             },
         )
         response = client.get("/api/charts/no-such-chart/")

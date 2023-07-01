@@ -422,6 +422,10 @@ sorted_columns_config = TableConfig(
 )
 
 
+###############################################################################
+# Chart data sources
+
+
 async def get_director_movie_count():
     movies = (
         await Movie.select(
@@ -441,16 +445,32 @@ async def get_movie_genre_count():
         .order_by(Movie.genre)
     )
 
-    return [(i["genre"], i["count"]) for i in movies]
+    return [(Movie.Genre(i["genre"]).name, i["count"]) for i in movies]
 
 
-async def placeholder_data():
-    return [
-        ["George Lucas", 4],
-        ["Peter Jackson", 6],
-        ["Ron Howard", 1],
-    ]
+async def get_movie_count_per_year():
+    movies = await Movie.raw(
+        """
+        SELECT
+            CAST(release_date AS date) AS year,
+            COUNT(*) AS count
+        FROM movie
+        GROUP BY CAST(release_date AS date)
+        ORDER BY CAST(release_date AS date)
+        """
+    )
 
+    movies_per_year = {i["year"]: i["count"] for i in movies}
+
+    output = []
+
+    for year in range(1970, 2023):
+        output.append((year, movies_per_year.get(year, 0)))
+
+    return output
+
+
+###############################################################################
 
 APP = create_admin(
     [
@@ -479,34 +499,34 @@ APP = create_admin(
     session_table=Sessions,
     charts=[
         ChartConfig(
-            title="Movies per director",
+            title="Movies per director (pie)",
             chart_type="Pie",
             data_source=get_director_movie_count,
         ),
         ChartConfig(
-            title="Movies per genre",
+            title="Movies per genre (column)",
             chart_type="Column",
             data_source=get_movie_genre_count,
         ),
         ChartConfig(
-            title="Movie count Line",
+            title="Movies per year (line)",
             chart_type="Line",
-            data_source=placeholder_data,
+            data_source=get_movie_count_per_year,
         ),
         ChartConfig(
-            title="Movie count Column",
+            title="Movies per year (column)",
             chart_type="Column",
-            data_source=placeholder_data,
+            data_source=get_movie_count_per_year,
         ),
         ChartConfig(
-            title="Movie count Bar",
+            title="Movies per year (bar)",
             chart_type="Bar",
-            data_source=placeholder_data,
+            data_source=get_movie_count_per_year,
         ),
         ChartConfig(
-            title="Movie count Area",
+            title="Movies per year (area)",
             chart_type="Area",
-            data_source=placeholder_data,
+            data_source=get_movie_count_per_year,
         ),
     ],
     sidebar_links={
