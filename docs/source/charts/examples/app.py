@@ -14,9 +14,10 @@ async def get_director_movie_count():
         Movie.director.name.as_alias("director"),
         Count(Movie.id),
     ).group_by(Movie.director)
+
     # Flatten the response so it's a list of lists
     # like [['George Lucas', 3], ...]
-    return [[i["director"], i["count"]] for i in movies]
+    return [(i["director"], i["count"]) for i in movies]
 
 
 director_chart = ChartConfig(
