@@ -491,22 +491,22 @@ APP = create_admin(
         ChartConfig(
             title="Movie count Line",
             chart_type="Line",
-            data=placeholder_data,
+            data_source=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Column",
             chart_type="Column",
-            data=placeholder_data,
+            data_source=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Bar",
             chart_type="Bar",
-            data=placeholder_data,
+            data_source=placeholder_data,
         ),
         ChartConfig(
             title="Movie count Area",
             chart_type="Area",
-            data=placeholder_data,
+            data_source=placeholder_data,
         ),
     ],
     sidebar_links={
