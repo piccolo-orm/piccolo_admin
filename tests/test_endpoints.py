@@ -1002,31 +1002,37 @@ class TestCharts(TestCase):
                     "title": "Movies per director (pie)",
                     "slug": "movies-per-director-pie",
                     "chart_type": "Pie",
+                    "has_form": False,
                 },
                 {
                     "title": "Movies per genre (column)",
                     "slug": "movies-per-genre-column",
                     "chart_type": "Column",
+                    "has_form": False,
                 },
                 {
                     "title": "Movies per year (line)",
                     "slug": "movies-per-year-line",
                     "chart_type": "Line",
+                    "has_form": True,
                 },
                 {
                     "title": "Movies per year (column)",
                     "slug": "movies-per-year-column",
                     "chart_type": "Column",
+                    "has_form": True,
                 },
                 {
                     "title": "Movies per year (bar)",
                     "slug": "movies-per-year-bar",
                     "chart_type": "Bar",
+                    "has_form": True,
                 },
                 {
                     "title": "Movies per year (area)",
                     "slug": "movies-per-year-area",
                     "chart_type": "Area",
+                    "has_form": True,
                 },
             ],
         )
@@ -1043,7 +1049,7 @@ class TestCharts(TestCase):
                 "title": "Movies per director (pie)",
                 "slug": "movies-per-director-pie",
                 "chart_type": "Pie",
-                "data": [],
+                "has_form": False,
             },
         )
         response = client.get("/api/charts/no-such-chart/")
