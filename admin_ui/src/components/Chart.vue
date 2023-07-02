@@ -36,30 +36,70 @@
             v-else-if="chartConfig.chart_type == 'Area'"
             :data="chartData"
         ></area-chart>
+
+        <form @submit.prevent="handleSubmit($event)" v-if="chartSchema">
+            <NewForm :schema="chartSchema"></NewForm>
+            <button>Apply</button>
+        </form>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
+import NewForm from "./NewForm.vue"
+import { convertFormValue } from "@/utils"
 
 export default Vue.extend({
     data() {
-        return { chartData: [], chartConfig: null, chartSchema: null }
+        return {
+            chartData: [],
+            chartConfig: null,
+            chartSchema: null,
+            chartSlug: null
+        }
+    },
+    components: { NewForm },
+    methods: {
+        async handleSubmit(event) {
+            const form = new FormData(event.target)
+
+            const json = {}
+            for (const i of form.entries()) {
+                const key = i[0]
+                let value = i[1]
+
+                json[key] = convertFormValue({
+                    key,
+                    value,
+                    schema: this.chartSchema
+                })
+            }
+
+            this.chartData = (
+                await this.$store.dispatch("fetchChartData", {
+                    chartSlug: this.chartSlug,
+                    data: json
+                })
+            ).data
+        }
     },
     async mounted() {
-        const chartSlug = this.$router.currentRoute.params.chartSlug
+        this.chartSlug = this.$router.currentRoute.params.chartSlug
 
         this.chartData = (
-            await this.$store.dispatch("fetchChartData", chartSlug)
+            await this.$store.dispatch("fetchChartData", {
+                chartSlug: this.chartSlug,
+                data: {}
+            })
         ).data
 
         this.chartConfig = (
-            await this.$store.dispatch("fetchChartConfig", chartSlug)
+            await this.$store.dispatch("fetchChartConfig", this.chartSlug)
         ).data
 
         if (this.chartConfig.has_form) {
             this.chartSchema = (
-                await this.$store.dispatch("fetchChartSchema", chartSlug)
+                await this.$store.dispatch("fetchChartSchema", this.chartSlug)
             ).data
         }
     }

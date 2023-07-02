@@ -429,9 +429,9 @@ sorted_columns_config = TableConfig(
 async def get_director_movie_count():
     movies = (
         await Movie.select(
-            Movie.director.name.as_alias("director"), CountAgg(Movie.id)
+            Movie.director.name.as_alias("director"), CountAgg()
         )
-        .group_by(Movie.director)
+        .group_by(Movie.director.name)
         .order_by(Movie.director.name)
     )
 
@@ -474,7 +474,7 @@ async def get_movie_count_per_year(model: MovieCountModel):
             GROUP BY EXTRACT(year FROM release_date)
             """
 
-    movies = await Movie.raw(query, model.start_date)
+    movies = await Movie.raw(query, model.start_date.year)
 
     movies_per_year = {i["year"]: i["count"] for i in movies}
 

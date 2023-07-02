@@ -127,8 +127,14 @@ export default new Vuex.Store({
         async fetchChartConfig(context, chartSlug: string) {
             return await axios.get(`${BASE_URL}charts/${chartSlug}/`)
         },
-        async fetchChartData(context, chartSlug: string) {
-            return await axios.post(`${BASE_URL}charts/${chartSlug}/data/`, {})
+        async fetchChartData(
+            context,
+            config: { chartSlug: string; data: object }
+        ) {
+            return await axios.post(
+                `${BASE_URL}charts/${config.chartSlug}/data/`,
+                config.data
+            )
         },
         async fetchChartSchema(context, chartSlug: string) {
             return await axios.get(`${BASE_URL}charts/${chartSlug}/schema/`)
