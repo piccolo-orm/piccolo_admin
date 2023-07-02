@@ -50,6 +50,9 @@ autodoc_typehints = "signature"
 autodoc_typehints_format = "short"
 autoclass_content = "both"
 autodoc_preserve_defaults = True
+autodoc_type_aliases = {
+    "ChartDataSource": "ChartDataSource",
+}
 
 # -- Viewcode -------------------------------------------------------------
 

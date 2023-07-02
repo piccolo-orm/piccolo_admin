@@ -111,8 +111,7 @@ export default new Vuex.Store({
             context.commit("updateFormConfigs", response.data)
         },
         async fetchFormConfig(context, formSlug: string) {
-            const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
-            return response
+            return await axios.get(`${BASE_URL}forms/${formSlug}/`)
         },
         async fetchFormSchema(context, formSlug: string) {
             const response = await axios.get(
@@ -126,11 +125,13 @@ export default new Vuex.Store({
             context.commit("updateChartConfigs", response.data)
         },
         async fetchChartConfig(context, chartSlug: string) {
-            const response = await axios.get(
-                `${BASE_URL}charts/${chartSlug}/`
-            )
-            context.commit("updateChartConfigs", response.data)
-            return response
+            return await axios.get(`${BASE_URL}charts/${chartSlug}/`)
+        },
+        async fetchChartData(context, chartSlug: string) {
+            return await axios.post(`${BASE_URL}charts/${chartSlug}/data/`, {})
+        },
+        async fetchChartSchema(context, chartSlug: string) {
+            return await axios.get(`${BASE_URL}charts/${chartSlug}/schema/`)
         },
 
         /*********************************************************************/

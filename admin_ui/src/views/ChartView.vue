@@ -1,13 +1,12 @@
 <template>
     <DetailViewBase>
-        <ChartsPage :chartSlug="chartSlug" />
+        <Chart :chartSlug="chartSlug" />
     </DetailViewBase>
 </template>
 
-
 <script lang="ts">
 import Vue from "vue"
-import ChartsPage from "../components/ChartsPage.vue"
+import Chart from "../components/Chart.vue"
 import DetailViewBase from "../components/DetailViewBase.vue"
 
 export default Vue.extend({
@@ -15,15 +14,10 @@ export default Vue.extend({
         chartSlug: String
     },
     components: {
-        ChartsPage,
+        Chart,
         DetailViewBase
-    },
-    async mounted() {
-        await this.$store.dispatch("fetchChartConfig", this.chartSlug)
     }
 })
 </script>
 
-
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

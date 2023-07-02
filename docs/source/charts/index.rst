@@ -38,3 +38,4 @@ Source
 .. currentmodule:: piccolo_admin.endpoints
 
 .. autoclass:: ChartConfig
+.. autoclass:: ChartDataSource

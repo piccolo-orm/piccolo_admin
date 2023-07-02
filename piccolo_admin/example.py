@@ -448,23 +448,39 @@ async def get_movie_genre_count():
     return [(Movie.Genre(i["genre"]).name, i["count"]) for i in movies]
 
 
-async def get_movie_count_per_year():
-    movies = await Movie.raw(
-        """
-        SELECT
-            CAST(release_date AS date) AS year,
-            COUNT(*) AS count
-        FROM movie
-        GROUP BY CAST(release_date AS date)
-        ORDER BY CAST(release_date AS date)
-        """
+class MovieCountModel(BaseModel):
+    start_date: datetime.datetime = datetime.datetime(
+        year=1970, month=1, day=1
     )
+
+
+async def get_movie_count_per_year(model: MovieCountModel):
+    if Movie._meta.db.engine_type == "sqlite":
+        query = """
+            SELECT
+                CAST(strftime('%Y', release_date) AS INTEGER) AS year,
+                COUNT(*) AS count
+            FROM movie
+            WHERE CAST(strftime('%Y', release_date) AS INTEGER) > {}
+            GROUP BY CAST(strftime('%Y', release_date) AS INTEGER)
+            """
+    else:
+        query = """
+            SELECT
+                EXTRACT(year FROM release_date) AS year,
+                COUNT(*) AS count
+            FROM movie
+            WHERE EXTRACT(year FROM release_date) > {}
+            GROUP BY EXTRACT(year FROM release_date)
+            """
+
+    movies = await Movie.raw(query, model.start_date)
 
     movies_per_year = {i["year"]: i["count"] for i in movies}
 
     output = []
 
-    for year in range(1970, 2023):
+    for year in range(model.start_date.year, 2023):
         output.append((year, movies_per_year.get(year, 0)))
 
     return output
