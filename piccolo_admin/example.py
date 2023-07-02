@@ -40,6 +40,7 @@ from piccolo.columns.column_types import (
 from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
+from piccolo.query.methods.select import Count as CountAgg
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
@@ -48,6 +49,7 @@ from pydantic import BaseModel, validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
+    ChartConfig,
     FormConfig,
     OrderBy,
     TableConfig,
@@ -419,6 +421,73 @@ sorted_columns_config = TableConfig(
     menu_group="Testing",
 )
 
+
+###############################################################################
+# Chart data sources
+
+
+async def get_director_movie_count():
+    movies = (
+        await Movie.select(
+            Movie.director.name.as_alias("director"), CountAgg()
+        )
+        .group_by(Movie.director.name)
+        .order_by(Movie.director.name)
+    )
+
+    return [(i["director"], i["count"]) for i in movies]
+
+
+async def get_movie_genre_count():
+    movies = (
+        await Movie.select(Movie.genre, CountAgg(Movie.id))
+        .group_by(Movie.genre)
+        .order_by(Movie.genre)
+    )
+
+    return [(Movie.Genre(i["genre"]).name, i["count"]) for i in movies]
+
+
+class MovieCountModel(BaseModel):
+    start_date: datetime.datetime = datetime.datetime(
+        year=1970, month=1, day=1
+    )
+
+
+async def get_movie_count_per_year(model: MovieCountModel):
+    if Movie._meta.db.engine_type == "sqlite":
+        query = """
+            SELECT
+                CAST(strftime('%Y', release_date) AS INTEGER) AS year,
+                COUNT(*) AS count
+            FROM movie
+            WHERE CAST(strftime('%Y', release_date) AS INTEGER) > {}
+            GROUP BY CAST(strftime('%Y', release_date) AS INTEGER)
+            """
+    else:
+        query = """
+            SELECT
+                EXTRACT(year FROM release_date) AS year,
+                COUNT(*) AS count
+            FROM movie
+            WHERE EXTRACT(year FROM release_date) > {}
+            GROUP BY EXTRACT(year FROM release_date)
+            """
+
+    movies = await Movie.raw(query, model.start_date.year)
+
+    movies_per_year = {i["year"]: i["count"] for i in movies}
+
+    output = []
+
+    for year in range(model.start_date.year, 2023):
+        output.append((year, movies_per_year.get(year, 0)))
+
+    return output
+
+
+###############################################################################
+
 APP = create_admin(
     [
         movie_config,
@@ -444,6 +513,38 @@ APP = create_admin(
     ],
     auth_table=User,
     session_table=Sessions,
+    charts=[
+        ChartConfig(
+            title="Movies per director (pie)",
+            chart_type="Pie",
+            data_source=get_director_movie_count,
+        ),
+        ChartConfig(
+            title="Movies per genre (column)",
+            chart_type="Column",
+            data_source=get_movie_genre_count,
+        ),
+        ChartConfig(
+            title="Movies per year (line)",
+            chart_type="Line",
+            data_source=get_movie_count_per_year,
+        ),
+        ChartConfig(
+            title="Movies per year (column)",
+            chart_type="Column",
+            data_source=get_movie_count_per_year,
+        ),
+        ChartConfig(
+            title="Movies per year (bar)",
+            chart_type="Bar",
+            data_source=get_movie_count_per_year,
+        ),
+        ChartConfig(
+            title="Movies per year (area)",
+            chart_type="Area",
+            data_source=get_movie_count_per_year,
+        ),
+    ],
     sidebar_links={
         "Top Movies": "/#/movie?__order=-box_office",
         "Google": "https://google.com",

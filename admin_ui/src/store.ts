@@ -34,6 +34,7 @@ export default new Vuex.Store({
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
+        chartConfigs: [] as i.ChartConfig[],
         user: undefined,
         loadingStatus: false,
         customLinks: {}
@@ -62,6 +63,9 @@ export default new Vuex.Store({
         },
         updateFormSchema(state, formSchema) {
             state.formSchema = formSchema
+        },
+        updateChartConfigs(state, value) {
+            state.chartConfigs = value
         },
         updateApiResponseMessage(state, message: i.APIResponseMessage) {
             state.apiResponseMessage = message
@@ -107,8 +111,7 @@ export default new Vuex.Store({
             context.commit("updateFormConfigs", response.data)
         },
         async fetchFormConfig(context, formSlug: string) {
-            const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
-            return response
+            return await axios.get(`${BASE_URL}forms/${formSlug}/`)
         },
         async fetchFormSchema(context, formSlug: string) {
             const response = await axios.get(
@@ -116,6 +119,25 @@ export default new Vuex.Store({
             )
             context.commit("updateFormSchema", response.data)
             return response
+        },
+        async fetchChartConfigs(context) {
+            const response = await axios.get(`${BASE_URL}charts/`)
+            context.commit("updateChartConfigs", response.data)
+        },
+        async fetchChartConfig(context, chartSlug: string) {
+            return await axios.get(`${BASE_URL}charts/${chartSlug}/`)
+        },
+        async fetchChartData(
+            context,
+            config: { chartSlug: string; data: object }
+        ) {
+            return await axios.post(
+                `${BASE_URL}charts/${config.chartSlug}/data/`,
+                config.data
+            )
+        },
+        async fetchChartSchema(context, chartSlug: string) {
+            return await axios.get(`${BASE_URL}charts/${chartSlug}/schema/`)
         },
 
         /*********************************************************************/

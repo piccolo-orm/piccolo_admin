@@ -955,3 +955,103 @@ class TestValidators(TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, b'{"detail":"Not allowed!"}')
+
+
+class TestCharts(TestCase):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    def setUp(self):
+        create_db_tables_sync(
+            SessionsBase, BaseUser, Movie, Director, if_not_exists=True
+        )
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
+
+    def tearDown(self):
+        drop_db_tables_sync(SessionsBase, BaseUser, Movie, Director)
+
+    def test_charts(self):
+        """
+        Make sure the charts listing can be retrieved.
+        """
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        #######################################################################
+        # List all charts
+
+        response = client.get("/api/charts/")
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "title": "Movies per director (pie)",
+                    "slug": "movies-per-director-pie",
+                    "chart_type": "Pie",
+                    "has_form": False,
+                },
+                {
+                    "title": "Movies per genre (column)",
+                    "slug": "movies-per-genre-column",
+                    "chart_type": "Column",
+                    "has_form": False,
+                },
+                {
+                    "title": "Movies per year (line)",
+                    "slug": "movies-per-year-line",
+                    "chart_type": "Line",
+                    "has_form": True,
+                },
+                {
+                    "title": "Movies per year (column)",
+                    "slug": "movies-per-year-column",
+                    "chart_type": "Column",
+                    "has_form": True,
+                },
+                {
+                    "title": "Movies per year (bar)",
+                    "slug": "movies-per-year-bar",
+                    "chart_type": "Bar",
+                    "has_form": True,
+                },
+                {
+                    "title": "Movies per year (area)",
+                    "slug": "movies-per-year-area",
+                    "chart_type": "Area",
+                    "has_form": True,
+                },
+            ],
+        )
+
+        #######################################################################
+        # Now get the ChartConfig for a single chart
+
+        response = client.get("/api/charts/movies-per-director-pie/")
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(
+            response.json(),
+            {
+                "title": "Movies per director (pie)",
+                "slug": "movies-per-director-pie",
+                "chart_type": "Pie",
+                "has_form": False,
+            },
+        )
+        response = client.get("/api/charts/no-such-chart/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.content, b'{"detail":"No such chart found"}')

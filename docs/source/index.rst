@@ -20,7 +20,7 @@ Some of it's standout features:
 * Media support, both locally and in S3 compatible services
 * Dark mode support
 * CSV exports
-* Easily create custom forms
+* Easily create custom forms, and display data in charts
 * Works on mobile and desktop
 * Use standalone, or integrate it easily with ASGI apps like FastAPI, and Starlette
 * Multilingual out of box
@@ -46,6 +46,7 @@ Table of Contents
    ../help_text/index
    ../table_config/index
    ../custom_forms/index
+   ../charts/index
    ../sidebar_links/index
    ../actions/index
    ../media_storage/index

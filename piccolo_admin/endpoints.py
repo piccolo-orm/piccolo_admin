@@ -1,13 +1,15 @@
 """
-Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
+Creates an ASGI admin app from Piccolo tables.
 """
 from __future__ import annotations
 
+import decimal
 import inspect
 import itertools
 import json
 import logging
 import os
+import string
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
@@ -277,6 +279,18 @@ class TableConfig:
 PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
 
 
+ALLOWED_URL_CHARACTERS = string.ascii_lowercase + string.digits + "-"
+
+
+def slugify(string: str) -> str:
+    return "".join(
+        [
+            (i if i in ALLOWED_URL_CHARACTERS else "")
+            for i in string.lower().replace(" ", "-").replace("_", "-")
+        ]
+    )
+
+
 @dataclass
 class FormConfig:
     """
@@ -340,13 +354,127 @@ class FormConfig:
         self.pydantic_model = pydantic_model
         self.endpoint = endpoint
         self.description = description
-        self.slug = self.name.replace(" ", "-").lower()
+        self.slug = slugify(self.name)
 
 
 class FormConfigResponseModel(BaseModel):
     name: str
     slug: str
     description: t.Optional[str] = None
+
+
+Number = t.Union[int, float, decimal.Decimal]
+ChartData = t.Sequence[t.Tuple[str, Number]]
+#: An async function which returns the chart's data.
+ChartDataSource = t.Callable[..., t.Awaitable[ChartData]]
+
+
+class ChartConfig:
+    """
+    Used to specify charts, which are passed into ``create_admin``.
+
+    :param title:
+        This will be displayed in the UI in the sidebar.
+    :param chart_type:
+        Available chart types. There are five types: ``Pie``, ``Line``,
+        ``Column``, ``Bar`` and ``Area``.
+    :param data_source:
+        An async function which returns the data to be displayed in the chart.
+        It must return a sequence of tuples. The first element is the label,
+        and the second is the value:
+
+        .. code-block:: python
+
+            >>> [("Male", 7), ("Female", 3)]
+
+        Here's an example:
+
+        .. code-block:: python
+
+            from piccolo.query.methods.select import Count
+
+            from movies.tables import Movie
+
+
+            async def get_director_movie_count():
+                movies = await Movie.select(
+                    Movie.director.name.as_alias("director"),
+                    Count(Movie.id)
+                ).group_by(
+                    Movie.director
+                )
+                # Flatten the response so it's in the correct format
+                # e.g. [('George Lucas', 3), ...]
+                return [(i['director'], i['count']) for i in movies]
+
+        If your async function has a ``model`` argument which receives a
+        Pydantic model, then a form is rendered in the UI which allows the user
+        to configure the chart's data.
+
+        For example, here we let the user specify the ``start_date``, so we
+        only include movie's released since then:
+
+        .. code-block:: python
+
+            import datetime
+
+            from piccolo.query.methods.select import Count
+            from pydantic import BaseModel
+
+            from movies.tables import Movie
+
+
+            class ChartModel(BaseModel):
+                start_date: datetime.datetime | None = None
+
+
+            async def get_director_movie_count(model: ChartModel):
+                query = await Movie.select(
+                    Movie.director.name.as_alias("director"),
+                    Count(Movie.id)
+                ).group_by(
+                    Movie.director
+                )
+
+                if model.start_date:
+                    query = query.where(Movie.release_date > model.start_date)
+
+                movies = await query()
+
+                # Flatten the response so it's in the correct format
+                # e.g. [('George Lucas', 3), ...]
+                return [(i['director'], i['count']) for i in movies]
+
+    """
+
+    def __init__(
+        self,
+        title: str,
+        data_source: ChartDataSource,
+        chart_type: t.Literal["Pie", "Line", "Column", "Bar", "Area"] = "Bar",
+    ):
+        self.title = title
+        self.slug = slugify(self.title)
+        self.chart_type = chart_type
+        self.data_source = data_source
+
+        # See if the data source contains a Pydantic model
+        type_hints = t.get_type_hints(data_source)
+        model_arg = type_hints.get("model", None)
+        self.pydantic_model = (
+            model_arg
+            if model_arg
+            and inspect.isclass(model_arg)
+            and issubclass(model_arg, BaseModel)
+            else None
+        )
+
+
+class ChartResponseModel(BaseModel):
+    title: str
+    slug: str
+    chart_type: str
+    has_form: bool
 
 
 def handle_auth_exception(request: Request, exc: Exception):
@@ -386,7 +514,7 @@ class AdminRouter(FastAPI):
     def __init__(
         self,
         *tables: t.Union[t.Type[Table], TableConfig],
-        forms: t.List[FormConfig] = [],
+        forms: t.Optional[t.List[FormConfig]] = None,
         auth_table: t.Type[BaseUser] = BaseUser,
         session_table: t.Type[SessionsBase] = SessionsBase,
         session_expiry: timedelta = timedelta(hours=1),
@@ -398,10 +526,11 @@ class AdminRouter(FastAPI):
         production: bool = False,
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
-        translations: t.List[Translation] = None,
+        translations: t.Optional[t.List[Translation]] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
-        sidebar_links: t.Dict[str, str] = {},
+        charts: t.Optional[t.List[ChartConfig]] = None,
+        sidebar_links: t.Optional[t.Dict[str, str]] = None,
     ) -> None:
         super().__init__(
             title=site_name,
@@ -483,9 +612,11 @@ class AdminRouter(FastAPI):
 
         self.auth_table = auth_table
         self.site_name = site_name
-        self.forms = forms
+        self.forms = forms or []
         self.read_only = read_only
-        self.sidebar_links = sidebar_links
+        self.charts = charts or []
+        self.chart_config_map = {chart.slug: chart for chart in self.charts}
+        self.sidebar_links = sidebar_links or {}
         self.form_config_map = {form.slug: form for form in self.forms}
 
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
@@ -564,6 +695,9 @@ class AdminRouter(FastAPI):
             tags=["Links"],
         )
 
+        #######################################################################
+        # Form endpoints
+
         private_app.add_api_route(
             path="/forms/",
             endpoint=self.get_forms,  # type: ignore
@@ -593,6 +727,43 @@ class AdminRouter(FastAPI):
             tags=["Forms"],
         )
 
+        #######################################################################
+        # Chart endpoints
+
+        private_app.add_api_route(
+            path="/charts/",
+            endpoint=self.get_charts,  # type: ignore
+            methods=["GET"],
+            tags=["Charts"],
+            response_model=t.List[ChartResponseModel],
+        )
+
+        private_app.add_api_route(
+            path="/charts/{slug:str}/",
+            endpoint=self.get_single_chart,  # type: ignore
+            methods=["GET"],
+            tags=["Charts"],
+            response_model=ChartResponseModel,
+        )
+
+        private_app.add_api_route(
+            path="/charts/{slug:str}/schema/",
+            endpoint=self.get_single_chart_schema,  # type: ignore
+            methods=["GET"],
+            tags=["Charts"],
+        )
+
+        for chart in self.charts:
+            private_app.add_api_route(
+                path=f"/charts/{chart.slug}/data/",
+                endpoint=chart.data_source,  # type: ignore
+                methods=["POST"],
+                tags=["Charts"],
+            )
+
+        #######################################################################
+        # User / password endpoints
+
         private_app.add_api_route(
             path="/user/",
             endpoint=self.get_user,  # type: ignore
@@ -612,7 +783,7 @@ class AdminRouter(FastAPI):
         )
 
         #######################################################################
-        # Media
+        # Media endpoints
 
         private_app.add_api_route(
             path="/media/",
@@ -846,6 +1017,55 @@ class AdminRouter(FastAPI):
         )
 
     ###########################################################################
+    # Custom charts
+
+    def get_charts(self) -> t.List[ChartResponseModel]:
+        """
+        Returns all charts registered with the admin.
+        """
+        return [
+            ChartResponseModel(
+                title=chart.title,
+                slug=chart.slug,
+                chart_type=chart.chart_type,
+                has_form=chart.pydantic_model is not None,
+            )
+            for chart in self.charts
+        ]
+
+    async def get_single_chart(self, slug: str) -> ChartResponseModel:
+        """
+        Returns a single chart.
+        """
+        chart = self.chart_config_map.get(slug, None)
+        if chart is None:
+            raise HTTPException(status_code=404, detail="No such chart found")
+        else:
+            return ChartResponseModel(
+                title=chart.title,
+                slug=chart.slug,
+                chart_type=chart.chart_type,
+                has_form=chart.pydantic_model is not None,
+            )
+
+    async def get_single_chart_schema(self, slug: str):
+        """
+        Returns the schema for a chart's form if configured, else a 404.
+        """
+        chart = self.chart_config_map.get(slug, None)
+
+        if chart is None:
+            raise HTTPException(status_code=404, detail="No such chart found")
+
+        pydantic_model = chart.pydantic_model
+        if pydantic_model is None:
+            raise HTTPException(
+                status_code=404, detail="A form isn't configured"
+            )
+
+        return pydantic_model.schema()
+
+    ###########################################################################
     # Custom forms
 
     def get_forms(self) -> t.List[FormConfigResponseModel]:
@@ -854,7 +1074,9 @@ class AdminRouter(FastAPI):
         """
         return [
             FormConfigResponseModel(
-                name=form.name, slug=form.slug, description=form.description
+                name=form.name,
+                slug=form.slug,
+                description=form.description,
             )
             for form in self.forms
         ]
@@ -1047,10 +1269,11 @@ def create_admin(
     production: bool = False,
     site_name: str = "Piccolo Admin",
     default_language_code: str = "auto",
-    translations: t.List[Translation] = None,
+    translations: t.Optional[t.List[Translation]] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
+    charts: t.List[ChartConfig] = [],
     sidebar_links: t.Dict[str, str] = {},
 ):
     """
@@ -1154,6 +1377,10 @@ def create_admin(
         If ``True``, debug mode is enabled. Any unhandled exceptions will
         return a stack trace, rather than a generic 500 error. Don't use this
         in production!
+    :param charts:
+        For each :class:`ChartConfig <piccolo_admin.endpoints.ChartConfig>`
+        specified, a chart will automatically be rendered in the user interface,
+        accessible via the sidebar.
     :param sidebar_links:
         Custom links in the navigation sidebar. Example uses cases:
 
@@ -1217,5 +1444,6 @@ def create_admin(
         translations=translations,
         allowed_hosts=allowed_hosts,
         debug=debug,
+        charts=charts,
         sidebar_links=sidebar_links,
     )

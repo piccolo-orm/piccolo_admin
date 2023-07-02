@@ -37,8 +37,8 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
-    page.get_by_role("link", name="Show filters").click()
+    page.get_by_role("link", name="director", exact=True).click()
+    page.get_by_role("link", name="Show filters", exact=True).click()
     page.locator('input[name="name"]').click()
     page.locator('input[name="name"]').fill("Howard")
     page.locator('input[name="name"]').press("Enter")
@@ -108,8 +108,8 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
-    page.get_by_role("link", name="8").click()
+    page.get_by_role("link", name="director", exact=True).click()
+    page.get_by_role("link", name="8", exact=True).click()
     page.locator('input[type="file"]').click()
     page.locator('input[type="file"]').set_input_files(
         "./e2e/upload/piccolo.jpg"
@@ -143,7 +143,7 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
+    page.get_by_role("link", name="director", exact=True).click()
     page.locator("th").first.click()
     page.get_by_role("row", name="id Name Gender Photo").get_by_role(
         "checkbox"
@@ -171,9 +171,9 @@ def test_table_crud(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
-    page.get_by_role("cell", name="8").click()
-    page.get_by_role("link", name="8").click()
+    page.get_by_role("link", name="director", exact=True).click()
+    page.get_by_role("cell", name="8", exact=True).click()
+    page.get_by_role("link", name="8", exact=True).click()
     page.locator('input[name="name"]').click()
     page.locator('input[name="name"]').fill("Ronald William Howard")
     page.locator('input[name="name"]').press("Enter")

@@ -145,3 +145,10 @@ export interface FormConfig {
     slug: string
     description: string
 }
+
+export interface ChartConfig {
+    title: string
+    slug: string
+    chart_type: string
+    data: any
+}

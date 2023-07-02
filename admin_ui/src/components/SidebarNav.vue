@@ -35,6 +35,22 @@
         <FormNav v-show="!isHiddenForms" />
         <p
             class="opaque"
+            v-if="chartConfigs.length > 0"
+            v-on:click="isHiddenCharts = !isHiddenCharts"
+        >
+            <font-awesome-icon icon="chart-bar" />{{ $t("Charts") }}
+            <span style="float: right">
+                <font-awesome-icon
+                    icon="angle-down"
+                    title="Show charts"
+                    v-if="isHiddenCharts"
+                />
+                <font-awesome-icon icon="angle-up" title="Hide charts" v-else />
+            </span>
+        </p>
+        <ChartsNav v-show="!isHiddenCharts" />
+        <p
+            class="opaque"
             v-if="Object.keys(customLinks).length > 0"
             v-on:click="isHiddenLinks = !isHiddenLinks"
         >
@@ -56,6 +72,7 @@
 import Vue from "vue"
 import TableNav from "./TableNav.vue"
 import FormNav from "./FormNav.vue"
+import ChartsNav from "./ChartsNav.vue"
 import LinksNav from "./LinksNav.vue"
 
 export default Vue.extend({
@@ -63,17 +80,22 @@ export default Vue.extend({
         return {
             isHiddenTables: false,
             isHiddenForms: false,
+            isHiddenCharts: false,
             isHiddenLinks: false
         }
     },
     components: {
         TableNav,
         FormNav,
+        ChartsNav,
         LinksNav
     },
     computed: {
         formConfigs() {
             return this.$store.state.formConfigs
+        },
+        chartConfigs() {
+            return this.$store.state.chartConfigs
         },
         customLinks() {
             return this.$store.state.customLinks
