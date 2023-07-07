@@ -1,6 +1,17 @@
 Changes
 =======
 
+0.52.0
+------
+
+Version pinning Pydantic to v1, as v2 has breaking changes.
+
+We will add support for Pydantic v2 in a future release.
+
+Thanks to @sinisaos for helping with this.
+
+-------------------------------------------------------------------------------
+
 0.51.0
 ------
 
