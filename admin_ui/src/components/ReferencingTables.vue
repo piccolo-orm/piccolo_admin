@@ -19,29 +19,36 @@
                 v-bind:key="reference.tableName + reference.columnName"
                 v-for="reference in references"
             >
-                <a href="#" v-on:click.prevent="clickedReference(reference)">
-                    <font-awesome-icon icon="external-link-alt" />
+                <router-link
+                    :to="{
+                        name: 'rowListing',
+                        params: { tableName: reference.tableName },
+                        query: getQueryParams(reference)
+                    }"
+                >
+                    <font-awesome-icon icon="level-up-alt" class="rotated90" />
                     <span class="table bold">{{ reference.tableName }}</span>
                     {{ $t("with a matching") }}
-                    <span class="bold">{{ reference.columnName }}</span>
-                </a>
+                    <span class="bold">{{
+                        reference.columnName
+                    }}</span></router-link
+                >
             </li>
         </ul>
     </div>
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from "vue"
-import { Location } from "vue-router"
+import { defineComponent, PropType } from "vue"
 import { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
-export default {
+export default defineComponent({
     props: {
         tableName: {
-            type: String as PropType<string>,
+            type: String as PropType<string>
         },
         rowID: {
-            type: undefined as PropType<number | string>,
+            type: undefined as PropType<number | string>
         }
     },
     data: function () {
@@ -60,27 +67,16 @@ export default {
                 response.data as TableReferencesAPIResponse
             ).references
         },
-        clickedReference(reference: TableReference) {
-            let columnName = reference.columnName
-            let query = {}
-            query[columnName] = this.rowID
-
-            let location: Location = {
-                name: "rowListing",
-                params: { tableName: reference.tableName },
-                query
-            }
-            let vueUrl = this.$router.resolve(location).href
-            window.open(
-                `${document.location.origin}${document.location.pathname}${vueUrl}`,
-                "_blank"
-            )
+        getQueryParams(reference: TableReference) {
+            const query = {}
+            query[reference.columnName] = this.rowID
+            return query
         }
     },
     async mounted() {
         await this.fetchTableReferences()
     }
-}
+})
 </script>
 
 <style scoped lang="less">

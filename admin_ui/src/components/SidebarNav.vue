@@ -124,10 +124,6 @@ div.sidebar {
                     border-left: 3px solid @light_blue;
                 }
 
-                svg.rotated90 {
-                    transform: rotate(90deg);
-                }
-
                 span {
                     display: block;
                     box-sizing: border-box;
