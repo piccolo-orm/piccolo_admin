@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.53.0
+------
+
+Improved the UI for JSON fields (the cursor would sometimes jump to the
+bottom).
+
+-------------------------------------------------------------------------------
+
 0.52.0
 ------
 
