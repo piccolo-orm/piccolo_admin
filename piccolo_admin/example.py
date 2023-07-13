@@ -173,6 +173,7 @@ class Studio(Table, help_text="A movie studio."):
     pk = UUID(primary_key=True)
     name = Varchar(unique=True)
     facilities = JSON()
+    description = Text()
 
     @classmethod
     def get_readable(cls):
