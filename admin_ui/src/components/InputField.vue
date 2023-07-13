@@ -79,7 +79,7 @@
                     v-bind:placeholder="placeholder"
                     v-bind:style="{ height: textareaHeight }"
                     v-model="localValue"
-                    v-on:input="setTextareaHeight"
+                    v-on:keyup="setTextareaHeight"
                 />
 
                 <textarea
@@ -91,16 +91,12 @@
 
             <div v-else-if="format == 'json'">
                 <textarea
-                    :value="
-                        localValue
-                            ? JSON.stringify(JSON.parse(localValue), null, 2)
-                            : null
-                    "
+                    v-model="localValue"
                     autocomplete="off"
                     ref="textarea"
                     v-bind:name="columnName"
                     v-bind:style="{ height: textareaHeight }"
-                    v-on:input="setTextareaHeight"
+                    v-on:keyup="setTextareaHeight"
                 />
             </div>
 
@@ -143,7 +139,7 @@
                 <OperatorField :columnName="columnName" v-if="isFilter" />
                 <DurationWidget
                     v-bind:timedelta="localValue"
-                    v-on:newTimedelta="updateLocalValue($event)"
+                    v-on:newTimedelta="localValue = $event"
                 />
                 <input
                     type="hidden"
@@ -297,12 +293,16 @@ export default Vue.extend({
             let element = this.$refs.textarea
             if (element) {
                 if (element.scrollHeight > element.clientHeight) {
+                    const cursorPosition = element.selectionStart
                     this.textareaHeight = element.scrollHeight + "px"
+                    window.setTimeout(() => {
+                        element.setSelectionRange(
+                            cursorPosition,
+                            cursorPosition
+                        )
+                    }, 0)
                 }
             }
-        },
-        updateLocalValue(event) {
-            this.localValue = event
         },
         showMedia() {
             const mediaViewerConfig: MediaViewerConfig = {
@@ -312,6 +312,9 @@ export default Vue.extend({
             }
             this.mediaViewerConfig = mediaViewerConfig
             this.showMediaViewer = true
+        },
+        formatJSON(value: string): string {
+            return JSON.stringify(JSON.parse(this.value), null, 2)
         },
         async uploadFile(event) {
             const file = event.target.files[0]
@@ -370,24 +373,31 @@ export default Vue.extend({
 
             event.target.value = ""
             this.showLoadingOverlay = false
+        },
+        setLocalValue(value: any) {
+            if (this.format == "json") {
+                this.localValue = value ? this.formatJSON(value) : null
+            } else {
+                this.localValue = value
+            }
+
+            let app = this
+
+            setTimeout(function () {
+                app.setTextareaHeight()
+            }, 0)
         }
     },
     watch: {
-        value() {
-            this.localValue = this.value
-            this.setTextareaHeight()
+        value(newValue) {
+            this.setLocalValue(newValue)
         },
         currentTableName() {
             this.localValue = undefined
         }
     },
     mounted() {
-        this.localValue = this.value
-
-        let app = this
-        setTimeout(function () {
-            app.setTextareaHeight()
-        }, 0)
+        this.setLocalValue(this.value)
     }
 })
 </script>

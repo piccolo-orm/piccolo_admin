@@ -339,6 +339,12 @@ STUDIOS: t.List[t.Dict[str, t.Any]] = [
             "catering": True,
             "water_tank": True,
         },
+        "description": (
+            "Shepperton Studios is a film studio located in Shepperton, "
+            "Surrey, England, with a history dating back to 1931. It is now "
+            "part of the Pinewood Studios Group. During its early existence, "
+            "the studio was branded as Sound City."
+        ),
     }
 ]
 
