@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.54.0
+------
+
+Improved the behaviour of the `referencing tables` links on the detail page.
+
+-------------------------------------------------------------------------------
+
 0.53.0
 ------
 
