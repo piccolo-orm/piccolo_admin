@@ -10,6 +10,8 @@ shown in the UI.
 This is useful if we have constraints on the table (for example
 ``ON DELETE RESTRICT``).
 
+Support for Python 3.7 was dropped as it's now end of life.
+
 -------------------------------------------------------------------------------
 
 0.54.0
