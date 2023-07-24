@@ -420,7 +420,7 @@ import {
     MediaViewerConfig,
     OrderByConfig
 } from "../interfaces"
-import { deserialiseOrderByString } from "@/utils"
+import { deserialiseOrderByString, parseErrorResponse } from "@/utils"
 
 export default Vue.extend({
     props: ["tableName"],
@@ -611,11 +611,28 @@ export default Vue.extend({
         async deleteRows() {
             if (confirm(`Are you sure you want to delete the selected rows?`)) {
                 console.log("Deleting rows!")
+
                 for (let i = 0; i < this.selectedRows.length; i++) {
-                    await this.$store.dispatch("deleteRow", {
-                        tableName: this.tableName,
-                        rowID: this.selectedRows[i]
-                    })
+                    try {
+                        await this.$store.dispatch("deleteRow", {
+                            tableName: this.tableName,
+                            rowID: this.selectedRows[i]
+                        })
+                    } catch (error) {
+                        const errors = parseErrorResponse(
+                            error.response.data,
+                            error.response.status
+                        )
+                        const errorString = errors.join(", ")
+
+                        var message: APIResponseMessage = {
+                            contents: `Unable to delete row ${this.selectedRows[i]} (${errorString})`,
+                            type: "error"
+                        }
+                        this.$store.commit("updateApiResponseMessage", message)
+                        await this.fetchRows()
+                        return
+                    }
                 }
                 await this.fetchRows()
                 this.showSuccess("Successfully deleted rows")

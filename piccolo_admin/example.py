@@ -29,6 +29,7 @@ from piccolo.columns.column_types import (
     Integer,
     Interval,
     Numeric,
+    OnDelete,
     Real,
     Serial,
     SmallInt,
@@ -223,6 +224,10 @@ class Ticket(Table):
     vip = Boolean(null=True, default=None)
 
 
+###############################################################################
+# Some tables which are for UI testing with Playwright.
+
+
 class NullableColumns(Table):
     """
     A table used for UI tests.
@@ -250,6 +255,50 @@ class SortedColumns(Table):
     id: Serial
     integer = Integer()
     letter = Varchar()
+
+
+class ConstraintTarget(Table):
+    """
+    A table used for UI tests.
+    """
+
+    id: Serial
+    name = Varchar()
+
+
+class Constraints(Table):
+    """
+    A table used for UI tests.
+    """
+
+    id: Serial
+    cascade = ForeignKey(
+        ConstraintTarget,
+        null=True,
+        default=None,
+        on_delete=OnDelete.cascade,
+    )
+    restrict = ForeignKey(
+        ConstraintTarget, null=True, default=None, on_delete=OnDelete.restrict
+    )
+    no_action = ForeignKey(
+        ConstraintTarget,
+        null=True,
+        default=None,
+        on_delete=OnDelete.no_action,
+    )
+    set_null = ForeignKey(
+        ConstraintTarget, on_delete=OnDelete.set_null, null=True, default=None
+    )
+    set_default = ForeignKey(
+        ConstraintTarget,
+        on_delete=OnDelete.set_default,
+        null=True,
+        default=None,
+    )
+
+
+###############################################################################
 
 
 class BusinessEmailModel(BaseModel):
@@ -328,6 +377,8 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Ticket,
     NullableColumns,
     SortedColumns,
+    Constraints,
+    ConstraintTarget,
 )
 
 
@@ -420,6 +471,16 @@ sorted_columns_config = TableConfig(
     menu_group="Testing",
 )
 
+constraints_config = TableConfig(
+    table_class=Constraints,
+    menu_group="Testing",
+)
+
+constraints_target_config = TableConfig(
+    table_class=ConstraintTarget,
+    menu_group="Testing",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -428,6 +489,8 @@ APP = create_admin(
         ticket_config,
         nullable_config,
         sorted_columns_config,
+        constraints_config,
+        constraints_target_config,
     ],
     forms=[
         FormConfig(
