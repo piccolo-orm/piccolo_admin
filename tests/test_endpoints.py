@@ -636,6 +636,8 @@ class TestTables(TestCase):
         self.assertEqual(
             response.json(),
             [
+                "constraint_target",
+                "constraints",
                 "director",
                 "movie",
                 "nullable_columns",
@@ -674,7 +676,12 @@ class TestTables(TestCase):
                 "grouped": {
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
-                    "Testing": ["nullable_columns", "sorted_columns"],
+                    "Testing": [
+                        "constraint_target",
+                        "constraints",
+                        "nullable_columns",
+                        "sorted_columns",
+                    ],
                 },
                 "ungrouped": [],
             },
