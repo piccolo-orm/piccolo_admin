@@ -29,6 +29,7 @@ from piccolo.columns.column_types import (
     Integer,
     Interval,
     Numeric,
+    OnDelete,
     Real,
     Serial,
     SmallInt,
@@ -195,7 +196,7 @@ class Movie(Table):
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
-    director = ForeignKey(references=Director)
+    director = ForeignKey(references=Director, on_delete=OnDelete.restrict)
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
