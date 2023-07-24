@@ -196,7 +196,7 @@ class Movie(Table):
     name = Varchar(length=300)
     rating = Real(help_text="The rating on IMDB.")
     duration = Interval()
-    director = ForeignKey(references=Director, on_delete=OnDelete.restrict)
+    director = ForeignKey(references=Director)
     oscar_nominations = Integer()
     won_oscar = Boolean()
     description = Text()
@@ -222,6 +222,10 @@ class Ticket(Table):
     start_time = Time()
     booked_on = Timestamp()
     vip = Boolean(null=True, default=None)
+
+
+###############################################################################
+# Some tables which are for UI testing with Playwright.
 
 
 class NullableColumns(Table):
@@ -251,6 +255,48 @@ class SortedColumns(Table):
     id: Serial
     integer = Integer()
     letter = Varchar()
+
+
+class ConstraintsTarget(Table):
+    """
+    A table used for UI tests.
+    """
+
+    name = Varchar()
+
+
+class Constraints(Table):
+    """
+    A table used for UI tests.
+    """
+
+    cascade = ForeignKey(
+        ConstraintsTarget,
+        null=True,
+        default=None,
+        on_delete=OnDelete.cascade,
+    )
+    restrict = ForeignKey(
+        ConstraintsTarget, null=True, default=None, on_delete=OnDelete.restrict
+    )
+    no_action = ForeignKey(
+        ConstraintsTarget,
+        null=True,
+        default=None,
+        on_delete=OnDelete.no_action,
+    )
+    set_null = ForeignKey(
+        ConstraintsTarget, on_delete=OnDelete.set_null, null=True, default=None
+    )
+    set_default = ForeignKey(
+        ConstraintsTarget,
+        on_delete=OnDelete.set_default,
+        null=True,
+        default=None,
+    )
+
+
+###############################################################################
 
 
 class BusinessEmailModel(BaseModel):
@@ -329,6 +375,8 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Ticket,
     NullableColumns,
     SortedColumns,
+    Constraints,
+    ConstraintsTarget,
 )
 
 
@@ -421,6 +469,16 @@ sorted_columns_config = TableConfig(
     menu_group="Testing",
 )
 
+constraints_config = TableConfig(
+    table_class=Constraints,
+    menu_group="Testing",
+)
+
+constraints_target_config = TableConfig(
+    table_class=ConstraintsTarget,
+    menu_group="Testing",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -429,6 +487,8 @@ APP = create_admin(
         ticket_config,
         nullable_config,
         sorted_columns_config,
+        constraints_config,
+        constraints_target_config,
     ],
     forms=[
         FormConfig(
