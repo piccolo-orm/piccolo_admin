@@ -626,7 +626,7 @@ export default Vue.extend({
                         const errorString = errors.join(", ")
 
                         var message: APIResponseMessage = {
-                            contents: `Unable to delete row ${this.selectedRows[i]}: ${errorString}`,
+                            contents: `Unable to delete row ${this.selectedRows[i]} (${errorString})`,
                             type: "error"
                         }
                         this.$store.commit("updateApiResponseMessage", message)
