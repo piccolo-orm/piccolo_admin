@@ -132,7 +132,24 @@ export default Vue.extend({
                     tableName: this.tableName,
                     rowID: this.rowID
                 }
-                await this.$store.dispatch("deleteRow", config)
+
+                try {
+                    await this.$store.dispatch("deleteRow", config)
+                } catch (error) {
+                    this.errors = parseErrorResponse(
+                        error.response.data,
+                        error.response.status
+                    )
+
+                    var message: APIResponseMessage = {
+                        contents: "Unable to delete the row.",
+                        type: "error"
+                    }
+                    this.$store.commit("updateApiResponseMessage", message)
+
+                    return
+                }
+
                 alert("Successfully deleted row")
                 this.$router.push({
                     name: "rowListing",
