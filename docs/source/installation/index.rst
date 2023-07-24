@@ -1,7 +1,7 @@
 Installation
 ============
 
-Python 3.7 or above is required.
+Python 3.8 or above is required.
 
 Install ``piccolo_admin``, ideally inside a `virtualenv <https://docs.python-guide.org/dev/virtualenvs/>`_.
 
