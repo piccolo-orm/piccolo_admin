@@ -7,6 +7,7 @@
                 <a
                     class="subtle"
                     href="#"
+                    data-uitest="drop_down_button"
                     v-on:click.prevent="showDropdown = !showDropdown"
                 >
                     <font-awesome-icon icon="ellipsis-v" />

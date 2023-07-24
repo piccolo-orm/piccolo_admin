@@ -3,6 +3,7 @@
         href="#"
         id="delete"
         title="Delete Row"
+        data-uitest="delete_row_button"
         v-on:click.prevent="$emit('triggered')"
     >
         <font-awesome-icon icon="trash-alt" />

@@ -121,6 +121,32 @@ class RowListingPage:
         self.sort_button.click()
 
 
+class EditRowPage:
+    def __init__(self, page: Page, tablename: str, id: str):
+        self.page = page
+        self.url = f"{BASE_URL}/#/{tablename}/{id}/"
+        self.drop_down_button = page.locator("a[data-uitest=drop_down_button]")
+        self.delete_row_button = page.locator(
+            "a[data-uitest=delete_row_button]"
+        )
+        self.error_div = page.locator("div.errors")
+
+    def open_drop_down_menu(self):
+        self.drop_down_button.click()
+
+    def delete(self):
+        self.open_drop_down_menu()
+        self.page.on("dialog", lambda dialog: dialog.accept())
+        self.delete_row_button.click()
+
+    def check_error(self, error: str):
+        list_item = self.error_div.locator("li:first-child")
+        assert error == list_item.inner_text()
+
+    def reset(self):
+        self.page.goto(self.url)
+
+
 class AddRowPage:
     def __init__(self, page: Page, tablename: str):
         self.page = page

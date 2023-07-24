@@ -257,11 +257,12 @@ class SortedColumns(Table):
     letter = Varchar()
 
 
-class ConstraintsTarget(Table):
+class ConstraintTarget(Table):
     """
     A table used for UI tests.
     """
 
+    id: Serial
     name = Varchar()
 
 
@@ -270,26 +271,27 @@ class Constraints(Table):
     A table used for UI tests.
     """
 
+    id: Serial
     cascade = ForeignKey(
-        ConstraintsTarget,
+        ConstraintTarget,
         null=True,
         default=None,
         on_delete=OnDelete.cascade,
     )
     restrict = ForeignKey(
-        ConstraintsTarget, null=True, default=None, on_delete=OnDelete.restrict
+        ConstraintTarget, null=True, default=None, on_delete=OnDelete.restrict
     )
     no_action = ForeignKey(
-        ConstraintsTarget,
+        ConstraintTarget,
         null=True,
         default=None,
         on_delete=OnDelete.no_action,
     )
     set_null = ForeignKey(
-        ConstraintsTarget, on_delete=OnDelete.set_null, null=True, default=None
+        ConstraintTarget, on_delete=OnDelete.set_null, null=True, default=None
     )
     set_default = ForeignKey(
-        ConstraintsTarget,
+        ConstraintTarget,
         on_delete=OnDelete.set_default,
         null=True,
         default=None,
@@ -376,7 +378,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     NullableColumns,
     SortedColumns,
     Constraints,
-    ConstraintsTarget,
+    ConstraintTarget,
 )
 
 
@@ -475,7 +477,7 @@ constraints_config = TableConfig(
 )
 
 constraints_target_config = TableConfig(
-    table_class=ConstraintsTarget,
+    table_class=ConstraintTarget,
     menu_group="Testing",
 )
 
