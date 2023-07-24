@@ -1,6 +1,17 @@
 Changes
 =======
 
+0.55.0
+------
+
+When deleting a row, if a problem is encountered then an error message is now
+shown in the UI.
+
+This is useful if we have constraints on the table (for example
+``ON DELETE RESTRICT``).
+
+-------------------------------------------------------------------------------
+
 0.54.0
 ------
 
