@@ -45,7 +45,7 @@ from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
@@ -306,7 +306,7 @@ class BusinessEmailModel(BaseModel):
     title: str = "Enquiry"
     content: str
 
-    @validator("email")
+    @field_validator("email")
     def validate_email(cls, v):
         if "@" not in v:
             raise ValueError("not valid email")
@@ -318,7 +318,7 @@ class BookingModel(BaseModel):
     name: str
     notes: str = "N/A"
 
-    @validator("email")
+    @field_validator("email")
     def validate_email(cls, v):
         if "@" not in v:
             raise ValueError("not valid email")
@@ -388,6 +388,7 @@ movie_config = TableConfig(
         Movie._meta.primary_key,
         Movie.name,
         Movie.rating,
+        Movie.duration,
         Movie.director,
         Movie.poster,
         Movie.tags,

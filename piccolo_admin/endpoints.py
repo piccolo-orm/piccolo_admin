@@ -879,7 +879,7 @@ class AdminRouter(FastAPI):
         if form_config is None:
             raise HTTPException(status_code=404, detail="No such form found")
         else:
-            return form_config.pydantic_model.schema()
+            return form_config.pydantic_model.model_json_schema()
 
     async def post_single_form(
         self, request: Request, form_slug: str

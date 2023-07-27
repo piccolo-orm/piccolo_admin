@@ -323,10 +323,7 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="
-                                                                subtle
-                                                                delete
-                                                            "
+                                                            class="subtle delete"
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -548,7 +545,7 @@ export default Vue.extend({
             return this.schema.properties[name]["type"] == "boolean"
         },
         isInterval(name: string): boolean {
-            return this.schema.properties[name]["format"] == "time-delta"
+            return this.schema.properties[name]["format"] == "duration"
         },
         isJSON(name: string): boolean {
             return this.schema.properties[name]["format"] == "json"

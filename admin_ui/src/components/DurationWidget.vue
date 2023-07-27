@@ -47,7 +47,9 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { secondsToISO8601Duration } from "../utils"
+
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
@@ -83,7 +85,7 @@ export default {
                 this.hours * HOUR +
                 this.days * DAY +
                 this.weeks * WEEK
-            this.$emit("newTimedelta", timedelta)
+            this.$emit("newTimedelta", secondsToISO8601Duration(timedelta))
         },
         setupValues(timedelta) {
             this.weeks = Math.floor(timedelta / WEEK)

@@ -1,7 +1,9 @@
-piccolo>=0.104.0
+# TODO - pin to the first Piccolo version with Pydantic V2 support when released 
+piccolo>=0.118.0
+# TODO - pin to the first Piccolo API version with Pydantic V2 support when released 
 piccolo_api>=0.57.0
 uvicorn
 aiofiles>=0.5.0
 Hypercorn
 targ>=0.1.9
-fastapi>=0.87.0,<0.100.0
+fastapi>=0.100.0

@@ -89,6 +89,21 @@
                 ></textarea>
             </div>
 
+            <div v-else-if="format == 'duration'">
+                <template>
+                    <OperatorField :columnName="columnName" v-if="isFilter" />
+                    <DurationWidget
+                        v-bind:timedelta="convertDurationToSeconds"
+                        v-on:newTimedelta="localValue = $event"
+                    />
+                    <input
+                        type="hidden"
+                        v-bind:name="columnName"
+                        :value="convertSecondsToDuration"
+                    />
+                </template>
+            </div>
+
             <div v-else-if="format == 'json'">
                 <textarea
                     v-model="localValue"
@@ -135,19 +150,7 @@
         </template>
 
         <template v-else-if="type == 'number'">
-            <template v-if="format == 'time-delta'">
-                <OperatorField :columnName="columnName" v-if="isFilter" />
-                <DurationWidget
-                    v-bind:timedelta="localValue"
-                    v-on:newTimedelta="localValue = $event"
-                />
-                <input
-                    type="hidden"
-                    v-bind:name="columnName"
-                    v-model="localValue"
-                />
-            </template>
-            <template v-else>
+            <template>
                 <OperatorField :columnName="columnName" v-if="isFilter" />
                 <input
                     type="text"
@@ -181,6 +184,7 @@
 import Vue, { PropType } from "vue"
 import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
+import moment from "moment"
 import { VueEditor } from "vue2-editor"
 
 import ArrayWidget from "./ArrayWidget.vue"
@@ -195,6 +199,7 @@ import {
     APIResponseMessage,
     MediaViewerConfig
 } from "@/interfaces"
+import { secondsToISO8601Duration } from "../utils"
 
 export default Vue.extend({
     props: {
@@ -275,6 +280,16 @@ export default Vue.extend({
         }
     },
     computed: {
+        schema() {
+            console.log(this.$store.state.schema)
+            return this.$store.state.schema
+        },
+        convertDurationToSeconds() {
+            return moment.duration(this.localValue).asSeconds()
+        },
+        convertSecondsToDuration() {
+            return secondsToISO8601Duration(this.localValue)
+        },
         placeholder() {
             if (this.isFilter) {
                 return "All"

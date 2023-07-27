@@ -23,6 +23,7 @@
         "is-svg": "^4.3.1",
         "js-cookie": "^2.2.1",
         "json-bigint": "^1.0.0",
+        "moment": "^2.29.4",
         "ssri": "^8.0.1",
         "vue": "^2.7.14",
         "vue-class-component": "^7.2.6",
