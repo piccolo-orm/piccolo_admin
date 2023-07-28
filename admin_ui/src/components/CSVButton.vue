@@ -1,32 +1,28 @@
 <template>
-    <a class="button">
-        <downloadexcel
-            :before-finish="finishDownload"
-            :before-generate="startDownload"
-            :fetch="fetchExportedRows"
-            :name="tableName + '.csv'"
-            type="csv"
-        >
-            <font-awesome-icon icon="file-csv" />
-            <span>{{ $t("Export CSV") }}</span>
-        </downloadexcel>
+    <a class="button" v-on:click="fetchExportedRows">
+        <font-awesome-icon icon="file-csv" />
+        <span>{{ $t("Export CSV") }}</span>
     </a>
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType } from "vue"
 import axios from "axios"
-import downloadexcel from "vue-json-excel"
 import * as i from "../interfaces"
 import { getOrderByString } from "@/utils"
 
-export default {
-    props: ["tableName"],
-    components: {
-        downloadexcel
+export default defineComponent({
+    props: {
+        tableName: {
+            type: String as PropType<string>
+        }
     },
     methods: {
         // Export data as csv from json:
         async fetchExportedRows() {
+            alert(
+                "Your data will begin downloading. Large data sets may take a while."
+            )
             const params = this.$store.state.filterParams
             const orderBy = this.$store.state.orderBy
             if (orderBy) {
@@ -59,21 +55,25 @@ export default {
                     )
                     exportedRows.push(...response.data.rows)
                 }
-                return exportedRows
+                let csv: string = "data:text/csv;charset=utf-8,"
+                csv += [
+                    Object.keys(exportedRows[0]).join(";"),
+                    ...exportedRows.map((item) => Object.values(item).join(";"))
+                ]
+                    .join("\n")
+                    .replace(/(^\[)|(\]$)/gm, "")
+                const data: string = encodeURI(csv)
+                const link: HTMLAnchorElement = document.createElement("a")
+                link.setAttribute("href", data)
+                link.setAttribute("download", `${this.tableName}.csv`)
+                link.click()
+                alert("Your data is ready.")
             } catch (error) {
                 console.log(error.response)
             }
-        },
-        startDownload() {
-            alert(
-                "Your data will begin downloading. Large data sets may take a few seconds."
-            )
-        },
-        finishDownload() {
-            alert("Your data is ready.")
         }
     }
-}
+})
 </script>
 
 <style lang="less" scoped>
