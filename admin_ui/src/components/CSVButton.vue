@@ -59,9 +59,7 @@ export default defineComponent({
                 csv += [
                     Object.keys(exportedRows[0]).join(";"),
                     ...exportedRows.map((item) => Object.values(item).join(";"))
-                ]
-                    .join("\n")
-                    .replace(/(^\[)|(\]$)/gm, "")
+                ].join("\n")
                 const data: string = encodeURI(csv)
                 const link: HTMLAnchorElement = document.createElement("a")
                 link.setAttribute("href", data)
