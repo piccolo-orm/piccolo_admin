@@ -55,17 +55,20 @@ export default defineComponent({
                     )
                     exportedRows.push(...response.data.rows)
                 }
-                let csv: string = "data:text/csv;charset=utf-8,"
-                csv += [
+                let data: string = ""
+                data += [
                     Object.keys(exportedRows[0]).join(";"),
                     ...exportedRows.map((item) => Object.values(item).join(";"))
                 ].join("\n")
-                const data: string = encodeURI(csv)
+                let csv = new Blob([data], {
+                    type: "text/csv;charset=utf-8;"
+                })
+                const url: string = URL.createObjectURL(csv)
                 const link: HTMLAnchorElement = document.createElement("a")
-                link.setAttribute("href", data)
+                alert("Your data is ready.")
+                link.setAttribute("href", url)
                 link.setAttribute("download", `${this.tableName}.csv`)
                 link.click()
-                alert("Your data is ready.")
             } catch (error) {
                 console.log(error.response)
             }
