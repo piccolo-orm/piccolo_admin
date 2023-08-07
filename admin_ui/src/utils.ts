@@ -119,6 +119,12 @@ export function convertFormValue(params: {
     } else if (schema?.properties[key].type == "number" && value == "") {
         value = null
     } else if (
+        schema?.properties[key].format == "json" &&
+        schema?.properties[key].nullable &&
+        value == ""
+    ) {
+        value = null
+    } else if (
         schema?.properties[key].extra.foreign_key == true &&
         value == ""
     ) {
