@@ -96,6 +96,7 @@
                     ref="textarea"
                     v-bind:name="columnName"
                     v-bind:style="{ height: textareaHeight }"
+                    v-bind:placeholder="placeholder"
                     v-on:keyup="setTextareaHeight"
                 />
             </div>
