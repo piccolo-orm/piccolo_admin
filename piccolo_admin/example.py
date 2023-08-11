@@ -245,6 +245,7 @@ class NullableColumns(Table):
     email = Email(null=True, default=None)
     timestamp = Timestamp(null=True, default=None)
     date = Date(null=True, default=None)
+    json_ = JSON(null=True, default=None)
 
 
 class SortedColumns(Table):

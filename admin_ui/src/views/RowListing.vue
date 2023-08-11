@@ -220,7 +220,10 @@
                                                 {{ row[name] | humanReadable }}
                                             </span>
                                             <span v-else-if="isJSON(name)">
-                                                <pre>{{
+                                                <code v-if="row[name] === null"
+                                                    >NULL</code
+                                                >
+                                                <pre v-else>{{
                                                     row[name]
                                                         | formatJSON
                                                         | abbreviate
