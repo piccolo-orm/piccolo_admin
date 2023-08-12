@@ -1,5 +1,4 @@
-# TODO - pin to the first Piccolo version with Pydantic V2 support when released 
-piccolo>=0.118.0
+piccolo>=1.0a1
 # TODO - pin to the first Piccolo API version with Pydantic V2 support when released 
 piccolo_api>=0.57.0
 uvicorn

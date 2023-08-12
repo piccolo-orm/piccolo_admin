@@ -282,7 +282,6 @@ export default Vue.extend({
     },
     computed: {
         schema() {
-            console.log(this.$store.state.schema)
             return this.$store.state.schema
         },
         convertDurationToSeconds() {

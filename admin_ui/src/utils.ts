@@ -127,26 +127,37 @@ export function convertFormValue(params: {
         value = null
     } else if (schema.properties[key]["anyOf"][0].type == "array") {
         value = JSON.parse(String(value))
-    } else if (schema?.properties[key]["anyOf"][0].format == "uuid" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].format == "uuid" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "email" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].format == "email" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date-time" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].format == "date-time" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].format == "date" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "integer" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].type == "integer" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "number" && value == "") {
+    } else if (schema?.properties[key]["anyOf"][0].type == "number" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
-    } else if (
-        schema?.properties[key].format == "json" &&
-        schema?.properties[key].nullable &&
-        value == ""
-    ) {
+    } else if (schema?.properties[key].format == "json" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
         value = null
     } else if (
         schema?.properties[key].extra.foreign_key == true &&
+        schema?.properties[key].extra["nullable"] == true &&
         value == ""
     ) {
         value = null
