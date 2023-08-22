@@ -104,7 +104,7 @@ export function convertFormValue(params: {
 
     if (value == "null") {
         value = null
-    } else if (schema.properties[key].type == "array") {
+    } else if (schema?.properties[key].type == "array") {
         value = JSON.parse(String(value))
     } else if (schema?.properties[key].format == "uuid" && value == "") {
         value = null
@@ -117,6 +117,12 @@ export function convertFormValue(params: {
     } else if (schema?.properties[key].type == "integer" && value == "") {
         value = null
     } else if (schema?.properties[key].type == "number" && value == "") {
+        value = null
+    } else if (
+        schema?.properties[key].type == "string" &&
+        schema?.properties[key].nullable &&
+        value == ""
+    ) {
         value = null
     } else if (
         schema?.properties[key].format == "json" &&
