@@ -246,6 +246,8 @@ class NullableColumns(Table):
     timestamp = Timestamp(null=True, default=None)
     date = Date(null=True, default=None)
     json_ = JSON(null=True, default=None)
+    text = Text(null=True, default=None)
+    varchar = Varchar(null=True, default=None)
 
 
 class SortedColumns(Table):

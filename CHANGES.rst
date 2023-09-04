@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.57.0
+------
+
+Improved the handling of nullable ``Varchar`` / ``Text`` columns in the UI.
+
+-------------------------------------------------------------------------------
+
 0.56.0
 ------
 

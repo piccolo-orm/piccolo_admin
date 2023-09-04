@@ -156,6 +156,11 @@ export function convertFormValue(params: {
         && value == "") {
         value = null
     } else if (
+        schema?.properties[key]["anyOf"][0].type == "string" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
+        value = null
+    } else if (
         schema?.properties[key].extra.foreign_key == true &&
         schema?.properties[key].extra["nullable"] == true &&
         value == ""

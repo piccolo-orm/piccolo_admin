@@ -32,5 +32,7 @@ def test_add_nullable_columns(page: Page, dev_server):
             "timestamp": None,
             "date": None,
             "json_": None,
+            "varchar": None,
+            "text": None,
         }
     ]
