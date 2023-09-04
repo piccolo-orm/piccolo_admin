@@ -1,6 +1,5 @@
 piccolo>=1.0a1
-# TODO - pin to the first Piccolo API version with Pydantic V2 support when released 
-piccolo_api>=0.57.0
+piccolo_api>=1.0a1
 uvicorn
 aiofiles>=0.5.0
 Hypercorn
