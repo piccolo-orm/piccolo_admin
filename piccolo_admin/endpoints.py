@@ -656,7 +656,7 @@ class AdminRouter(FastAPI):
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
-                limit=1000, timespan=300
+                limit=100, timespan=300
             )
 
         public_app.mount(
