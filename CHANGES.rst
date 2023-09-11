@@ -4,7 +4,7 @@ Changes
 0.58.0
 ------
 
-The default rate limiting is now more aggressive. This can be overriden using
+The default rate limiting is now more aggressive. This can be overridden using
 the ``rate_limit_provider`` argument of ``create_admin``.
 
 -------------------------------------------------------------------------------
