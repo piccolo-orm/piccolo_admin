@@ -477,6 +477,9 @@ export default Vue.extend({
 
             return Object.fromEntries(orderBy.map((i) => [i.column, i]))
         },
+        filterParams(): { [key: string]: any } {
+            return this.$store.state.filterParams
+        },
         rowCount() {
             return this.$store.state.rowCount
         },
@@ -670,11 +673,31 @@ export default Vue.extend({
             await this.fetchRows()
         },
         "$route.query": async function () {
-            this.$store.commit(
-                "updateFilterParams",
-                this.$router.currentRoute.query
-            )
-            await this.fetchRows()
+            const queryParams = this.$router.currentRoute.query
+            const orderBy = queryParams.__order
+
+            if (orderBy) {
+                delete queryParams.__order
+            }
+
+            const paramsChanged =
+                JSON.stringify(this.filterParams) !=
+                JSON.stringify(this.filterParams)
+
+            if (paramsChanged) {
+                this.$store.commit("updateFilterParams", queryParams)
+            }
+
+            if (orderBy) {
+                this.$store.commit(
+                    "updateOrderBy",
+                    deserialiseOrderByString(orderBy)
+                )
+            }
+
+            if (paramsChanged || orderBy) {
+                await this.fetchRows()
+            }
         },
         rows() {
             this.resetRowCheckbox()
