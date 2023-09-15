@@ -20,7 +20,6 @@
 import Vue from "vue"
 import FilterForm from "./FilterForm.vue"
 import { APIResponseMessage } from "../interfaces"
-import { secondsToISO8601Duration } from "../utils"
 
 export default Vue.extend({
     props: {
@@ -61,13 +60,6 @@ export default Vue.extend({
                         value = Array.isArray(value)
                             ? value.filter((i) => i)
                             : value
-                    }
-
-                    if (
-                        this.schema.properties[key]?.anyOf[0].format ==
-                        "duration"
-                    ) {
-                        value = secondsToISO8601Duration(value)
                     }
 
                     if (value == "null") {

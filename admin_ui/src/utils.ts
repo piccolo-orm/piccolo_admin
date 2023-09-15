@@ -125,33 +125,34 @@ export function convertFormValue(params: {
 
     if (value == "null") {
         value = null
-    } else if (schema.properties[key]["anyOf"][0].type == "array") {
+    } else if (schema?.properties[key].type == "array") {
         value = JSON.parse(String(value))
-    } else if (schema?.properties[key]["anyOf"][0].format == "uuid" &&
+    } else if (schema?.properties[key].format == "uuid" &&
         schema?.properties[key].extra["nullable"] == true
         && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "email" &&
+    } else if (schema?.properties[key].format == "email" &&
         schema?.properties[key].extra["nullable"] == true
         && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date-time" &&
+    } else if (schema?.properties[key].format == "date-time" &&
         schema?.properties[key].extra["nullable"] == true
         && value == "") {
         value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "integer" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "number" &&
+    } else if (schema?.properties[key].format == "date" &&
         schema?.properties[key].extra["nullable"] == true
         && value == "") {
         value = null
     } else if (schema?.properties[key].format == "json" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
+        value = null
+    }
+    else if (schema?.properties[key]["anyOf"][0].type == "integer" &&
+        schema?.properties[key].extra["nullable"] == true
+        && value == "") {
+        value = null
+    } else if (schema?.properties[key]["anyOf"][0].type == "number" &&
         schema?.properties[key].extra["nullable"] == true
         && value == "") {
         value = null
