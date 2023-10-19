@@ -710,6 +710,11 @@ class AdminRouter(FastAPI):
         )
 
         self.mount(
+            path="/assets",
+            app=StaticFiles(directory=os.path.join(ASSET_PATH, "assets")),
+        )
+
+        self.mount(
             path="/css",
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "css")),
         )
