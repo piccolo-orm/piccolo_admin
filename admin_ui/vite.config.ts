@@ -13,7 +13,8 @@ export default defineConfig({
     },
     base: "./",
     build: {
-        outDir: "../piccolo_admin/dist"
+        outDir: "../piccolo_admin/dist",
+        emptyOutDir: true
     },
     server: {
         host: "127.0.0.1",
