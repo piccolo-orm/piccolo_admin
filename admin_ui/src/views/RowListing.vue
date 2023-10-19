@@ -64,7 +64,7 @@
                                 }}
                             </span>
                         </a>
-                        <!-- <CSVButton :tableName="tableName" /> -->
+                        <CSVButton :tableName="tableName" />
                     </div>
                 </div>
                 <p id="selected_count" v-if="selectedRows.length > 0">
@@ -404,7 +404,7 @@ import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
 import BulkUpdateModal from "../components/BulkUpdateModal.vue"
 import BulkDeleteButton from "../components/BulkDeleteButton.vue"
-// import CSVButton from "../components/CSVButton.vue"
+import CSVButton from "../components/CSVButton.vue"
 import DeleteButton from "../components/DeleteButton.vue"
 import DropDownMenu from "../components/DropDownMenu.vue"
 import ChangePageSize from "../components/ChangePageSize.vue"
@@ -457,7 +457,7 @@ export default defineComponent({
         BulkDeleteButton,
         BulkUpdateModal,
         ChangePageSize,
-        // CSVButton,
+        CSVButton,
         DeleteButton,
         DropDownMenu,
         MediaViewer,

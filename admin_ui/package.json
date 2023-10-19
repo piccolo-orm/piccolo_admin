@@ -20,7 +20,6 @@
         "vue": "^3.2.31",
         "vue-flatpickr-component": "^11.0.3",
         "vue-i18n": "^9.5.0",
-        "vue-json-excel": "^0.3.0",
         "vue-router": "^4.0.14",
         "vue3-editor": "^0.1.1",
         "vuex": "^4.1.0"
