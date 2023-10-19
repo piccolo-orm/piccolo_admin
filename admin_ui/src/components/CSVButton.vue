@@ -14,12 +14,14 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
 import axios from "axios"
 import downloadexcel from "vue-json-excel"
-import * as i from "../interfaces"
+
+import type * as i from "../interfaces"
 import { getOrderByString } from "@/utils"
 
-export default {
+export default defineComponent({
     props: ["tableName"],
     components: {
         downloadexcel
@@ -29,7 +31,7 @@ export default {
         async fetchExportedRows() {
             const params = this.$store.state.filterParams
             const orderBy = this.$store.state.orderBy
-            if (orderBy) {
+            if (orderBy && orderBy.length > 0) {
                 params["__order"] = getOrderByString(orderBy)
             }
             // Get the row counts:
@@ -61,7 +63,9 @@ export default {
                 }
                 return exportedRows
             } catch (error) {
-                console.log(error.response)
+                if (axios.isAxiosError(error)) {
+                    console.log(error.response)
+                }
             }
         },
         startDownload() {
@@ -73,7 +77,7 @@ export default {
             alert("Your data is ready.")
         }
     }
-}
+})
 </script>
 
 <style lang="less" scoped>

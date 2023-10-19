@@ -1,7 +1,7 @@
 <template>
     <div v-if="schema">
         <div class="header">
-            <h1>{{ $t("Edit") }} {{ tableName | readable }}</h1>
+            <h1>{{ $t("Edit") }} {{ readable(tableName) }}</h1>
 
             <p>
                 <a
@@ -27,7 +27,11 @@
         <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
         <form v-on:submit.prevent="submitForm($event)">
-            <RowForm :row="selectedRow" :schema="schema" />
+            <RowForm
+                v-if="schema && selectedRow"
+                :row="selectedRow"
+                :schema="schema"
+            />
             <button>{{ $t("Save") }}</button>
         </form>
 
@@ -36,25 +40,33 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 
 import ReferencingTables from "./ReferencingTables.vue"
 import DeleteButton from "./DeleteButton.vue"
 import DropDownMenu from "./DropDownMenu.vue"
 import RowForm from "./RowForm.vue"
 import FormErrors from "./FormErrors.vue"
-import { convertFormValue } from "@/utils"
+import { convertFormValue, readable } from "@/utils"
 
-import { APIResponseMessage, UpdateRow, DeleteRow } from "../interfaces"
+import type {
+    APIResponseMessage,
+    UpdateRow,
+    DeleteRow,
+    RowID
+} from "../interfaces"
 import { parseErrorResponse } from "../utils"
+import axios from "axios"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         tableName: {
-            type: String as PropType<string>
+            type: String as PropType<string>,
+            required: true
         },
         rowID: {
-            type: undefined as PropType<number | string>
+            type: undefined as unknown as PropType<RowID>,
+            required: true
         }
     },
     components: {
@@ -78,13 +90,18 @@ export default Vue.extend({
             return this.$store.state.selectedRow
         }
     },
+    setup() {
+        return {
+            readable
+        }
+    },
     methods: {
-        async submitForm(event) {
+        async submitForm(event: Event) {
             console.log("Submitting...")
 
-            const form = new FormData(event.target)
+            const form = new FormData(event.target as HTMLFormElement)
 
-            const json = {}
+            const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
                 let value = i[1]
@@ -109,10 +126,12 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
             } catch (error) {
-                this.errors = parseErrorResponse(
-                    error.response.data,
-                    error.response.status
-                )
+                if (axios.isAxiosError(error) && error.response) {
+                    this.errors = parseErrorResponse(
+                        error.response.data,
+                        error.response.status
+                    )
+                }
 
                 window.scrollTo(0, 0)
 
@@ -137,10 +156,12 @@ export default Vue.extend({
                 try {
                     await this.$store.dispatch("deleteRow", config)
                 } catch (error) {
-                    this.errors = parseErrorResponse(
-                        error.response.data,
-                        error.response.status
-                    )
+                    if (axios.isAxiosError(error) && error.response) {
+                        this.errors = parseErrorResponse(
+                            error.response.data,
+                            error.response.status
+                        )
+                    }
 
                     var message: APIResponseMessage = {
                         contents: "Unable to delete the row.",
@@ -152,7 +173,7 @@ export default Vue.extend({
                 }
 
                 alert("Successfully deleted row")
-                this.$router.push({
+                await this.$router.push({
                     name: "rowListing",
                     params: { tableName: this.tableName }
                 })

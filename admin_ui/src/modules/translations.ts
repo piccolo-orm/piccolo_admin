@@ -1,11 +1,12 @@
 import axios from "axios"
 
-import {
+import i18n from "@/translations"
+import type {
     TranslationsListAPIResponse,
     TranslationListItemAPI,
     TranslationAPIResponse
 } from "@/interfaces"
-import i18n from "@/i18n"
+import type { Context } from "./interfaces"
 
 const DEFAULT_LANGUAGE_KEY = "piccoloAdminDefaultLanguage"
 
@@ -23,17 +24,21 @@ const localStorageUtils = {
     }
 }
 
+interface State {
+    translations: TranslationListItemAPI[]
+}
+
 export default {
     state: {
-        translations: null as string | TranslationListItemAPI[]
-    },
+        translations: []
+    } as State,
     mutations: {
-        updateTranslations(state, value: object) {
+        updateTranslations(state: State, value: TranslationListItemAPI[]) {
             state.translations = value
         }
     },
     actions: {
-        async setupTranslations(context) {
+        async setupTranslations(context: Context) {
             // This fetches a list of all available translations (not the
             // translations themselves):
             const response = await axios.get<TranslationsListAPIResponse>(
@@ -92,16 +97,17 @@ export default {
         /**
          * Fetch the translations for a certain language, and store it.
          */
-        async loadTranslation(context, languageCode: string) {
+        async loadTranslation(context: Context, languageCode: string) {
             const response = await axios.get<TranslationAPIResponse>(
                 `./public/translations/${languageCode}/`
             )
             localStorageUtils.setDefaultLanguage(languageCode)
-            i18n.setLocaleMessage(
+
+            i18n.global.setLocaleMessage(
                 response.data.language_code,
                 response.data.translations
             )
-            i18n.locale = response.data.language_code
+            i18n.global.locale = response.data.language_code
         }
     }
 }

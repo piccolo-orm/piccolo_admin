@@ -17,12 +17,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import FilterForm from "./FilterForm.vue"
-import { APIResponseMessage } from "../interfaces"
+import type { APIResponseMessage } from "../interfaces"
 import { secondsToISO8601Duration } from "../utils"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         showFilterSidebar: Boolean
     },
@@ -48,7 +48,7 @@ export default Vue.extend({
         async submitForm(event: any) {
             const form = new FormData(event.target)
 
-            const json = {}
+            const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
                 let value: any = i[1]

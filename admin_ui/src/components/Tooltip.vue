@@ -2,9 +2,7 @@
     <span class="tooltip">
         <a
             href="#"
-            v-on:click.prevent="
-                popupVisible ? hidePopup($event) : showPopup($event)
-            "
+            v-on:click.prevent="popupVisible ? hidePopup() : showPopup($event)"
             v-on:blur="hidePopup()"
             title="Click for more info"
         >
@@ -29,7 +27,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         content: {
             default: "",
@@ -43,12 +43,13 @@ export default {
             popupBottom: "auto",
             popupLeft: "auto",
             popupRight: "auto",
-            popupWidth: undefined,
-            textAlign: undefined
+            popupWidth: "50px",
+            textAlign: "left" as "left" | "right" | "center",
+            onResize: undefined as (() => void) | undefined
         }
     },
     methods: {
-        showPopup(event) {
+        showPopup(event: MouseEvent) {
             const scrollHeight = document.body.scrollHeight
             const scrollWidth = document.body.scrollWidth
             const eventY = event.pageY
@@ -103,7 +104,7 @@ export default {
             window.removeEventListener("resize", this.onResize)
         }
     }
-}
+})
 </script>
 
 <style lang="less">

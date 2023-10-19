@@ -11,9 +11,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         message: {
             type: String as PropType<string>,

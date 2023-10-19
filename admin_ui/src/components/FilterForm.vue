@@ -3,7 +3,11 @@
         <template v-for="(property, columnName) in schema.properties">
             <div
                 v-bind:key="property.title"
-                v-if="schema.visible_filter_names.includes(String(columnName))"
+                v-if="
+                    schema.extra.visible_filter_names.includes(
+                        String(columnName)
+                    )
+                "
             >
                 <template v-if="property.extra.foreign_key">
                     <label>
@@ -13,10 +17,8 @@
                         v-bind:fieldName="String(columnName)"
                         v-bind:isFilter="true"
                         v-bind:key="property.title"
-                        v-bind:readable="null"
-                        v-bind:rowID="null"
-                        v-bind:tableName="property.extra.to"
-                        v-bind:isNullable="property.nullable"
+                        v-bind:tableName="property.extra.foreign_key.to"
+                        v-bind:isNullable="property.extra.nullable"
                     />
                 </template>
                 <template v-else-if="property.format !== 'json'">
@@ -25,15 +27,16 @@
                     </label>
 
                     <InputField
-                        v-bind:columnName="columnName"
+                        v-bind:columnName="String(columnName)"
                         v-bind:choices="property.extra.choices"
-                        v-bind:format="property.format"
+                        v-bind:format="getFormat(property)"
                         v-bind:isFilter="true"
-                        v-bind:isNullable="property.nullable"
+                        v-bind:isNullable="property.extra.nullable"
                         v-bind:key="property.title"
                         v-bind:title="property.title"
-                        v-bind:type="property.type || property.anyOf[0].type"
+                        v-bind:type="getType(property)"
                         v-bind:value="getValue(String(columnName))"
+                        v-bind:widget="property.extra.widget"
                     />
                 </template>
             </div>
@@ -42,24 +45,34 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent } from "vue"
+import { defineComponent, type PropType } from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
-import { Schema } from "@/interfaces"
+import { type Schema, getFormat, getType } from "@/interfaces"
 
 export default defineComponent({
     props: {
-        schema: Object as PropType<Schema>
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        }
     },
     components: {
         InputField,
         KeySearch
     },
+    setup() {
+        return {
+            getFormat,
+            getType
+        }
+    },
     methods: {
         getValue(columnName: string) {
-            const schema: Schema = this.schema
-            if (schema.properties[columnName].type == "boolean") {
+            if (
+                (this.schema as Schema).properties[columnName].type == "boolean"
+            ) {
                 return "all"
             } else {
                 return null

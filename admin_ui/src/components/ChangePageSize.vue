@@ -13,7 +13,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     data() {
         return {
             selectedPageSize: 15,
@@ -40,7 +42,7 @@ export default {
     mounted() {
         this.selectedPageSize = this.pageSize
     }
-}
+})
 </script>
 
 <style lang="less" scoped>

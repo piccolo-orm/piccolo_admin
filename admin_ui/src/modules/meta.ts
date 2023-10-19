@@ -1,20 +1,27 @@
 import axios from "axios"
 
+import type { Context } from "./interfaces"
+
+interface State {
+    siteName: string
+    piccoloAdminVersion: string
+}
+
 export default {
     state: {
         siteName: "Piccolo Admin",
         piccoloAdminVersion: "Unknown"
-    },
+    } as State,
     mutations: {
-        updateSiteName(state, value: string) {
+        updateSiteName(state: State, value: string) {
             state.siteName = value
         },
-        updatePiccoloAdminVersion(state, value: string) {
+        updatePiccoloAdminVersion(state: State, value: string) {
             state.piccoloAdminVersion = value
         }
     },
     actions: {
-        async fetchMeta(context) {
+        async fetchMeta(context: Context) {
             const response = await axios.get(`./public/meta/`)
             context.commit("updateSiteName", response.data.site_name)
             context.commit(

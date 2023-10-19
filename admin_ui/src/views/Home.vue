@@ -10,9 +10,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
+
 import BaseView from "./BaseView.vue"
 
-export default {
+export default defineComponent({
     components: {
         BaseView
     },
@@ -24,7 +26,7 @@ export default {
     mounted() {
         this.$store.commit("updateCurrentTablename", "")
     }
-}
+})
 </script>
 
 <style scoped lang="less">

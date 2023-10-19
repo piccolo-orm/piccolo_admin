@@ -1,18 +1,15 @@
-import Vue from "vue"
-import Vuex from "vuex"
+import { createStore } from "vuex"
 import axios from "axios"
 
-import * as i from "./interfaces"
+import type * as i from "./interfaces"
 import aboutModalModule from "./modules/aboutModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
 import { getOrderByString } from "./utils"
 
-Vue.use(Vuex)
+const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
-const BASE_URL = process.env.VUE_APP_BASE_URI
-
-export default new Vuex.Store({
+export default createStore({
     modules: {
         aboutModalModule,
         metaModule,
@@ -30,7 +27,7 @@ export default new Vuex.Store({
         schema: undefined as i.Schema | undefined,
         formSchema: undefined,
         selectedRow: undefined,
-        orderBy: null as i.OrderByConfig[] | null,
+        orderBy: [] as i.OrderByConfig[],
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
@@ -73,10 +70,10 @@ export default new Vuex.Store({
             state.orderBy = config
         },
         reset(state) {
-            state.orderBy = null
+            state.orderBy = []
             state.filterParams = {}
             state.currentPageNumber = 1
-            state.rows = null
+            state.rows = []
         },
         updateFilterParams(state, config: object) {
             state.filterParams = config
@@ -147,10 +144,13 @@ export default new Vuex.Store({
         },
         async fetchRows(context) {
             context.commit("updateLoadingStatus", true)
-            const params = context.state.filterParams
+            const params: { [key: string]: any } = {
+                ...(context.state.filterParams || {})
+            }
             const tableName = context.state.currentTableName
 
             const orderByConfigs = context.state.orderBy
+
             if (orderByConfigs) {
                 params["__order"] = getOrderByString(orderByConfigs)
             }
@@ -175,11 +175,13 @@ export default new Vuex.Store({
                 )
                 context.commit("updateRows", response.data.rows)
             } catch (error) {
-                console.log(error.response)
-                context.commit("updateApiResponseMessage", {
-                    contents: `Problem fetching ${tableName} rows.`,
-                    type: "error"
-                })
+                if (axios.isAxiosError(error)) {
+                    console.log(error.response)
+                    context.commit("updateApiResponseMessage", {
+                        contents: `Problem fetching ${tableName} rows.`,
+                        type: "error"
+                    })
+                }
             }
             context.commit("updateLoadingStatus", false)
         },
@@ -190,7 +192,7 @@ export default new Vuex.Store({
             return response
         },
         async fetchIds(context, config: i.FetchIdsConfig) {
-            const params = {}
+            const params: { [key: string]: any } = {}
 
             if (config.search) {
                 params["search"] = config.search

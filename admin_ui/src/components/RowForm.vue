@@ -18,7 +18,7 @@
                     <router-link
                         :to="{
                             name: 'addRow',
-                            params: { tableName: property.extra.to }
+                            params: { tableName: property.extra.foreign_key.to }
                         }"
                         class="add"
                         target="_blank"
@@ -32,7 +32,7 @@
                         :to="{
                             name: 'editRow',
                             params: {
-                                tableName: property.extra.to,
+                                tableName: property.extra.foreign_key.to,
                                 rowID: foreignKeyIDs[columnName]
                             }
                         }"
@@ -47,44 +47,51 @@
             <KeySearch
                 v-if="property.extra.foreign_key"
                 v-bind:fieldName="String(columnName)"
-                v-bind:tableName="property.extra.to"
+                v-bind:tableName="property.extra.foreign_key.to"
                 v-bind:rowID="getValue(String(columnName))"
                 v-bind:readable="getValue(columnName + '_readable')"
-                v-bind:isNullable="property.nullable"
-                @update="$set(foreignKeyIDs, String(columnName), $event.id)"
+                v-bind:isNullable="property.extra.nullable"
+                @update="foreignKeyIDs[String(columnName)] = $event.id"
             />
             <InputField
                 v-else
-                v-bind:columnName="columnName"
-                v-bind:format="property.format"
+                v-bind:columnName="String(columnName)"
+                v-bind:format="getFormat(property)"
                 v-bind:isFilter="isFilter"
-                v-bind:isNullable="property.nullable"
+                v-bind:isNullable="property.extra.nullable"
                 v-bind:required="isRequired(String(columnName))"
                 v-bind:title="property.title"
-                v-bind:type="property.type || property.anyOf[0].type"
+                v-bind:type="getType(property)"
                 v-bind:value="getValue(String(columnName))"
                 v-bind:choices="property.extra.choices"
                 v-bind:isMediaColumn="isMediaColumn(String(columnName))"
                 v-bind:isRichText="isRichText(String(columnName))"
+                v-bind:widget="property.extra.widget"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import Vue, { computed, PropType, reactive, toRefs, watch } from "vue"
+import { computed, defineComponent, type PropType, reactive, toRefs } from "vue"
 
 import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
 import Tooltip from "./Tooltip.vue"
-import { Schema } from "@/interfaces"
+import { type Schema, getFormat, getType } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        row: Object,
-        schema: Object as PropType<Schema>,
+        row: {
+            type: Object,
+            required: true
+        },
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         }
     },
@@ -97,11 +104,11 @@ export default Vue.extend({
         const { schema, row } = toRefs(props)
 
         const foreignKeyColumnNames = computed(() => {
-            const _foreignKeyColumnNames = []
+            const _foreignKeyColumnNames: string[] = []
 
             Object.entries(schema.value.properties).forEach((value) => {
                 const [columnName, property] = value
-                if (property.extra.foreign_key == true) {
+                if (property.extra.foreign_key) {
                     _foreignKeyColumnNames.push(columnName)
                 }
             })
@@ -110,7 +117,7 @@ export default Vue.extend({
         })
 
         const foreignKeyIDs = computed(() => {
-            const _foreignKeyIDs = {}
+            const _foreignKeyIDs: { [key: string]: any } = {}
             foreignKeyColumnNames.value.forEach((columnName) => {
                 _foreignKeyIDs[columnName] = row.value[columnName]
             })
@@ -119,7 +126,9 @@ export default Vue.extend({
         })
 
         return {
-            foreignKeyIDs
+            foreignKeyIDs,
+            getFormat,
+            getType
         }
     },
     methods: {
@@ -134,10 +143,10 @@ export default Vue.extend({
             )
         },
         isMediaColumn(columnName: string) {
-            return this.schema.media_columns.includes(columnName)
+            return this.schema.extra.media_columns.includes(columnName)
         },
         isRichText(columnName: string) {
-            return this.schema.rich_text_columns.includes(columnName)
+            return this.schema.extra.rich_text_columns.includes(columnName)
         }
     }
 })

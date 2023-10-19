@@ -15,11 +15,14 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        tableName: String as PropType<string>
+        tableName: {
+            type: String as PropType<string>,
+            required: true
+        }
     },
     computed: {
         currentTableName(): string {

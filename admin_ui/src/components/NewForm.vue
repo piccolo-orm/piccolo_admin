@@ -8,9 +8,9 @@
             <InputField
                 v-bind:isFilter="false"
                 v-bind:key="columnName"
-                v-bind:columnName="columnName"
+                v-bind:columnName="String(columnName)"
                 v-bind:title="property.title"
-                v-bind:type="property.type || property.anyOf[0].type"
+                v-bind:type="getType(property)"
                 v-bind:value="property.default"
             />
         </div>
@@ -18,17 +18,25 @@
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from "vue"
+import { defineComponent, type PropType } from "vue"
 import InputField from "./InputField.vue"
-import {Schema} from "@/interfaces"
+import { type Schema, getType } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        schema: Object as PropType<Schema>,
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        }
     },
     components: {
-        InputField,
+        InputField
     },
+    setup() {
+        return {
+            getType
+        }
+    }
 })
 </script>
 

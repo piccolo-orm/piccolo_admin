@@ -49,7 +49,7 @@
             </li>
         </ul>
         <MediaViewer
-            v-if="showMediaViewer"
+            v-if="showMediaViewer && mediaViewerConfig"
             :mediaViewerConfig="mediaViewerConfig"
             @close="showMediaViewer = false"
         />
@@ -57,12 +57,13 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
+
 import ChoiceSelect from "./ChoiceSelect.vue"
 import MediaViewer from "./MediaViewer.vue"
-import { Choices, MediaViewerConfig } from "@/interfaces"
+import type { Choices, MediaViewerConfig, Schema } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         array: {
             type: Array as PropType<string[]>,
@@ -85,10 +86,8 @@ export default Vue.extend({
             default: true
         },
         choices: {
-            type: Object as PropType<Choices>,
-            default: () => {
-                return {}
-            }
+            type: Object as PropType<Choices | null>,
+            default: null
         },
         isNullable: {
             type: Boolean as PropType<boolean>,
@@ -101,20 +100,20 @@ export default Vue.extend({
     },
     data() {
         return {
-            internalArray: [],
+            internalArray: [] as any[],
             showMediaViewer: false,
-            mediaViewerConfig: null as MediaViewerConfig
+            mediaViewerConfig: null as MediaViewerConfig | null
         }
     },
     computed: {
-        schema() {
+        schema(): Schema {
             return this.$store.state.schema
         },
         currentTableName() {
             return this.$store.state.currentTableName
         },
         isMediaColumn() {
-            return this.schema?.media_columns.includes(this.fieldName)
+            return this.schema.extra.media_columns.includes(this.fieldName)
         }
     },
     methods: {
@@ -122,7 +121,7 @@ export default Vue.extend({
             return (event.target as HTMLInputElement).value
         },
         updateArray(value: any, index: number) {
-            this.$set(this.internalArray, index, value)
+            this.internalArray[index] = value
             this.$emit("updateArray", this.internalArray)
         },
         addArrayElement() {
@@ -130,7 +129,7 @@ export default Vue.extend({
             this.$emit("updateArray", this.internalArray)
         },
         removeArrayElement(index: number) {
-            this.$delete(this.internalArray, index)
+            delete this.internalArray[index]
             this.$emit("updateArray", this.internalArray)
         },
         showMedia(index: number) {

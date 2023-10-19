@@ -250,6 +250,12 @@ class NullableColumns(Table):
     varchar = Varchar(null=True, default=None)
 
 
+class RequiredColumns(Table):
+    id: Serial
+    varchar = Varchar(required=True)
+    array = Array(Varchar(), required=True)
+
+
 class SortedColumns(Table):
     """
     A table used for UI tests.
@@ -379,6 +385,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
     Ticket,
     NullableColumns,
+    RequiredColumns,
     SortedColumns,
     Constraints,
     ConstraintTarget,
@@ -393,6 +400,7 @@ movie_config = TableConfig(
         Movie.rating,
         Movie.duration,
         Movie.director,
+        Movie.won_oscar,
         Movie.poster,
         Movie.tags,
         Movie.screenshots,
@@ -468,6 +476,10 @@ nullable_config = TableConfig(
     menu_group="Testing",
 )
 
+required_columns_config = TableConfig(
+    table_class=RequiredColumns,
+    menu_group="Testing",
+)
 
 sorted_columns_config = TableConfig(
     table_class=SortedColumns,
@@ -492,6 +504,7 @@ APP = create_admin(
         studio_config,
         ticket_config,
         nullable_config,
+        required_columns_config,
         sorted_columns_config,
         constraints_config,
         constraints_target_config,

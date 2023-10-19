@@ -10,16 +10,15 @@
     </div>
 </template>
 
-
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import BackButton from "./BackButton.vue"
 import NavBar from "./NavBar.vue"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         BackButton,
-        NavBar,
+        NavBar
     },
     computed: {
         username() {
@@ -28,11 +27,10 @@ export default Vue.extend({
         },
         siteName() {
             return this.$store.state.metaModule.siteName
-        },
-    },
+        }
+    }
 })
 </script>
-
 
 <style scoped lang="less">
 @import "../vars.less";

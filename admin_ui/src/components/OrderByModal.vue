@@ -60,7 +60,7 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 import Modal from "./Modal.vue"
-import * as i from "../interfaces"
+import type { OrderByConfig } from "../interfaces"
 import { syncQueryParams, getOrderByString } from "@/utils"
 
 export default defineComponent({
@@ -70,7 +70,7 @@ export default defineComponent({
     },
     data() {
         return {
-            localCopy: null as i.OrderByConfig[] | null
+            localCopy: null as OrderByConfig[] | null
         }
     },
     components: {
@@ -78,7 +78,7 @@ export default defineComponent({
     },
     methods: {
         async save() {
-            const localCopy: i.OrderByConfig[] = this.localCopy
+            const localCopy = this.localCopy ?? []
             // Remove any which didn't specify a column to sort by.
             const orderByConfigs = localCopy.filter((i) => i.column)
 
@@ -90,20 +90,20 @@ export default defineComponent({
             this.$emit("close")
         },
         addOrderByColumn() {
-            const newValue: i.OrderByConfig = {
+            const newValue: OrderByConfig = {
                 column: null,
                 ascending: true
             }
-            this.localCopy.push(newValue)
+            this.localCopy?.push(newValue)
         },
         removeOrderByColumn(index: number) {
-            this.localCopy.splice(index, 1)
+            this.localCopy?.splice(index, 1)
         }
     },
     mounted() {
-        let orderByConfigs: i.OrderByConfig[] | null = this.$store.state.orderBy
+        let orderByConfigs: OrderByConfig[] | null = this.$store.state.orderBy
 
-        let localCopy: i.OrderByConfig[] = orderByConfigs
+        let localCopy: OrderByConfig[] = orderByConfigs
             ? orderByConfigs.map((i) => {
                   return { ...i }
               })

@@ -1,8 +1,6 @@
 <template>
     <div class="errors">
-        <p>
-            <font-awesome-icon icon="exclamation-triangle" />Error</span>
-        </p>
+        <p><font-awesome-icon icon="exclamation-triangle" />Error</p>
         <ul>
             <li v-for="error in errors" :key="error">{{ error }}</li>
         </ul>
@@ -10,9 +8,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         errors: {
             type: Array as PropType<string[]>,

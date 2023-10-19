@@ -1,9 +1,21 @@
-import { Schema, OrderByConfig } from "@/interfaces"
+import { type Schema, type OrderByConfig, getType } from "@/interfaces"
 import router from "./router"
-import moment from 'moment'
+import moment from "moment"
+
+/*****************************************************************************/
+// Filters
 
 /**
- * We need to parse ISO 8601 duration string (e.g. P17DT14706S) to 
+ * Converts an identifier like `my_column` to `my column`.
+ * @param value The string to convert.
+ * @returns A readable version of a string
+ */
+export function readable(value: string) {
+    return value.split("_").join(" ")
+}
+
+/**
+ * We need to parse ISO 8601 duration string (e.g. P17DT14706S) to
  * seconds and then convert to human readable interval.
  *
  * @param timeValue ISO 8601 duration string which we need to parse.
@@ -41,14 +53,14 @@ export function readableInterval(timeValue: string) {
 }
 
 /**
- * We need to convert interval from seconds to ISO 8601 duration 
+ * We need to convert interval from seconds to ISO 8601 duration
  * string (e.g. P17DT14706S) for form fields.
  *
  * @param value interval seconds which we need to convert.
  * @returns ISO 8601 duration string
  */
 export function secondsToISO8601Duration(value: number) {
-    return moment.duration(value, 'seconds').toISOString()
+    return moment.duration(value, "seconds").toISOString()
 }
 
 export function titleCase(value: string) {
@@ -123,50 +135,16 @@ export function convertFormValue(params: {
 }): any {
     let { key, value, schema } = params
 
+    const property = schema.properties[key]
+
     if (value == "null") {
         value = null
-    } else if (schema.properties[key]["anyOf"][0].type == "array") {
+    } else if (property.extra.nullable && value == "") {
+        value = null
+    } else if (getType(property) == "array") {
         value = JSON.parse(String(value))
-    } else if (schema?.properties[key]["anyOf"][0].format == "uuid" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "email" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date-time" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].format == "date" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "integer" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key]["anyOf"][0].type == "number" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (schema?.properties[key].format == "json" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (
-        schema?.properties[key]["anyOf"][0].type == "string" &&
-        schema?.properties[key].extra["nullable"] == true
-        && value == "") {
-        value = null
-    } else if (
-        schema?.properties[key].extra.foreign_key == true &&
-        schema?.properties[key].extra["nullable"] == true &&
-        value == ""
-    ) {
-        value = null
     }
+
     return value
 }
 

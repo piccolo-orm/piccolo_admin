@@ -19,11 +19,13 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
+
 import axios from "axios"
 import BackButton from "../components/BackButton.vue"
 import PasswordInput from "../components/PasswordInput.vue"
 
-export default {
+export default defineComponent({
     data() {
         return {
             currentPassword: "",
@@ -54,15 +56,17 @@ export default {
                 }, 3000)
             } catch (error) {
                 console.log("Request failed")
-                console.log(error.response)
-                this.$store.commit("updateApiResponseMessage", {
-                    contents: `Error - ${error.response.data.detail}`,
-                    type: "error"
-                })
+                if (axios.isAxiosError(error) && error.response) {
+                    console.log(error.response)
+                    this.$store.commit("updateApiResponseMessage", {
+                        contents: `Error - ${error.response.data.detail}`,
+                        type: "error"
+                    })
+                }
             }
         }
     }
-}
+})
 </script>
 
 <style lang="less">

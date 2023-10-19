@@ -1,9 +1,10 @@
-import Vue from "vue"
+import { createApp } from "vue"
+
 import App from "./App.vue"
 import router from "./router"
 import store from "./store"
-import i18n from "./i18n"
-import "./fontawesome"
+import { setupFonts } from "./fontawesome"
+import i18n from "./translations"
 
 /*****************************************************************************/
 
@@ -14,6 +15,7 @@ import Cookies from "js-cookie"
 // Add the CSRF token
 axios.interceptors.request.use(function (config) {
     if (
+        config.method &&
         ["POST", "PUT", "DELETE", "PATCH"].indexOf(
             config.method.toUpperCase()
         ) != -1
@@ -37,18 +39,31 @@ axios.defaults.transformResponse = [
 ]
 
 /*****************************************************************************/
+// Create app
 
-Vue.filter("readable", function (value) {
-    return value.split("_").join(" ")
-})
+const app = createApp(App)
 
 /*****************************************************************************/
+// Localisation
 
-Vue.config.productionTip = false
+app.use(i18n)
 
-new Vue({
-    i18n,
-    router,
-    store,
-    render: (h) => h(App)
-}).$mount("#app")
+/*****************************************************************************/
+// Fonts
+
+setupFonts(app)
+
+/*****************************************************************************/
+// Router
+
+app.use(router)
+
+/*****************************************************************************/
+// Store
+
+app.use(store)
+
+/*****************************************************************************/
+// Mount app
+
+app.mount("#app")

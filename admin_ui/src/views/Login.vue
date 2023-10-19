@@ -9,7 +9,7 @@
                 <input name="username" type="text" v-model="username" />
 
                 <label>{{ $t("Password") }}</label>
-                <PasswordInput v-model="password" />
+                <PasswordInput @input="password = $event" />
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -17,10 +17,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
+
 import axios from "axios"
 import PasswordInput from "../components/PasswordInput.vue"
 
-export default {
+export default defineComponent({
     data() {
         return {
             username: "",
@@ -31,7 +33,7 @@ export default {
         PasswordInput
     },
     computed: {
-        siteName() {
+        siteName(): string {
             return this.$store.state.metaModule.siteName
         }
     },
@@ -45,25 +47,29 @@ export default {
                 })
             } catch (error) {
                 console.log("Request failed")
-                console.log(error.response)
-                this.$store.commit("updateApiResponseMessage", {
-                    contents: "Problem logging in",
-                    type: "error"
-                })
+                if (axios.isAxiosError(error)) {
+                    console.log(error.response)
+                    this.$store.commit("updateApiResponseMessage", {
+                        contents: "Problem logging in",
+                        type: "error"
+                    })
+                }
+
                 return
             }
 
             await this.$store.dispatch("fetchUser")
 
-            let nextURL = this.$route.query.nextURL
-            if (nextURL) {
-                this.$router.push({ path: nextURL })
+            let nextURL = this.$route.query.nextURL as string
+
+            if (nextURL && nextURL != "/login/") {
+                await this.$router.push({ path: nextURL })
             } else {
-                this.$router.push({ name: "home" })
+                await this.$router.push({ name: "home" })
             }
         }
     }
-}
+})
 </script>
 
 <style lang="less">

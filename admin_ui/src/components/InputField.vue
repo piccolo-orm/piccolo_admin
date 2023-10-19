@@ -12,7 +12,7 @@
             </div>
 
             <MediaViewer
-                v-if="showMediaViewer"
+                v-if="showMediaViewer && mediaViewerConfig"
                 :mediaViewerConfig="mediaViewerConfig"
                 @close="showMediaViewer = false"
             />
@@ -44,7 +44,10 @@
 
         <template v-else-if="type == 'string'">
             <template
-                v-if="['date-time', 'date', 'time'].indexOf(format) != -1"
+                v-if="
+                    format &&
+                    ['date-time', 'date', 'time'].indexOf(format) != -1
+                "
             >
                 <OperatorField :columnName="columnName" v-if="isFilter" />
                 <!--
@@ -54,7 +57,9 @@
                 -->
                 <flat-pickr
                     v-bind:config="{
-                        enableTime: ['date-time', 'time'].indexOf(format) != -1,
+                        enableTime:
+                            format != undefined &&
+                            ['date-time', 'time'].indexOf(format) != -1,
                         disableMobile: true,
                         noCalendar: format == 'time'
                     }"
@@ -64,7 +69,7 @@
                 ></flat-pickr>
             </template>
 
-            <div v-else-if="format == 'text-area' && isFilter == false">
+            <div v-else-if="widget == 'text-area' && isFilter == false">
                 <vue-editor
                     v-if="isRichText"
                     v-model="localValue"
@@ -90,21 +95,19 @@
             </div>
 
             <div v-else-if="format == 'duration'">
-                <template>
-                    <OperatorField :columnName="columnName" v-if="isFilter" />
-                    <DurationWidget
-                        v-bind:timedelta="convertDurationToSeconds"
-                        v-on:newTimedelta="localValue = $event"
-                    />
-                    <input
-                        type="hidden"
-                        v-bind:name="columnName"
-                        :value="convertSecondsToDuration"
-                    />
-                </template>
+                <OperatorField :columnName="columnName" v-if="isFilter" />
+                <DurationWidget
+                    v-bind:timedelta="convertDurationToSeconds"
+                    v-on:newTimedelta="localValue = $event"
+                />
+                <input
+                    type="hidden"
+                    v-bind:name="columnName"
+                    :value="convertSecondsToDuration"
+                />
             </div>
 
-            <div v-else-if="format == 'json'">
+            <div v-else-if="widget == 'json'">
                 <textarea
                     v-model="localValue"
                     autocomplete="off"
@@ -151,15 +154,13 @@
         </template>
 
         <template v-else-if="type == 'number'">
-            <template>
-                <OperatorField :columnName="columnName" v-if="isFilter" />
-                <input
-                    type="text"
-                    v-bind:name="columnName"
-                    v-bind:placeholder="placeholder"
-                    v-model="localValue"
-                />
-            </template>
+            <OperatorField :columnName="columnName" v-if="isFilter" />
+            <input
+                type="text"
+                v-bind:name="columnName"
+                v-bind:placeholder="placeholder"
+                v-model="localValue"
+            />
         </template>
 
         <template v-else-if="type == 'array'">
@@ -182,11 +183,12 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 import axios from "axios"
 import flatPickr from "vue-flatpickr-component"
 import moment from "moment"
-import { VueEditor } from "vue2-editor"
+// @ts-ignore
+import { VueEditor } from "vue3-editor"
 
 import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
@@ -194,7 +196,7 @@ import DurationWidget from "./DurationWidget.vue"
 import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
-import {
+import type {
     Choices,
     StoreFileAPIResponse,
     APIResponseMessage,
@@ -202,7 +204,7 @@ import {
 } from "@/interfaces"
 import { secondsToISO8601Duration } from "../utils"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         // A nicely formatted column name, for example 'First Name'
         title: {
@@ -218,7 +220,7 @@ export default Vue.extend({
             default: "string"
         },
         value: {
-            type: undefined as PropType<any>,
+            type: undefined as PropType<any> | undefined,
             default: undefined
         },
         // Fields can share the same type, but have different formats. For
@@ -236,7 +238,7 @@ export default Vue.extend({
             default: false
         },
         choices: {
-            type: Object as PropType<Choices>,
+            type: Object as PropType<Choices | null>,
             default: null
         },
         isMediaColumn: {
@@ -246,6 +248,11 @@ export default Vue.extend({
         isRichText: {
             type: Boolean as PropType<boolean>,
             default: false
+        },
+        // The API can indicate which widget is desired.
+        widget: {
+            type: undefined as unknown as PropType<string | undefined>,
+            default: undefined
         }
     },
     components: {
@@ -260,10 +267,10 @@ export default Vue.extend({
     },
     data() {
         return {
-            localValue: undefined,
+            localValue: undefined as any,
             textareaHeight: "50px",
             showMediaViewer: false,
-            mediaViewerConfig: null as MediaViewerConfig,
+            mediaViewerConfig: null as MediaViewerConfig | null,
             customToolbar: [
                 ["bold", "italic", "underline", "strike", "blockquote"],
                 [{ list: "ordered" }, { list: "bullet" }],
@@ -305,7 +312,7 @@ export default Vue.extend({
     },
     methods: {
         setTextareaHeight() {
-            let element = this.$refs.textarea
+            let element = this.$refs.textarea as HTMLTextAreaElement
             if (element) {
                 if (element.scrollHeight > element.clientHeight) {
                     const cursorPosition = element.selectionStart
@@ -329,10 +336,11 @@ export default Vue.extend({
             this.showMediaViewer = true
         },
         formatJSON(value: string): string {
-            return JSON.stringify(JSON.parse(this.value), null, 2)
+            return JSON.stringify(JSON.parse(value), null, 2)
         },
-        async uploadFile(event) {
-            const file = event.target.files[0]
+        async uploadFile(event: Event) {
+            const target = event.target as HTMLInputElement
+            const file = target.files?.[0]
 
             if (!file) {
                 return
@@ -366,16 +374,19 @@ export default Vue.extend({
                 }
             } catch (error) {
                 let errorMessage = "The request failed."
-                const statusCode = error.response?.status
 
-                if (statusCode) {
-                    if (statusCode == 413) {
-                        errorMessage = "The file is too large."
-                    } else if (statusCode == 500) {
-                        errorMessage = "An error happened on the server."
-                    } else {
-                        errorMessage =
-                            error.response?.data?.detail ?? "Unknown error"
+                if (axios.isAxiosError(error) && error.response) {
+                    const statusCode = error.response?.status
+
+                    if (statusCode) {
+                        if (statusCode == 413) {
+                            errorMessage = "The file is too large."
+                        } else if (statusCode == 500) {
+                            errorMessage = "An error happened on the server."
+                        } else {
+                            errorMessage =
+                                error.response?.data?.detail ?? "Unknown error"
+                        }
                     }
                 }
 
@@ -386,11 +397,11 @@ export default Vue.extend({
                 this.$store.commit("updateApiResponseMessage", message)
             }
 
-            event.target.value = ""
+            target.value = ""
             this.showLoadingOverlay = false
         },
         setLocalValue(value: any) {
-            if (this.format == "json") {
+            if (this.widget == "json") {
                 this.localValue = value ? this.formatJSON(value) : null
             } else {
                 this.localValue = value
