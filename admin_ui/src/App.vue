@@ -55,7 +55,7 @@ export default defineComponent({
                     const currentPath = app.$route.path
 
                     // If we're already on the login page, don't do anything
-                    if (currentPath !== "/login/") {
+                    if (!currentPath.startsWith("/login")) {
                         console.log("Login required")
 
                         // We want to redirect back to the current page after

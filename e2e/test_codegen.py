@@ -114,10 +114,6 @@ def test_file_upload(playwright: Playwright, dev_server) -> None:
     page.locator('input[type="file"]').set_input_files(
         "./e2e/upload/piccolo.jpg"
     )
-    page.get_by_text(
-        "Piccolo Admin piccolo Back Edit director Name Years Nominated Which "
-        "years this d"
-    ).click()
     page.get_by_role("button", name="Save").click()
     page.get_by_role("link", name="Back").click()
     page.get_by_text("piccolo-").click()

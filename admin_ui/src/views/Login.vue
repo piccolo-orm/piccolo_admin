@@ -62,7 +62,7 @@ export default defineComponent({
 
             let nextURL = this.$route.query.nextURL as string
 
-            if (nextURL && nextURL != "/login/") {
+            if (nextURL && !nextURL.startsWith("/login")) {
                 await this.$router.push({ path: nextURL })
             } else {
                 await this.$router.push({ name: "home" })
