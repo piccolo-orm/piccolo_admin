@@ -719,11 +719,6 @@ class AdminRouter(FastAPI):
             app=StaticFiles(directory=os.path.join(ASSET_PATH, "css")),
         )
 
-        self.mount(
-            path="/js",
-            app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
-        )
-
         auth_middleware = partial(
             AuthenticationMiddleware,
             backend=SessionsAuthBackend(
