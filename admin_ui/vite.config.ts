@@ -11,6 +11,9 @@ export default defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url))
         }
     },
+    build: {
+        outDir: "../piccolo_admin/dist"
+    },
     server: {
         host: "127.0.0.1",
         port: 3000,
