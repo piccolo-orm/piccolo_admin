@@ -182,9 +182,13 @@ export function deserialiseOrderByString(
  * Adds values as GET params to the browser's URL.
  * @param query The values to add as GET params.
  */
-export const syncQueryParams = (query: { [key: string]: string }) => {
+export const syncQueryParams = (
+    tableName: string,
+    query: { [key: string]: string }
+) => {
     router.replace({
         name: "rowListing",
+        params: { tableName },
         query
     })
 }

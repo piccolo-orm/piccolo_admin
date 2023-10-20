@@ -22,8 +22,8 @@
                     v-model="config.column"
                     data-uitest="sort_by_selector"
                 >
-                    <option :value="schema.primary_key_name">
-                        {{ schema.primary_key_name }}
+                    <option :value="schema.extra.primary_key_name">
+                        {{ schema.extra.primary_key_name }}
                     </option>
 
                     <option
@@ -58,15 +58,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, type PropType } from "vue"
+
 import Modal from "./Modal.vue"
-import type { OrderByConfig } from "../interfaces"
+import type { OrderByConfig, Schema } from "../interfaces"
 import { syncQueryParams, getOrderByString } from "@/utils"
 
 export default defineComponent({
     props: {
-        schema: Object,
-        tableName: String
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        },
+        tableName: {
+            type: String as PropType<string>
+        }
     },
     data() {
         return {
@@ -83,7 +89,11 @@ export default defineComponent({
             const orderByConfigs = localCopy.filter((i) => i.column)
 
             this.$store.commit("updateOrderBy", orderByConfigs)
-            syncQueryParams({ __order: getOrderByString(orderByConfigs) })
+            if (this.tableName) {
+                syncQueryParams(this.tableName, {
+                    __order: getOrderByString(orderByConfigs)
+                })
+            }
 
             await this.$store.dispatch("fetchRows")
 

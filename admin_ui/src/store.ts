@@ -20,7 +20,7 @@ export default createStore({
         currentPageNumber: 1,
         currentTableName: undefined,
         darkMode: false,
-        filterParams: {},
+        filterParams: {} as { [key: string]: any },
         pageSize: 15,
         rowCount: 0,
         rows: [],
@@ -131,7 +131,11 @@ export default createStore({
         },
         async fetchCount(context) {
             const tableName = context.state.currentTableName
-            const params = context.state.filterParams
+
+            // Remove order, as it doesn't make any sense for a count.
+            const params = { ...context.state.filterParams }
+            delete params["__order"]
+
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/count/`,
                 {
