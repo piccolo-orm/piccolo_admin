@@ -39,6 +39,7 @@
                     <a
                         href="#"
                         id="user"
+                        data-uitest="nav_dropdown_button"
                         :title="username"
                         v-on:click.prevent="showDropdown = !showDropdown"
                     >
@@ -62,14 +63,13 @@
     </div>
 </template>
 
-
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import NavDropDownMenu from "./NavDropDownMenu.vue"
 import SidebarOverlay from "./SidebarOverlay.vue"
 import NavTranslationsMenu from "./NavTranslationsMenu.vue"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         username: {
             type: String,
@@ -103,13 +103,12 @@ export default Vue.extend({
         NavTranslationsMenu
     },
     methods: {
-        closeDropdown(value) {
-            this.showLanguageDropdown = value
+        closeDropdown() {
+            this.showLanguageDropdown = false
         }
     }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";

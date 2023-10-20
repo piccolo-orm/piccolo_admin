@@ -38,6 +38,26 @@ class LoginPage:
         self.page.wait_for_url(f"{BASE_URL}/#/")
 
 
+class Nav:
+    def __init__(self, page: Page):
+        self.page = page
+        self.nav_dropdown_button = page.locator(
+            'a[data-uitest="nav_dropdown_button"]'
+        )
+        self.logout_button = page.locator('a[data-uitest="logout_button"]')
+
+    def logout(self):
+        self.nav_dropdown_button.click()
+        self.page.on("dialog", lambda dialog: dialog.accept())
+
+        with self.page.expect_response(
+            lambda response: response.url == f"{BASE_URL}/public/logout/"
+            and response.request.method == "POST"
+            and response.status == 200
+        ):
+            self.logout_button.click()
+
+
 class SortModal:
     """
     Part of the :class:`RowListingPage`.
@@ -122,14 +142,17 @@ class RowListingPage:
 
 
 class EditRowPage:
-    def __init__(self, page: Page, tablename: str, id: str):
+    def __init__(self, page: Page, tablename: str, row_id: str):
         self.page = page
-        self.url = f"{BASE_URL}/#/{tablename}/{id}/"
+        self.tablename = tablename
+        self.row_id = row_id
+        self.url = f"{BASE_URL}/#/{tablename}/{row_id}/"
         self.drop_down_button = page.locator("a[data-uitest=drop_down_button]")
         self.delete_row_button = page.locator(
             "a[data-uitest=delete_row_button]"
         )
         self.error_div = page.locator("div.errors")
+        self.save_button = page.locator("button[data-uitest=save_button]")
 
     def open_drop_down_menu(self):
         self.drop_down_button.click()
@@ -138,6 +161,15 @@ class EditRowPage:
         self.open_drop_down_menu()
         self.page.on("dialog", lambda dialog: dialog.accept())
         self.delete_row_button.click()
+
+    def save(self):
+        with self.page.expect_response(
+            lambda response: response.url
+            == f"{BASE_URL}/api/tables/{self.tablename}/{self.row_id}/"
+            and response.request.method == "PATCH"
+            and response.status == 200
+        ):
+            self.save_button.click()
 
     def check_error(self, error: str):
         list_item = self.error_div.locator("li:first-child")
@@ -165,3 +197,13 @@ class AddRowPage:
             and response.status == 201
         ):
             self.create_button.click()
+
+
+class HomePage:
+    def __init__(self, page: Page):
+        self.page = page
+        self.url = f"{BASE_URL}/#/"
+        self.nav = Nav(page=page)
+
+    def reset(self):
+        self.page.goto(self.url)

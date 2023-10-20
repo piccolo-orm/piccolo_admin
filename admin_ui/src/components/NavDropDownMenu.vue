@@ -1,7 +1,7 @@
 <template>
     <DropDownMenu>
         <li>
-            <a href="#" v-on:click.prevent="logout">
+            <a href="#" v-on:click.prevent="logout" data-uitest="logout_button">
                 <font-awesome-icon icon="sign-out-alt" />{{ $t("Log out") }}
             </a>
         </li>
@@ -34,11 +34,11 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
+import { defineComponent } from "vue"
 
 import DropDownMenu from "./DropDownMenu.vue"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         DropDownMenu
     },

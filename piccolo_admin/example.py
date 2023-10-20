@@ -45,7 +45,7 @@ from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
@@ -250,6 +250,12 @@ class NullableColumns(Table):
     varchar = Varchar(null=True, default=None)
 
 
+class RequiredColumns(Table):
+    id: Serial
+    varchar = Varchar(required=True)
+    array = Array(Varchar(), required=True)
+
+
 class SortedColumns(Table):
     """
     A table used for UI tests.
@@ -309,7 +315,7 @@ class BusinessEmailModel(BaseModel):
     title: str = "Enquiry"
     content: str
 
-    @validator("email")
+    @field_validator("email")
     def validate_email(cls, v):
         if "@" not in v:
             raise ValueError("not valid email")
@@ -321,7 +327,7 @@ class BookingModel(BaseModel):
     name: str
     notes: str = "N/A"
 
-    @validator("email")
+    @field_validator("email")
     def validate_email(cls, v):
         if "@" not in v:
             raise ValueError("not valid email")
@@ -379,6 +385,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Sessions,
     Ticket,
     NullableColumns,
+    RequiredColumns,
     SortedColumns,
     Constraints,
     ConstraintTarget,
@@ -391,7 +398,9 @@ movie_config = TableConfig(
         Movie._meta.primary_key,
         Movie.name,
         Movie.rating,
+        Movie.duration,
         Movie.director,
+        Movie.won_oscar,
         Movie.poster,
         Movie.tags,
         Movie.screenshots,
@@ -467,6 +476,10 @@ nullable_config = TableConfig(
     menu_group="Testing",
 )
 
+required_columns_config = TableConfig(
+    table_class=RequiredColumns,
+    menu_group="Testing",
+)
 
 sorted_columns_config = TableConfig(
     table_class=SortedColumns,
@@ -491,6 +504,7 @@ APP = create_admin(
         studio_config,
         ticket_config,
         nullable_config,
+        required_columns_config,
         sorted_columns_config,
         constraints_config,
         constraints_target_config,

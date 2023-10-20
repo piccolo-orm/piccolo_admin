@@ -4,7 +4,9 @@
             name="password"
             v-bind:value="value"
             v-bind:type="showPassword ? 'text' : 'password'"
-            v-on:input="$emit('input', $event.target.value)"
+            v-on:input="
+                $emit('input', ($event.target as HTMLInputElement).value)
+            "
         />
         <span
             class="viewer"
@@ -22,7 +24,10 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
+    emits: ["input"],
     props: {
         value: String
     },
@@ -31,7 +36,7 @@ export default {
             showPassword: false
         }
     }
-}
+})
 </script>
 
 <style lang="less">

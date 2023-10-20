@@ -1,13 +1,13 @@
 <template>
     <BaseView>
-        <template v-if="schema != undefined">
+        <template v-if="!loading">
             <div class="left_column">
                 <div class="title_bar">
                     <div class="title">
-                        <h1>{{ tableName | readable }}</h1>
+                        <h1>{{ readable(tableName) }}</h1>
                         <Tooltip
-                            :content="schema.help_text"
-                            v-if="schema.help_text"
+                            :content="schema.extra.help_text"
+                            v-if="schema.extra.help_text"
                         />
                     </div>
                     <div class="buttons">
@@ -164,13 +164,13 @@
                                                 >
                                             </span>
                                             <span v-else-if="name == pkName">{{
-                                                row[name] | abbreviate
+                                                abbreviate(row[name])
                                             }}</span>
                                             <span
                                                 v-else-if="choicesLookup[name]"
                                             >
                                                 {{
-                                                    choicesLookup[name][
+                                                    choicesLookup[name]![
                                                         row[name]
                                                     ]
                                                 }}
@@ -217,16 +217,16 @@
                                                 <code v-else>NULL</code>
                                             </span>
                                             <span v-else-if="isInterval(name)">
-                                                {{ row[name] | humanReadable }}
+                                                {{ humanReadable(row[name]) }}
                                             </span>
                                             <span v-else-if="isJSON(name)">
                                                 <code v-if="row[name] === null"
                                                     >NULL</code
                                                 >
                                                 <pre v-else>{{
-                                                    row[name]
-                                                        | formatJSON
-                                                        | abbreviate
+                                                    abbreviate(
+                                                        formatJSON(row[name])
+                                                    )
                                                 }}</pre>
                                             </span>
                                             <span
@@ -246,7 +246,7 @@
                                                                 name
                                                             )
                                                         "
-                                                        >{{ item | abbreviate }}
+                                                        >{{ abbreviate(item) }}
                                                     </a>
                                                 </template>
                                                 <template v-else>
@@ -259,8 +259,9 @@
                                                             )
                                                         "
                                                         >{{
-                                                            row[name]
-                                                                | abbreviate
+                                                            abbreviate(
+                                                                row[name]
+                                                            )
                                                         }}
                                                     </a>
                                                 </template>
@@ -270,7 +271,7 @@
                                                     >NULL</code
                                                 >
                                                 <span v-else>
-                                                    {{ row[name] | abbreviate }}
+                                                    {{ abbreviate(row[name]) }}
                                                 </span>
                                             </span>
                                         </td>
@@ -326,10 +327,7 @@
                                                     <li>
                                                         <DeleteButton
                                                             :includeTitle="true"
-                                                            class="
-                                                                subtle
-                                                                delete
-                                                            "
+                                                            class="subtle delete"
                                                             v-on:triggered="
                                                                 deleteRow(
                                                                     row[pkName]
@@ -399,8 +397,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
-import { readableInterval } from "../utils"
+import axios from "axios"
+import { defineComponent, type PropType } from "vue"
 
 import AddRowModal from "../components/AddRowModal.vue"
 import BaseView from "./BaseView.vue"
@@ -416,20 +414,32 @@ import RowFilter from "../components/RowFilter.vue"
 import OrderByModal from "../components/OrderByModal.vue"
 import Tooltip from "../components/Tooltip.vue"
 import {
-    APIResponseMessage,
-    Choice,
-    Choices,
-    Schema,
-    MediaViewerConfig,
-    OrderByConfig
-} from "../interfaces"
-import { deserialiseOrderByString, parseErrorResponse } from "@/utils"
+    type APIResponseMessage,
+    type Choice,
+    type Schema,
+    type MediaViewerConfig,
+    type OrderByConfig,
+    type RowID,
+    getType,
+    getFormat
+} from "@/interfaces"
+import {
+    deserialiseOrderByString,
+    parseErrorResponse,
+    readableInterval,
+    readable
+} from "@/utils"
 
-export default Vue.extend({
-    props: ["tableName"],
+export default defineComponent({
+    props: {
+        tableName: {
+            type: String as PropType<string>,
+            required: true
+        }
+    },
     data() {
         return {
-            selectedRows: [],
+            selectedRows: [] as RowID[],
             allSelected: false,
             showAddRow: false,
             showFilter: false,
@@ -437,7 +447,8 @@ export default Vue.extend({
             showUpdateModal: false,
             visibleDropdown: null,
             showMediaViewer: false,
-            mediaViewerConfig: null as MediaViewerConfig
+            mediaViewerConfig: undefined as MediaViewerConfig | undefined,
+            loading: true
         }
     },
     components: {
@@ -455,9 +466,14 @@ export default Vue.extend({
         OrderByModal,
         Tooltip
     },
+    setup() {
+        return {
+            readable
+        }
+    },
     computed: {
         visibleColumnNames() {
-            return this.schema.visible_column_names
+            return this.schema.extra.visible_column_names
         },
         rows() {
             return this.$store.state.rows
@@ -487,25 +503,30 @@ export default Vue.extend({
             return this.$store.state.loadingStatus
         },
         pkName() {
-            return this.schema?.primary_key_name || "id"
+            return this.schema.extra.primary_key_name || "id"
         },
         linkColumnName(): string {
             let schema: Schema = this.schema
-            return schema.link_column_name
+            return schema.extra.link_column_name
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
         // For example {'genre': {1: 'Sci-Fi'}}
         choicesLookup() {
-            let schema: Schema = this.schema
-            const output = {}
+            let schema = this.schema
+            const output: {
+                [key: string]: { [key: string | number]: string } | null
+            } = {}
 
             for (const [columnName, config] of Object.entries(
                 schema.properties
             )) {
-                const choices: Choices = config.extra.choices
+                const choices = config.extra.choices
 
-                const reducer = (accumulator: Object, choice: Choice) => {
+                const reducer = (
+                    accumulator: { [key: string]: any },
+                    choice: Choice
+                ) => {
                     accumulator[choice.value] = choice.display_name
                     return accumulator
                 }
@@ -522,7 +543,7 @@ export default Vue.extend({
             return output
         }
     },
-    filters: {
+    methods: {
         abbreviate(value: string | null) {
             // We need to handle null values, and make sure text strings aren't
             // too long.
@@ -535,39 +556,36 @@ export default Vue.extend({
             }
             return string
         },
-        humanReadable(value) {
+        humanReadable(value: string) {
             return readableInterval(value)
         },
         formatJSON(value: string) {
             return JSON.stringify(JSON.parse(value), null, 2)
-        }
-    },
-    methods: {
+        },
         isForeignKey(name: string): boolean {
-            let property = this.schema.properties[name]
-            return property != undefined ? property.extra.foreign_key : false
+            return this.schema.properties[name]?.extra.foreign_key !== undefined
         },
         isBoolean(name: string): boolean {
-            return this.schema.properties[name]["type"] == "boolean"
+            return getType(this.schema.properties[name]) == "boolean"
         },
         isInterval(name: string): boolean {
-            return this.schema.properties[name]["format"] == "time-delta"
+            return getFormat(this.schema.properties[name]) == "duration"
         },
         isJSON(name: string): boolean {
-            return this.schema.properties[name]["format"] == "json"
+            return this.schema.properties[name].extra?.widget == "json"
         },
         isArray(name: string): boolean {
-            return this.schema.properties[name]["type"] == "array"
+            return getType(this.schema.properties[name]) == "array"
         },
         isMediaColumn(name: string): boolean {
-            return this.schema.media_columns.includes(name)
+            return this.schema.extra.media_columns.includes(name)
         },
         getTableName(name: string) {
-            // Find the table name a foreign key refers to:
-            return this.schema.properties[name].extra.to
+            // Find the table name a foreign key refers to.
+            return this.schema.properties[name]!.extra.foreign_key!.to
         },
-        closeSideBar(value) {
-            this.showFilter = value
+        closeSideBar() {
+            this.showFilter = false
         },
         resetRowCheckbox() {
             this.allSelected = false
@@ -579,7 +597,9 @@ export default Vue.extend({
         selectAllRows() {
             // Select all checkboxes and add row ids to selected array:
             if (this.allSelected) {
-                this.selectedRows = this.rows.map((row) => row[this.pkName])
+                this.selectedRows = this.rows.map(
+                    (row: any) => row[this.pkName]
+                )
             } else {
                 this.selectedRows = []
             }
@@ -600,7 +620,7 @@ export default Vue.extend({
             }
             this.showMediaViewer = true
         },
-        async deleteRow(rowID) {
+        async deleteRow(rowID: RowID) {
             if (confirm(`Are you sure you want to delete row ${rowID}?`)) {
                 console.log("Deleting!")
                 await this.$store.dispatch("deleteRow", {
@@ -622,18 +642,24 @@ export default Vue.extend({
                             rowID: this.selectedRows[i]
                         })
                     } catch (error) {
-                        const errors = parseErrorResponse(
-                            error.response.data,
-                            error.response.status
-                        )
-                        const errorString = errors.join(", ")
+                        if (axios.isAxiosError(error) && error.response) {
+                            const errors = parseErrorResponse(
+                                error.response.data,
+                                error.response.status
+                            )
+                            const errorString = errors.join(", ")
 
-                        var message: APIResponseMessage = {
-                            contents: `Unable to delete row ${this.selectedRows[i]} (${errorString})`,
-                            type: "error"
+                            var message: APIResponseMessage = {
+                                contents: `Unable to delete row ${this.selectedRows[i]} (${errorString})`,
+                                type: "error"
+                            }
+                            this.$store.commit(
+                                "updateApiResponseMessage",
+                                message
+                            )
+                            await this.fetchRows()
                         }
-                        this.$store.commit("updateApiResponseMessage", message)
-                        await this.fetchRows()
+
                         return
                     }
                 }
@@ -648,31 +674,29 @@ export default Vue.extend({
             await this.$store.dispatch("fetchSchema", this.tableName)
 
             const orderBy = this.$route.query.__order as string
-            console.log(orderBy)
             if (orderBy) {
                 this.$store.commit(
                     "updateOrderBy",
                     deserialiseOrderByString(orderBy)
                 )
             } else {
-                this.$store.commit(
-                    "updateOrderBy",
-                    (this.schema as Schema).order_by
-                )
+                this.$store.commit("updateOrderBy", this.schema.extra.order_by)
             }
         }
     },
     watch: {
         "$route.params.tableName": async function () {
+            this.loading = true
             this.$store.commit("reset")
             this.$store.commit("updateCurrentTablename", this.tableName)
             await this.fetchSchema()
             await this.fetchRows()
+            this.loading = false
         },
         "$route.query": async function () {
             this.$store.commit(
                 "updateFilterParams",
-                this.$router.currentRoute.query
+                this.$router.currentRoute.value.query
             )
             await this.fetchRows()
         },
@@ -681,15 +705,17 @@ export default Vue.extend({
         }
     },
     async mounted() {
+        this.loading = true
         this.$store.commit("updateCurrentTablename", this.tableName)
 
         this.$store.commit(
             "updateFilterParams",
-            this.$router.currentRoute.query
+            this.$router.currentRoute.value.query
         )
 
         await this.fetchSchema()
         await this.fetchRows()
+        this.loading = false
     }
 })
 </script>
@@ -794,7 +820,7 @@ div.wrapper {
                 transition: opacity 0.8s;
             }
 
-            .fade-enter,
+            .fade-enter-from,
             .fade-leave-to {
                 opacity: 0;
                 transition: opacity 0s;

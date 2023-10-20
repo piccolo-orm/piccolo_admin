@@ -1,5 +1,5 @@
 <template>
-    <div id="media_viewer">
+    <div id="media_viewer" v-if="mediaViewerConfig">
         <!-- Top bar -->
 
         <div class="top_bar">
@@ -82,19 +82,17 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
-import { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 
-import { MediaViewerConfig } from "@/interfaces"
+import type { MediaViewerConfig } from "@/interfaces"
 
-// @ts-ignore
-const BASE_URL = process.env.VUE_APP_BASE_URI
+const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
 const AUDIO_EXTENSIONS = ["mp3", "wav"]
 const IMAGE_EXTENSIONS = ["gif", "jpeg", "jpg", "png", "svg", "tif", "webp"]
 const VIDEO_EXTENSIONS = ["mp4", "webm"]
 
-export default Vue.extend({
+export default defineComponent({
     props: {
         mediaViewerConfig: {
             type: Object as PropType<MediaViewerConfig>

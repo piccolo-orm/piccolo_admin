@@ -7,9 +7,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue"
+
 import Modal from "./Modal.vue"
 
-export default {
+export default defineComponent({
     components: {
         Modal
     },
@@ -23,5 +25,5 @@ export default {
             this.$store.commit("updateShowAboutModal", false)
         }
     }
-}
+})
 </script>

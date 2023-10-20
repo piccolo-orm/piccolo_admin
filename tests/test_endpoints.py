@@ -641,6 +641,7 @@ class TestTables(TestCase):
                 "director",
                 "movie",
                 "nullable_columns",
+                "required_columns",
                 "sorted_columns",
                 "studio",
                 "ticket",
@@ -680,6 +681,7 @@ class TestTables(TestCase):
                         "constraint_target",
                         "constraints",
                         "nullable_columns",
+                        "required_columns",
                         "sorted_columns",
                     ],
                 },
@@ -738,14 +740,14 @@ class TestTables(TestCase):
 
         data = response.json()
 
-        self.assertEqual(data["link_column_name"], "id")
-        self.assertEqual(data["rich_text_columns"], [])
+        self.assertEqual(data["extra"]["link_column_name"], "id")
+        self.assertEqual(data["extra"]["rich_text_columns"], [])
         self.assertEqual(
-            data["visible_column_names"],
+            data["extra"]["visible_column_names"],
             ["id", "name", "gender", "photo"],
         )
         self.assertEqual(
-            data["visible_filter_names"],
+            data["extra"]["visible_filter_names"],
             [
                 "id",
                 "name",
@@ -755,7 +757,7 @@ class TestTables(TestCase):
                 "additional_skills",
             ],
         )
-        self.assertEqual(data["media_columns"], ["photo"])
+        self.assertEqual(data["extra"]["media_columns"], ["photo"])
 
 
 class TestTranslations(TestCase):

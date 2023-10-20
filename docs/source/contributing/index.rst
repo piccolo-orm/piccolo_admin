@@ -16,7 +16,7 @@ And then you can launch the admin as follows:
 
 .. code-block:: bash
 
-    npm run serve
+    npm run dev
 
 It will auto refresh the UI as you make changes to the source files.
 
@@ -106,6 +106,8 @@ tool for viewing UI components in isolation. To launch it:
 .. code-block:: bash
 
     npm run storybook
+
+.. note:: This was temporarily removed in v1, but we will try and add it back.
 
 -------------------------------------------------------------------------------
 

@@ -1,7 +1,29 @@
-import { Schema, OrderByConfig } from "@/interfaces"
+import { type Schema, type OrderByConfig, getType } from "@/interfaces"
 import router from "./router"
+import moment from "moment"
 
-export function readableInterval(timeRange: number) {
+/*****************************************************************************/
+// Filters
+
+/**
+ * Converts an identifier like `my_column` to `my column`.
+ * @param value The string to convert.
+ * @returns A readable version of a string
+ */
+export function readable(value: string) {
+    return value.split("_").join(" ")
+}
+
+/**
+ * We need to parse ISO 8601 duration string (e.g. P17DT14706S) to
+ * seconds and then convert to human readable interval.
+ *
+ * @param timeValue ISO 8601 duration string which we need to parse.
+ * @returns A string of nicelly formated timeValue
+ */
+export function readableInterval(timeValue: string) {
+    const parsedTimeValue = moment.duration(timeValue)
+    const timeRange = parsedTimeValue.asSeconds()
     if (timeRange === 0) {
         return "0 seconds"
     }
@@ -28,6 +50,17 @@ export function readableInterval(timeRange: number) {
         minutesDisplay +
         secondsDisplay
     )
+}
+
+/**
+ * We need to convert interval from seconds to ISO 8601 duration
+ * string (e.g. P17DT14706S) for form fields.
+ *
+ * @param value interval seconds which we need to convert.
+ * @returns ISO 8601 duration string
+ */
+export function secondsToISO8601Duration(value: number) {
+    return moment.duration(value, "seconds").toISOString()
 }
 
 export function titleCase(value: string) {
@@ -102,40 +135,16 @@ export function convertFormValue(params: {
 }): any {
     let { key, value, schema } = params
 
+    const property = schema.properties[key]
+
     if (value == "null") {
         value = null
-    } else if (schema?.properties[key].type == "array") {
+    } else if (property.extra.nullable && value == "") {
+        value = null
+    } else if (getType(property) == "array") {
         value = JSON.parse(String(value))
-    } else if (schema?.properties[key].format == "uuid" && value == "") {
-        value = null
-    } else if (schema?.properties[key].format == "email" && value == "") {
-        value = null
-    } else if (schema?.properties[key].format == "date-time" && value == "") {
-        value = null
-    } else if (schema?.properties[key].format == "date" && value == "") {
-        value = null
-    } else if (schema?.properties[key].type == "integer" && value == "") {
-        value = null
-    } else if (schema?.properties[key].type == "number" && value == "") {
-        value = null
-    } else if (
-        schema?.properties[key].type == "string" &&
-        schema?.properties[key].nullable &&
-        value == ""
-    ) {
-        value = null
-    } else if (
-        schema?.properties[key].format == "json" &&
-        schema?.properties[key].nullable &&
-        value == ""
-    ) {
-        value = null
-    } else if (
-        schema?.properties[key].extra.foreign_key == true &&
-        value == ""
-    ) {
-        value = null
     }
+
     return value
 }
 
@@ -173,9 +182,13 @@ export function deserialiseOrderByString(
  * Adds values as GET params to the browser's URL.
  * @param query The values to add as GET params.
  */
-export const syncQueryParams = (query: { [key: string]: string }) => {
+export const syncQueryParams = (
+    tableName: string,
+    query: { [key: string]: string }
+) => {
     router.replace({
         name: "rowListing",
+        params: { tableName },
         query
     })
 }

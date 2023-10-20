@@ -10,13 +10,12 @@
     </div>
 </template>
 
-
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import NavBar from "../components/NavBar.vue"
 import SidebarNav from "../components/SidebarNav.vue"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         NavBar,
         SidebarNav
@@ -32,7 +31,6 @@ export default Vue.extend({
     }
 })
 </script>
-
 
 <style lang="less">
 @import "../vars.less";

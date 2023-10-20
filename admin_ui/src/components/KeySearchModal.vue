@@ -40,31 +40,38 @@
 </template>
 
 <script lang="ts">
-import { FetchIdsConfig } from "../interfaces"
+import { defineComponent, type PropType } from "vue"
+
+import type { FetchIdsConfig, RowID } from "../interfaces"
 import Modal from "./Modal.vue"
 import { titleCase } from "../utils"
 
 const PAGE_SIZE = 5
 
-export default {
+type IDs = [RowID, string][]
+
+export default defineComponent({
     props: {
-        tableName: String,
+        tableName: {
+            type: String as PropType<string>,
+            required: true
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: true
         }
     },
     data() {
         return {
-            ids: [],
+            ids: [] as IDs,
             offset: 0,
             limitReached: false,
             searchTerm: "",
-            debounceTimer: null
+            debounceTimer: null as number | null
         }
     },
     components: {
@@ -72,6 +79,10 @@ export default {
     },
     computed: {
         readableTableName() {
+            if (!this.tableName) {
+                return ""
+            }
+
             return titleCase(this.tableName.split("_").join(" "))
         }
     },
@@ -86,7 +97,7 @@ export default {
             }
 
             const response = await this.$store.dispatch("fetchIds", config)
-            const ids = Object.entries(response.data)
+            const ids: IDs = Object.entries(response.data)
 
             this.limitReached = ids.length <= PAGE_SIZE
 
@@ -105,14 +116,16 @@ export default {
             this.ids.push(...ids)
             this.scrollResultsToBottom()
         },
-        selectResult(id, readable) {
+        selectResult(id: RowID | null, readable: string) {
             this.$emit("update", { id, readable })
         }
     },
     watch: {
-        async tableName() {
+        async tableName(value: string) {
             this.offset = 0
-            this.ids = await this.fetchData()
+            if (value) {
+                this.ids = await this.fetchData()
+            }
         },
         async searchTerm() {
             // We debounce it, to reduce the number of API calls.
@@ -122,18 +135,19 @@ export default {
 
             let app = this
 
-            this.debounceTimer = setTimeout(async () => {
+            this.debounceTimer = window.setTimeout(async () => {
                 app.offset = 0
                 app.ids = await app.fetchData()
             }, 300)
         }
     },
     async mounted() {
-        this.ids = await this.fetchData()
+        if (this.tableName) {
+            this.ids = await this.fetchData()
+        }
     }
-}
+})
 </script>
-
 
 <style lang="less" scoped>
 @import "../vars.less";

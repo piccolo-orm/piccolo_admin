@@ -3,14 +3,16 @@ export interface CreateRow {
     data: object
 }
 
+export type RowID = number | string
+
 export interface DeleteRow {
     tableName: string
-    rowID: number
+    rowID: RowID
 }
 
 export interface UpdateRow {
     tableName: string
-    rowID: number
+    rowID: RowID
     data: object
 }
 
@@ -28,7 +30,7 @@ export interface FetchRowsConfig {
 
 export interface FetchSingleRowConfig {
     tableName: string
-    rowID: number
+    rowID: RowID
 }
 
 export interface APIResponseMessage {
@@ -37,7 +39,7 @@ export interface APIResponseMessage {
 }
 
 export interface OrderByConfig {
-    column: string
+    column: string | null
     ascending: boolean
 }
 
@@ -99,41 +101,60 @@ export interface Choices {
 
 /*****************************************************************************/
 
+export interface SchemaExtra {
+    help_text: string | null
+    link_column_name: string
+    media_columns: string[]
+    order_by: OrderByConfig[]
+    primary_key_name: string
+    rich_text_columns: string[]
+    visible_column_names: string[]
+    visible_fields_options: string[]
+    visible_filter_names: string[]
+}
+
 export interface Schema {
+    extra: SchemaExtra
+    properties: Properties
+    required: string[]
     title: string
     type: string
-    properties: Properties
-    help_text: null
-    visible_column_names: string[]
-    visible_filter_names: string[]
-    rich_text_columns: string[]
-    media_columns: string[]
-    visible_fields_options: string[]
-    primary_key_name: string
-    link_column_name: string
-    order_by: OrderByConfig[]
 }
 
 export interface Properties {
-    [key: string]: RowConfig
+    [key: string]: Property
 }
 
-export interface RowConfig {
+export interface AnyOf {
+    type: string
+    maxLength?: number
+    format?: string
+}
+
+export interface Property {
     title: string
     default?: any
-    extra: RowConfigExtra
-    nullable: boolean
-    type: string
+    extra: PropertyExtra
+    type?: string
+    anyOf?: AnyOf[]
     format?: string
     maxLength?: number
     items?: ArrayItems
 }
 
-export interface RowConfigExtra {
-    help_text: null | string
+export interface ForeignKey {
+    to: string
+    target_column: string
+}
+
+// These are additional values we add to the JSON schema.
+export interface PropertyExtra {
     choices: Choices | null
-    foreign_key?: boolean
-    to?: string
+    foreign_key?: ForeignKey
+    help_text: string | null
+    nullable: boolean
+    secret: boolean
+    widget?: string
 }
 
 export interface ArrayItems {
@@ -144,4 +165,15 @@ export interface FormConfig {
     name: string
     slug: string
     description: string
+}
+
+/*****************************************************************************/
+
+export const getType = (property: Property): string => {
+    // We know that one of these will be true:
+    return (property.type || property.anyOf?.[0].type) as string
+}
+
+export const getFormat = (property: Property): string | undefined => {
+    return property.format || property.anyOf?.[0].format
 }

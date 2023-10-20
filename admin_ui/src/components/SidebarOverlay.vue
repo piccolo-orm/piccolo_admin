@@ -4,14 +4,16 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue"
+
 import SidebarNav from "./SidebarNav.vue"
 
-export default {
+export default defineComponent({
     components: {
-        SidebarNav,
-    },
-}
+        SidebarNav
+    }
+})
 </script>
 
 <style lang="less">

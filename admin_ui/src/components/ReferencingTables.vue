@@ -39,8 +39,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue"
-import { TableReferencesAPIResponse, TableReference } from "../interfaces"
+import { defineComponent, type PropType } from "vue"
+import type { TableReferencesAPIResponse, TableReference } from "../interfaces"
 
 export default defineComponent({
     props: {
@@ -48,7 +48,7 @@ export default defineComponent({
             type: String as PropType<string>
         },
         rowID: {
-            type: undefined as PropType<number | string>
+            type: undefined as unknown as PropType<number | string>
         }
     },
     data: function () {
@@ -68,7 +68,7 @@ export default defineComponent({
             ).references
         },
         getQueryParams(reference: TableReference) {
-            const query = {}
+            const query: { [key: string]: any } = {}
             query[reference.columnName] = this.rowID
             return query
         }

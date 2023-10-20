@@ -1,4 +1,4 @@
-import Vue from "vue"
+import type { App } from "vue"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 import { library } from "@fortawesome/fontawesome-svg-core"
 import {
@@ -86,4 +86,7 @@ library.add(
     faTrashAlt,
     faUser
 )
-Vue.component("font-awesome-icon", FontAwesomeIcon)
+
+export const setupFonts = (app: App) => {
+    app.component("font-awesome-icon", FontAwesomeIcon)
+}

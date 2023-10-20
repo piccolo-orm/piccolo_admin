@@ -14,10 +14,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
-import * as i from "../interfaces"
+import { defineComponent } from "vue"
+import type { APIResponseMessage } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     data() {
         return {
             visible: false,
@@ -30,7 +30,7 @@ export default Vue.extend({
                 ? this.apiResponseMessage.contents
                 : "-"
         },
-        apiResponseMessage(): i.APIResponseMessage {
+        apiResponseMessage(): APIResponseMessage {
             return this.$store.state.apiResponseMessage
         }
     },
