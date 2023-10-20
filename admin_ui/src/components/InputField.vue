@@ -365,7 +365,10 @@ export default defineComponent({
                 )
                 if (this.type == "array") {
                     if (this.localValue) {
-                        this.localValue.push(response.data.file_key)
+                        this.localValue = [
+                            ...this.localValue,
+                            response.data.file_key
+                        ]
                     } else {
                         this.localValue = [response.data.file_key]
                     }

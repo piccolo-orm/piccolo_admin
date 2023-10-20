@@ -1,30 +1,27 @@
 <template>
     <div>
         <ul class="array_items">
-            <li :key="index" v-for="(value, index) in internalArray">
-                <template v-if="choices">
-                    <!--
-                    We deliberately set the fieldName to blank, as we don't
-                    want the value to be submitted. Instead, we combine the
-                    values into an array object and submit that instead.
-                    -->
-                    <ChoiceSelect
-                        :fieldName="''"
-                        :value="value"
-                        :choices="choices"
-                        :isNullable="isNullable"
-                        :isFilter="isFilter"
-                        :isArray="true"
-                        @updated="updateArray($event, index)"
-                    />
-                </template>
-                <template v-else>
-                    <input
-                        :type="inputType"
-                        :value="value"
-                        @change="updateArray(getValueFromEvent($event), index)"
-                    />
-                </template>
+            <li :key="value" v-for="(value, index) in internalArray">
+                <!--
+                We deliberately set the fieldName to blank, as we don't
+                want the value to be submitted. Instead, we combine the
+                values into an array object and submit that instead.
+                -->
+                <ChoiceSelect
+                    v-if="choices"
+                    :fieldName="''"
+                    :value="value"
+                    :choices="choices"
+                    :isNullable="isNullable"
+                    :isFilter="isFilter"
+                    :isArray="true"
+                    @updated="updateArray($event, index)"
+                />
+                <input
+                    :type="inputType"
+                    :value="value"
+                    @change="updateArray(getValueFromEvent($event), index)"
+                />
 
                 <a
                     href="#"
@@ -129,7 +126,7 @@ export default defineComponent({
             this.$emit("updateArray", this.internalArray)
         },
         removeArrayElement(index: number) {
-            delete this.internalArray[index]
+            this.internalArray.splice(index, 1)
             this.$emit("updateArray", this.internalArray)
         },
         showMedia(index: number) {
@@ -143,8 +140,8 @@ export default defineComponent({
         }
     },
     watch: {
-        array() {
-            this.internalArray = [...this.array]
+        array(newValue) {
+            this.internalArray = [...newValue]
         }
     },
     mounted() {
