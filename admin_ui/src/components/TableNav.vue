@@ -12,20 +12,20 @@
                     <a
                         href="#"
                         class="subtle"
-                        @click.prevent="toggleGroup(groupName)"
+                        @click.prevent="toggleGroup(String(groupName))"
                         title="Click to toggle children."
                     >
                         <font-awesome-icon icon="layer-group" />
                         <span class="name">{{ groupName }}</span>
                         <span
                             class="ellipsis"
-                            v-if="hiddenGroups.indexOf(groupName) != -1"
+                            v-if="hiddenGroups.indexOf(String(groupName)) != -1"
                             >...</span
                         >
                     </a>
                 </li>
 
-                <template v-if="hiddenGroups.indexOf(groupName) == -1">
+                <template v-if="hiddenGroups.indexOf(String(groupName)) == -1">
                     <TableNavItem
                         v-bind:key="tableName"
                         v-for="tableName in tableNames"
@@ -38,15 +38,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import TableNavItem from "./TableNavItem.vue"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         TableNavItem
     },
     data() {
-        return { hiddenGroups: [] }
+        return {
+            hiddenGroups: [] as string[]
+        }
     },
     computed: {
         tableGroups() {

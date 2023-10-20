@@ -6,14 +6,16 @@
     </p>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
     computed: {
         showBackButton() {
             return window.history.length > 1
         }
     }
-}
+})
 </script>
 
 <style scoped lang="less">

@@ -8,13 +8,13 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
-import * as i from "./interfaces"
+import { defineComponent } from "vue"
+import type * as i from "./interfaces"
 
 import AboutModal from "./components/AboutModal.vue"
 import MessagePopup from "./components/MessagePopup.vue"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         AboutModal,
         MessagePopup
@@ -31,7 +31,7 @@ export default Vue.extend({
         }
     },
     async created() {
-        let darkMode = JSON.parse(localStorage.getItem("darkMode"))
+        let darkMode = JSON.parse(localStorage.getItem("darkMode") ?? "false")
 
         if (darkMode === null) {
             darkMode = false
@@ -52,14 +52,20 @@ export default Vue.extend({
             },
             function (error) {
                 if (error.response && error.response.status == 401) {
-                    console.log("Login required")
-                    let nextURL = app.$route.path
-                    if (nextURL !== "/login") {
+                    const currentPath = app.$route.path
+
+                    // If we're already on the login page, don't do anything
+                    if (!currentPath.startsWith("/login")) {
+                        console.log("Login required")
+
+                        // We want to redirect back to the current page after
+                        // logging in again, so we let the login page know
+                        // about this via the `nextURL` query param.
                         setTimeout(function () {
                             app.$router.push({
                                 name: "login",
                                 query: {
-                                    nextURL: nextURL
+                                    nextURL: currentPath
                                 }
                             })
                         }, 0)

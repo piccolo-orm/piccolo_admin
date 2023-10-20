@@ -53,12 +53,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import TableNav from "./TableNav.vue"
 import FormNav from "./FormNav.vue"
 import LinksNav from "./LinksNav.vue"
 
-export default Vue.extend({
+export default defineComponent({
     data() {
         return {
             isHiddenTables: false,

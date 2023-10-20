@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>{{ $t("Add") }} {{ tableName | readable }}</h1>
+        <h1>{{ $t("Add") }} {{ readable(tableName) }}</h1>
 
         <FormErrors v-if="errors.length > 0" v-bind:errors="errors" />
 
@@ -12,18 +12,24 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { defineComponent, type PropType } from "vue"
 import RowForm from "./RowForm.vue"
 import FormErrors from "./FormErrors.vue"
-import { APIResponseMessage } from "../interfaces"
 import { parseErrorResponse } from "../utils"
-import { Schema } from "@/interfaces"
-import { convertFormValue } from "@/utils"
+import type { Schema, APIResponseMessage } from "@/interfaces"
+import { convertFormValue, readable } from "@/utils"
+import axios from "axios"
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        tableName: String as PropType<string>,
-        schema: Object as PropType<Schema>
+        tableName: {
+            type: String as PropType<string>,
+            required: true
+        },
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        }
     },
     components: {
         RowForm,
@@ -35,11 +41,16 @@ export default Vue.extend({
             errors: [] as string[]
         }
     },
+    setup() {
+        return {
+            readable
+        }
+    },
     methods: {
-        async submitForm(event) {
-            const form = new FormData(event.target)
+        async submitForm(event: Event) {
+            const form = new FormData(event.target as HTMLFormElement)
 
-            const json = {}
+            const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
                 let value = i[1]
@@ -56,10 +67,12 @@ export default Vue.extend({
                     data: json
                 })
             } catch (error) {
-                this.errors = parseErrorResponse(
-                    error.response.data,
-                    error.response.status
-                )
+                if (axios.isAxiosError(error) && error.response) {
+                    this.errors = parseErrorResponse(
+                        error.response.data,
+                        error.response.status
+                    )
+                }
 
                 window.scrollTo(0, 0)
 

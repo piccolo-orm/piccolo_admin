@@ -16,50 +16,61 @@
         />
 
         <KeySearchModal
+            v-if="tableName"
             v-show="showModal"
             :isFilter="isFilter"
             :tableName="tableName"
             @close="showModal = false"
-            @update="
-                handleUpdate($event)
-                $emit('update', $event)
-            "
+            @update="handleUpdate($event)"
         />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, type PropType } from "vue"
+
 import KeySearchModal from "./KeySearchModal.vue"
+import type { RowID } from "@/interfaces"
 
 export default defineComponent({
     props: {
-        fieldName: String,
-        tableName: String,
-        rowID: undefined,
-        readable: undefined,
+        fieldName: {
+            type: String as PropType<string>,
+            required: true
+        },
+        tableName: {
+            type: String as PropType<string>,
+            required: true
+        },
+        rowID: {
+            type: undefined as unknown as PropType<RowID | undefined>
+        },
+        readable: {
+            type: String as PropType<string>
+        },
         isFilter: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         },
         isNullable: {
-            type: Boolean,
+            type: Boolean as PropType<boolean>,
             default: false
         }
     },
     data() {
         return {
             ids: [],
-            selectedValue: undefined,
-            hiddenSelectedValue: undefined,
+            selectedValue: undefined as string | undefined,
+            hiddenSelectedValue: undefined as RowID | undefined,
             showModal: false
         }
     },
     methods: {
-        handleUpdate(event) {
+        handleUpdate(event: any) {
             this.selectedValue = event.readable
             this.hiddenSelectedValue = event.id
             this.showModal = false
+            this.$emit("update", event)
         }
     },
     components: {

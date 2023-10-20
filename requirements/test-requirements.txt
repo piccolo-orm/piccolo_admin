@@ -1,7 +1,7 @@
-pytest==7.3.1
-pytest-cov==4.0.0
+pytest==7.4.2
+pytest-cov==4.1.0
 flake8==5.0.4
 piccolo[postgres,sqlite]>=0.30.0
-playwright==1.35.0
-pytest-playwright==0.3.3
+playwright==1.39.0
+pytest-playwright==0.4.3
 httpx>=0.20.0

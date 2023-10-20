@@ -5,15 +5,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 
-export default Vue.extend({})
+export default defineComponent({})
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import "../vars.less";
 
-ul {
+ul#drop_down_menu {
     background-color: darken(@dark_grey, 5%);
     box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.5);
     list-style: none;

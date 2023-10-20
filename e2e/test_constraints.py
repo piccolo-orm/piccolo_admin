@@ -23,7 +23,7 @@ def test_constraints(page: Page, dev_server):
     test_page = EditRowPage(
         page=page,
         tablename=ConstraintTarget._meta.tablename,
-        id=str(constraint_target.id),
+        row_id=str(constraint_target.id),
     )
     test_page.reset()
     test_page.delete()

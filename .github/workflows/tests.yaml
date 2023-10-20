@@ -18,6 +18,7 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
+                  pip install -r requirements/requirements.txt
                   pip install -r requirements/dev-requirements.txt
                   pip install -r requirements/test-requirements.txt
             - name: Lint
@@ -50,11 +51,18 @@ jobs:
               uses: actions/setup-python@v2
               with:
                   python-version: ${{ matrix.python-version }}
+            - name: "Setup Node"
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements/requirements.txt
                   pip install -r requirements/test-requirements.txt
+                  cd admin_ui && npm install
+            - name: Build front end assets
+              run: cd admin_ui && npm run build
             - name: Test with pytest, SQLite
               run: ./scripts/run-tests.sh
             - name: Upload coverage

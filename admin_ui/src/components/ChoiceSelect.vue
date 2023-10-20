@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent } from "vue"
-import { Choices } from "../interfaces"
+import { type PropType, defineComponent } from "vue"
+import type { Choices } from "../interfaces"
 
 export default defineComponent({
     props: {
@@ -56,7 +56,7 @@ export default defineComponent({
     },
     data() {
         return {
-            localValue: ""
+            localValue: "" as string | undefined
         }
     },
     emits: ["updated"],

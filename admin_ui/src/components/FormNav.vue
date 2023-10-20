@@ -6,19 +6,26 @@
                 class="subtle"
             >
                 <font-awesome-icon icon="level-up-alt" class="rotated90" />
-                <span>{{ formConfig.name | readable }}</span>
+                <span>{{ readable(formConfig.name) }}</span>
             </router-link>
         </li>
     </ul>
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 
-export default Vue.extend({
+import { readable } from "@/utils"
+
+export default defineComponent({
     computed: {
         formConfigs() {
             return this.$store.state.formConfigs
+        }
+    },
+    setup() {
+        return {
+            readable
         }
     },
     async mounted() {

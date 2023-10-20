@@ -26,7 +26,6 @@
         </div>
 
         <div v-show="!successMessage">
-
             <FormErrors :errors="errors" v-if="errors.length > 0" />
 
             <form
@@ -43,18 +42,25 @@
 
 <script lang="ts">
 import axios from "axios"
-import Vue from "vue"
+import { defineComponent, type PropType } from "vue"
+
 import NewForm from "./NewForm.vue"
-import { APIResponseMessage, FormConfig } from "../interfaces"
+import type { APIResponseMessage, FormConfig, Schema } from "../interfaces"
 import { parseErrorResponse } from "../utils"
-import  FormErrors from "./FormErrors.vue"
+import FormErrors from "./FormErrors.vue"
 
-const BASE_URL = process.env.VUE_APP_BASE_URI
+const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
-export default Vue.extend({
+export default defineComponent({
     props: {
-        formSlug: String,
-        schema: Object
+        formSlug: {
+            type: String as PropType<string>,
+            required: true
+        },
+        schema: {
+            type: Object as PropType<Schema>,
+            required: true
+        }
     },
     components: {
         NewForm,
@@ -63,7 +69,7 @@ export default Vue.extend({
     data() {
         return {
             errors: [] as string[],
-            formConfig: undefined as FormConfig,
+            formConfig: undefined as FormConfig | undefined,
             successMessage: null
         }
     },
@@ -74,7 +80,8 @@ export default Vue.extend({
     },
     methods: {
         resetForm() {
-            this.$refs.form.reset()
+            const form = this.$refs.form as HTMLFormElement
+            form.reset()
             this.successMessage = null
             this.errors = []
         },
@@ -88,7 +95,7 @@ export default Vue.extend({
         async submitForm(event: any) {
             const form = new FormData(event.target)
 
-            const json = {}
+            const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
                 let value: any = i[1]
@@ -113,7 +120,12 @@ export default Vue.extend({
                 }
                 this.$store.commit("updateApiResponseMessage", message)
 
-                this.errors = parseErrorResponse(error.response.data, error.response.status)
+                if (axios.isAxiosError(error) && error.response) {
+                    this.errors = parseErrorResponse(
+                        error.response.data,
+                        error.response.status
+                    )
+                }
 
                 return
             }
@@ -121,7 +133,8 @@ export default Vue.extend({
             this.errors = []
 
             this.successMessage =
-                response.data.custom_form_success || "Successfully submitted form"
+                response.data.custom_form_success ||
+                "Successfully submitted form"
         }
     },
     async mounted() {

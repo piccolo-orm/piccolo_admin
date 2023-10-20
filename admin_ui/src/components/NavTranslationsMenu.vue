@@ -23,11 +23,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
+import { defineComponent } from "vue"
 import DropDownMenu from "./DropDownMenu.vue"
-import { TranslationListItemAPI } from "@/interfaces"
+import type { TranslationListItemAPI } from "@/interfaces"
 
-export default Vue.extend({
+export default defineComponent({
     components: {
         DropDownMenu
     },

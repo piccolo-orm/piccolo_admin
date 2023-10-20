@@ -47,18 +47,22 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, type PropType } from "vue"
+
+import { secondsToISO8601Duration } from "../utils"
+
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 const WEEK = DAY * 7
 
-export default {
+export default defineComponent({
     props: {
         timedelta: {
             // In seconds
-            default: 0,
-            type: Number
+            type: Number as PropType<number>,
+            default: 0
         }
     },
     data() {
@@ -68,11 +72,11 @@ export default {
             hourRange: [...Array(24).keys()],
             minuteRange: [...Array(60).keys()],
             secondRange: [...Array(60).keys()],
-            weeks: undefined,
-            days: undefined,
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined
+            weeks: 0,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
         }
     },
     methods: {
@@ -83,9 +87,9 @@ export default {
                 this.hours * HOUR +
                 this.days * DAY +
                 this.weeks * WEEK
-            this.$emit("newTimedelta", timedelta)
+            this.$emit("newTimedelta", secondsToISO8601Duration(timedelta))
         },
-        setupValues(timedelta) {
+        setupValues(timedelta: number) {
             this.weeks = Math.floor(timedelta / WEEK)
             timedelta += -this.weeks * WEEK
 
@@ -102,16 +106,15 @@ export default {
         }
     },
     watch: {
-        timedelta(timedelta) {
+        timedelta(timedelta: number) {
             this.setupValues(timedelta)
         }
     },
     mounted() {
         this.setupValues(this.timedelta)
     }
-}
+})
 </script>
-
 
 <style lang="less" scoped>
 div.timedelta_widget {

@@ -12,14 +12,16 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         includeTitle: {
             type: Boolean,
             default: false
         }
     }
-}
+})
 </script>
 
 <style scoped lang="less">

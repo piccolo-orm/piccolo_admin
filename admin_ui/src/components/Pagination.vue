@@ -22,7 +22,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+export default defineComponent({
     props: {
         tableName: String
     },
@@ -53,7 +55,7 @@ export default {
         }
     },
     methods: {
-        async changePage(pageNumber) {
+        async changePage(pageNumber: number) {
             if (this.currentPageNumber != pageNumber) {
                 console.log("Navigating to " + pageNumber)
                 this.$store.commit("updateCurrentPageNumber", pageNumber)
@@ -69,7 +71,7 @@ export default {
     mounted() {
         this.pageDropdownValue = this.currentPageNumber
     }
-}
+})
 </script>
 
 <style scoped lang="less">

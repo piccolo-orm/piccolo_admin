@@ -398,7 +398,7 @@ class AdminRouter(FastAPI):
         production: bool = False,
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
-        translations: t.List[Translation] = None,
+        translations: t.Optional[t.List[Translation]] = None,
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
         sidebar_links: t.Dict[str, str] = {},
@@ -710,13 +710,8 @@ class AdminRouter(FastAPI):
         )
 
         self.mount(
-            path="/css",
-            app=StaticFiles(directory=os.path.join(ASSET_PATH, "css")),
-        )
-
-        self.mount(
-            path="/js",
-            app=StaticFiles(directory=os.path.join(ASSET_PATH, "js")),
+            path="/assets",
+            app=StaticFiles(directory=os.path.join(ASSET_PATH, "assets")),
         )
 
         auth_middleware = partial(
@@ -802,7 +797,7 @@ class AdminRouter(FastAPI):
 
         try:
             file_key = await media_storage.store_file(
-                file_name=file.filename,
+                file_name=str(file.filename),
                 file=file.file,
                 user=request.user.user,
             )
@@ -879,7 +874,7 @@ class AdminRouter(FastAPI):
         if form_config is None:
             raise HTTPException(status_code=404, detail="No such form found")
         else:
-            return form_config.pydantic_model.schema()
+            return form_config.pydantic_model.model_json_schema()
 
     async def post_single_form(
         self, request: Request, form_slug: str
@@ -1047,7 +1042,7 @@ def create_admin(
     production: bool = False,
     site_name: str = "Piccolo Admin",
     default_language_code: str = "auto",
-    translations: t.List[Translation] = None,
+    translations: t.Optional[t.List[Translation]] = None,
     auto_include_related: bool = True,
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
