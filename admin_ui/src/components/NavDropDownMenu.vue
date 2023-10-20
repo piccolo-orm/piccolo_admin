@@ -1,7 +1,7 @@
 <template>
     <DropDownMenu>
         <li>
-            <a href="#" v-on:click.prevent="logout">
+            <a href="#" v-on:click.prevent="logout" data-uitest="logout_button">
                 <font-awesome-icon icon="sign-out-alt" />{{ $t("Log out") }}
             </a>
         </li>

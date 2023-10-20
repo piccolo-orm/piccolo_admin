@@ -32,7 +32,7 @@
                 :row="selectedRow"
                 :schema="schema"
             />
-            <button>{{ $t("Save") }}</button>
+            <button data-uitest="save_button">{{ $t("Save") }}</button>
         </form>
 
         <ReferencingTables :rowID="rowID" :tableName="tableName" />

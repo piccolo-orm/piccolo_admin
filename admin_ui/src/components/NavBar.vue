@@ -39,6 +39,7 @@
                     <a
                         href="#"
                         id="user"
+                        data-uitest="nav_dropdown_button"
                         :title="username"
                         v-on:click.prevent="showDropdown = !showDropdown"
                     >
