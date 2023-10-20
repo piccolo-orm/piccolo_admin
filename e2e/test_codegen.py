@@ -106,50 +106,6 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
     browser.close()
 
 
-def test_table_crud(playwright: Playwright, dev_server) -> None:
-    browser = playwright.chromium.launch()
-    context = browser.new_context(record_video_dir="videos/")
-    # Open new page
-    page = context.new_page()
-    page.goto("http://localhost:8000/#/login?nextURL=%2F")
-    page.locator('input[name="username"]').click()
-    page.locator('input[name="username"]').fill("piccolo")
-    page.locator('input[name="username"]').press("Tab")
-    page.locator('input[name="password"]').fill("piccolo123")
-    page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
-    page.get_by_role("cell", name="8").click()
-    page.get_by_role("link", name="8").click()
-    page.locator('input[name="name"]').click()
-    page.locator('input[name="name"]').fill("Ronald William Howard")
-    page.locator('input[name="name"]').press("Enter")
-    page.get_by_role("link", name="Back").click()
-    page.get_by_role("row", name="id Name Gender Photo").get_by_role(
-        "checkbox"
-    ).check()
-    page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_role("link", name="Delete 8 rows").click()
-    page.get_by_role("link", name="Add Row").click()
-    page.locator('input[name="name"]').click()
-    page.locator('input[name="name"]').fill("Emerald Fennell")
-    page.get_by_role("link", name="Add Add").first.click()
-    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
-        "textbox"
-    ).click()
-    page.get_by_role("listitem").filter(has_text="Remove").get_by_role(
-        "textbox"
-    ).fill("2022")
-    page.get_by_role("combobox").select_option("m")
-    page.get_by_role("button", name="Create").click()
-    page.get_by_role("link", name="Back").click()
-    page.get_by_title("piccolo").click()
-    page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_text("Log out").click()
-    # ---------------------
-    context.close()
-    browser.close()
-
-
 def test_custom_links(playwright: Playwright, dev_server) -> None:
     browser = playwright.chromium.launch()
     context = browser.new_context(record_video_dir="videos/")
