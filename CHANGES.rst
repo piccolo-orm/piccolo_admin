@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.0.0
+-----
+
+Updated to work with Piccolo v1 (which uses Pydantic v2).
+
+The front end code has also been substantially upgraded to Vue v3.
+
+-------------------------------------------------------------------------------
+
 0.58.0
 ------
 
