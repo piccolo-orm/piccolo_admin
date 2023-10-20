@@ -19,14 +19,14 @@ def test_add_row(page: Page, dev_server):
     )
     add_row_page.reset()
 
+    test_name = "Steven Spielberg"
     name_input = page.locator('input[name="name"]')
-    name_input.fill("Steven Spielberg")
+    name_input.click()
+    name_input.fill(test_name)
 
     gender_select = page.locator('select[name="gender"]')
     gender_select.select_option("m")
 
     add_row_page.submit_form()
 
-    assert (
-        Director.exists().where(Director.name == "Steven Spielberg").run_sync()
-    )
+    assert Director.exists().where(Director.name == test_name).run_sync()
