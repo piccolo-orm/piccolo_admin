@@ -69,17 +69,26 @@
                 />
 
                 <template v-if="format == 'date-time'">
-                    <!-- TODO - this should only be if the widget is timestamptz -->
-                    <Timestamptz
-                        :datetime="localValue"
-                        :placeholder="placeholder"
-                        @update="localValue = $event"
-                        :timeResolution="timeResolution ?? 1"
-                    />
+                    <template v-if="widget == 'timestamptz'">
+                        <Timestamptz
+                            :datetime="localValue"
+                            :placeholder="placeholder"
+                            @update="localValue = $event"
+                            :timeResolution="timeResolution ?? 1"
+                        />
+                        <input
+                            type="hidden"
+                            v-bind:name="columnName"
+                            v-model="localValue"
+                        />
+                    </template>
                     <input
-                        type="hidden"
+                        v-else
+                        type="datetime-local"
                         v-bind:name="columnName"
+                        v-bind:placeholder="placeholder"
                         v-model="localValue"
+                        :step="timeResolution ?? 1"
                     />
                 </template>
             </template>
