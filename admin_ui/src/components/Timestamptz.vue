@@ -65,10 +65,12 @@ watch(localValue, (newValue) => {
     emit("update", value)
 })
 
-watch(timezone, (newValue) => {
-    const value = moment.tz(localValue.value, newValue).toISOString()
-    console.log(`Emit update ${value}`)
-    emit("update", value)
+// When the timezone is changed, we change the displayed datetime so it matches
+// the newly selected timezone.
+watch(timezone, (newTimezoneValue) => {
+    localValue.value = moment
+        .tz(datetime.value, newTimezoneValue)
+        .format("YYYY-MM-DDTHH:mm:ss")
 })
 
 /*****************************************************************************/
