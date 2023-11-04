@@ -60,12 +60,6 @@ const timezone = ref<string>(localStorage.getItem(TIMEZONE_KEY) ?? "UTC")
 /*****************************************************************************/
 // Computed date format
 
-const countDecimalPlaces = (value: number) => {
-    var text = value.toString()
-    var index = text.indexOf(".")
-    return index == -1 ? 0 : text.length - index - 1
-}
-
 // We dynamically work out the datetime format based on the time resolution.
 const datetimeFormat = computed(() => {
     var format = "YYYY-MM-DDTHH:mm"
@@ -75,18 +69,9 @@ const datetimeFormat = computed(() => {
     }
 
     if (timeResolution.value < 1) {
-        let decimalPlaces = countDecimalPlaces(timeResolution.value)
-
-        // We can't allow more than 3 decimal places, as milliseconds is the
-        // max resolution.
-        decimalPlaces = decimalPlaces > 3 ? 3 : decimalPlaces
-
-        format += "."
-
-        Array.from(Array(decimalPlaces)).forEach(() => {
-            format += "S"
-        })
+        format += ".SSS"
     }
+
     return format
 })
 
