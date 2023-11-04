@@ -74,7 +74,7 @@
                             :datetime="localValue"
                             :placeholder="placeholder"
                             @update="localValue = $event"
-                            :timeResolution="timeResolution ?? 1"
+                            :timeResolution="timeResolution ?? 60"
                         />
                         <input
                             type="hidden"
