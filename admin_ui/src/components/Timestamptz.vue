@@ -25,6 +25,8 @@ import { onMounted, type PropType, toRef, ref, watch } from "vue"
 
 import { TIMEZONE_KEY } from "@/localStorage"
 
+const DATE_TIME_FORMAT = "YYYY-MM-DDTHH:mm:ss.SSS"
+
 /*****************************************************************************/
 // Props
 
@@ -70,7 +72,7 @@ watch(localValue, (newValue) => {
 watch(timezone, (newTimezoneValue) => {
     localValue.value = moment
         .tz(datetime.value, newTimezoneValue)
-        .format("YYYY-MM-DDTHH:mm:ss")
+        .format(DATE_TIME_FORMAT)
 })
 
 /*****************************************************************************/
@@ -79,7 +81,7 @@ onMounted(() => {
     if (datetime.value) {
         const value = moment
             .tz(datetime.value, timezone.value)
-            .format("YYYY-MM-DDTHH:mm:ss")
+            .format(DATE_TIME_FORMAT)
         console.log(value)
         localValue.value = value
     }
@@ -89,7 +91,7 @@ watch(datetime, (newValue: string) => {
     if (newValue) {
         const value = moment
             .tz(newValue, timezone.value)
-            .format("YYYY-MM-DDTHH:mm:ss")
+            .format(DATE_TIME_FORMAT)
         console.log(`datetime prop changed - ${value}`)
         localValue.value = value
     }
