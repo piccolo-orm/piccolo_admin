@@ -36,6 +36,7 @@ from piccolo.columns.column_types import (
     Text,
     Time,
     Timestamp,
+    Timestamptz,
     Varchar,
 )
 from piccolo.columns.readable import Readable
@@ -220,7 +221,7 @@ class Ticket(Table):
     movie = ForeignKey(Movie)
     start_date = Date()
     start_time = Time()
-    booked_on = Timestamp()
+    booked_on = Timestamptz(null=True, default=None)
     vip = Boolean(null=True, default=None)
 
 
