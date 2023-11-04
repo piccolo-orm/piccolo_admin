@@ -59,22 +59,27 @@
                     v-model="localValue"
                 />
 
-                <input
-                    v-if="format == 'time'"
-                    type="time"
-                    v-bind:name="columnName"
-                    v-bind:placeholder="placeholder"
-                    v-model="localValue"
-                    :step="timeResolution ?? 1"
-                />
+                <template v-if="format == 'time'">
+                    <TimeWidget
+                        :time="localValue"
+                        :placeholder="placeholder"
+                        :timeResolution="timeResolution ?? 1"
+                        @update="localValue = $event"
+                    />
+                    <input
+                        type="hidden"
+                        v-bind:name="columnName"
+                        v-model="localValue"
+                    />
+                </template>
 
                 <template v-if="format == 'date-time'">
                     <template v-if="widget == 'timestamptz'">
-                        <Timestamptz
+                        <TimestamptzWidget
                             :datetime="localValue"
                             :placeholder="placeholder"
+                            :timeResolution="timeResolution ?? 0.1"
                             @update="localValue = $event"
-                            :timeResolution="timeResolution ?? 60"
                         />
                         <input
                             type="hidden"
@@ -219,7 +224,8 @@ import DurationWidget from "./DurationWidget.vue"
 import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
-import Timestamptz from "./Timestamptz.vue"
+import TimeWidget from "./TimeWidget.vue"
+import TimestamptzWidget from "./TimestamptzWidget.vue"
 import type {
     Choices,
     StoreFileAPIResponse,
@@ -290,7 +296,8 @@ export default defineComponent({
         LoadingOverlay,
         MediaViewer,
         OperatorField,
-        Timestamptz,
+        TimestamptzWidget,
+        TimeWidget,
         VueEditor
     },
     data() {

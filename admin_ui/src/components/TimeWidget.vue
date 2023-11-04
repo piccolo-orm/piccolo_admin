@@ -1,21 +1,11 @@
 <template>
     <div>
         <input
-            type="datetime-local"
+            type="time"
             v-model="localValue"
             :placeholder="placeholder"
             :step="timeResolution"
         />
-
-        <select v-model="timezone">
-            <option
-                :value="tzName"
-                v-for="tzName in moment.tz.names()"
-                :key="tzName"
-            >
-                {{ tzName }}
-            </option>
-        </select>
     </div>
 </template>
 
@@ -23,13 +13,11 @@
 import moment from "moment-timezone"
 import { onMounted, type PropType, toRef, ref, watch, computed } from "vue"
 
-import { TIMEZONE_KEY } from "@/localStorage"
-
 /*****************************************************************************/
 // Props
 
 const props = defineProps({
-    datetime: {
+    time: {
         type: undefined as any as PropType<string>,
         required: true
     },
@@ -43,7 +31,7 @@ const props = defineProps({
     }
 })
 
-const datetime = toRef(props, "datetime")
+const time = toRef(props, "time")
 const timeResolution = toRef(props, "timeResolution")
 
 /*****************************************************************************/
@@ -55,14 +43,13 @@ const emit = defineEmits(["update"])
 // Refs
 
 const localValue = ref<string>("")
-const timezone = ref<string>(localStorage.getItem(TIMEZONE_KEY) ?? "UTC")
 
 /*****************************************************************************/
 // Computed date format
 
 // We dynamically work out the datetime format based on the time resolution.
-const datetimeFormat = computed(() => {
-    var format = "YYYY-MM-DDTHH:mm"
+const timeFormat = computed(() => {
+    var format = "HH:mm"
 
     if (timeResolution.value < 60) {
         format += ":ss"
@@ -79,38 +66,24 @@ const datetimeFormat = computed(() => {
 // Handle updates
 
 watch(localValue, (newValue) => {
-    const value = moment.tz(newValue, timezone.value).toISOString()
-    console.log(`Emit update ${value}`)
-    emit("update", value)
-})
-
-// When the timezone is changed, we change the displayed datetime so it matches
-// the newly selected timezone.
-watch(timezone, (newTimezoneValue) => {
-    localValue.value = moment
-        .tz(datetime.value, newTimezoneValue)
-        .format(datetimeFormat.value)
+    emit("update", newValue)
 })
 
 /*****************************************************************************/
 
 onMounted(() => {
-    if (datetime.value) {
-        const value = moment
-            .tz(datetime.value, timezone.value)
-            .format(datetimeFormat.value)
-        console.log(value)
-        localValue.value = value
+    if (time.value) {
+        localValue.value = moment("2000-01-07T" + time.value).format(
+            timeFormat.value
+        )
     }
 })
 
-watch(datetime, (newValue: string) => {
+watch(time, (newValue: string) => {
     if (newValue) {
-        const value = moment
-            .tz(newValue, timezone.value)
-            .format(datetimeFormat.value)
-        console.log(`datetime prop changed - ${value}`)
-        localValue.value = value
+        localValue.value = moment("2000-01-07T" + time.value).format(
+            timeFormat.value
+        )
     }
 })
 </script>
