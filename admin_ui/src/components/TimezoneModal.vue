@@ -2,8 +2,11 @@
     <Modal v-on:close="$emit('close')">
         <h1>{{ $t("Timezone") }}</h1>
         <p>
-            For timestamps which are timezone aware, they will be displayed in
-            this timezone by default.
+            {{
+                $t(
+                    "For timestamps which are timezone aware, they will be displayed in this timezone by default."
+                )
+            }}
         </p>
 
         <form @submit.prevent="handleSave">
@@ -20,7 +23,11 @@
             <button>{{ $t("Save") }}</button>
 
             <p class="note">
-                Note: They are converted to UTC when stored in the database.
+                {{
+                    $t(
+                        "Note: They are converted to UTC when stored in the database."
+                    )
+                }}
             </p>
         </form>
     </Modal>
