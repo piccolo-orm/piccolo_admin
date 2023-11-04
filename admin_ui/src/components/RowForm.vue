@@ -67,6 +67,7 @@
                 v-bind:isMediaColumn="isMediaColumn(String(columnName))"
                 v-bind:isRichText="isRichText(String(columnName))"
                 v-bind:widget="property.extra.widget"
+                v-bind:timeResolution="schema.extra.time_resolution[columnName]"
             />
         </div>
     </div>

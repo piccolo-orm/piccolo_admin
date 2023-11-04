@@ -78,7 +78,7 @@
                         <TimestamptzWidget
                             :datetime="localValue"
                             :placeholder="placeholder"
-                            :timeResolution="timeResolution ?? 0.1"
+                            :timeResolution="timeResolution ?? 1"
                             @update="localValue = $event"
                         />
                         <input
