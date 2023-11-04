@@ -469,6 +469,10 @@ ticket_config = TableConfig(
         Ticket.start_date,
         Ticket.start_time,
     ],
+    time_resolution={
+        Ticket.start_time: 60,
+        Ticket.booked_on: 1
+    }
 )
 
 nullable_config = TableConfig(
