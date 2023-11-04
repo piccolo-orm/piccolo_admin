@@ -111,6 +111,7 @@ export interface SchemaExtra {
     visible_column_names: string[]
     visible_fields_options: string[]
     visible_filter_names: string[]
+    time_resolution: { [key: string]: number }
 }
 
 export interface Schema {

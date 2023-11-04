@@ -50,23 +50,38 @@
                 "
             >
                 <OperatorField :columnName="columnName" v-if="isFilter" />
-                <!--
-                `disableMobile` is very poorly named - setting it to 'true'
-                enables the picker on mobile devices. It doesn't work great on
-                iOS, so an alternative picker is needed.
-                -->
-                <flat-pickr
-                    v-bind:config="{
-                        enableTime:
-                            format != undefined &&
-                            ['date-time', 'time'].indexOf(format) != -1,
-                        disableMobile: true,
-                        noCalendar: format == 'time'
-                    }"
+
+                <input
+                    v-if="format == 'date'"
+                    type="date"
                     v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-model="localValue"
-                ></flat-pickr>
+                />
+
+                <input
+                    v-if="format == 'time'"
+                    type="time"
+                    v-bind:name="columnName"
+                    v-bind:placeholder="placeholder"
+                    v-model="localValue"
+                    :step="timeResolution ?? 1"
+                />
+
+                <template v-if="format == 'date-time'">
+                    <!-- TODO - this should only be if the widget is timestamptz -->
+                    <Timestamptz
+                        :datetime="localValue"
+                        :placeholder="placeholder"
+                        @update="localValue = $event"
+                        :timeResolution="timeResolution ?? 1"
+                    />
+                    <input
+                        type="hidden"
+                        v-bind:name="columnName"
+                        v-model="localValue"
+                    />
+                </template>
             </template>
 
             <div v-else-if="widget == 'text-area' && isFilter == false">
@@ -185,7 +200,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import axios from "axios"
-import flatPickr from "vue-flatpickr-component"
 import moment from "moment"
 // @ts-ignore
 import { VueEditor } from "vue3-editor"
@@ -196,6 +210,7 @@ import DurationWidget from "./DurationWidget.vue"
 import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
+import Timestamptz from "./Timestamptz.vue"
 import type {
     Choices,
     StoreFileAPIResponse,
@@ -253,16 +268,20 @@ export default defineComponent({
         widget: {
             type: undefined as unknown as PropType<string | undefined>,
             default: undefined
+        },
+        timeResolution: {
+            type: undefined as unknown as PropType<number | undefined>,
+            default: undefined
         }
     },
     components: {
-        flatPickr,
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
         LoadingOverlay,
         MediaViewer,
         OperatorField,
+        Timestamptz,
         VueEditor
     },
     data() {

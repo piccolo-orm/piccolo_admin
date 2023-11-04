@@ -3,6 +3,7 @@ import axios from "axios"
 
 import type * as i from "./interfaces"
 import aboutModalModule from "./modules/aboutModal"
+import timezoneModalModule from "./modules/timezoneModal"
 import metaModule from "./modules/meta"
 import translationsModule from "./modules/translations"
 import { getOrderByString } from "./utils"
@@ -13,6 +14,7 @@ export default createStore({
     modules: {
         aboutModalModule,
         metaModule,
+        timezoneModalModule,
         translationsModule
     },
     state: {

@@ -149,6 +149,7 @@ button {
         background-color: darken(@dark_grey, 4%);
         border: 1px solid rgba(0, 0, 0, 0.2);
         color: @off_white;
+        color-scheme: dark;
 
         &[type="file"] {
             background: none;
@@ -206,20 +207,19 @@ label {
 input[type='text'],
 input[type='number'],
 input[type='password'],
+input[type='time'],
+input[type='date'],
+input[type='datetime-local'],
 select,
 textarea {
     box-sizing: border-box;
     font-size: 0.9rem;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
+    width: 100%;
 }
 
-input[type='text'],
-input[type='number'],
-input[type='password'],
-button,
-select,
-textarea {
+button {
     width: 100%;
 }
 

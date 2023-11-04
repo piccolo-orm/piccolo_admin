@@ -16,7 +16,12 @@ from functools import partial
 from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
-from piccolo.columns.column_types import ForeignKey
+from piccolo.columns.column_types import (
+    ForeignKey,
+    Time,
+    Timestamp,
+    Timestamptz,
+)
 from piccolo.columns.reference import LazyTableReference
 from piccolo.table import Table
 from piccolo.utils.warnings import Level, colored_warning
@@ -175,6 +180,15 @@ class TableConfig:
     :param order_by:
         If specified, the rows are sorted by ``order_by``, otherwise
         the default ``primary_key`` column is used to sort the rows.
+    :param time_resolution:
+        Controls the resolution of ``Time`` columns, and the time component
+        of ``Timestamp`` / ``Timestamptz`` columns. The units are given in
+        seconds. Some examples:
+
+        * 0.001 - the max resolution is 1 millisecond (this is the minimum
+          currently allowed by HTML input fields)
+        * 1 - the max resolution is 1 second (the default)
+        * 60 - the max resolution is 1 minute
 
     """
 
@@ -190,6 +204,9 @@ class TableConfig:
     menu_group: t.Optional[str] = None
     link_column: t.Optional[Column] = None
     order_by: t.Optional[t.List[OrderBy]] = None
+    time_resolution: t.Optional[
+        t.Dict[t.Union[Timestamp, Timestamptz, Time], t.Union[float, int]]
+    ] = None
 
     def __post_init__(self):
         if self.visible_columns and self.exclude_visible_columns:
@@ -272,6 +289,16 @@ class TableConfig:
         return self.order_by or [
             OrderBy(column=self.table_class._meta.primary_key, ascending=True)
         ]
+
+    def get_time_resolution(self) -> t.Dict[str, t.Union[int, float]]:
+        return (
+            {
+                column._meta.name: resolution
+                for column, resolution in self.time_resolution.items()
+            }
+            if self.time_resolution
+            else {}
+        )
 
 
 PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
@@ -511,6 +538,7 @@ class AdminRouter(FastAPI):
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
             order_by = table_config.get_order_by()
+            time_resolution = table_config.get_time_resolution()
             validators = table_config.validators
             if table_class in (auth_table, session_table):
                 validators = validators or Validators()
@@ -530,6 +558,7 @@ class AdminRouter(FastAPI):
                         "media_columns": media_columns_names,
                         "link_column_name": link_column_name,
                         "order_by": tuple(i.to_dict() for i in order_by),
+                        "time_resolution": time_resolution,
                     },
                     validators=validators,
                     hooks=table_config.hooks,
