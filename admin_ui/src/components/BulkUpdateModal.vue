@@ -44,7 +44,7 @@
                     v-bind:choices="selectedProperty.extra.choices"
                     v-bind:widget="selectedProperty.extra.widget"
                     v-bind:timeResolution="
-                        schema.extra.time_resolution[selectedPropertyName]
+                        schema?.extra?.time_resolution[selectedPropertyName]
                     "
                     v-else
                 />

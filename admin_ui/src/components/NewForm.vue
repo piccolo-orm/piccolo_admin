@@ -12,7 +12,9 @@
                 v-bind:title="property.title"
                 v-bind:type="getType(property)"
                 v-bind:value="property.default"
-                v-bind:timeResolution="schema.extra.time_resolution[columnName]"
+                v-bind:timeResolution="
+                    schema?.extra?.time_resolution[columnName]
+                "
             />
         </div>
     </div>

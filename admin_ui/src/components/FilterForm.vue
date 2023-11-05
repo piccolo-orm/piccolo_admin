@@ -38,7 +38,7 @@
                         v-bind:value="getValue(String(columnName))"
                         v-bind:widget="property.extra.widget"
                         v-bind:timeResolution="
-                            schema.extra.time_resolution[columnName]
+                            schema?.extra?.time_resolution[columnName]
                         "
                     />
                 </template>
