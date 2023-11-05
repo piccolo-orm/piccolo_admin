@@ -308,6 +308,16 @@ class Constraints(Table):
     )
 
 
+class DateTimeColumns(Table):
+    date = Date()
+    date_null = Date(null=True, default=None)
+    time = Time()
+    time_null = Time(null=True, default=None)
+    timestamp = Timestamp()
+    timestamp_null = Timestamp(null=True, default=None)
+    timestamptz = Timestamptz()
+    timestamptz_null = Timestamptz(null=True, default=None)
+
 ###############################################################################
 
 
@@ -390,6 +400,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     SortedColumns,
     Constraints,
     ConstraintTarget,
+    DateTimeColumns,
 )
 
 
@@ -502,6 +513,11 @@ constraints_target_config = TableConfig(
     menu_group="Testing",
 )
 
+date_time_config = TableConfig(
+    table_class=DateTimeColumns,
+    menu_group='Testing'
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -513,6 +529,7 @@ APP = create_admin(
         sorted_columns_config,
         constraints_config,
         constraints_target_config,
+        date_time_config
     ],
     forms=[
         FormConfig(

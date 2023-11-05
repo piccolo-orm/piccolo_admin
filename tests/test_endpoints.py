@@ -648,6 +648,7 @@ class TestTables(TestCase):
             [
                 "constraint_target",
                 "constraints",
+                "date_time_columns",
                 "director",
                 "movie",
                 "nullable_columns",
@@ -690,6 +691,7 @@ class TestTables(TestCase):
                     "Testing": [
                         "constraint_target",
                         "constraints",
+                        "date_time_columns",
                         "nullable_columns",
                         "required_columns",
                         "sorted_columns",
