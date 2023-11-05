@@ -2,11 +2,8 @@
     <Modal v-on:close="$emit('close')">
         <h1>{{ $t("Timezone") }}</h1>
         <p>
-            {{
-                $t(
-                    "For timestamps which are timezone aware, they will be displayed in this timezone by default."
-                )
-            }}
+            <!-- prettier-ignore -->
+            {{ $t("For timestamps which are timezone aware, they will be displayed in this timezone by default.") }}
         </p>
 
         <form @submit.prevent="handleSave">
@@ -23,11 +20,8 @@
             <button>{{ $t("Save") }}</button>
 
             <p class="note">
-                {{
-                    $t(
-                        "Note: They are converted to UTC when stored in the database."
-                    )
-                }}
+                <!-- prettier-ignore -->
+                {{ $t("Note: They are converted to UTC when stored in the database.") }}
             </p>
         </form>
     </Modal>
