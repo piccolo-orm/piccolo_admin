@@ -85,9 +85,11 @@ watch(localValue, (newValue) => {
 // When the timezone is changed, we change the displayed datetime so it matches
 // the newly selected timezone.
 watch(timezone, (newTimezoneValue) => {
-    localValue.value = moment
-        .tz(datetime.value, newTimezoneValue)
-        .format(datetimeFormat.value)
+    if (datetime.value) {
+        localValue.value = moment
+            .tz(datetime.value, newTimezoneValue)
+            .format(datetimeFormat.value)
+    }
 })
 
 /*****************************************************************************/
