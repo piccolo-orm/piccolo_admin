@@ -87,14 +87,19 @@
                             v-model="localValue"
                         />
                     </template>
-                    <input
-                        v-else
-                        type="datetime-local"
-                        v-bind:name="columnName"
-                        v-bind:placeholder="placeholder"
-                        v-model="localValue"
-                        :step="timeResolution ?? 1"
-                    />
+                    <template v-else>
+                        <TimestampWidget
+                            :datetime="localValue"
+                            :placeholder="placeholder"
+                            :timeResolution="timeResolution ?? 1"
+                            @update="localValue = $event"
+                        />
+                        <input
+                            type="hidden"
+                            v-bind:name="columnName"
+                            v-model="localValue"
+                        />
+                    </template>
                 </template>
             </template>
 
@@ -225,6 +230,7 @@ import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
 import TimeWidget from "./TimeWidget.vue"
+import TimestampWidget from "./TimestampWidget.vue"
 import TimestamptzWidget from "./TimestamptzWidget.vue"
 import type {
     Choices,
@@ -296,6 +302,7 @@ export default defineComponent({
         LoadingOverlay,
         MediaViewer,
         OperatorField,
+        TimestampWidget,
         TimestamptzWidget,
         TimeWidget,
         VueEditor
