@@ -50,23 +50,57 @@
                 "
             >
                 <OperatorField :columnName="columnName" v-if="isFilter" />
-                <!--
-                `disableMobile` is very poorly named - setting it to 'true'
-                enables the picker on mobile devices. It doesn't work great on
-                iOS, so an alternative picker is needed.
-                -->
-                <flat-pickr
-                    v-bind:config="{
-                        enableTime:
-                            format != undefined &&
-                            ['date-time', 'time'].indexOf(format) != -1,
-                        disableMobile: true,
-                        noCalendar: format == 'time'
-                    }"
+
+                <input
+                    v-if="format == 'date'"
+                    type="date"
                     v-bind:name="columnName"
                     v-bind:placeholder="placeholder"
                     v-model="localValue"
-                ></flat-pickr>
+                />
+
+                <template v-if="format == 'time'">
+                    <TimeWidget
+                        :time="localValue"
+                        :placeholder="placeholder"
+                        :timeResolution="timeResolution ?? 1"
+                        @update="localValue = $event"
+                    />
+                    <input
+                        type="hidden"
+                        v-bind:name="columnName"
+                        v-model="localValue"
+                    />
+                </template>
+
+                <template v-if="format == 'date-time'">
+                    <template v-if="widget == 'timestamptz'">
+                        <TimestamptzWidget
+                            :datetime="localValue"
+                            :placeholder="placeholder"
+                            :timeResolution="timeResolution ?? 1"
+                            @update="localValue = $event"
+                        />
+                        <input
+                            type="hidden"
+                            v-bind:name="columnName"
+                            v-model="localValue"
+                        />
+                    </template>
+                    <template v-else>
+                        <TimestampWidget
+                            :datetime="localValue"
+                            :placeholder="placeholder"
+                            :timeResolution="timeResolution ?? 1"
+                            @update="localValue = $event"
+                        />
+                        <input
+                            type="hidden"
+                            v-bind:name="columnName"
+                            v-model="localValue"
+                        />
+                    </template>
+                </template>
             </template>
 
             <div v-else-if="widget == 'text-area' && isFilter == false">
@@ -185,7 +219,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import axios from "axios"
-import flatPickr from "vue-flatpickr-component"
 import moment from "moment"
 // @ts-ignore
 import { VueEditor } from "vue3-editor"
@@ -196,6 +229,9 @@ import DurationWidget from "./DurationWidget.vue"
 import LoadingOverlay from "./LoadingOverlay.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
+import TimeWidget from "./TimeWidget.vue"
+import TimestampWidget from "./TimestampWidget.vue"
+import TimestamptzWidget from "./TimestamptzWidget.vue"
 import type {
     Choices,
     StoreFileAPIResponse,
@@ -253,16 +289,22 @@ export default defineComponent({
         widget: {
             type: undefined as unknown as PropType<string | undefined>,
             default: undefined
+        },
+        timeResolution: {
+            type: undefined as unknown as PropType<number | undefined>,
+            default: undefined
         }
     },
     components: {
-        flatPickr,
         ArrayWidget,
         ChoiceSelect,
         DurationWidget,
         LoadingOverlay,
         MediaViewer,
         OperatorField,
+        TimestampWidget,
+        TimestamptzWidget,
+        TimeWidget,
         VueEditor
     },
     data() {

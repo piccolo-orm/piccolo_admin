@@ -170,6 +170,16 @@ class TestTableConfig(TestCase):
         config = TableConfig(table_class=Post)
         self.assertIs(config.get_order_by()[0].column, Post._meta.primary_key)
 
+    def test_time_resolution(self):
+        """
+        Make sure `time_resolution` is returned.
+        """
+        config = TableConfig(
+            table_class=Post,
+            time_resolution={Post.created: 1},
+        )
+        self.assertDictEqual(config.get_time_resolution(), {"created": 1})
+
 
 class TestAdminRouter(TestCase):
     def test_init(self):
@@ -638,6 +648,7 @@ class TestTables(TestCase):
             [
                 "constraint_target",
                 "constraints",
+                "date_time_columns",
                 "director",
                 "movie",
                 "nullable_columns",
@@ -680,6 +691,7 @@ class TestTables(TestCase):
                     "Testing": [
                         "constraint_target",
                         "constraints",
+                        "date_time_columns",
                         "nullable_columns",
                         "required_columns",
                         "sorted_columns",
@@ -735,6 +747,7 @@ class TestTables(TestCase):
             headers={"X-CSRFToken": csrftoken},
         )
 
+        # Test `Director` table
         response = client.get("/api/tables/director/schema/")
         self.assertEqual(response.status_code, 200)
 
@@ -758,6 +771,18 @@ class TestTables(TestCase):
             ],
         )
         self.assertEqual(data["extra"]["media_columns"], ["photo"])
+
+        # Test the `Ticket` table, as it has `time_resolution` specified in the
+        # `TableConfig`.
+        response = client.get("/api/tables/ticket/schema/")
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertDictEqual(
+            data["extra"]["time_resolution"],
+            {"booked_on": 1, "start_time": 60},
+        )
 
 
 class TestTranslations(TestCase):

@@ -2,7 +2,8 @@
     <div :class="{ dark_mode: darkMode, light_mode: !darkMode }" id="app">
         <router-view />
         <MessagePopup />
-        <AboutModal v-if="showAboutModal" />
+        <AboutModal v-if="showAboutModal" @close="hideAboutModal" />
+        <TimezoneModal v-if="showTimezoneModal" @close="hideTimezoneModal" />
     </div>
 </template>
 
@@ -13,11 +14,13 @@ import type * as i from "./interfaces"
 
 import AboutModal from "./components/AboutModal.vue"
 import MessagePopup from "./components/MessagePopup.vue"
+import TimezoneModal from "./components/TimezoneModal.vue"
 
 export default defineComponent({
     components: {
         AboutModal,
-        MessagePopup
+        MessagePopup,
+        TimezoneModal
     },
     computed: {
         darkMode() {
@@ -26,8 +29,19 @@ export default defineComponent({
         showAboutModal() {
             return this.$store.state.aboutModalModule.showAboutModal
         },
+        showTimezoneModal() {
+            return this.$store.state.timezoneModalModule.showTimezoneModal
+        },
         siteName() {
             return this.$store.state.metaModule.siteName
+        }
+    },
+    methods: {
+        hideAboutModal() {
+            this.$store.commit("updateShowAboutModal", false)
+        },
+        hideTimezoneModal() {
+            this.$store.commit("updateShowTimezoneModal", false)
         }
     },
     async created() {

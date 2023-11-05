@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOURCES="piccolo_admin tests"
+SOURCES="piccolo_admin tests e2e"
 
 isort $SOURCES
 black $SOURCES

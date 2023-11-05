@@ -36,6 +36,7 @@ from piccolo.columns.column_types import (
     Text,
     Time,
     Timestamp,
+    Timestamptz,
     Varchar,
 )
 from piccolo.columns.readable import Readable
@@ -220,7 +221,7 @@ class Ticket(Table):
     movie = ForeignKey(Movie)
     start_date = Date()
     start_time = Time()
-    booked_on = Timestamp()
+    booked_on = Timestamptz(null=True, default=None)
     vip = Boolean(null=True, default=None)
 
 
@@ -307,6 +308,17 @@ class Constraints(Table):
     )
 
 
+class DateTimeColumns(Table):
+    date = Date()
+    date_null = Date(null=True, default=None)
+    time = Time()
+    time_null = Time(null=True, default=None)
+    timestamp = Timestamp()
+    timestamp_null = Timestamp(null=True, default=None)
+    timestamptz = Timestamptz()
+    timestamptz_null = Timestamptz(null=True, default=None)
+
+
 ###############################################################################
 
 
@@ -389,6 +401,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     SortedColumns,
     Constraints,
     ConstraintTarget,
+    DateTimeColumns,
 )
 
 
@@ -469,6 +482,7 @@ ticket_config = TableConfig(
         Ticket.start_date,
         Ticket.start_time,
     ],
+    time_resolution={Ticket.start_time: 60, Ticket.booked_on: 1},
 )
 
 nullable_config = TableConfig(
@@ -497,6 +511,10 @@ constraints_target_config = TableConfig(
     menu_group="Testing",
 )
 
+date_time_config = TableConfig(
+    table_class=DateTimeColumns, menu_group="Testing"
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -508,6 +526,7 @@ APP = create_admin(
         sorted_columns_config,
         constraints_config,
         constraints_target_config,
+        date_time_config,
     ],
     forms=[
         FormConfig(

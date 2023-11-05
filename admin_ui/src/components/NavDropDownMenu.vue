@@ -24,6 +24,11 @@
             </a>
         </li>
         <li>
+            <a href="#" @click.prevent="showTimezoneModal"
+                ><font-awesome-icon icon="globe" />{{ $t("Set Timezone") }}</a
+            >
+        </li>
+        <li>
             <a href="#" v-on:click.prevent="showAboutModal">
                 <font-awesome-icon icon="info-circle" />{{ $t("About") }}
                 Piccolo
@@ -53,6 +58,9 @@ export default defineComponent({
         },
         showAboutModal() {
             this.$store.commit("updateShowAboutModal", true)
+        },
+        showTimezoneModal() {
+            this.$store.commit("updateShowTimezoneModal", true)
         },
         async logout() {
             if (window.confirm("Are you sure you want to logout?")) {
