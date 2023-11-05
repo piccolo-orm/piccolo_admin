@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import moment from "moment-timezone"
+import moment from "moment"
 import { onMounted, type PropType, toRef, ref, watch, computed } from "vue"
 
 /*****************************************************************************/
@@ -47,7 +47,7 @@ const localValue = ref<string>("")
 /*****************************************************************************/
 // Computed date format
 
-// We dynamically work out the datetime format based on the time resolution.
+// We dynamically work out the time format based on the time resolution.
 const timeFormat = computed(() => {
     var format = "HH:mm"
 
@@ -73,7 +73,7 @@ watch(localValue, (newValue) => {
 
 onMounted(() => {
     if (time.value) {
-        localValue.value = moment("2000-01-07T" + time.value).format(
+        localValue.value = moment("2000-01-01T" + time.value).format(
             timeFormat.value
         )
     }
@@ -81,7 +81,7 @@ onMounted(() => {
 
 watch(time, (newValue: string) => {
     if (newValue) {
-        localValue.value = moment("2000-01-07T" + time.value).format(
+        localValue.value = moment("2000-01-01T" + time.value).format(
             timeFormat.value
         )
     }
