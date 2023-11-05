@@ -8,7 +8,7 @@ Big improvements to ``Timestamptz`` columns:
 
 * Piccolo Admin now displays the timezone in the UI.
 * The resolution of the widget can be specified using ``TableConfig.time_resolution``,
-  so you can decide it lets the user pick seconds / milliseconds.
+  so you can decide if the user can pick seconds / milliseconds.
 
 -------------------------------------------------------------------------------
 
