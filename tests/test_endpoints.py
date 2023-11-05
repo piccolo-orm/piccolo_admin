@@ -178,7 +178,7 @@ class TestTableConfig(TestCase):
             table_class=Post,
             time_resolution={Post.created: 1},
         )
-        self.assertDictEqual(config.get_time_resolution(), {'created': 1})
+        self.assertDictEqual(config.get_time_resolution(), {"created": 1})
 
 
 class TestAdminRouter(TestCase):
@@ -781,7 +781,7 @@ class TestTables(TestCase):
 
         self.assertDictEqual(
             data["extra"]["time_resolution"],
-            {'booked_on': 1, 'start_time': 60}
+            {"booked_on": 1, "start_time": 60},
         )
 
 

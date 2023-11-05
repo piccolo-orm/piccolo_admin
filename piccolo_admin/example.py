@@ -318,6 +318,7 @@ class DateTimeColumns(Table):
     timestamptz = Timestamptz()
     timestamptz_null = Timestamptz(null=True, default=None)
 
+
 ###############################################################################
 
 
@@ -481,10 +482,7 @@ ticket_config = TableConfig(
         Ticket.start_date,
         Ticket.start_time,
     ],
-    time_resolution={
-        Ticket.start_time: 60,
-        Ticket.booked_on: 1
-    }
+    time_resolution={Ticket.start_time: 60, Ticket.booked_on: 1},
 )
 
 nullable_config = TableConfig(
@@ -514,8 +512,7 @@ constraints_target_config = TableConfig(
 )
 
 date_time_config = TableConfig(
-    table_class=DateTimeColumns,
-    menu_group='Testing'
+    table_class=DateTimeColumns, menu_group="Testing"
 )
 
 APP = create_admin(
@@ -529,7 +526,7 @@ APP = create_admin(
         sorted_columns_config,
         constraints_config,
         constraints_target_config,
-        date_time_config
+        date_time_config,
     ],
     forms=[
         FormConfig(
