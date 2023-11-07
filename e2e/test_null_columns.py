@@ -34,5 +34,6 @@ def test_add_nullable_columns(page: Page, dev_server):
             "json_": None,
             "varchar": None,
             "text": None,
+            "boolean": None
         }
     ]

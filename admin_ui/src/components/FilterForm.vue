@@ -74,7 +74,8 @@ export default defineComponent({
     methods: {
         getValue(columnName: string) {
             if (
-                (this.schema as Schema).properties[columnName].type == "boolean"
+                getType((this.schema as Schema).properties[columnName]) ==
+                "boolean"
             ) {
                 return "all"
             } else {

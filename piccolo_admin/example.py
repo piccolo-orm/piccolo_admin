@@ -249,6 +249,7 @@ class NullableColumns(Table):
     json_ = JSON(null=True, default=None)
     text = Text(null=True, default=None)
     varchar = Varchar(null=True, default=None)
+    boolean = Boolean(null=True, default=None)
 
 
 class RequiredColumns(Table):
