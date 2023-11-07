@@ -54,6 +54,7 @@
                             class="button"
                             href="#"
                             v-on:click.prevent="showFilter = !showFilter"
+                            data-uitest="filter_button"
                         >
                             <font-awesome-icon icon="filter" />
                             <span>
@@ -357,7 +358,11 @@
                 </div>
             </div>
 
-            <div class="right_column" v-if="showFilter">
+            <div
+                class="right_column"
+                v-if="showFilter"
+                data-uitest="right_sidebar"
+            >
                 <RowFilter
                     :showFilterSidebar="showFilter"
                     @closeSideBar="closeSideBar"
