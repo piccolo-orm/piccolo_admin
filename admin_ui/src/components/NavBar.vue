@@ -1,66 +1,56 @@
 <template>
-    <div>
-        <div id="nav">
-            <span id="burger_menu">
+    <div id="nav">
+        <span id="burger_menu">
+            <a
+                href="#"
+                v-on:click.prevent="showSidebar = showSidebar ? false : true"
+            >
+                <font-awesome-icon icon="bars" v-if="!showSidebar" />
+                <font-awesome-icon icon="times" v-else />
+            </a>
+        </span>
+
+        <h1>
+            <router-link to="/">
+                <font-awesome-icon icon="tools" />
+                {{ siteName }}
+            </router-link>
+        </h1>
+
+        <ul>
+            <li style="margin-right: 1rem">
                 <a
                     href="#"
+                    title="Translations"
                     v-on:click.prevent="
-                        showSidebar = showSidebar ? false : true
+                        showLanguageDropdown = !showLanguageDropdown
                     "
+                    ><font-awesome-icon icon="language" size="lg"
+                /></a>
+                <NavTranslationsMenu
+                    v-if="showLanguageDropdown"
+                    @closeDropdown="closeDropdown"
+                />
+            </li>
+            <li>
+                <a
+                    href="#"
+                    id="user"
+                    data-uitest="nav_dropdown_button"
+                    :title="username"
+                    v-on:click.prevent="showDropdown = !showDropdown"
                 >
-                    <font-awesome-icon icon="bars" v-if="!showSidebar" />
-                    <font-awesome-icon icon="times" v-else />
+                    <font-awesome-icon icon="user" />
+                    {{ truncatedUsername }}
+                    <font-awesome-icon icon="angle-up" v-if="showDropdown" />
+                    <font-awesome-icon icon="angle-down" v-if="!showDropdown" />
+                    <NavDropDownMenu v-if="showDropdown" />
                 </a>
-            </span>
-
-            <h1>
-                <router-link to="/">
-                    <font-awesome-icon icon="tools" />
-                    {{ siteName }}
-                </router-link>
-            </h1>
-
-            <ul>
-                <li style="margin-right: 1rem">
-                    <a
-                        href="#"
-                        title="Translations"
-                        v-on:click.prevent="
-                            showLanguageDropdown = !showLanguageDropdown
-                        "
-                        ><font-awesome-icon icon="language" size="lg"
-                    /></a>
-                    <NavTranslationsMenu
-                        v-if="showLanguageDropdown"
-                        @closeDropdown="closeDropdown"
-                    />
-                </li>
-                <li>
-                    <a
-                        href="#"
-                        id="user"
-                        data-uitest="nav_dropdown_button"
-                        :title="username"
-                        v-on:click.prevent="showDropdown = !showDropdown"
-                    >
-                        <font-awesome-icon icon="user" />
-                        {{ truncatedUsername }}
-                        <font-awesome-icon
-                            icon="angle-up"
-                            v-if="showDropdown"
-                        />
-                        <font-awesome-icon
-                            icon="angle-down"
-                            v-if="!showDropdown"
-                        />
-                        <NavDropDownMenu v-if="showDropdown" />
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <SidebarOverlay v-if="showSidebar" />
+            </li>
+        </ul>
     </div>
+
+    <SidebarOverlay v-if="showSidebar" />
 </template>
 
 <script lang="ts">
