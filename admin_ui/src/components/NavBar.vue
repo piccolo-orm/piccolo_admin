@@ -105,9 +105,8 @@ export default defineComponent({
 
 #nav {
     background-color: darken(@dark_grey, 5%);
-}
-
-#nav {
+    border-bottom: 1px solid @border_color;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: center;
