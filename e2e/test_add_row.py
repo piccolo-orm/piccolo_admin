@@ -19,6 +19,9 @@ def test_add_row(page: Page, dev_server):
     )
     add_row_page.reset()
 
+    # Let Vue JS finish loading
+    page.wait_for_timeout(1000)
+
     test_name = "Steven Spielberg"
     name_input = page.locator('input[name="name"]')
     name_input.click()
