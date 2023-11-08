@@ -1,17 +1,25 @@
 <template>
-    <div class="opaque" id="sidebar_overlay">
+    <div class="opaque" id="sidebar_overlay" ref="sidebar_overlay">
         <SidebarNav />
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue"
-
+<script setup lang="ts">
+import { onMounted, ref } from "vue"
 import SidebarNav from "./SidebarNav.vue"
 
-export default defineComponent({
-    components: {
-        SidebarNav
+const sidebar_overlay = ref<HTMLElement | undefined>(undefined)
+
+onMounted(() => {
+    // Make sure the sidebar aligns to the bottom of the nav bar:
+    if (sidebar_overlay.value) {
+        const navHeight = document
+            .querySelector("#nav")
+            ?.getBoundingClientRect().height
+
+        if (navHeight) {
+            sidebar_overlay.value.style.top = navHeight + "px"
+        }
     }
 })
 </script>
@@ -27,7 +35,6 @@ div#sidebar_overlay {
     min-width: 10rem;
     bottom: 0;
     border-right: 1px solid @border_color;
-    border-top: 1px solid @border_color;
     z-index: 1000;
 
     @media (min-width: @mobile_width) {
