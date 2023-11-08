@@ -20,6 +20,9 @@ def test_date_time_columns(page: Page, dev_server):
         page=page, tablename=DateTimeColumns._meta.tablename
     )
     test_page.reset()
+
+    # Let Vue JS finish loading before submitting
+    page.wait_for_timeout(1000)
     test_page.submit_form()
 
     response = DateTimeColumns.select().run_sync()
