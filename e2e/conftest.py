@@ -28,7 +28,7 @@ def context(context):
     # become available.
     # By default it's 30 seconds, which is way too long when testing an app
     # locally.
-    context.set_default_timeout(5000)
+    context.set_default_timeout(10000)
     yield context
 
 

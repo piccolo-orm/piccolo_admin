@@ -127,18 +127,42 @@ class SortModal:
             column_select.select_option(order_by.column._meta.name)
 
 
+class FilterSidebar:
+    """
+    Part of the :class:`RowListingPage`.
+    """
+
+    def __init__(self, page: Page):
+        self.sidebar = page.locator("div[data-uitest=right_sidebar]")
+
+    def get_input(self, name: str):
+        """
+        Returns the value of an input or select in the sidebar.
+
+        :param name:
+            The name of the input or select.
+
+        """
+        return self.sidebar.locator(f"[name={name}]")
+
+
 class RowListingPage:
     def __init__(self, page: Page, tablename: str):
         self.page = page
         self.url = f"{BASE_URL}/#/{tablename}"
         self.sort_button = page.locator("a[data-uitest=sort_button]")
+        self.filter_button = page.locator("a[data-uitest=filter_button]")
         self.sort_modal = SortModal(page=page)
+        self.filter_sidebar = FilterSidebar(page=page)
 
     def reset(self):
         self.page.goto(self.url)
 
     def open_sort_modal(self):
         self.sort_button.click()
+
+    def open_filter_sidebar(self):
+        self.filter_button.click()
 
 
 class EditRowPage:

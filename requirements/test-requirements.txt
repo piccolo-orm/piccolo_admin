@@ -1,7 +1,7 @@
 pytest==7.4.2
 pytest-cov==4.1.0
 flake8==5.0.4
-piccolo[postgres,sqlite]>=0.30.0
-playwright==1.39.0
+piccolo[postgres,sqlite]>=1.0.0
+playwright==1.38.0
 pytest-playwright==0.4.3
 httpx>=0.20.0
