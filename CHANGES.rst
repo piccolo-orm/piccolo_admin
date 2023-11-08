@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.1.1
+-----
+
+Fixed a regression in Piccolo Admin v1, where nullable boolean fields defaulted
+to ``null`` instead of ``all`` in the filter sidebar. This was caused by
+changes in Pydantic v2, where the JSON schema changed.
+
+-------------------------------------------------------------------------------
+
 1.1.0
 -----
 
