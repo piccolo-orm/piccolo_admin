@@ -41,13 +41,14 @@ div.base_view {
     flex-direction: column;
 
     div.wrapper {
-        border-top: 1px solid @border_color;
         display: flex;
         flex-grow: 1;
 
         div.sidebar_wrapper {
             border-right: 1px solid @border_color;
             width: 15rem;
+            flex-grow: 0;
+            flex-shrink: 0;
 
             @media (max-width: @mobile_width) {
                 display: none;
