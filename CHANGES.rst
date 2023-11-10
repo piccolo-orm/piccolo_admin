@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.1.2
+-----
+
+The sidebar styles were improved (see
+`this issue <https://github.com/piccolo-orm/piccolo_admin/issues/342>`_ for more
+info).
+
+-------------------------------------------------------------------------------
+
 1.1.1
 -----
 
