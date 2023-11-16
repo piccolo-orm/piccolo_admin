@@ -157,7 +157,7 @@ export default createStore({
 
             const orderByConfigs = context.state.orderBy
 
-            if (orderByConfigs) {
+            if (orderByConfigs && orderByConfigs.length > 0) {
                 params["__order"] = getOrderByString(orderByConfigs)
             }
 

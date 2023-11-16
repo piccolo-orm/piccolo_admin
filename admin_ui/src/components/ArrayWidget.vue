@@ -141,7 +141,7 @@ export default defineComponent({
     },
     watch: {
         array(newValue) {
-            this.internalArray = [...newValue]
+            this.internalArray = newValue ? [...newValue] : []
         }
     },
     mounted() {

@@ -53,14 +53,16 @@ def validate():
     if path not in sys.path:
         sys.path.insert(0, path)
 
-    from piccolo_admin.translations.data import TRANSLATIONS
+    from piccolo_admin.translations.data import TRANSLATIONS, VALIDATE_IGNORE
 
     phrases = get_phrases()
 
     success = True
 
     for translation in TRANSLATIONS:
-        existing_keys = set(translation.translations.keys())
+        existing_keys = set(translation.translations.keys()) - set(
+            VALIDATE_IGNORE
+        )
 
         print(f"{translation.language_name}")
 

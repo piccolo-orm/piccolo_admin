@@ -65,7 +65,7 @@
                                 }}
                             </span>
                         </a>
-                        <CSVButton :tableName="tableName" />
+                        <CSVButton />
                     </div>
                 </div>
                 <p id="selected_count" v-if="selectedRows.length > 0">
