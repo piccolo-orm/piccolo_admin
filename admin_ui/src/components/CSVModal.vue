@@ -107,7 +107,7 @@ const fetchExportedRows = async () => {
         link.setAttribute("download", `${tableName}.csv`)
         link.click()
         store.commit("updateApiResponseMessage", {
-            contents: "Successfully downloaded CSV",
+            contents: "Successfully downloaded.",
             type: "success"
         })
     } catch (error) {
@@ -115,7 +115,7 @@ const fetchExportedRows = async () => {
             console.log(error.response)
         }
         store.commit("updateApiResponseMessage", {
-            contents: "Unable to download the CSV - an error occurred.",
+            contents: "Error downloading.",
             type: "error"
         })
     }
