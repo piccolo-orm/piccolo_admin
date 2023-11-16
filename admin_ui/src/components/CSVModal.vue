@@ -25,7 +25,8 @@
 
 <script setup lang="ts">
 import axios from "axios"
-import { ref } from "vue"
+import { ref, inject } from "vue"
+import type { I18n } from "vue-i18n"
 
 import type { RowCountAPIResponse } from "../interfaces"
 import { getOrderByString } from "@/utils"
@@ -39,6 +40,7 @@ const emit = defineEmits(["close"])
 
 const buttonDisabled = ref<boolean>(false)
 const delimiter = ref<"," | ";">(",")
+const i18n = inject<I18n>("i18n")
 
 /*****************************************************************************/
 
@@ -54,7 +56,14 @@ const replaceAll = (input: string, value: string, newValue: string): string => {
 
 /*****************************************************************************/
 
-// Export data as csv from json:
+// Access i18n outside of a HTML template
+const translate = (term: string): string => {
+    // @ts-ignore
+    return i18n ? i18n.global.t(term) : term
+}
+
+/*****************************************************************************/
+
 const fetchExportedRows = async () => {
     buttonDisabled.value = true
 
@@ -107,7 +116,7 @@ const fetchExportedRows = async () => {
         link.setAttribute("download", `${tableName}.csv`)
         link.click()
         store.commit("updateApiResponseMessage", {
-            contents: "Successfully downloaded.",
+            contents: translate("Download successful"),
             type: "success"
         })
     } catch (error) {
@@ -115,7 +124,7 @@ const fetchExportedRows = async () => {
             console.log(error.response)
         }
         store.commit("updateApiResponseMessage", {
-            contents: "Error downloading.",
+            contents: translate("Download failed"),
             type: "error"
         })
     }
