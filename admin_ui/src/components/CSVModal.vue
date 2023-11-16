@@ -17,7 +17,8 @@
                 <span>{{ $t("Download") }}</span>
             </button>
 
-            <p class="note">Note: Large data sets may take a while.</p>
+            <!-- prettier-ignore -->
+            <p class="note">{{ $t("Note: Large data sets may take a while.") }}</p>
         </form>
     </Modal>
 </template>
