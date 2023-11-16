@@ -5,8 +5,8 @@ Changes
 -----
 
 Improved CSV downloads - the user now has the option of using commas or
-semicolons as delimiters. In Piccolo v1 we had changed to using semicolons by
-default, which was causing confusion.
+semicolons as delimiters. In Piccolo Admin v1 we had changed to using
+semicolons by default, which was causing confusion.
 
 -------------------------------------------------------------------------------
 
