@@ -4,7 +4,7 @@
 
         <form @submit.prevent="fetchExportedRows">
             <label for="delimiter">{{ $t("Delimiter") }}</label>
-            <select name="delimiter" v-model="delimiter">
+            <select id="delimiter" v-model="delimiter">
                 <option value=",">{{ $t("Comma") }}</option>
                 <option value=";">{{ $t("Semicolon") }}</option>
             </select>
