@@ -1003,3 +1003,8 @@ TRANSLATIONS: t.List[Translation] = [
     UKRAINIAN,
     WELSH,
 ]
+
+# We use some translations outside of the HTML templates (e.g. within
+# Javascript alerts). When running `get_translations.py::validate` it only
+# checks translations within templates, so the ones listed here are ignored:
+VALIDATE_IGNORE = ["Download failed", "Download successful"]
