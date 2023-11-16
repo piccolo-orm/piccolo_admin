@@ -7,7 +7,8 @@
       "@/*": ["./src/*"]
     },
     "types": ["node"],
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0",
+    "lib": ["dom", "es2021"]
   },
 
   "references": [

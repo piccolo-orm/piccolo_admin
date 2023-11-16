@@ -12,6 +12,16 @@ import axios from "axios"
 import type { RowCountAPIResponse } from "../interfaces"
 import { getOrderByString } from "@/utils"
 
+// Just in case `replaceAll` isn't supported by the browser, provide a
+// fallback.
+const replaceAll = (input: string, value: string, newValue: string): string => {
+    if (String.prototype.replaceAll != undefined) {
+        return input.replaceAll(value, newValue)
+    } else {
+        return input.split(value).join(newValue)
+    }
+}
+
 export default defineComponent({
     props: {
         tableName: {
@@ -41,10 +51,12 @@ export default defineComponent({
             const localParams = { ...params }
 
             localParams["__page"] = data.count
-            // Set higher __page_size param to have fewer requests to api:
+            // Set higher __page_size param to have fewer requests to the API:
             localParams["__page_size"] = 1000
             const pages = Math.ceil(data.count / localParams["__page_size"])
             const exportedRows = []
+
+            const delimiter = ","
 
             try {
                 for (let i = 1; i < pages + 1; i++) {
@@ -59,8 +71,12 @@ export default defineComponent({
                 }
                 let data: string = ""
                 data += [
-                    Object.keys(exportedRows[0]).join(";"),
-                    ...exportedRows.map((item) => Object.values(item).join(";"))
+                    Object.keys(exportedRows[0]).join(delimiter),
+                    ...exportedRows.map((item) =>
+                        Object.values(item)
+                            .map((i) => `"${replaceAll(String(i), '"', '""')}"`)
+                            .join(delimiter)
+                    )
                 ].join("\n")
                 let csv = new Blob([data], {
                     type: "text/csv;charset=utf-8;"
@@ -80,11 +96,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="less" scoped>
-a.button {
-    div {
-        cursor: pointer;
-    }
-}
-</style>
