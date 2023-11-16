@@ -3,5 +3,5 @@ from starlette.responses import HTMLResponse
 
 
 class HomeEndpoint(HTTPEndpoint):
-    async def get(request):
+    async def get(self, request):
         return HTMLResponse("<p>Movies</p>")
