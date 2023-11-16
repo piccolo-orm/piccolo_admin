@@ -38,29 +38,13 @@ class LoginPage:
         self.page.wait_for_url(f"{BASE_URL}/#/")
 
 
-class Nav:
-    def __init__(self, page: Page):
-        self.page = page
-        self.nav_dropdown_button = page.locator(
-            'a[data-uitest="nav_dropdown_button"]'
-        )
-        self.logout_button = page.locator('a[data-uitest="logout_button"]')
-
-    def logout(self):
-        self.nav_dropdown_button.click()
-        self.page.on("dialog", lambda dialog: dialog.accept())
-
-        with self.page.expect_response(
-            lambda response: response.url == f"{BASE_URL}/public/logout/"
-            and response.request.method == "POST"
-            and response.status == 200
-        ):
-            self.logout_button.click()
+###############################################################################
+# Row listing page
 
 
 class SortModal:
     """
-    Part of the :class:`RowListingPage`.
+    Part of :class:`RowListingPage`.
     """
 
     def __init__(self, page: Page):
@@ -129,7 +113,7 @@ class SortModal:
 
 class FilterSidebar:
     """
-    Part of the :class:`RowListingPage`.
+    Part of :class:`RowListingPage`.
     """
 
     def __init__(self, page: Page):
@@ -146,14 +130,31 @@ class FilterSidebar:
         return self.sidebar.locator(f"[name={name}]")
 
 
+class CSVModal:
+    """
+    Part of :class:`RowListingPage`.
+    """
+
+    def __init__(self, page: Page):
+        self.modal = page.locator("div[data-uitest=csv_modal]")
+        self.download_button = self.modal.locator(
+            "button[data-uitest=download_csv_button]"
+        )
+
+    def click_download(self):
+        self.download_button.click()
+
+
 class RowListingPage:
     def __init__(self, page: Page, tablename: str):
         self.page = page
         self.url = f"{BASE_URL}/#/{tablename}"
         self.sort_button = page.locator("a[data-uitest=sort_button]")
         self.filter_button = page.locator("a[data-uitest=filter_button]")
-        self.sort_modal = SortModal(page=page)
+        self.csv_button = page.locator("a[data-uitest=csv_button]")
+        self.csv_modal = CSVModal(page=page)
         self.filter_sidebar = FilterSidebar(page=page)
+        self.sort_modal = SortModal(page=page)
 
     def reset(self):
         self.page.goto(self.url)
@@ -163,6 +164,12 @@ class RowListingPage:
 
     def open_filter_sidebar(self):
         self.filter_button.click()
+
+    def show_csv_modal(self):
+        self.csv_button.click()
+
+
+###############################################################################
 
 
 class EditRowPage:
@@ -203,6 +210,9 @@ class EditRowPage:
         self.page.goto(self.url)
 
 
+###############################################################################
+
+
 class AddRowPage:
     def __init__(self, page: Page, tablename: str):
         self.page = page
@@ -221,6 +231,29 @@ class AddRowPage:
             and response.status == 201
         ):
             self.create_button.click()
+
+
+###############################################################################
+
+
+class Nav:
+    def __init__(self, page: Page):
+        self.page = page
+        self.nav_dropdown_button = page.locator(
+            'a[data-uitest="nav_dropdown_button"]'
+        )
+        self.logout_button = page.locator('a[data-uitest="logout_button"]')
+
+    def logout(self):
+        self.nav_dropdown_button.click()
+        self.page.on("dialog", lambda dialog: dialog.accept())
+
+        with self.page.expect_response(
+            lambda response: response.url == f"{BASE_URL}/public/logout/"
+            and response.request.method == "POST"
+            and response.status == 200
+        ):
+            self.logout_button.click()
 
 
 class HomePage:

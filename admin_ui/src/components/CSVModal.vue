@@ -1,5 +1,5 @@
 <template>
-    <Modal @close="$emit('close')">
+    <Modal @close="$emit('close')" data-uitest="csv_modal">
         <p>{{ $t("Export CSV") }}</p>
 
         <form @submit.prevent="fetchExportedRows">

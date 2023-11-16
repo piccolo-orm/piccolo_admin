@@ -2,7 +2,7 @@
     <a
         class="button"
         @click.prevent="showModal = true"
-        data-uitest="download_csv_button"
+        data-uitest="csv_button"
     >
         <font-awesome-icon icon="file-csv" />
         <span>{{ $t("Export CSV") }}</span>
