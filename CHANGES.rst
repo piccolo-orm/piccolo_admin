@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.1.3
+-----
+
+Improved CSV downloads - the user now has the option of using commas or
+semicolons as delimiters. In Piccolo v1 we had changed to using semicolons by
+default, which was causing confusion.
+
+-------------------------------------------------------------------------------
+
 1.1.2
 -----
 
