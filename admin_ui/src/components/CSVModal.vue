@@ -3,7 +3,7 @@
         <p>{{ $t("Export CSV") }}</p>
 
         <form @submit.prevent="fetchExportedRows">
-            <label for="delimiter">Delimiter</label>
+            <label for="delimiter">{{ $t("Delimiter") }}</label>
             <select name="delimiter" v-model="delimiter">
                 <option value=",">Comma</option>
                 <option value=";">Semicolon</option>
