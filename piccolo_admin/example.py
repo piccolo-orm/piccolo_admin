@@ -8,6 +8,7 @@ import asyncio
 import datetime
 import decimal
 import enum
+import logging
 import os
 import random
 import smtplib
@@ -64,6 +65,8 @@ from piccolo_admin.example_data import (
     TICKETS,
 )
 
+logger = logging.getLogger()
+
 try:
     """
     If you want to try out S3, create a .env file in this folder, with the
@@ -99,7 +102,7 @@ try:
     )
 
     if USE_S3:
-        print("Using S3")
+        logger.info("Using S3")
 
         S3_CONFIG = {
             "aws_access_key_id": AWS_ACCESS_KEY_ID,
