@@ -153,13 +153,16 @@
                 />
             </div>
 
-            <input
-                type="text"
-                v-bind:name="columnName"
-                v-bind:placeholder="placeholder"
-                v-else
-                v-model="localValue"
-            />
+            <template v-else>
+                <MatchField :columnName="columnName" />
+
+                <input
+                    type="text"
+                    v-bind:name="columnName"
+                    v-bind:placeholder="placeholder"
+                    v-model="localValue"
+                />
+            </template>
         </template>
 
         <template v-else-if="type == 'boolean'">
@@ -227,6 +230,7 @@ import ArrayWidget from "./ArrayWidget.vue"
 import ChoiceSelect from "./ChoiceSelect.vue"
 import DurationWidget from "./DurationWidget.vue"
 import LoadingOverlay from "./LoadingOverlay.vue"
+import MatchField from "./MatchField.vue"
 import MediaViewer from "./MediaViewer.vue"
 import OperatorField from "./OperatorField.vue"
 import TimeWidget from "./TimeWidget.vue"
@@ -295,6 +299,7 @@ export default defineComponent({
         ChoiceSelect,
         DurationWidget,
         LoadingOverlay,
+        MatchField,
         MediaViewer,
         OperatorField,
         TimestampWidget,
