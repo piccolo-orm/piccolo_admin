@@ -1,5 +1,5 @@
 piccolo>=1.1.0
-piccolo_api>=1.0a3
+piccolo_api>=1.1.0
 uvicorn
 aiofiles>=0.5.0
 Hypercorn
