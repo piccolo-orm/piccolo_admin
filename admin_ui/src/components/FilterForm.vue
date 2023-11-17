@@ -33,7 +33,6 @@
                         v-bind:isFilter="true"
                         v-bind:isNullable="property.extra.nullable"
                         v-bind:key="property.title"
-                        v-bind:title="property.title"
                         v-bind:type="getType(property)"
                         v-bind:value="getValue(String(columnName))"
                         v-bind:widget="property.extra.widget"
@@ -47,41 +46,31 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, type PropType } from "vue"
+<script setup lang="ts">
+import { type PropType, toRef } from "vue"
 
-import KeySearch from "./KeySearch.vue"
 import InputField from "./InputField.vue"
+import KeySearch from "./KeySearch.vue"
 import { type Schema, getFormat, getType } from "@/interfaces"
 
-export default defineComponent({
-    props: {
-        schema: {
-            type: Object as PropType<Schema>,
-            required: true
-        }
-    },
-    components: {
-        InputField,
-        KeySearch
-    },
-    setup() {
-        return {
-            getFormat,
-            getType
-        }
-    },
-    methods: {
-        getValue(columnName: string) {
-            if (
-                getType((this.schema as Schema).properties[columnName]) ==
-                "boolean"
-            ) {
-                return "all"
-            } else {
-                return null
-            }
-        }
+/*****************************************************************************/
+
+const props = defineProps({
+    schema: {
+        type: Object as PropType<Schema>,
+        required: true
     }
 })
+
+const schema = toRef(props, "schema")
+
+/*****************************************************************************/
+
+const getValue = (columnName: string) => {
+    if (getType(schema.value.properties[columnName]) == "boolean") {
+        return "all"
+    } else {
+        return null
+    }
+}
 </script>

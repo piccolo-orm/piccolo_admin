@@ -8,7 +8,9 @@
 
         <form ref="form" v-on:submit.prevent="submitForm($event)">
             <FilterForm v-bind:schema="schema" />
-            <button>{{ $t("Apply") }}</button>
+            <button data-uitest="submit_filter_button">
+                {{ $t("Apply") }}
+            </button>
         </form>
         <button v-on:click.prevent="clearFilters">
             {{ $t("Clear filters") }}
@@ -19,7 +21,7 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 import FilterForm from "./FilterForm.vue"
-import type { APIResponseMessage } from "../interfaces"
+import { type APIResponseMessage, getFormat, getType } from "../interfaces"
 import { secondsToISO8601Duration } from "../utils"
 
 export default defineComponent({
@@ -53,27 +55,34 @@ export default defineComponent({
                 const key = i[0]
                 let value: any = i[1]
 
-                if (value && value != "all") {
-                    if (this.schema.properties[key]?.type == "array") {
-                        // @ts-ignore
-                        value = JSON.parse(value).filter((i) => i)
-                        // Ignore any empty values.
-                        value = Array.isArray(value)
-                            ? value.filter((i) => i)
-                            : value
-                    }
-
+                if (key.endsWith("__match") || key.endsWith("__operator")) {
+                    json[key] = value
+                } else {
                     if (
-                        this.schema.properties[key]?.anyOf[0].format ==
-                        "duration"
+                        value &&
+                        value != "all" &&
+                        // For now, assume that if the duration is 0, the user
+                        // doesn't intend on using it as a filter. We need a better
+                        // solution long term.
+                        !(
+                            getFormat(this.schema.properties[key]) ==
+                                "duration" &&
+                            value == secondsToISO8601Duration(0)
+                        )
                     ) {
-                        value = secondsToISO8601Duration(value)
-                    }
+                        if (getType(this.schema.properties[key]) == "array") {
+                            value = JSON.parse(value).filter((i: any) => i)
+                            // Ignore any empty values.
+                            value = Array.isArray(value)
+                                ? value.filter((i) => i)
+                                : value
+                        }
 
-                    if (value == "null") {
-                        json[`${key}__operator`] = "is_null"
-                    } else {
-                        json[key] = value
+                        if (value == "null") {
+                            json[`${key}__operator`] = "is_null"
+                        } else {
+                            json[key] = value
+                        }
                     }
                 }
             }

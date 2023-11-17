@@ -9,7 +9,6 @@
                 v-bind:isFilter="false"
                 v-bind:key="columnName"
                 v-bind:columnName="String(columnName)"
-                v-bind:title="property.title"
                 v-bind:type="getType(property)"
                 v-bind:value="property.default"
                 v-bind:timeResolution="
