@@ -154,7 +154,7 @@
             </div>
 
             <template v-else>
-                <MatchField :columnName="columnName" />
+                <MatchField v-if="isFilter" :columnName="columnName" />
 
                 <input
                     type="text"
