@@ -118,6 +118,9 @@ class FilterSidebar:
 
     def __init__(self, page: Page):
         self.sidebar = page.locator("div[data-uitest=right_sidebar]")
+        self.submit_button = self.sidebar.locator(
+            "button[data-uitest=submit_filter_button]"
+        )
 
     def get_input(self, name: str):
         """
@@ -128,6 +131,22 @@ class FilterSidebar:
 
         """
         return self.sidebar.locator(f"[name={name}]")
+
+    def get_match_selector(self, name: str):
+        """
+        Returns the match selector.
+
+        :param name:
+            The name of the field.
+
+        """
+        return self.sidebar.locator(f"[name={name}__match]")
+
+    def submit_form(self):
+        """
+        Submits the filter form.
+        """
+        self.submit_button.click()
 
 
 class CSVModal:
