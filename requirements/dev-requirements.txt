@@ -3,5 +3,5 @@ isort==5.12.0
 twine==4.0.0
 mypy==1.5.1
 pip-upgrader==1.4.15
-wheel==0.37.1
+wheel==0.41.3
 python-dotenv==0.20.0
