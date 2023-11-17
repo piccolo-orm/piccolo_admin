@@ -242,11 +242,6 @@ import { secondsToISO8601Duration } from "../utils"
 
 export default defineComponent({
     props: {
-        // A nicely formatted column name, for example 'First Name'
-        title: {
-            type: String as PropType<string>,
-            required: true
-        },
         columnName: {
             type: String as PropType<string>,
             required: true

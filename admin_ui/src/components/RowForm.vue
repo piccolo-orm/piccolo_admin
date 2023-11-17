@@ -60,7 +60,6 @@
                 v-bind:isFilter="isFilter"
                 v-bind:isNullable="property.extra.nullable"
                 v-bind:required="isRequired(String(columnName))"
-                v-bind:title="property.title"
                 v-bind:type="getType(property)"
                 v-bind:value="getValue(String(columnName))"
                 v-bind:choices="property.extra.choices"

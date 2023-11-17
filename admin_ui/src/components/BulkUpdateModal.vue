@@ -36,7 +36,6 @@
                     v-bind:columnName="selectedPropertyName"
                     v-bind:format="getFormat(selectedProperty)"
                     v-bind:isFilter="false"
-                    v-bind:title="selectedProperty.title"
                     v-bind:type="
                         selectedProperty.type ||
                         selectedProperty.anyOf?.[0].type

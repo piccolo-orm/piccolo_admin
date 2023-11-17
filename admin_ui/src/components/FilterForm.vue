@@ -33,7 +33,6 @@
                         v-bind:isFilter="true"
                         v-bind:isNullable="property.extra.nullable"
                         v-bind:key="property.title"
-                        v-bind:title="property.title"
                         v-bind:type="getType(property)"
                         v-bind:value="getValue(String(columnName))"
                         v-bind:widget="property.extra.widget"
