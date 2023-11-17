@@ -5,10 +5,10 @@ from piccolo_admin.example import Movie
 from .pages import LoginPage, RowListingPage
 
 
-def test_match(page: Page, dev_server):
+def test_operator(page: Page, dev_server):
     """
-    Make sure that the filters can specify how to match text values - for
-    example that the Movie name starts with 'Star'.
+    Make sure that the filters can specify the operator to use - for
+    example that the Movie genre doesn't include 'Fantasy'.
     """
     login_page = LoginPage(page=page)
     login_page.reset()
@@ -22,15 +22,15 @@ def test_match(page: Page, dev_server):
 
     test_page.open_filter_sidebar()
 
-    field_name = "name"
+    field_name = "genre"
 
     name_input = test_page.filter_sidebar.get_input(name=field_name)
-    name_input.type("Star Wars")
+    name_input.select_option("Fantasy")
 
-    match_selector = test_page.filter_sidebar.get_match_selector(
+    operator_selector = test_page.filter_sidebar.get_operator_selector(
         name=field_name
     )
-    match_selector.select_option("starts")
+    operator_selector.select_option("ne")
 
     # Submit the form, and wait for the API response
     with page.expect_response(
@@ -39,11 +39,13 @@ def test_match(page: Page, dev_server):
         test_page.filter_sidebar.submit_form()
 
     # Make sure the correct GET params were sent
-    assert f"{field_name}__match=starts" in response_info.value.url
-    assert f"{field_name}=Star+Wars" in response_info.value.url
+    assert f"{field_name}__operator=ne" in response_info.value.url
+    assert (
+        f"{field_name}={Movie.Genre.fantasy.value}" in response_info.value.url
+    )
 
     # Make sure the data was filtered correctly.
-    # There's a movie called `Rogue One: Star Wars`, which shouldn't be
-    # returned.
-    for movie_name in [i["name"] for i in response_info.value.json()["rows"]]:
-        assert movie_name.startswith("Star Wars")
+    # Fantasy movies shouldn't be returned.
+    genres = [i["genre"] for i in response_info.value.json()["rows"]]
+    assert Movie.Genre.fantasy.value not in genres
+    assert Movie.Genre.sci_fi.value in genres

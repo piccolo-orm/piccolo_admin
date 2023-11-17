@@ -132,6 +132,16 @@ class FilterSidebar:
         """
         return self.sidebar.locator(f"[name={name}]")
 
+    def get_operator_selector(self, name: str):
+        """
+        Returns the operator selector.
+
+        :param name:
+            The name of the field.
+
+        """
+        return self.sidebar.locator(f"[name={name}__operator]")
+
     def get_match_selector(self, name: str):
         """
         Returns the match selector.
