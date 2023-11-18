@@ -11,7 +11,7 @@ When filtering ``Varchar`` and ``Text`` columns, you can now specify the
 specify ``starts``, ``ends`` and ``exact``. For example, you can now filter for
 a movie with a name starting with ``Star Wars``.
 
-When filtering numeric and date / time columns, you can now specify the
+When filtering numeric / date / time columns, you can now specify the
 ``not equals`` operator. For example, give me all the movie tickets which
 aren't on a certain day.
 
