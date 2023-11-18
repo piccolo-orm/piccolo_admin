@@ -21,7 +21,7 @@
                         v-bind:isNullable="property.extra.nullable"
                     />
                 </template>
-                <template v-else-if="property.format !== 'json'">
+                <template v-else-if="getFormat(property) !== 'json'">
                     <label>
                         {{ property.title }}
                     </label>
