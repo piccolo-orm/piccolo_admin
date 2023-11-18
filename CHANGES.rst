@@ -1,6 +1,24 @@
 Changes
 =======
 
+1.2.0
+-----
+
+Added Python 3.12 support.
+
+When filtering ``Varchar`` and ``Text`` columns, you can now specify the
+``match``. Previously, it always defaulted to ``contains``, but now you can
+specify ``starts``, ``ends`` and ``exact``. For example, you can now filter for
+a movie with a name starting with ``Star Wars``.
+
+When filtering numeric and date / time columns, you can now specify the
+``not equals`` operator. For example, give me all the movie tickets which
+aren't on a certain day.
+
+Fixed some minor bugs, and added additional Playwright tests.
+
+-------------------------------------------------------------------------------
+
 1.1.3
 -----
 
