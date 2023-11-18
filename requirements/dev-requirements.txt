@@ -5,3 +5,4 @@ mypy==1.5.1
 pip-upgrader==1.4.15
 wheel==0.41.3
 python-dotenv==0.20.0
+setuptools==68.2.2
