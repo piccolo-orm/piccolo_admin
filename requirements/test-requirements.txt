@@ -5,3 +5,8 @@ piccolo[postgres,sqlite]>=1.0.0
 playwright==1.39.0
 pytest-playwright==0.4.3
 httpx>=0.20.0
+# This is needed because newer versions of FastAPI use a Starlette version with
+# a `TestClient` which breaks rate limiting.
+# The changes to `TestClient` will likely be reverted in a future release, in
+# which case we can remove this version pin.
+fastapi==0.106.0
