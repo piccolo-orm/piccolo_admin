@@ -646,6 +646,7 @@ class TestTables(TestCase):
         self.assertEqual(
             response.json(),
             [
+                "choices",
                 "constraint_target",
                 "constraints",
                 "date_time_columns",
@@ -689,6 +690,7 @@ class TestTables(TestCase):
                     "Booking": ["ticket"],
                     "Movies": ["director", "movie", "studio"],
                     "Testing": [
+                        "choices",
                         "constraint_target",
                         "constraints",
                         "date_time_columns",

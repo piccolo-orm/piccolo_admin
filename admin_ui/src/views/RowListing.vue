@@ -146,9 +146,14 @@
                                             v-bind:key="name"
                                             v-for="name in visibleColumnNames"
                                         >
+                                            <span v-if="row[name] === null">
+                                                <code>NULL</code>
+                                            </span>
                                             <span
                                                 class="link"
-                                                v-if="name == linkColumnName"
+                                                v-else-if="
+                                                    name == linkColumnName
+                                                "
                                             >
                                                 <router-link
                                                     :to="{
@@ -164,17 +169,29 @@
                                                     }}</router-link
                                                 >
                                             </span>
-                                            <span v-else-if="name == pkName">{{
-                                                abbreviate(row[name])
-                                            }}</span>
                                             <span
                                                 v-else-if="choicesLookup[name]"
                                             >
-                                                {{
+                                                <template v-if="isArray(name)">
+                                                    {{
+                                                        abbreviate(
+                                                            row[name]
+                                                                .map(
+                                                                    (i: any) =>
+                                                                        choicesLookup[
+                                                                            name
+                                                                        ]![i] ??
+                                                                        i
+                                                                )
+                                                                .join(", ")
+                                                        )
+                                                    }}
+                                                </template>
+                                                <template v-else>{{
                                                     choicesLookup[name]![
                                                         row[name]
-                                                    ]
-                                                }}
+                                                    ] ?? row[name]
+                                                }}</template>
                                             </span>
                                             <span
                                                 class="link"
@@ -215,16 +232,12 @@
                                                         row[name] === false
                                                     "
                                                 />
-                                                <code v-else>NULL</code>
                                             </span>
                                             <span v-else-if="isInterval(name)">
                                                 {{ humanReadable(row[name]) }}
                                             </span>
                                             <span v-else-if="isJSON(name)">
-                                                <code v-if="row[name] === null"
-                                                    >NULL</code
-                                                >
-                                                <pre v-else>{{
+                                                <pre>{{
                                                     abbreviate(
                                                         formatJSON(row[name])
                                                     )
@@ -268,12 +281,7 @@
                                                 </template>
                                             </span>
                                             <span v-else>
-                                                <code v-if="row[name] === null"
-                                                    >NULL</code
-                                                >
-                                                <span v-else>
-                                                    {{ abbreviate(row[name]) }}
-                                                </span>
+                                                {{ abbreviate(row[name]) }}
                                             </span>
                                         </td>
 

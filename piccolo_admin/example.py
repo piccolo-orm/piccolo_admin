@@ -324,6 +324,36 @@ class DateTimeColumns(Table):
     timestamptz_null = Timestamptz(null=True, default=None)
 
 
+class Choices(Table):
+    class ArrayChoices(enum.Enum):
+        a = "a"
+        b = "b"
+        c = "c"
+
+    class DateChoices(enum.Enum):
+        early = datetime.date(year=2000, month=1, day=1)
+        late = datetime.date(year=2020, month=1, day=1)
+
+    class IntegerChoices(enum.Enum):
+        low = 1
+        medium = 2
+        high = 3
+
+    class VarcharChoices(enum.Enum):
+        a = "a"
+        b = "b"
+        c = "c"
+
+    array = Array(base_column=Varchar(), choices=ArrayChoices)
+    array_null = Array(base_column=Varchar(), choices=ArrayChoices, null=True)
+    date = Date(choices=DateChoices)
+    date_null = Date(choices=DateChoices, null=True)
+    integer = Integer(choices=IntegerChoices)
+    integer_null = Integer(choices=IntegerChoices, null=True)
+    varchar = Varchar(choices=VarcharChoices)
+    varchar_null = Varchar(choices=VarcharChoices, null=True)
+
+
 ###############################################################################
 
 
@@ -407,6 +437,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Constraints,
     ConstraintTarget,
     DateTimeColumns,
+    Choices,
 )
 
 
@@ -522,6 +553,11 @@ date_time_config = TableConfig(
     table_class=DateTimeColumns, menu_group="Testing"
 )
 
+choices_config = TableConfig(
+    table_class=Choices,
+    menu_group="Testing",
+)
+
 APP = create_admin(
     [
         movie_config,
@@ -534,6 +570,7 @@ APP = create_admin(
         constraints_config,
         constraints_target_config,
         date_time_config,
+        choices_config,
     ],
     forms=[
         FormConfig(
