@@ -3,6 +3,7 @@ By using pages we can make out test more scalable.
 
 https://playwright.dev/docs/pom
 """
+
 import typing as t
 
 from playwright.sync_api import Page

@@ -2,6 +2,7 @@
 Runs the admin in read only mode - useful for letting people evaluate the admin
 online without risk of abuse.
 """
+
 import targ
 import uvicorn
 
