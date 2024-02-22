@@ -533,7 +533,9 @@ class TestMediaStorage(TestCase):
             media_storage=[MOVIE_POSTER_MEDIA],
         )
 
-        APP = create_admin([movie_config], read_only=True)
+        APP = create_admin(
+            [movie_config], read_only=True, rate_limit_provider="DISABLED"
+        )
 
         client = TestClient(APP)
 
@@ -576,7 +578,11 @@ class TestMediaStorage(TestCase):
             media_storage=[MOVIE_POSTER_MEDIA],
         )
 
-        APP = create_admin([movie_config], read_only=True)
+        APP = create_admin(
+            [movie_config],
+            read_only=True,
+            rate_limit_provider="DISABLED",
+        )
 
         client = TestClient(APP)
 
@@ -890,7 +896,8 @@ class TestHooks(TestCase):
                     table_class=Post,
                     hooks=[Hook(hook_type=HookType.pre_save, callable=hook)],
                 )
-            ]
+            ],
+            rate_limit_provider="DISABLED",
         )
 
         client = TestClient(app)
@@ -959,7 +966,8 @@ class TestValidators(TestCase):
                     Post,
                     validators=Validators(post_single=[post_single_validator]),
                 ),
-            ]
+            ],
+            rate_limit_provider="DISABLED",
         )
 
         client = TestClient(app)
