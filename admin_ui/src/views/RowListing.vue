@@ -190,7 +190,7 @@
                                                 <template v-else>{{
                                                     choicesLookup[name]![
                                                         row[name]
-                                                    ]
+                                                    ] ?? row[name]
                                                 }}</template>
                                             </span>
                                             <span
