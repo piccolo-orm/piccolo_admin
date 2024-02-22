@@ -49,7 +49,7 @@ def test_choices(page: Page, dev_server):
     add_row_page.submit_form()
 
     choices_in_db = Choices.select(
-        Choices.all_columns(exclude=[Choices.id])
+        Choices.all_columns(exclude=[Choices.id])  # type: ignore
     ).run_sync()
 
     assert {
