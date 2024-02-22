@@ -253,6 +253,24 @@ class AddRowPage:
     def reset(self):
         self.page.goto(self.url)
 
+    def add_array_item(self, field: str, option: str):
+        """
+        Used when an array widget is being used, with choices.
+        """
+        self.page.locator(
+            f"[data-uitest={field}_array_widget] [data-uitest=add_array_item_button]"  # noqa: E501
+        ).click()
+
+        self.page.locator(
+            f"[data-uitest={field}_array_widget] select"
+        ).select_option(option)
+
+    def select_value(self, field: str, option: str):
+        """
+        Used when a non-array widget is being used, with choices.
+        """
+        self.page.locator(f"select[name={field}]").select_option(option)
+
     def submit_form(self):
         with self.page.expect_response(
             lambda response: response.url

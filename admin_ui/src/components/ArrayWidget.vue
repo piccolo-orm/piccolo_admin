@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :data-uitest="`${fieldName}_array_widget`">
         <ul class="array_items">
             <li :key="value" v-for="(value, index) in internalArray">
                 <!--
@@ -41,6 +41,7 @@
                     href="#"
                     v-on:click.prevent="addArrayElement"
                     v-if="enableAddButton"
+                    data-uitest="add_array_item_button"
                 >
                     <font-awesome-icon icon="plus" title="Add" />{{ $t("Add") }}
                 </a>
