@@ -5,3 +5,4 @@ piccolo[postgres,sqlite]>=1.0.0
 playwright==1.41.2
 pytest-playwright==0.4.4
 httpx>=0.20.0
+fastapi==0.106.0
