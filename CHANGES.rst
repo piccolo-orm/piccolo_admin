@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.2.1
+-----
+
+Fixed a bug with ``Array`` columns which have choices defined. Both a
+``select`` and ``input`` widget were being shown.
+
+-------------------------------------------------------------------------------
+
 1.2.0
 -----
 
