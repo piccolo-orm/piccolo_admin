@@ -1,9 +1,9 @@
-pytest==7.4.3
+pytest==8.0.1
 pytest-cov==4.1.0
-flake8==5.0.4
+flake8==7.0.0
 piccolo[postgres,sqlite]>=1.0.0
-playwright==1.39.0
-pytest-playwright==0.4.3
+playwright==1.41.2
+pytest-playwright==0.4.4
 httpx>=0.20.0
 # This is needed because newer versions of FastAPI use a Starlette version with
 # a `TestClient` which breaks rate limiting.
