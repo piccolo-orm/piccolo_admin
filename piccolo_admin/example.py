@@ -4,7 +4,6 @@ An example of how to configure and run the admin.
 Can be run from the command line using `python -m piccolo_admin.example`,
 or `admin_demo`.
 """
-
 import asyncio
 import datetime
 import decimal
@@ -457,18 +456,16 @@ director_config = TableConfig(
         Director.photo,
     ],
     media_storage=(
-        (
-            S3MediaStorage(
-                column=Director.photo,
-                bucket_name=t.cast(str, BUCKET_NAME),
-                folder_name="director_photo",
-                connection_kwargs=S3_CONFIG,
-            )
-            if USE_S3
-            else LocalMediaStorage(
-                column=Director.photo,
-                media_path=os.path.join(MEDIA_ROOT, "photo"),
-            )
+        S3MediaStorage(
+            column=Director.photo,
+            bucket_name=t.cast(str, BUCKET_NAME),
+            folder_name="director_photo",
+            connection_kwargs=S3_CONFIG,
+        )
+        if USE_S3
+        else LocalMediaStorage(
+            column=Director.photo,
+            media_path=os.path.join(MEDIA_ROOT, "photo"),
         ),
     ),
     menu_group="Movies",
@@ -555,7 +552,6 @@ APP = create_admin(
         "Top Movies": "/#/movie?__order=-box_office",
         "Google": "https://google.com",
     },
-    rate_limit_provider="DISABLED",
 )
 
 

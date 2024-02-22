@@ -1,7 +1,6 @@
 """
 Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 """
-
 from __future__ import annotations
 
 import inspect
@@ -422,9 +421,7 @@ class AdminRouter(FastAPI):
         increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
         page_size: int = 15,
         read_only: bool = False,
-        rate_limit_provider: t.Union[
-            RateLimitProvider, t.Literal["DISABLED"], None
-        ] = None,
+        rate_limit_provider: t.Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
@@ -635,7 +632,7 @@ class AdminRouter(FastAPI):
 
         private_app.add_route(
             path="/change-password/",
-            route=change_password(  # type: ignore
+            route=change_password(
                 login_url="./../../public/login/",
                 session_table=session_table,
                 read_only=read_only,
@@ -686,30 +683,29 @@ class AdminRouter(FastAPI):
         )
         public_app.mount("/docs/", swagger_ui(schema_url="../openapi.json"))
 
-        session_login_app = session_login(
-            auth_table=self.auth_table,
-            session_table=session_table,
-            session_expiry=session_expiry,
-            max_session_expiry=max_session_expiry,
-            redirect_to=None,
-            production=production,
-        )
-
-        if rate_limit_provider == "DISABLED":
-            public_app.mount(path="/login/", app=session_login_app)
-        else:
-            public_app.mount(
-                path="/login/",
-                app=RateLimitingMiddleware(
-                    app=session_login_app,
-                    provider=rate_limit_provider
-                    or InMemoryLimitProvider(limit=100, timespan=300),
-                ),
+        if not rate_limit_provider:
+            rate_limit_provider = InMemoryLimitProvider(
+                limit=100, timespan=300
             )
+
+        public_app.mount(
+            path="/login/",
+            app=RateLimitingMiddleware(
+                app=session_login(
+                    auth_table=self.auth_table,
+                    session_table=session_table,
+                    session_expiry=session_expiry,
+                    max_session_expiry=max_session_expiry,
+                    redirect_to=None,
+                    production=production,
+                ),
+                provider=rate_limit_provider,
+            ),
+        )
 
         public_app.add_route(
             path="/logout/",
-            route=session_logout(session_table=session_table),  # type: ignore
+            route=session_logout(session_table=session_table),
             methods=["POST"],
         )
 
@@ -1071,9 +1067,7 @@ def create_admin(
     increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
     page_size: int = 15,
     read_only: bool = False,
-    rate_limit_provider: t.Union[
-        RateLimitProvider, t.Literal["DISABLED"], None
-    ] = None,
+    rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
     default_language_code: str = "auto",
@@ -1116,10 +1110,9 @@ def create_admin(
         creating online demos.
     :param rate_limit_provider:
         Rate limiting middleware is used to protect the login endpoint
-        against brute force attack. If ``None``, an
+        against brute force attack. If not set, an
         :class:`InMemoryLimitProvider <piccolo_api.rate_limiting.middleware.InMemoryLimitProvider>`
-        will be configured with reasonable defaults. If ``'DISABLED'`` is
-        passed in, rate limiting is disabled (not recommended).
+        will be configured with reasonable defaults.
     :param production:
         If ``True``, the admin will enforce stronger security - for example,
         the cookies used will be secure, meaning they are only sent over
