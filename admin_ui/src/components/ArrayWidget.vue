@@ -18,6 +18,7 @@
                     @updated="updateArray($event, index)"
                 />
                 <input
+                    v-else
                     :type="inputType"
                     :value="value"
                     @change="updateArray(getValueFromEvent($event), index)"
