@@ -3,9 +3,13 @@
         <ul class="array_items">
             <li :key="value" v-for="(value, index) in internalArray">
                 <!--
-                We deliberately set the fieldName to blank, as we don't
+                We deliberately set the `fieldName` to blank, as we don't
                 want the value to be submitted. Instead, we combine the
                 values into an array object and submit that instead.
+
+                Also, `isFilter` is deliberately always `false`. We don't want
+                the 'All' option to be shown. For arrays, 'All' is the absence
+                of any values.
                 -->
                 <ChoiceSelect
                     v-if="choices"
@@ -13,7 +17,7 @@
                     :value="value"
                     :choices="choices"
                     :isNullable="isNullable"
-                    :isFilter="isFilter"
+                    :isFilter="false"
                     :isArray="true"
                     @updated="updateArray($event, index)"
                 />
