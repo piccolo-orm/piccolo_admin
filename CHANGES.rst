@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.2.2
+-----
+
+Fixed a bug with filtering ``Array`` columns when choices are defined. Thanks
+to @sinisaos for discovering the solution.
+
+-------------------------------------------------------------------------------
+
 1.2.1
 -----
 
