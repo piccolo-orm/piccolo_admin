@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.3.0
+-----
+
+Added translations for Traditional Chinese (thanks to @jrycw for this).
+
+-------------------------------------------------------------------------------
+
 1.2.2
 -----
 
