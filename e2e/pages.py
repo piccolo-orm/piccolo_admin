@@ -202,6 +202,19 @@ class RowListingPage:
 ###############################################################################
 
 
+class ErrorList:
+    def __init__(self, page: Page):
+        self.page = page
+        self.error_div = page.locator("div.errors")
+
+    def check_error(self, error: str):
+        list_item = self.error_div.locator("li:first-child")
+        assert error == list_item.inner_text()
+
+    def get_error_count(self) -> bool:
+        return self.error_div.locator("li").count()
+
+
 class EditRowPage:
     def __init__(self, page: Page, tablename: str, row_id: str):
         self.page = page
@@ -212,7 +225,7 @@ class EditRowPage:
         self.delete_row_button = page.locator(
             "a[data-uitest=delete_row_button]"
         )
-        self.error_div = page.locator("div.errors")
+        self.error_list = ErrorList(page=page)
         self.save_button = page.locator("button[data-uitest=save_button]")
 
     def open_drop_down_menu(self):
@@ -232,10 +245,6 @@ class EditRowPage:
         ):
             self.save_button.click()
 
-    def check_error(self, error: str):
-        list_item = self.error_div.locator("li:first-child")
-        assert error == list_item.inner_text()
-
     def reset(self):
         self.page.goto(self.url)
 
@@ -248,12 +257,25 @@ class AddRowPage:
         self.page = page
         self.tablename = tablename
         self.url = f"{BASE_URL}/#/{tablename}/add"
+        self.error_list = ErrorList(page=page)
         self.create_button = page.locator("button[data-uitest=create_button]")
 
     def reset(self):
         self.page.goto(self.url)
 
-    def add_array_item(self, field: str, option: str):
+    def add_array_value(self, field: str, value: str):
+        """
+        Used when an array widget is being used, without choices.
+        """
+        self.page.locator(
+            f"[data-uitest={field}_array_widget] [data-uitest=add_array_item_button]"  # noqa: E501
+        ).click()
+
+        self.page.locator(f"[data-uitest={field}_array_widget] input").type(
+            value
+        )
+
+    def add_array_choice(self, field: str, option: str):
         """
         Used when an array widget is being used, with choices.
         """
@@ -271,12 +293,12 @@ class AddRowPage:
         """
         self.page.locator(f"select[name={field}]").select_option(option)
 
-    def submit_form(self):
+    def submit_form(self, expected_status: int = 201):
         with self.page.expect_response(
             lambda response: response.url
             == f"{BASE_URL}/api/tables/{self.tablename}/"
             and response.request.method == "POST"
-            and response.status == 201
+            and response.status == expected_status
         ):
             self.create_button.click()
 

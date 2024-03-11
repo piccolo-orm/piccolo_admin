@@ -27,6 +27,6 @@ def test_constraints(page: Page, dev_server):
     )
     test_page.reset()
     test_page.delete()
-    test_page.check_error(
+    test_page.error_list.check_error(
         error="Database error: FOREIGN KEY constraint failed"
     )
