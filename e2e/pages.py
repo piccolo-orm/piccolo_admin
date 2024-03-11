@@ -211,7 +211,7 @@ class ErrorList:
         list_item = self.error_div.locator("li:first-child")
         assert error == list_item.inner_text()
 
-    def get_error_count(self) -> bool:
+    def get_error_count(self) -> int:
         return self.error_div.locator("li").count()
 
 
