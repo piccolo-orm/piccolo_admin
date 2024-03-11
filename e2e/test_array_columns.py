@@ -65,6 +65,18 @@ def _test_value(page: Page, field: str, value: str):
     assert test_page.error_list.get_error_count() > 0
 
 
+def test_array_varchar_validation(page: Page, dev_server):
+    """
+    Make sure that text values which are too long are rejected.
+    """
+    _test_value(
+        page=page,
+        field="email",
+        value="a"
+        * (ArrayColumns.varchar.base_column._meta.params["length"] + 1),
+    )
+
+
 def test_array_email_validation(page: Page, dev_server):
     """
     Make sure that invalid email values are rejected.
