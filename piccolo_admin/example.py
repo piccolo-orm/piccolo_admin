@@ -233,6 +233,12 @@ class Ticket(Table):
 # Some tables which are for UI testing with Playwright.
 
 
+class ArrayColumns(Table):
+    varchar = Array(Varchar(64))
+    integer = Array(Integer())
+    email = Array(Email())
+
+
 class NullableColumns(Table):
     """
     A table used for UI tests.
@@ -431,6 +437,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     User,
     Sessions,
     Ticket,
+    ArrayColumns,
     NullableColumns,
     RequiredColumns,
     SortedColumns,
@@ -523,6 +530,10 @@ ticket_config = TableConfig(
     time_resolution={Ticket.start_time: 60, Ticket.booked_on: 1},
 )
 
+array_columns_config = TableConfig(
+    table_class=ArrayColumns, menu_group="Testing"
+)
+
 nullable_config = TableConfig(
     table_class=NullableColumns,
     menu_group="Testing",
@@ -564,6 +575,7 @@ APP = create_admin(
         director_config,
         studio_config,
         ticket_config,
+        array_columns_config,
         nullable_config,
         required_columns_config,
         sorted_columns_config,
