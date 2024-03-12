@@ -23,7 +23,7 @@ def test_choices(page: Page, dev_server):
     page.wait_for_timeout(1000)
 
     for field in ("array", "array_null"):
-        add_row_page.add_array_item(
+        add_row_page.add_array_choice(
             field=field,
             option=Choices.ArrayChoices.a.value,
         )
