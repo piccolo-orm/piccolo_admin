@@ -57,25 +57,27 @@ Since the admin is an ASGI app, you can either run it standalone like in the dem
 For example, using Starlette routes:
 
 ```python
-from piccolo_admin.endpoints import create_admin
-from starlette.routing import Router, Route
 import uvicorn
+from movies.endpoints import HomeEndpoint
+from movies.tables import Director, Movie
+from starlette.routing import Mount, Route, Router
 
-from my_project.tables import Director, Movie
+from piccolo_admin.endpoints import create_admin
 
-
-# The `allowed_hosts` argument is required when running under HTTPS. It's used
-# for additional CSRF defence.
-admin = create_admin([Director, Movie], allowed_hosts=['my_site.com'])
-
-
-router = Router([
-    Route(path="/", endpoint=Hello),
-    Mount(path="/admin/", app=admin),
-])
+# The `allowed_hosts` argument is required when running under HTTPS. It's
+# used for additional CSRF defence.
+admin = create_admin([Director, Movie], allowed_hosts=["my_site.com"])
 
 
-if __name__ == '__main__':
+router = Router(
+    [
+        Route(path="/", endpoint=HomeEndpoint),
+        Mount(path="/admin/", app=admin),
+    ]
+)
+
+
+if __name__ == "__main__":
     uvicorn.run(router)
 
 ```
