@@ -17,6 +17,9 @@ def test_add_array_columns(page: Page, dev_server):
     test_page = AddRowPage(page=page, tablename=ArrayColumns._meta.tablename)
     test_page.reset()
 
+    # Let Vue JS finish loading
+    page.wait_for_timeout(1000)
+
     test_page.add_array_value(
         field="varchar",
         value="Alice",
@@ -54,6 +57,9 @@ def _test_value(page: Page, field: str, value: str):
 
     test_page = AddRowPage(page=page, tablename=ArrayColumns._meta.tablename)
     test_page.reset()
+
+    # Let Vue JS finish loading
+    page.wait_for_timeout(1000)
 
     test_page.add_array_value(
         field="email",
