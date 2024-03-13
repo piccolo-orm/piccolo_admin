@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.3.1
+-----
+
+Fixed a bug with the bulk update button not being translated.
+
+Thanks to @jrycw for reporting the issue, and @sinisaos for the fix.
+
+-------------------------------------------------------------------------------
+
 1.3.0
 -----
 
