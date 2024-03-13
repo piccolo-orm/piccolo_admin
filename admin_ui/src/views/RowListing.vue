@@ -20,7 +20,10 @@
                             "
                         >
                             <font-awesome-icon icon="arrow-up" />
-                            <span>Update {{ selectedRows.length }} rows</span>
+                            <span>
+                                {{ $t("Update") }} {{ selectedRows.length }}
+                                {{ $t("rows") }}</span
+                            >
                         </a>
                         <BulkDeleteButton
                             :selected="selectedRows.length"
