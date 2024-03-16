@@ -953,7 +953,7 @@ TRADITIONAL_CHINESE = Translation(
         "Minutes": "分鐘",
         "New password confirmation": "確認新密碼",
         "New password": "新密碼",
-        "New value": "新的值",
+        "New value": "更新值",
         "No results found": "沒有找到結果",
         "Note: Large data sets may take a while.": "注意：大型資料集可能需要一段時間。",
         "Note: They are converted to UTC when stored in the database.": "注意：它們在儲存至資料庫時會轉換為 UTC。",
@@ -972,7 +972,7 @@ TRADITIONAL_CHINESE = Translation(
         "Set Timezone": "設定時區",
         "Show Filters": "顯示篩選器",
         "Show referencing tables": "顯示引用的表格",
-        "Showing": "執行中",
+        "Showing": "正在顯示",
         "Sort by": "使用排序",
         "Sort": "排序",
         "Submit": "提交",
@@ -985,7 +985,7 @@ TRADITIONAL_CHINESE = Translation(
         "Version": "版本",
         "Weeks": "星期",
         "Welcome to": "歡迎來到",
-        "with a matching": "匹配成功",
+        "with a matching": "相對應的",
     },
 )
 
