@@ -11,7 +11,10 @@
                     <option
                         :key="columnName"
                         :value="columnName"
-                        v-if="columnName != schema.extra.primary_key_name"
+                        v-if="
+                            columnName != schema.extra.primary_key_name &&
+                            property.extra.unique == false
+                        "
                     >
                         {{ property.title }}
                     </option>

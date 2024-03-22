@@ -155,6 +155,7 @@ export interface PropertyExtra {
     help_text: string | null
     nullable: boolean
     secret: boolean
+    unique: boolean
     widget?: string
 }
 
