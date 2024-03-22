@@ -95,8 +95,6 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
         "checkbox"
     ).check()
     page.get_by_role("link", name="Update 8 rows").click()
-    # Let Vue JS finish loading
-    page.wait_for_timeout(1000)
     page.locator('select[name="property"]').select_option("gender")
     page.locator('select[name="gender"]').select_option("f")
     page.get_by_role("button", name="Update").click()
