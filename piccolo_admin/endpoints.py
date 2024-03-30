@@ -30,6 +30,7 @@ from piccolo_api.change_password.endpoints import change_password
 from piccolo_api.crud.endpoints import OrderBy, PiccoloCRUD
 from piccolo_api.crud.hooks import Hook
 from piccolo_api.crud.validators import Validators
+from piccolo_api.csp.middleware import CSPMiddleware, CSPConfig
 from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.media.base import MediaStorage
@@ -667,11 +668,17 @@ class AdminRouter(FastAPI):
                     media_storage,
                 ) in table_config.media_columns.items():
                     if isinstance(media_storage, LocalMediaStorage):
+                        # We apply a restrictive CSP here to mitigate SVG
+                        # files being used maliciously when viewed by admins
                         private_app.mount(
-                            path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",  # noqa: E501
-                            app=StaticFiles(
-                                directory=media_storage.media_path
-                            ),
+                            path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",
+                            # noqa: E501
+                            app=CSPMiddleware(
+                                StaticFiles(
+                                    directory=media_storage.media_path
+                                ),
+                                config=CSPConfig(default_src="none")
+                            )
                         )
 
         #######################################################################
