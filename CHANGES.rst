@@ -10,7 +10,7 @@ executing JavaScript. This was possible if:
 * Local media storage was enabled
 * SVG uploads were allowed from untrusted sources
 * When viewing an uploaded SVG in Piccolo Admin, if you open the SVG in a new
-  tab then it's possible for JavaScript to run.
+  tab then it's possible for JavaScript embedded in the SVG file to run.
 
 It's recommended that you upgrade to this version. Thanks to @Skelmis for this.
 
