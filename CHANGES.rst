@@ -1,6 +1,21 @@
 Changes
 =======
 
+1.3.2
+-----
+
+Added CSP (Content Security Policy) middleware to stop malicious SVG files from
+executing JavaScript. This was possible if:
+
+* Local media storage was enabled
+* SVG uploads were allowed from untrusted sources
+* When viewing an uploaded SVG in Piccolo Admin, if you open the SVG in a new
+  tab then it's possible for JavaScript to run.
+
+It's recommended that you upgrade to this version. Thanks to @Skelmis for this.
+
+-------------------------------------------------------------------------------
+
 1.3.1
 -----
 
