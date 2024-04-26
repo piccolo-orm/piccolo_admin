@@ -116,7 +116,7 @@ export default defineComponent({
             return this.$store.state.currentTableName
         },
         isMediaColumn() {
-            return this.schema.extra.media_columns.includes(this.fieldName)
+            return this.schema?.extra.media_columns.includes(this.fieldName)
         }
     },
     methods: {
