@@ -46,7 +46,7 @@ import { defineComponent, type PropType } from "vue"
 
 import NewForm from "./NewForm.vue"
 import type { APIResponseMessage, FormConfig, Schema } from "../interfaces"
-import { parseErrorResponse } from "../utils"
+import { convertFormValue, parseErrorResponse } from "@/utils"
 import FormErrors from "./FormErrors.vue"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
@@ -100,12 +100,11 @@ export default defineComponent({
                 const key = i[0]
                 let value: any = i[1]
 
-                if (value == "null") {
-                    value = null
-                } else if (this.schema.properties[key].type == "array") {
-                    value = JSON.parse(value)
-                }
-                json[key] = value
+                json[key] = convertFormValue({
+                    key,
+                    value,
+                    schema: this.schema
+                })
             }
 
             try {
