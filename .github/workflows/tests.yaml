@@ -66,4 +66,4 @@ jobs:
             - name: Test with pytest, SQLite
               run: ./scripts/run-tests.sh
             - name: Upload coverage
-              uses: codecov/codecov-action@v1
+              uses: codecov/codecov-action@v4
