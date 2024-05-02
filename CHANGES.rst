@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.3.3
+-----
+
+Fixed a bug with array inputs in custom forms (thanks to @sinisaos for this).
+
+-------------------------------------------------------------------------------
+
 1.3.2
 -----
 
