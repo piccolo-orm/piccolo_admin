@@ -139,7 +139,7 @@ export function convertFormValue(params: {
 
     if (value == "null") {
         value = null
-    } else if (property.extra.nullable && value == "") {
+    } else if (property.extra?.nullable && value == "") {
         value = null
     } else if (getType(property) == "array") {
         value = JSON.parse(String(value))
