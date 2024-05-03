@@ -449,7 +449,7 @@ def custom_form_choices() -> t.Dict[str, t.Any]:
 
 
 class NewStaff(BaseModel):
-    name: t.Annotated[str, Field(max_length=255, pattern=r"^[a-zA-Z\s]+$")]
+    name: str
     email: EmailStr
     superuser: bool
     permissions: t.Any = Field(
