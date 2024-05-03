@@ -290,6 +290,11 @@ class TestForms(TestCase):
                     "slug": "booking-form",
                     "description": "Make a booking for a customer.",
                 },
+                {
+                    "name": "New Staff",
+                    "slug": "new-staff",
+                    "description": "Create a new staff member.",
+                },
             ],
         )
 

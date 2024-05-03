@@ -11,6 +11,7 @@
                 v-bind:columnName="String(columnName)"
                 v-bind:type="getType(property)"
                 v-bind:value="property.default"
+                v-bind:choices="property.extra?.choices"
                 v-bind:timeResolution="
                     schema?.extra?.time_resolution[columnName]
                 "

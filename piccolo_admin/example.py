@@ -48,7 +48,7 @@ from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.session_auth.tables import SessionsBase
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
@@ -430,6 +430,38 @@ def booking_endpoint(request: Request, data: BookingModel) -> str:
     return "Booking complete"
 
 
+# An example of using Python enum in custom forms
+class Permission(str, enum.Enum):
+    UPLOADS = "uploads"
+    NOTICES = "notices"
+    GALLERY = "gallery"
+    ADMISSIONS = "admissions"
+
+
+def custom_form_choices() -> t.Dict[str, t.Any]:
+    choices = {}
+    for item in Permission:
+        choices[item.name] = {
+            "display_name": item.name,
+            "value": item.value,
+        }
+    return choices
+
+
+class NewStaff(BaseModel):
+    name: t.Annotated[str, Field(max_length=255, pattern=r"^[a-zA-Z\s]+$")]
+    email: EmailStr
+    superuser: bool
+    permissions: t.Any = Field(
+        json_schema_extra={"extra": {"choices": custom_form_choices()}}
+    )
+
+
+def new_staff_endpoint(request: Request, data: NewStaff) -> str:
+    print(data)
+    return "A new staff member has been successfully created."
+
+
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Director,
     Movie,
@@ -596,6 +628,12 @@ APP = create_admin(
             pydantic_model=BookingModel,
             endpoint=booking_endpoint,
             description="Make a booking for a customer.",
+        ),
+        FormConfig(
+            name="New Staff",
+            description="Create a new staff member.",
+            pydantic_model=NewStaff,
+            endpoint=new_staff_endpoint,
         ),
     ],
     auth_table=User,
