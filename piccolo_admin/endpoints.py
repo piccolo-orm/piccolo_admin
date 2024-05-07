@@ -58,6 +58,7 @@ from .translations.models import (
     TranslationListItem,
     TranslationListResponse,
 )
+from .utils import convert_enum_to_choices
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 logger = logging.getLogger(__name__)
@@ -326,6 +327,9 @@ class FormConfig:
     :param description:
         An optional description which is shown in the UI to explain to the user
         what the form is for.
+    :param choices:
+        An optional choices that allow Python enums to be used as HTML
+        select in UI.
 
     Here's a full example:
 
@@ -364,12 +368,27 @@ class FormConfig:
             t.Union[str, None, t.Coroutine],
         ],
         description: t.Optional[str] = None,
+        choices: t.Optional[t.Dict[str, t.Any]] = None,
     ):
         self.name = name
         self.pydantic_model = pydantic_model
         self.endpoint = endpoint
         self.description = description
+        self.choices = choices
         self.slug = self.name.replace(" ", "-").lower()
+        if choices is not None:
+            for field_name, field_value in choices.items():
+                # update model_fields, field annotation and
+                # rebuild the model for the changes to take effect
+                pydantic_model.model_fields[field_name] = Field(
+                    json_schema_extra={
+                        "extra": {
+                            "choices": convert_enum_to_choices(field_value)
+                        }
+                    },
+                )
+                pydantic_model.model_fields[field_name].annotation = str
+                pydantic_model.model_rebuild(force=True)
 
 
 class FormConfigResponseModel(BaseModel):
