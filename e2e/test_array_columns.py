@@ -1,3 +1,5 @@
+import datetime
+
 from playwright.sync_api import Page
 
 from piccolo_admin.example import ArrayColumns
@@ -35,18 +37,41 @@ def test_add_array_columns(page: Page, dev_server):
         value="test@gmail.com",
     )
 
+    test_page.add_array_value(
+        field="date",
+        value="2024-02-01",
+    )
+
+    test_page.add_array_value(
+        field="time",
+        value="08:20",
+    )
+
+    test_page.add_array_value(
+        field="timestamp",
+        value="2024-02-01T08:20",
+    )
+
     test_page.submit_form()
 
     response = ArrayColumns.select(
         ArrayColumns.varchar,
         ArrayColumns.integer,
         ArrayColumns.email,
+        ArrayColumns.date,
+        ArrayColumns.time,
+        ArrayColumns.timestamp,
     ).run_sync()
 
     assert {
         "varchar": ["Alice"],
         "integer": [1],
         "email": ["test@gmail.com"],
+        "date": [datetime.date(year=2024, month=2, day=1)],
+        "time": [datetime.time(hour=8, minute=20)],
+        "timestamp": [
+            datetime.datetime(year=2024, month=2, day=1, hour=8, minute=20)
+        ],
     } in response
 
 

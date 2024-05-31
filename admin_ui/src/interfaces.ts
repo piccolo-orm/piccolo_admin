@@ -130,6 +130,11 @@ export interface AnyOf {
     type: string
     maxLength?: number
     format?: string
+    // If the element is an array:
+    items?: {
+        format: string
+        type: string
+    }
 }
 
 export interface Property {
@@ -140,7 +145,6 @@ export interface Property {
     anyOf?: AnyOf[]
     format?: string
     maxLength?: number
-    items?: ArrayItems
 }
 
 export interface ForeignKey {
@@ -159,10 +163,6 @@ export interface PropertyExtra {
     widget?: string
 }
 
-export interface ArrayItems {
-    type: string
-}
-
 export interface FormConfig {
     name: string
     slug: string
@@ -177,5 +177,17 @@ export const getType = (property: Property): string => {
 }
 
 export const getFormat = (property: Property): string | undefined => {
-    return property.format || property.anyOf?.[0].format
+    if (property.format) {
+        return property.format
+    }
+
+    const anyOfItem = property.anyOf?.[0]
+
+    if (anyOfItem) {
+        if (anyOfItem.type == "array") {
+            return anyOfItem.items?.format
+        } else {
+            return anyOfItem.format
+        }
+    }
 }
