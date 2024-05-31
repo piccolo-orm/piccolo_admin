@@ -209,6 +209,7 @@
                 :isFilter="isFilter"
                 :choices="choices"
                 :isNullable="isNullable"
+                :inputType="arrayInputType"
             />
             <input
                 :value="localValue ? JSON.stringify(localValue) : null"
@@ -350,6 +351,19 @@ export default defineComponent({
         },
         currentTableName() {
             return this.$store.state.currentTableName
+        },
+        arrayInputType() {
+            // TODO - for things like arrays of integers, we need to look at
+            // the subtype and not just the format.
+            if (this.format == "date") {
+                return "date"
+            } else if (this.format == "date-time") {
+                return "datetime-local"
+            } else if (this.format == "time") {
+                return "time"
+            } else {
+                return "text"
+            }
         }
     },
     methods: {

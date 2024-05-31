@@ -237,6 +237,9 @@ class ArrayColumns(Table):
     varchar = Array(Varchar(64))
     integer = Array(Integer())
     email = Array(Email())
+    timestamp = Array(Timestamp())
+    date = Array(Date())
+    time = Array(Time())
 
 
 class NullableColumns(Table):
