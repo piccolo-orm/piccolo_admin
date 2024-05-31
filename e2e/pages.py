@@ -271,7 +271,7 @@ class AddRowPage:
             f"[data-uitest={field}_array_widget] [data-uitest=add_array_item_button]"  # noqa: E501
         ).click()
 
-        self.page.locator(f"[data-uitest={field}_array_widget] input").type(
+        self.page.locator(f"[data-uitest={field}_array_widget] input").fill(
             value
         )
 
