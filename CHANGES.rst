@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.4.0
+-----
+
+Improved the array widget for arrays of ``Time`` / ``Date`` / ``Timestamp`` /
+``Timestamptz``.
+
+-------------------------------------------------------------------------------
+
 1.3.3
 -----
 
