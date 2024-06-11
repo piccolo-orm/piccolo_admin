@@ -32,7 +32,9 @@
                 :row="selectedRow"
                 :schema="schema"
             />
-            <button data-uitest="save_button">{{ $t("Save") }}</button>
+            <button :disabled="!saveButtonEnabled" data-uitest="save_button">
+                {{ $t("Save") }}
+            </button>
         </form>
 
         <ReferencingTables :rowID="rowID" :tableName="tableName" />
@@ -79,7 +81,8 @@ export default defineComponent({
     data: function () {
         return {
             errors: [] as string[],
-            showDropdown: false
+            showDropdown: false,
+            saveButtonEnabled: true
         }
     },
     computed: {
@@ -98,6 +101,8 @@ export default defineComponent({
     methods: {
         async submitForm(event: Event) {
             console.log("Submitting...")
+
+            this.saveButtonEnabled = false
 
             const form = new FormData(event.target as HTMLFormElement)
 
@@ -125,6 +130,7 @@ export default defineComponent({
                     type: "success"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
+                this.errors = []
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     this.errors = parseErrorResponse(
@@ -140,11 +146,9 @@ export default defineComponent({
                     type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
-
-                return
             }
 
-            this.errors = []
+            this.saveButtonEnabled = true
         },
         async deleteRow() {
             if (window.confirm("Are you sure you want to delete this row?")) {
