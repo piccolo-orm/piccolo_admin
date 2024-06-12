@@ -6,7 +6,9 @@
 
         <form v-if="defaults" v-on:submit.prevent="submitForm($event)">
             <RowForm v-bind:row="defaults" v-bind:schema="schema" />
-            <button data-uitest="create_button">{{ $t("Create") }}</button>
+            <button :disabled="!saveButtonEnabled" data-uitest="create_button">
+                {{ $t("Create") }}
+            </button>
         </form>
     </div>
 </template>
@@ -38,7 +40,8 @@ export default defineComponent({
     data() {
         return {
             defaults: {} as { [key: string]: any },
-            errors: [] as string[]
+            errors: [] as string[],
+            saveButtonEnabled: true
         }
     },
     setup() {
@@ -48,6 +51,8 @@ export default defineComponent({
     },
     methods: {
         async submitForm(event: Event) {
+            this.saveButtonEnabled = false
+
             const form = new FormData(event.target as HTMLFormElement)
 
             const json: { [key: string]: any } = {}
@@ -66,6 +71,17 @@ export default defineComponent({
                     tableName: this.tableName,
                     data: json
                 })
+
+                this.errors = []
+
+                var message: APIResponseMessage = {
+                    contents: "Successfully added row",
+                    type: "success"
+                }
+                this.$store.commit("updateApiResponseMessage", message)
+
+                this.$emit("addedRow")
+                this.$emit("close")
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     this.errors = parseErrorResponse(
@@ -81,19 +97,9 @@ export default defineComponent({
                     type: "error"
                 }
                 this.$store.commit("updateApiResponseMessage", message)
-
-                return
             }
-            this.errors = []
 
-            var message: APIResponseMessage = {
-                contents: "Successfully added row",
-                type: "success"
-            }
-            this.$store.commit("updateApiResponseMessage", message)
-
-            this.$emit("addedRow")
-            this.$emit("close")
+            this.saveButtonEnabled = true
         }
     },
     async mounted() {
