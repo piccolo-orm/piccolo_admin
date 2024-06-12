@@ -1,6 +1,16 @@
 Changes
 =======
 
+1.5.0
+-----
+
+On the add row and edit row forms, the save button is now temporarily disabled
+after being pressed (until the API call finishes). This is to prevent a user
+from accidentally clicking the button multiple times. Thanks to @sinisaos for
+helping with this.
+
+-------------------------------------------------------------------------------
+
 1.4.0
 -----
 
