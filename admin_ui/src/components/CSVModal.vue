@@ -27,16 +27,17 @@
             <table class="column_list" v-show="showColumnTable">
                 <tbody>
                     <tr v-for="columnName in allColumnNames">
-                        <td :for="columnName">
-                            <label :for="columnName">{{ columnName }}</label>
+                        <td>
+                            <label :for="'csv_' + columnName">{{
+                                columnName
+                            }}</label>
 
                             <input
                                 type="checkbox"
-                                :name="columnName"
+                                :id="'csv_' + columnName"
                                 :checked="
                                     selectedColumns.indexOf(columnName) != -1
                                 "
-                                :value="columnName"
                                 @change="
                                     toggleValue(
                                         ($event.target as HTMLInputElement)
@@ -57,7 +58,7 @@
                             >
                             <input
                                 type="checkbox"
-                                name="include_readable"
+                                id="include_readable"
                                 v-model="includeReadable"
                             />
                         </td>
