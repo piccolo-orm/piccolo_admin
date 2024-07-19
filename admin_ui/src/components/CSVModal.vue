@@ -106,7 +106,7 @@ const schema = computed((): Schema => {
 
 /*****************************************************************************/
 
-const showColumnTable = ref<boolean>(true)
+const showColumnTable = ref<boolean>(false)
 
 /*****************************************************************************/
 
@@ -172,6 +172,10 @@ const translate = (term: string): string => {
 
 /*****************************************************************************/
 
+// We allow the user to download more than this number of rows, but we ask them
+// to confirm first.
+const softRowLimit = 10000
+
 const fetchExportedRows = async () => {
     buttonDisabled.value = true
 
@@ -185,6 +189,16 @@ const fetchExportedRows = async () => {
         params
     })
     const data = response.data as RowCountAPIResponse
+    const rowCount = data.count
+
+    if (
+        rowCount > softRowLimit &&
+        !confirm(
+            `There are more than ${softRowLimit}, are you sure you want to continue?`
+        )
+    ) {
+        return
+    }
 
     /*************************************************************************/
     // Work out how many requests we need to make (based on the row count).
@@ -195,7 +209,7 @@ const fetchExportedRows = async () => {
     // Set higher __page_size param to have fewer requests to the API:
     localParams["__page_size"] = 1000
 
-    const pages = Math.ceil(data.count / localParams["__page_size"])
+    const pages = Math.ceil(rowCount / localParams["__page_size"])
 
     /*************************************************************************/
     // Make sure orderBy is included in the query, so it matches how the
