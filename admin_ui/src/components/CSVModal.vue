@@ -13,20 +13,25 @@
                 Columns<a href="#" @click.prevent="toggleAll()">Toggle all</a>
             </p>
 
-            <ul class="column_list">
-                <li v-for="columnName in Object.keys(schema.properties)">
-                    <label :for="columnName">
-                        {{ columnName }}
-                    </label>
-                    <input
-                        type="checkbox"
-                        :name="columnName"
-                        :checked="selectedColumns.indexOf(columnName) != -1"
-                        :value="columnName"
-                        @change="toggleValue($event, columnName)"
-                    />
-                </li>
-            </ul>
+            <table class="column_list">
+                <tbody>
+                    <tr v-for="columnName in Object.keys(schema.properties)">
+                        <td :for="columnName">
+                            <label :for="columnName">{{ columnName }}</label>
+
+                            <input
+                                type="checkbox"
+                                :name="columnName"
+                                :checked="
+                                    selectedColumns.indexOf(columnName) != -1
+                                "
+                                :value="columnName"
+                                @change="toggleValue($event, columnName)"
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <ul class="column_list">
                 <li>
@@ -209,32 +214,28 @@ p#toggle_all {
     }
 }
 
-ul.column_list {
-    margin-left: 0;
-    padding-left: 0;
+table.column_list {
+    width: 100%;
 
-    li {
-        box-sizing: border-box;
-        padding: 0.5rem;
-        list-style: none;
-        display: flex;
-        flex-direction: row;
+    tr {
+        td {
+            box-sizing: border-box;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: row;
 
-        label {
-            flex-grow: 1;
-            padding: 0;
-        }
+            label {
+                flex-grow: 1;
+                padding: 0;
+            }
 
-        input {
-            flex-grow: 0;
-        }
+            input {
+                flex-grow: 0;
+            }
 
-        a {
-            text-decoration: none;
-        }
-
-        &:nth-child(odd) {
-            background-color: rgba(0, 0, 0, 0.2);
+            a {
+                text-decoration: none;
+            }
         }
     }
 }
