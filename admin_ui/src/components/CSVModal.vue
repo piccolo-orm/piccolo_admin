@@ -26,19 +26,27 @@
                                     selectedColumns.indexOf(columnName) != -1
                                 "
                                 :value="columnName"
-                                @change="toggleValue($event, columnName)"
+                                @change="
+                                    toggleValue(
+                                        ($event.target as HTMLInputElement)
+                                            .checked,
+                                        columnName
+                                    )
+                                "
                             />
                         </td>
                     </tr>
                 </tbody>
-            </table>
 
-            <ul class="column_list">
-                <li>
-                    <label>Include readable</label>
-                    <input type="checkbox" checked />
-                </li>
-            </ul>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <label>Include readable</label>
+                            <input type="checkbox" checked />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
 
             <button
                 data-uitest="download_csv_button"
@@ -94,8 +102,7 @@ const toggleAll = () => {
     }
 }
 
-const toggleValue = (event: Event, columnName: string) => {
-    const checked = (event.target as HTMLInputElement).checked
+const toggleValue = (checked: boolean, columnName: string) => {
     if (checked) {
         selectedColumns.value.push(columnName)
     } else {
@@ -207,6 +214,8 @@ p.note {
 }
 
 p#toggle_all {
+    margin-bottom: 0;
+
     a {
         text-decoration: none;
         font-size: 0.8em;
@@ -236,6 +245,12 @@ table.column_list {
             a {
                 text-decoration: none;
             }
+        }
+    }
+
+    tfoot {
+        td {
+            margin-top: 1rem;
         }
     }
 }
