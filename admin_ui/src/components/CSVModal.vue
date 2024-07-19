@@ -15,7 +15,7 @@
 
             <table class="column_list">
                 <tbody>
-                    <tr v-for="columnName in Object.keys(schema.properties)">
+                    <tr v-for="columnName in allColumnNames">
                         <td :for="columnName">
                             <label :for="columnName">{{ columnName }}</label>
 
@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import axios from "axios"
-import { ref, inject, computed, onMounted, watch } from "vue"
+import { ref, inject, computed, onMounted } from "vue"
 import type { I18n } from "vue-i18n"
 
 import type { RowCountAPIResponse, Schema } from "../interfaces"
@@ -103,7 +103,7 @@ const includeReadable = ref<boolean>(true)
 
 const toggleAll = () => {
     if (selectedColumns.value.length == 0) {
-        selectedColumns.value = Object.keys(schema.value.properties)
+        selectedColumns.value = allColumnNames.value
     } else {
         selectedColumns.value = []
     }
@@ -118,6 +118,17 @@ const toggleValue = (checked: boolean, columnName: string) => {
         )
     }
 }
+
+const allColumnNames = computed(() => {
+    let columnNames = Object.keys(schema.value.properties)
+    const primaryKeyName = schema.value.extra.primary_key_name
+
+    if (columnNames.indexOf(primaryKeyName) == -1) {
+        columnNames = [primaryKeyName, ...columnNames]
+    }
+
+    return columnNames
+})
 
 onMounted(() => {
     selectedColumns.value = schema.value.extra.visible_column_names
