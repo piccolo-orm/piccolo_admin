@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.6.0
+-----
+
+When downloading a CSV file from the row listing page, you can now specify
+which columns you want to download.
+
+-------------------------------------------------------------------------------
+
 1.5.0
 -----
 
