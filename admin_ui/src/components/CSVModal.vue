@@ -9,6 +9,32 @@
                 <option value=";">{{ $t("Semicolon") }}</option>
             </select>
 
+            <p id="toggle_all">
+                Columns<a href="#" @click.prevent="toggleAll()">Toggle all</a>
+            </p>
+
+            <ul class="column_list">
+                <li v-for="columnName in Object.keys(schema.properties)">
+                    <label :for="columnName">
+                        {{ columnName }}
+                    </label>
+                    <input
+                        type="checkbox"
+                        :name="columnName"
+                        :checked="selectedColumns.indexOf(columnName) != -1"
+                        :value="columnName"
+                        @change="toggleValue($event, columnName)"
+                    />
+                </li>
+            </ul>
+
+            <ul class="column_list">
+                <li>
+                    <label>Include readable</label>
+                    <input type="checkbox" checked />
+                </li>
+            </ul>
+
             <button
                 data-uitest="download_csv_button"
                 :disabled="buttonDisabled"
@@ -25,10 +51,10 @@
 
 <script setup lang="ts">
 import axios from "axios"
-import { ref, inject } from "vue"
+import { ref, inject, computed, onMounted, watch } from "vue"
 import type { I18n } from "vue-i18n"
 
-import type { RowCountAPIResponse } from "../interfaces"
+import type { RowCountAPIResponse, Schema } from "../interfaces"
 import { getOrderByString } from "@/utils"
 import Modal from "./Modal.vue"
 import { useStore } from "vuex"
@@ -41,6 +67,42 @@ const emit = defineEmits(["close"])
 const buttonDisabled = ref<boolean>(false)
 const delimiter = ref<"," | ";">(",")
 const i18n = inject<I18n>("i18n")
+
+/*****************************************************************************/
+
+const schema = computed((): Schema => {
+    return store.state.schema
+})
+
+/*****************************************************************************/
+
+// I'm not sure how to handle this ...
+// I can't have a v-model for each checkbox ...
+
+const selectedColumns = ref<string[]>([])
+
+const toggleAll = () => {
+    if (selectedColumns.value.length == 0) {
+        selectedColumns.value = Object.keys(schema.value.properties)
+    } else {
+        selectedColumns.value = []
+    }
+}
+
+const toggleValue = (event: Event, columnName: string) => {
+    const checked = (event.target as HTMLInputElement).checked
+    if (checked) {
+        selectedColumns.value.push(columnName)
+    } else {
+        selectedColumns.value = selectedColumns.value.filter(
+            (i) => i != columnName
+        )
+    }
+}
+
+onMounted(() => {
+    selectedColumns.value = Object.keys(schema.value.properties)
+})
 
 /*****************************************************************************/
 
@@ -137,5 +199,43 @@ const fetchExportedRows = async () => {
 <style lang="less">
 p.note {
     font-size: 0.85em;
+}
+
+p#toggle_all {
+    a {
+        text-decoration: none;
+        font-size: 0.8em;
+        float: right;
+    }
+}
+
+ul.column_list {
+    margin-left: 0;
+    padding-left: 0;
+
+    li {
+        box-sizing: border-box;
+        padding: 0.5rem;
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+
+        label {
+            flex-grow: 1;
+            padding: 0;
+        }
+
+        input {
+            flex-grow: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        &:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
 }
 </style>
