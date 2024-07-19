@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import axios from "axios"
-import { ref, inject, computed, onMounted } from "vue"
+import { ref, inject, computed, onMounted, watch } from "vue"
 import type { I18n } from "vue-i18n"
 
 import type { RowCountAPIResponse, Schema } from "../interfaces"
@@ -142,9 +142,13 @@ const allColumnNames = computed(() => {
     return columnNames
 })
 
-onMounted(() => {
+const setupInitialColumns = () => {
     selectedColumns.value = schema.value.extra.visible_column_names
-})
+}
+
+watch(schema, setupInitialColumns)
+
+onMounted(setupInitialColumns)
 
 /*****************************************************************************/
 
@@ -172,35 +176,58 @@ const fetchExportedRows = async () => {
     buttonDisabled.value = true
 
     const params = store.state.filterParams
-    const orderBy = store.state.orderBy
     const tableName = store.state.currentTableName
 
-    if (orderBy && orderBy.length > 0) {
-        params["__order"] = getOrderByString(orderBy)
-    }
-    // Get the row counts:
+    /*************************************************************************/
+    // Get the row count
+
     const response = await axios.get(`api/tables/${tableName}/count/`, {
         params
     })
     const data = response.data as RowCountAPIResponse
-    const localParams = { ...params }
 
-    localParams["__page"] = data.count
+    /*************************************************************************/
+    // Work out how many requests we need to make (based on the row count).
+    // If there are lots of rows, we need to make multiple requests.
+
+    const localParams = { ...params }
 
     // Set higher __page_size param to have fewer requests to the API:
     localParams["__page_size"] = 1000
 
+    const pages = Math.ceil(data.count / localParams["__page_size"])
+
+    /*************************************************************************/
+    // Make sure orderBy is included in the query, so it matches how the
+    // results are currently displayed.
+
+    const orderBy = store.state.orderBy
+
+    if (orderBy && orderBy.length > 0) {
+        localParams["__order"] = getOrderByString(orderBy)
+    }
+
+    /*************************************************************************/
     // Work out which columns to fetch
+
     if (selectedColumns.value.length == 0) {
         alert("Please select at least one column.")
         return
     }
-    localParams["__visible_fields"] = selectedColumns.value.join(",")
 
+    if (selectedColumns.value.length != allColumnNames.value.length) {
+        // If only some columns are selected, we need to filter which are
+        // returned.
+        localParams["__visible_fields"] = selectedColumns.value.join(",")
+    }
+
+    /*************************************************************************/
     // Add readable if required
+
     localParams["__readable"] = true
 
-    const pages = Math.ceil(data.count / localParams["__page_size"])
+    /*************************************************************************/
+
     const exportedRows = []
 
     try {
