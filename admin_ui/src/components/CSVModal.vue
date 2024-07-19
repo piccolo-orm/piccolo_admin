@@ -9,11 +9,22 @@
                 <option value=";">{{ $t("Semicolon") }}</option>
             </select>
 
-            <p id="toggle_all">
-                Columns<a href="#" @click.prevent="toggleAll()">Toggle all</a>
+            <p id="column_header">
+                <a href="#" @click.prevent="showColumnTable = !showColumnTable">
+                    <font-awesome-icon
+                        :icon="showColumnTable ? 'angle-down' : 'angle-right'"
+                    />
+                    Columns</a
+                ><a
+                    id="toggle_all"
+                    href="#"
+                    @click.prevent="toggleAll()"
+                    v-show="showColumnTable"
+                    >Toggle all</a
+                >
             </p>
 
-            <table class="column_list">
+            <table class="column_list" v-show="showColumnTable">
                 <tbody>
                     <tr v-for="columnName in allColumnNames">
                         <td :for="columnName">
@@ -95,8 +106,9 @@ const schema = computed((): Schema => {
 
 /*****************************************************************************/
 
-// I'm not sure how to handle this ...
-// I can't have a v-model for each checkbox ...
+const showColumnTable = ref<boolean>(true)
+
+/*****************************************************************************/
 
 const selectedColumns = ref<string[]>([])
 const includeReadable = ref<boolean>(true)
@@ -240,13 +252,17 @@ p.note {
     font-size: 0.85em;
 }
 
-p#toggle_all {
+p#column_header {
     margin-bottom: 0;
 
     a {
         text-decoration: none;
-        font-size: 0.8em;
-        float: right;
+
+        &#toggle_all {
+            text-decoration: none;
+            font-size: 0.8em;
+            float: right;
+        }
     }
 }
 
