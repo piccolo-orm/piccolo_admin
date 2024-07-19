@@ -41,8 +41,14 @@
                 <tfoot>
                     <tr>
                         <td>
-                            <label>Include readable</label>
-                            <input type="checkbox" checked />
+                            <label for="include_readable"
+                                >Include readable</label
+                            >
+                            <input
+                                type="checkbox"
+                                name="include_readable"
+                                v-model="includeReadable"
+                            />
                         </td>
                     </tr>
                 </tfoot>
@@ -93,6 +99,7 @@ const schema = computed((): Schema => {
 // I can't have a v-model for each checkbox ...
 
 const selectedColumns = ref<string[]>([])
+const includeReadable = ref<boolean>(true)
 
 const toggleAll = () => {
     if (selectedColumns.value.length == 0) {
@@ -113,7 +120,7 @@ const toggleValue = (checked: boolean, columnName: string) => {
 }
 
 onMounted(() => {
-    selectedColumns.value = Object.keys(schema.value.properties)
+    selectedColumns.value = schema.value.extra.visible_column_names
 })
 
 /*****************************************************************************/
@@ -156,20 +163,29 @@ const fetchExportedRows = async () => {
     const localParams = { ...params }
 
     localParams["__page"] = data.count
+
     // Set higher __page_size param to have fewer requests to the API:
     localParams["__page_size"] = 1000
+
+    // Work out which columns to fetch
+    if (selectedColumns.value.length == 0) {
+        alert("Please select at least one column.")
+        return
+    }
+    localParams["__visible_fields"] = selectedColumns.value.join(",")
+
+    // Add readable if required
+    localParams["__readable"] = true
+
     const pages = Math.ceil(data.count / localParams["__page_size"])
     const exportedRows = []
 
     try {
         for (let i = 1; i < pages + 1; i++) {
             localParams["__page"] = i
-            const response = await axios.get(
-                `api/tables/${tableName}/?__readable=true`,
-                {
-                    params: localParams
-                }
-            )
+            const response = await axios.get(`api/tables/${tableName}/`, {
+                params: localParams
+            })
             exportedRows.push(...response.data.rows)
         }
         let data: string = ""
