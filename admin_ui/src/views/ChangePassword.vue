@@ -3,7 +3,7 @@
         <div class="inner">
             <BackButton />
             <div class="heading">
-                <h1>{{ $t("Change password") }}</h1>
+                <h1>{{ $t("Change Password") }}</h1>
             </div>
             <form v-on:submit.prevent="changePassword">
                 <label>{{ $t("Current password") }}</label>
@@ -21,7 +21,7 @@
                     :value="confirmNewPassword"
                     @input="confirmNewPassword = $event"
                 />
-                <button>{{ $t("Change password") }}</button>
+                <button>{{ $t("Change Password") }}</button>
             </form>
         </div>
     </div>

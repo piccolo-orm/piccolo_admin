@@ -36,7 +36,7 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     page.get_by_role("button", name="Sort").click()
     page.get_by_title("piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_text("Log out").click()
+    page.get_by_text("Log Out").click()
     # ---------------------
     context.close()
     browser.close()
@@ -73,7 +73,7 @@ def test_custom_form(playwright: Playwright, dev_server) -> None:
     page.get_by_role("link", name="Back to home page").click()
     page.get_by_title("piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_text("Log out").click()
+    page.get_by_text("Log Out").click()
     # ---------------------
     context.close()
     browser.close()
@@ -101,7 +101,7 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
     page.get_by_role("button", name="Update").click()
     page.get_by_title("piccolo").click()
     page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_text("Log out").click()
+    page.get_by_text("Log Out").click()
     # ---------------------
     context.close()
     browser.close()
@@ -122,7 +122,7 @@ def test_custom_links(playwright: Playwright, dev_server) -> None:
     page.get_by_role("link", name="7", exact=True).click()
     page.get_by_role("link", name="piccolo", exact=True).click()
     page.once("dialog", lambda dialog: dialog.dismiss())
-    page.get_by_role("link", name="Log out", exact=True).click()
+    page.get_by_role("link", name="Log Out", exact=True).click()
     # ---------------------
     context.close()
     browser.close()
