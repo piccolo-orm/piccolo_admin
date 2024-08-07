@@ -7,6 +7,7 @@ import Login from "./views/Login.vue"
 import ChangePassword from "./views/ChangePassword.vue"
 import RowListing from "./views/RowListing.vue"
 import AddForm from "./views/AddForm.vue"
+import MFASetup from "./views/MFASetup.vue"
 
 export default createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ export default createRouter({
             path: "/login/",
             name: "login",
             component: Login
+        },
+        {
+            path: "/mfa-setup/",
+            name: "mfaSetup",
+            component: MFASetup
         },
         {
             path: "/change-password/",
