@@ -2,7 +2,7 @@
     <DropDownMenu>
         <li>
             <a href="#" v-on:click.prevent="logout" data-uitest="logout_button">
-                <font-awesome-icon icon="sign-out-alt" />{{ $t("Log out") }}
+                <font-awesome-icon icon="sign-out-alt" />{{ $t("Log Out") }}
             </a>
         </li>
         <li>
@@ -10,7 +10,7 @@
                 :to="{
                     name: 'changePassword'
                 }"
-                ><font-awesome-icon icon="key" />{{ $t("Change password") }}
+                ><font-awesome-icon icon="key" />{{ $t("Change Password") }}
             </router-link>
         </li>
         <li>
