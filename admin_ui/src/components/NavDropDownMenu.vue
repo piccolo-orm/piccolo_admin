@@ -13,6 +13,14 @@
                 ><font-awesome-icon icon="key" />{{ $t("Change password") }}
             </router-link>
         </li>
+        <li>
+            <router-link
+                :to="{
+                    name: 'mfaSetup'
+                }"
+                ><font-awesome-icon icon="mobile-alt" />{{ $t("MFA Setup") }}
+            </router-link>
+        </li>
         <li v-if="darkMode">
             <a href="#" v-on:click.prevent="updateDarkMode(false)">
                 <font-awesome-icon icon="sun" />{{ $t("Light Mode") }}
