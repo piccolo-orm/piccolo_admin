@@ -35,6 +35,8 @@ from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.media.base import MediaStorage
 from piccolo_api.media.local import LocalMediaStorage
+from piccolo_api.mfa.endpoints import mfa_setup
+from piccolo_api.mfa.provider import MFAProvider
 from piccolo_api.openapi.endpoints import swagger_ui
 from piccolo_api.rate_limiting.middleware import (
     InMemoryLimitProvider,
@@ -431,12 +433,17 @@ class AdminRouter(FastAPI):
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
         sidebar_links: t.Dict[str, str] = {},
+        mfa_provider: t.Optional[MFAProvider] = None,
     ) -> None:
         super().__init__(
             title=site_name,
             description=f"{site_name} documentation",
             middleware=[
-                Middleware(CSRFMiddleware, allowed_hosts=allowed_hosts)
+                Middleware(
+                    CSRFMiddleware,
+                    allowed_hosts=allowed_hosts,
+                    allow_form_param=True,
+                )
             ],
             debug=debug,
             exception_handlers={500: log_error},
@@ -681,6 +688,21 @@ class AdminRouter(FastAPI):
                         )
 
         #######################################################################
+        # MFA
+
+        if mfa_provider:
+            private_app.mount(
+                path="/mfa-setup/",
+                app=RateLimitingMiddleware(
+                    app=mfa_setup(
+                        provider=mfa_provider,
+                        auth_table=self.auth_table,
+                    ),
+                    provider=rate_limit_provider,
+                ),
+            )
+
+        #######################################################################
 
         public_app = FastAPI(
             redoc_url=None,
@@ -705,6 +727,7 @@ class AdminRouter(FastAPI):
                     max_session_expiry=max_session_expiry,
                     redirect_to=None,
                     production=production,
+                    mfa_providers=[mfa_provider],
                 ),
                 provider=rate_limit_provider,
             ),
@@ -1083,6 +1106,7 @@ def create_admin(
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
     sidebar_links: t.Dict[str, str] = {},
+    mfa_provider: t.Optional[MFAProvider] = None,
 ):
     """
     :param tables:
@@ -1249,4 +1273,5 @@ def create_admin(
         allowed_hosts=allowed_hosts,
         debug=debug,
         sidebar_links=sidebar_links,
+        mfa_provider=mfa_provider,
     )

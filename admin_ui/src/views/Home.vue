@@ -5,6 +5,11 @@
             <p>
                 {{ $t("Select a table in the sidebar to get started.") }}
             </p>
+            <p>
+                <a href="/api/mfa-setup/">
+                    <font-awesome-icon icon="mobile-alt" />{{ $t("MFA Setup") }}
+                </a>
+            </p>
         </div>
     </BaseView>
 </template>

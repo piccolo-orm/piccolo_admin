@@ -47,6 +47,10 @@ from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
+from piccolo_api.mfa.authenticator.provider import AuthenticatorProvider
+from piccolo_api.mfa.authenticator.tables import (
+    AuthenticatorSecret as AuthenticatorSecret_,
+)
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, field_validator
 from starlette.requests import Request
@@ -136,6 +140,10 @@ class Sessions(SessionsBase):
 
 
 class User(BaseUser, tablename="piccolo_user"):
+    pass
+
+
+class AuthenticatorSecret(AuthenticatorSecret_):
     pass
 
 
@@ -439,6 +447,7 @@ TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
     Studio,
     User,
     Sessions,
+    AuthenticatorSecret,
     Ticket,
     ArrayColumns,
     NullableColumns,
@@ -607,6 +616,10 @@ APP = create_admin(
         "Top Movies": "/#/movie?__order=-box_office",
         "Google": "https://google.com",
     },
+    mfa_provider=AuthenticatorProvider(
+        db_encryption_key="wqsOqyTTEsrWppZeIMS8a3l90yPUtrqT48z7FS6_U8g=",
+        secret_table=AuthenticatorSecret,
+    ),
 )
 
 
