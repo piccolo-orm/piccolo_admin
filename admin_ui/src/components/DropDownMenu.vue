@@ -4,7 +4,7 @@
     </ul>
 </template>
 
-<script setup></script>
+<script setup lang="ts"></script>
 
 <style lang="less">
 @import "../vars.less";
