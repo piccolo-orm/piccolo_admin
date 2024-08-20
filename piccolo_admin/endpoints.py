@@ -733,7 +733,7 @@ class AdminRouter(FastAPI):
                     max_session_expiry=max_session_expiry,
                     redirect_to=None,
                     production=production,
-                    mfa_providers=[mfa_provider],
+                    mfa_providers=mfa_providers,
                 ),
                 provider=rate_limit_provider,
             ),
