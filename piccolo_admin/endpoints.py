@@ -433,7 +433,7 @@ class AdminRouter(FastAPI):
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
         sidebar_links: t.Dict[str, str] = {},
-        mfa_provider: t.Optional[MFAProvider] = None,
+        mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
     ) -> None:
         super().__init__(
             title=site_name,
@@ -690,17 +690,23 @@ class AdminRouter(FastAPI):
         #######################################################################
         # MFA
 
-        if mfa_provider:
-            private_app.mount(
-                path="/mfa-setup/",
-                app=RateLimitingMiddleware(
-                    app=mfa_setup(
-                        provider=mfa_provider,
-                        auth_table=self.auth_table,
+        if mfa_providers:
+            if len(mfa_providers) > 1:
+                raise ValueError(
+                    "Only a single mfa_provider is currently supported."
+                )
+
+            for mfa_provider in mfa_providers:
+                private_app.mount(
+                    path="/mfa-setup/",
+                    app=RateLimitingMiddleware(
+                        app=mfa_setup(
+                            provider=mfa_provider,
+                            auth_table=self.auth_table,
+                        ),
+                        provider=InMemoryLimitProvider(limit=5, timespan=300),
                     ),
-                    provider=rate_limit_provider,
-                ),
-            )
+                )
 
         #######################################################################
 
@@ -1106,7 +1112,7 @@ def create_admin(
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
     sidebar_links: t.Dict[str, str] = {},
-    mfa_provider: t.Optional[MFAProvider] = None,
+    mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
 ):
     """
     :param tables:
@@ -1273,5 +1279,5 @@ def create_admin(
         allowed_hosts=allowed_hosts,
         debug=debug,
         sidebar_links=sidebar_links,
-        mfa_provider=mfa_provider,
+        mfa_providers=mfa_providers,
     )

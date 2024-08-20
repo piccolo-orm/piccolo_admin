@@ -616,10 +616,12 @@ APP = create_admin(
         "Top Movies": "/#/movie?__order=-box_office",
         "Google": "https://google.com",
     },
-    mfa_provider=AuthenticatorProvider(
-        db_encryption_key="wqsOqyTTEsrWppZeIMS8a3l90yPUtrqT48z7FS6_U8g=",
-        secret_table=AuthenticatorSecret,
-    ),
+    mfa_providers=[
+        AuthenticatorProvider(
+            db_encryption_key="wqsOqyTTEsrWppZeIMS8a3l90yPUtrqT48z7FS6_U8g=",
+            secret_table=AuthenticatorSecret,
+        ),
+    ],
 )
 
 
