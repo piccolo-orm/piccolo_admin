@@ -35,7 +35,7 @@ export interface FetchSingleRowConfig {
 
 export interface APIResponseMessage {
     contents: string
-    type: string
+    type: "success" | "error" | "neutral"
 }
 
 export interface OrderByConfig {

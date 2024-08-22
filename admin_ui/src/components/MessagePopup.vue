@@ -1,6 +1,9 @@
 <template>
     <div
-        :class="{ error: apiResponseMessage.type == 'error' }"
+        :class="{
+            error: apiResponseMessage.type == 'error',
+            neutral: apiResponseMessage.type == 'neutral'
+        }"
         id="message_popup"
         v-if="visible"
     >
@@ -85,8 +88,13 @@ div#message_popup {
     p.close {
         flex-grow: 0;
     }
-}
-div#message_popup.error {
-    background-color: @red;
+
+    &.error {
+        background-color: @red;
+    }
+
+    &.neutral {
+        background-color: @dark_blue;
+    }
 }
 </style>

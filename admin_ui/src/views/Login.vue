@@ -13,7 +13,7 @@
 
                 <template v-if="mfaCodeRequired">
                     <label>{{ $t("MFA Code") }}</label>
-                    <input placeholder="123456" type="text" />
+                    <input placeholder="123456" type="text" v-model="mfaCode" />
                     <p>
                         Hint: Use your authenticator app to generate the MFA
                         code - if you've lost your phone, you can use a recovery
@@ -38,6 +38,7 @@ export default defineComponent({
         return {
             username: "",
             password: "",
+            mfaCode: "",
             mfaCodeRequired: false
         }
     },
@@ -55,7 +56,8 @@ export default defineComponent({
             try {
                 await axios.post(`./public/login/`, {
                     username: this.username,
-                    password: this.password
+                    password: this.password,
+                    ...(this.mfaCodeRequired ? { mfaCode: this.mfaCode } : {})
                 })
             } catch (error) {
                 console.log("Request failed")
@@ -67,6 +69,11 @@ export default defineComponent({
                         error.response?.status == 401 &&
                         error.response?.data?.detail == "MFA code required"
                     ) {
+                        this.$store.commit("updateApiResponseMessage", {
+                            contents: "MFA code required",
+                            type: "neutral"
+                        })
+
                         this.mfaCodeRequired = true
                     } else {
                         this.$store.commit("updateApiResponseMessage", {
