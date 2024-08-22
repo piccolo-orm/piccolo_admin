@@ -10,6 +10,17 @@
 
                 <label>{{ $t("Password") }}</label>
                 <PasswordInput @input="password = $event" :value="password" />
+
+                <template v-if="mfaCodeRequired">
+                    <label>{{ $t("MFA Code") }}</label>
+                    <input placeholder="123456" type="text" />
+                    <p>
+                        Hint: Use your authenticator app to generate the MFA
+                        code - if you've lost your phone, you can use a recovery
+                        code instead.
+                    </p>
+                </template>
+
                 <button data-uitest="login_button">{{ $t("Login") }}</button>
             </form>
         </div>
@@ -26,7 +37,8 @@ export default defineComponent({
     data() {
         return {
             username: "",
-            password: ""
+            password: "",
+            mfaCodeRequired: false
         }
     },
     components: {
@@ -47,12 +59,21 @@ export default defineComponent({
                 })
             } catch (error) {
                 console.log("Request failed")
+
                 if (axios.isAxiosError(error)) {
                     console.log(error.response)
-                    this.$store.commit("updateApiResponseMessage", {
-                        contents: "Problem logging in",
-                        type: "error"
-                    })
+
+                    if (
+                        error.response?.status == 401 &&
+                        error.response?.data?.detail == "MFA code required"
+                    ) {
+                        this.mfaCodeRequired = true
+                    } else {
+                        this.$store.commit("updateApiResponseMessage", {
+                            contents: "Problem logging in",
+                            type: "error"
+                        })
+                    }
                 }
 
                 return
