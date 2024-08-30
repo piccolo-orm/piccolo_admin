@@ -699,12 +699,15 @@ class AdminRouter(FastAPI):
             for mfa_provider in mfa_providers:
                 private_app.mount(
                     path="/mfa-setup/",
+                    # This rate limiting is because some of the forms accept
+                    # a password, and generating recovery codes is somewhat
+                    # expensive, so we want to prevent abuse.
                     app=RateLimitingMiddleware(
                         app=mfa_setup(
                             provider=mfa_provider,
                             auth_table=self.auth_table,
                         ),
-                        provider=InMemoryLimitProvider(limit=5, timespan=300),
+                        provider=InMemoryLimitProvider(limit=20, timespan=300),
                     ),
                 )
 
@@ -720,11 +723,14 @@ class AdminRouter(FastAPI):
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
-                limit=100, timespan=300
+                limit=20,
+                timespan=300,
             )
 
         public_app.mount(
             path="/login/",
+            # This rate limiting is to prevent brute forcing password login,
+            # and MFA codes.
             app=RateLimitingMiddleware(
                 app=session_login(
                     auth_table=self.auth_table,
