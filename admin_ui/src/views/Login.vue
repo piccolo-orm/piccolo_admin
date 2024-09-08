@@ -57,9 +57,7 @@ export default defineComponent({
                 await axios.post(`./public/login/`, {
                     username: this.username,
                     password: this.password,
-                    ...(this.mfaCodeRequired
-                        ? { authenticator_token: this.mfaCode }
-                        : {})
+                    ...(this.mfaCodeRequired ? { mfa_code: this.mfaCode } : {})
                 })
             } catch (error) {
                 console.log("Request failed")
