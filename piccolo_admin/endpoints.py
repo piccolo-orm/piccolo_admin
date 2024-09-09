@@ -1239,6 +1239,8 @@ def create_admin(
                     "Google": "https://google.com"
                 },
             )
+    param mfa_providers:
+        Enables Multi-factor Authentication in the login process.
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
