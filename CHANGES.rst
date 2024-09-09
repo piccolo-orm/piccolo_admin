@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.7.1
+-----
+
+Make the `MFA Setup` URL relative, so it works when Piccolo Admin isn't mounted
+at the root.
+
+-------------------------------------------------------------------------------
+
 1.7.0
 -----
 
