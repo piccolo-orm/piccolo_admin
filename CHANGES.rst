@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.7.0
+-----
+
+Initial release for Multi-factor Authentication support.
+
+Many thanks to @sinisaos and @Skelmis for their help with this.
+
+-------------------------------------------------------------------------------
+
 1.6.0
 -----
 
