@@ -45,7 +45,7 @@ from piccolo.columns.readable import Readable
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
-from piccolo_api.encryption.providers import FernetProvider
+from piccolo_api.encryption.providers import XChaCha20Provider
 from piccolo_api.media.local import LocalMediaStorage
 from piccolo_api.media.s3 import S3MediaStorage
 from piccolo_api.mfa.authenticator.provider import AuthenticatorProvider
@@ -619,8 +619,10 @@ APP = create_admin(
     },
     mfa_providers=[
         AuthenticatorProvider(
-            encryption_provider=FernetProvider(
-                encryption_key="wqsOqyTTEsrWppZeIMS8a3l90yPUtrqT48z7FS6_U8g="
+            encryption_provider=XChaCha20Provider(
+                encryption_key=(
+                    b"\x01\xfdN\xe4E?\xaa\xf8<e\xfc\x9f\x0b9\x8b\x00H%~\xe1/\xd7\xdcz\xff\xd88\xdajd\xae\x06"  # noqa: E501
+                )
             ),
             secret_table=AuthenticatorSecret,
         ),
