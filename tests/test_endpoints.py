@@ -14,9 +14,11 @@ from piccolo.columns.column_types import (
     Varchar,
 )
 from piccolo.table import Table, create_db_tables_sync, drop_db_tables_sync
+from piccolo.testing.test_case import TableTest
 from piccolo_api.crud.hooks import Hook, HookType
 from piccolo_api.crud.validators import Validators
 from piccolo_api.media.local import LocalMediaStorage
+from piccolo_api.mfa.authenticator.tables import AuthenticatorSecret
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.exceptions import HTTPException
 from starlette.testclient import TestClient
@@ -241,18 +243,16 @@ class TestAdminRouter(TestCase):
         self.assertEqual(response.status_code, 401)
 
 
-class TestForms(TestCase):
+class TestForms(TableTest):
     credentials = {"username": "Bob", "password": "bob123"}
 
+    tables = [BaseUser, SessionsBase, AuthenticatorSecret]
+
     def setUp(self):
-        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        super().setUp()
         BaseUser.create_user_sync(
             **self.credentials, active=True, admin=True, superuser=True
         )
-
-    def tearDown(self):
-        SessionsBase.alter().drop_table().run_sync()
-        BaseUser.alter().drop_table().run_sync()
 
     def test_forms(self):
         """
@@ -449,17 +449,16 @@ class TestForms(TestCase):
         )
 
 
-class TestMediaStorage(TestCase):
+class TestMediaStorage(TableTest):
     credentials = {"username": "Bob", "password": "bob123"}
 
+    tables = [BaseUser, SessionsBase, AuthenticatorSecret]
+
     def setUp(self):
-        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        super().setUp()
         BaseUser.create_user_sync(
             **self.credentials, active=True, admin=True, superuser=True
         )
-
-    def tearDown(self):
-        drop_db_tables_sync(SessionsBase, BaseUser)
 
     @patch("piccolo_api.media.base.uuid")
     def test_image_upload(self, uuid_module: MagicMock):
@@ -608,17 +607,16 @@ class TestMediaStorage(TestCase):
         )
 
 
-class TestTables(TestCase):
+class TestTables(TableTest):
     credentials = {"username": "Bob", "password": "bob123"}
 
+    tables = [SessionsBase, BaseUser, AuthenticatorSecret]
+
     def setUp(self):
-        create_db_tables_sync(SessionsBase, BaseUser, if_not_exists=True)
+        super().setUp()
         BaseUser.create_user_sync(
             **self.credentials, active=True, admin=True, superuser=True
         )
-
-    def tearDown(self):
-        drop_db_tables_sync(SessionsBase, BaseUser)
 
     def test_tables(self):
         """

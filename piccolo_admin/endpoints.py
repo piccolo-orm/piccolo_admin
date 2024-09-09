@@ -35,6 +35,8 @@ from piccolo_api.csrf.middleware import CSRFMiddleware
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from piccolo_api.media.base import MediaStorage
 from piccolo_api.media.local import LocalMediaStorage
+from piccolo_api.mfa.endpoints import mfa_setup
+from piccolo_api.mfa.provider import MFAProvider
 from piccolo_api.openapi.endpoints import swagger_ui
 from piccolo_api.rate_limiting.middleware import (
     InMemoryLimitProvider,
@@ -431,12 +433,17 @@ class AdminRouter(FastAPI):
         allowed_hosts: t.Sequence[str] = [],
         debug: bool = False,
         sidebar_links: t.Dict[str, str] = {},
+        mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
     ) -> None:
         super().__init__(
             title=site_name,
             description=f"{site_name} documentation",
             middleware=[
-                Middleware(CSRFMiddleware, allowed_hosts=allowed_hosts)
+                Middleware(
+                    CSRFMiddleware,
+                    allowed_hosts=allowed_hosts,
+                    allow_form_param=True,
+                )
             ],
             debug=debug,
             exception_handlers={500: log_error},
@@ -681,6 +688,30 @@ class AdminRouter(FastAPI):
                         )
 
         #######################################################################
+        # MFA
+
+        if mfa_providers:
+            if len(mfa_providers) > 1:
+                raise ValueError(
+                    "Only a single mfa_provider is currently supported."
+                )
+
+            for mfa_provider in mfa_providers:
+                private_app.mount(
+                    path="/mfa-setup/",
+                    # This rate limiting is because some of the forms accept
+                    # a password, and generating recovery codes is somewhat
+                    # expensive, so we want to prevent abuse.
+                    app=RateLimitingMiddleware(
+                        app=mfa_setup(
+                            provider=mfa_provider,
+                            auth_table=self.auth_table,
+                        ),
+                        provider=InMemoryLimitProvider(limit=20, timespan=300),
+                    ),
+                )
+
+        #######################################################################
 
         public_app = FastAPI(
             redoc_url=None,
@@ -692,11 +723,14 @@ class AdminRouter(FastAPI):
 
         if not rate_limit_provider:
             rate_limit_provider = InMemoryLimitProvider(
-                limit=100, timespan=300
+                limit=20,
+                timespan=300,
             )
 
         public_app.mount(
             path="/login/",
+            # This rate limiting is to prevent brute forcing password login,
+            # and MFA codes.
             app=RateLimitingMiddleware(
                 app=session_login(
                     auth_table=self.auth_table,
@@ -705,6 +739,7 @@ class AdminRouter(FastAPI):
                     max_session_expiry=max_session_expiry,
                     redirect_to=None,
                     production=production,
+                    mfa_providers=mfa_providers,
                 ),
                 provider=rate_limit_provider,
             ),
@@ -1083,6 +1118,7 @@ def create_admin(
     allowed_hosts: t.Sequence[str] = [],
     debug: bool = False,
     sidebar_links: t.Dict[str, str] = {},
+    mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
 ):
     """
     :param tables:
@@ -1203,6 +1239,8 @@ def create_admin(
                     "Google": "https://google.com"
                 },
             )
+    param mfa_providers:
+        Enables Multi-factor Authentication in the login process.
 
     """  # noqa: E501
     auth_table = auth_table or BaseUser
@@ -1249,4 +1287,5 @@ def create_admin(
         allowed_hosts=allowed_hosts,
         debug=debug,
         sidebar_links=sidebar_links,
+        mfa_providers=mfa_providers,
     )

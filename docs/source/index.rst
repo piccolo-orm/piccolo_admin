@@ -49,6 +49,7 @@ Table of Contents
    ../sidebar_links/index
    ../actions/index
    ../media_storage/index
+   ../mfa/index
    ../internationalization/index
    ../rest_api_documentation/index
    ../debugging/index

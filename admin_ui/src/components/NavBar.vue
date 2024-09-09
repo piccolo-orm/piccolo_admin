@@ -44,7 +44,8 @@
                     {{ truncatedUsername }}
                     <font-awesome-icon icon="angle-up" v-if="showDropdown" />
                     <font-awesome-icon icon="angle-down" v-if="!showDropdown" />
-                    <NavDropDownMenu v-if="showDropdown" />
+
+                    <NavDropDownMenu v-show="showDropdown" />
                 </a>
             </li>
         </ul>

@@ -13,13 +13,18 @@
                 ><font-awesome-icon icon="key" />{{ $t("Change Password") }}
             </router-link>
         </li>
+        <li>
+            <a href="/api/mfa-setup/" @click="$event.stopPropagation()">
+                <font-awesome-icon icon="mobile-alt" />{{ $t("MFA Setup") }}
+            </a>
+        </li>
         <li v-if="darkMode">
-            <a href="#" v-on:click.prevent="updateDarkMode(false)">
+            <a href="#" @click.prevent="updateDarkMode(false)">
                 <font-awesome-icon icon="sun" />{{ $t("Light Mode") }}
             </a>
         </li>
         <li v-else>
-            <a href="#" v-on:click.prevent="updateDarkMode(true)">
+            <a href="#" @click.prevent="updateDarkMode(true)">
                 <font-awesome-icon icon="moon" />{{ $t("Dark Mode") }}
             </a>
         </li>
@@ -29,7 +34,7 @@
             >
         </li>
         <li>
-            <a href="#" v-on:click.prevent="showAboutModal">
+            <a href="#" @click.prevent="showAboutModal">
                 <font-awesome-icon icon="info-circle" />{{ $t("About") }}
                 Piccolo
             </a>
