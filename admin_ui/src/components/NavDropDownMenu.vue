@@ -14,7 +14,7 @@
             </router-link>
         </li>
         <li>
-            <a href="/api/mfa-setup/" @click="$event.stopPropagation()">
+            <a href="./api/mfa-setup/" @click="$event.stopPropagation()">
                 <font-awesome-icon icon="mobile-alt" />{{ $t("MFA Setup") }}
             </a>
         </li>
