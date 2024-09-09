@@ -51,3 +51,27 @@ To generate the encryption key in the above example:
 .. note::
     Piccolo Admin currently allows you to use a single ``MFAProvider``, but
     this might change in the future.
+
+Install dependencies
+--------------------
+
+For the above example, you need to install some extra dependencies:
+
+.. code-block:: bash
+
+    pip install piccolo_api[authenticator,pynacl]
+
+Create database table
+---------------------
+
+You need to create the database table for storing the MFA secrets, either by:
+
+* Adding ``"piccolo_api.mfa.authenticator.piccolo_app"`` to your ``AppRegistry``
+  in ``piccolo_conf.py``, then running the migrations using
+  ``piccolo migrations forwards all``.
+* Manually creating the table.
+
+  .. code-block:: pycon
+
+    >>> from piccolo_api.mfa.authenticator.tables import AuthenticatorSecret
+    >>> AuthenticatorSecret.create_table().run_sync()
