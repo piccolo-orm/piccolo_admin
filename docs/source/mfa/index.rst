@@ -6,6 +6,10 @@ Piccolo Admin supports Multi-factor Authentication (MFA). See the
 
 Most of the underlying functionality comes from ``piccolo_api``.
 
+.. note::
+
+   There is a `video tutorial on YouTube <https://youtu.be/S24JoFdWxwQ>`__.
+
 ``MFAProvider``
 ---------------
 
