@@ -70,7 +70,7 @@ export default defineComponent({
         return {
             errors: [] as string[],
             formConfig: undefined as FormConfig | undefined,
-            successMessage: null
+            successMessage: null as string | null
         }
     },
     watch: {
@@ -110,7 +110,8 @@ export default defineComponent({
             try {
                 var response = await axios.post(
                     `${BASE_URL}forms/${this.formSlug}/`,
-                    json
+                    json,
+                    { responseType: "blob" }
                 )
             } catch (error) {
                 var message: APIResponseMessage = {
@@ -129,11 +130,33 @@ export default defineComponent({
                 return
             }
 
-            this.errors = []
+            const contentDisposition = response.headers["content-disposition"]
 
-            this.successMessage =
-                response.data.custom_form_success ||
-                "Successfully submitted form"
+            if (
+                contentDisposition &&
+                contentDisposition.startsWith("attachment")
+            ) {
+                // It's a file we need to download
+                const fileName = contentDisposition
+                    .split("filename=")[1]
+                    .replaceAll('"', "")
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                )
+                const link = document.createElement("a")
+                link.href = url
+                link.setAttribute("download", fileName)
+                document.body.appendChild(link)
+                link.click()
+
+                this.successMessage = "Downloaded file"
+            } else {
+                this.successMessage =
+                    response.data.custom_form_success ||
+                    "Successfully submitted form"
+            }
+
+            this.errors = []
         }
     },
     async mounted() {

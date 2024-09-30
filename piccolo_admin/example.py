@@ -6,12 +6,15 @@ or `admin_demo`.
 """
 
 import asyncio
+import csv
 import datetime
 import decimal
 import enum
+import io
 import logging
 import os
 import random
+import shutil
 import smtplib
 import typing as t
 
@@ -57,6 +60,7 @@ from pydantic import BaseModel, field_validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import (
+    FileResponse,
     FormConfig,
     OrderBy,
     TableConfig,
@@ -399,6 +403,14 @@ class BookingModel(BaseModel):
         return v
 
 
+class DownloadMoviesModel(BaseModel):
+    director_name: str
+
+
+class DownloadScheduleModel(BaseModel):
+    date: datetime.date
+
+
 def business_email_endpoint(request: Request, data: BusinessEmailModel) -> str:
     sender = "info@example.com"
     receivers = [data.email]
@@ -420,9 +432,6 @@ def business_email_endpoint(request: Request, data: BusinessEmailModel) -> str:
 
 
 def booking_endpoint(request: Request, data: BookingModel) -> str:
-    """
-    Testing that async functions works.
-    """
     sender = "info@example.com"
     receivers = [data.email]
 
@@ -440,6 +449,51 @@ def booking_endpoint(request: Request, data: BookingModel) -> str:
         print("Error: unable to send email")
 
     return "Booking complete"
+
+
+async def download_movies(
+    request: Request, data: DownloadMoviesModel
+) -> FileResponse:
+    """
+    An example custom form function which downloads a CSV file.
+    """
+    movies = await Movie.select(Movie.name, Movie.release_date).where(
+        Movie.director._.name == data.director_name
+    )
+
+    output_file = io.StringIO(None)
+
+    csv.DictWriter(
+        f=output_file,
+        fieldnames=["name", "release_date"],
+    ).writerows(movies)
+
+    return FileResponse(
+        contents=output_file,
+        file_name="director_movies.csv",
+        media_type="text/csv",
+    )
+
+
+def download_schedule(
+    request: Request, data: DownloadScheduleModel
+) -> FileResponse:
+    """
+    An example custom form function which downloads an image file.
+    """
+    file_name = "movie_listings.jpg"
+    with open(
+        os.path.join(os.path.dirname(__file__), "files", file_name),
+        "rb",
+    ) as f:
+        output_file = io.BytesIO(initial_bytes=None)
+        shutil.copyfileobj(f, output_file)
+
+    return FileResponse(
+        contents=output_file,
+        file_name=file_name,
+        media_type="image/jpeg",
+    )
 
 
 TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
@@ -609,6 +663,20 @@ APP = create_admin(
             pydantic_model=BookingModel,
             endpoint=booking_endpoint,
             description="Make a booking for a customer.",
+        ),
+        FormConfig(
+            name="Download director movies",
+            pydantic_model=DownloadMoviesModel,
+            endpoint=download_movies,
+            description=(
+                "Download a list of movies for the director as a CSV file."
+            ),
+        ),
+        FormConfig(
+            name="Download schedule",
+            pydantic_model=DownloadScheduleModel,
+            endpoint=download_schedule,
+            description=("Download the schedule for the day."),
         ),
     ],
     auth_table=User,
