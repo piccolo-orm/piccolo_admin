@@ -954,10 +954,11 @@ class AdminRouter(FastAPI):
         Handles posting of custom forms.
         """
         form_config = self.form_config_map.get(form_slug)
-        data = await request.json()
 
         if form_config is None:
             raise HTTPException(status_code=404, detail="No such form found")
+
+        data = await request.json()
 
         try:
             model_instance = form_config.pydantic_model(**data)
