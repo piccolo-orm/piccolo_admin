@@ -1,8 +1,8 @@
-black==24.2.0
+black==24.8.0
 isort==5.13.2
 twine==5.0.0
 mypy==1.8.0
 pip-upgrader==1.4.15
 wheel==0.42.0
 python-dotenv==1.0.1
-setuptools==69.1.0
+setuptools==75.1.0
