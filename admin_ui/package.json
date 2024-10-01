@@ -12,7 +12,7 @@
         "@fortawesome/fontawesome-svg-core": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@fortawesome/vue-fontawesome": "^3.0.3",
-        "axios": "^1.6.2",
+        "axios": "^1.7.7",
         "js-cookie": "^3.0.5",
         "json-bigint": "^1.0.0",
         "moment": "^2.29.4",
@@ -37,7 +37,7 @@
         "less": "^4.2.0",
         "prettier": "^2.5.1",
         "typescript": "~4.6.3",
-        "vite": "^2.9.1",
+        "vite": "^2.9.18",
         "vue-tsc": "^0.33.9"
     }
 }
