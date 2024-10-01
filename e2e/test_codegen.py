@@ -18,7 +18,7 @@ def test_row_listing_filter(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
+    page.get_by_role("link", name="director", exact=True).click()
     page.get_by_role("link", name="Show filters").click()
     name_input = page.locator('.filter_wrapper input[name="name"]')
     name_input.click()
@@ -90,7 +90,7 @@ def test_bulk_update(playwright: Playwright, dev_server) -> None:
     page.locator('input[name="username"]').press("Tab")
     page.locator('input[name="password"]').fill("piccolo123")
     page.locator('input[name="password"]').press("Enter")
-    page.get_by_role("link", name="director").click()
+    page.get_by_role("link", name="director", exact=True).click()
     page.locator("th").first.click()
     page.get_by_role("row", name="id Name Gender Photo").get_by_role(
         "checkbox"
