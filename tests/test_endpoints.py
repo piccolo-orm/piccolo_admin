@@ -281,14 +281,27 @@ class TestForms(TableTest):
             response.json(),
             [
                 {
+                    "description": "Send an email to a business associate.",
                     "name": "Business email form",
                     "slug": "business-email-form",
-                    "description": "Send an email to a business associate.",
                 },
                 {
+                    "description": "Make a booking for a customer.",
                     "name": "Booking form",
                     "slug": "booking-form",
-                    "description": "Make a booking for a customer.",
+                },
+                {
+                    "description": (
+                        "Download a list of movies for the director as a CSV "
+                        "file."
+                    ),
+                    "name": "Download director movies",
+                    "slug": "download-director-movies",
+                },
+                {
+                    "description": "Download the schedule for the day.",
+                    "name": "Download schedule",
+                    "slug": "download-schedule",
                 },
             ],
         )
