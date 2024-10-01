@@ -375,7 +375,7 @@ class FormConfig:
         pydantic_model: t.Type[PydanticModel],
         endpoint: t.Callable[
             [Request, PydanticModel],
-            t.Union[FormResponse, t.Coroutine[FormResponse]],
+            t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
         ],
         description: t.Optional[str] = None,
     ):

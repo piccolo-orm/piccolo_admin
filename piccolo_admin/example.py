@@ -486,7 +486,7 @@ def download_schedule(
         os.path.join(os.path.dirname(__file__), "files", file_name),
         "rb",
     ) as f:
-        output_file = io.BytesIO(initial_bytes=None)
+        output_file = io.BytesIO()
         shutil.copyfileobj(f, output_file)
 
     return FileResponse(
