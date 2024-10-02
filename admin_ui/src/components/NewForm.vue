@@ -14,6 +14,7 @@
                 v-bind:timeResolution="
                     schema?.extra?.time_resolution[columnName]
                 "
+                v-bind:format="property.format"
             />
         </div>
     </div>
