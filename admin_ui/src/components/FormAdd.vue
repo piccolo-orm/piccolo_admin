@@ -51,6 +51,17 @@ import FormErrors from "./FormErrors.vue"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
+// As we can potentially get a file as a response, we have to get it as a blob.
+// This means we get an error, we have to convert the blob into JSON.
+const convertBlobToJSON = async (
+    blob: Blob
+): Promise<{ [key: string]: string }> => {
+    if (blob.type == "application/json") {
+        return JSON.parse(await blob.text())
+    }
+    return {}
+}
+
 export default defineComponent({
     props: {
         formSlug: {
@@ -121,8 +132,10 @@ export default defineComponent({
                 this.$store.commit("updateApiResponseMessage", message)
 
                 if (axios.isAxiosError(error) && error.response) {
+                    const data = await convertBlobToJSON(error.response.data)
+
                     this.errors = parseErrorResponse(
-                        error.response.data,
+                        data,
                         error.response.status
                     )
                 }
@@ -151,9 +164,10 @@ export default defineComponent({
 
                 this.successMessage = "Downloaded file"
             } else {
+                const data = await convertBlobToJSON(response.data)
+
                 this.successMessage =
-                    response.data.custom_form_success ||
-                    "Successfully submitted form"
+                    data.custom_form_success || "Successfully submitted form"
             }
 
             this.errors = []
