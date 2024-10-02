@@ -463,10 +463,12 @@ async def download_movies(
 
     output_file = io.StringIO(None)
 
-    csv.DictWriter(
+    writer = csv.DictWriter(
         f=output_file,
         fieldnames=["name", "release_date"],
-    ).writerows(movies)
+    )
+    writer.writeheader()
+    writer.writerows(movies)
 
     return FileResponse(
         contents=output_file,
