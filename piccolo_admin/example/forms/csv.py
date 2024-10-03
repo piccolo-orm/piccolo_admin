@@ -1,7 +1,7 @@
 import csv
 import io
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from starlette.requests import Request
 
 from piccolo_admin.endpoints import FileResponse, FormConfig
@@ -10,6 +10,12 @@ from piccolo_admin.example.tables import Movie
 
 class DownloadMoviesModel(BaseModel):
     director_name: str
+
+    @field_validator("director_name")
+    def validate_director_name(cls, v):
+        if v == "":
+            raise ValueError("The value can't be empty.")
+        return v
 
 
 async def download_movies(
