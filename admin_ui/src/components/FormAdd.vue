@@ -34,7 +34,9 @@
                 ref="form"
             >
                 <NewForm :schema="schema" />
-                <button>{{ $t("Submit") }}</button>
+                <button data-uitest="submit_custom_form_button">
+                    {{ $t("Submit") }}
+                </button>
             </form>
         </div>
     </div>
@@ -50,6 +52,17 @@ import { convertFormValue, parseErrorResponse } from "@/utils"
 import FormErrors from "./FormErrors.vue"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
+
+// As we can potentially get a file as a response, we have to get it as a blob.
+// This means we get an error, we have to convert the blob into JSON.
+const convertBlobToJSON = async (
+    blob: Blob
+): Promise<{ [key: string]: string }> => {
+    if (blob.type == "application/json") {
+        return JSON.parse(await blob.text())
+    }
+    return {}
+}
 
 export default defineComponent({
     props: {
@@ -70,7 +83,7 @@ export default defineComponent({
         return {
             errors: [] as string[],
             formConfig: undefined as FormConfig | undefined,
-            successMessage: null
+            successMessage: null as string | null
         }
     },
     watch: {
@@ -110,7 +123,8 @@ export default defineComponent({
             try {
                 var response = await axios.post(
                     `${BASE_URL}forms/${this.formSlug}/`,
-                    json
+                    json,
+                    { responseType: "blob" }
                 )
             } catch (error) {
                 var message: APIResponseMessage = {
@@ -120,8 +134,10 @@ export default defineComponent({
                 this.$store.commit("updateApiResponseMessage", message)
 
                 if (axios.isAxiosError(error) && error.response) {
+                    const data = await convertBlobToJSON(error.response.data)
+
                     this.errors = parseErrorResponse(
-                        error.response.data,
+                        data,
                         error.response.status
                     )
                 }
@@ -129,11 +145,34 @@ export default defineComponent({
                 return
             }
 
-            this.errors = []
+            const contentDisposition = response.headers["content-disposition"]
 
-            this.successMessage =
-                response.data.custom_form_success ||
-                "Successfully submitted form"
+            if (
+                contentDisposition &&
+                contentDisposition.startsWith("attachment")
+            ) {
+                // It's a file we need to download
+                const fileName = contentDisposition
+                    .split("filename=")[1]
+                    .replaceAll('"', "")
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                )
+                const link = document.createElement("a")
+                link.href = url
+                link.setAttribute("download", fileName)
+                document.body.appendChild(link)
+                link.click()
+
+                this.successMessage = "Downloaded file"
+            } else {
+                const data = await convertBlobToJSON(response.data)
+
+                this.successMessage =
+                    data.custom_form_success || "Successfully submitted form"
+            }
+
+            this.errors = []
         }
     },
     async mounted() {

@@ -22,6 +22,11 @@ export default defineComponent({
     },
     async mounted() {
         await this.$store.dispatch("fetchFormSchema", this.formSlug)
+    },
+    watch: {
+        async formSlug() {
+            await this.$store.dispatch("fetchFormSchema", this.formSlug)
+        }
     }
 })
 </script>

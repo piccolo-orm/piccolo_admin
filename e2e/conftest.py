@@ -4,7 +4,7 @@ from subprocess import PIPE, Popen
 
 import pytest
 
-from piccolo_admin.example import set_engine
+from piccolo_admin.example.tables import set_engine
 
 HOST = "localhost"
 PORT = 8000
@@ -39,7 +39,7 @@ def dev_server():
     More info https://til.simonwillison.net/pytest/playwright-pytest
     """
     process = Popen(
-        ["python", "-m", "piccolo_admin.example"],
+        ["python", "-m", "piccolo_admin.example.app"],
         stdout=PIPE,
     )
     retries = 5

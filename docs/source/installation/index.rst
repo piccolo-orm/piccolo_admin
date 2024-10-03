@@ -22,7 +22,7 @@ To run a demo locally:
 
 And then just launch `<localhost:8000>`_ in your browser. Login using ``username: piccolo, password: piccolo123``.
 
-To see what happens behind the scenes, see ``piccolo_admin/example.py``.
+To see what happens behind the scenes, see ``piccolo_admin/example/app.py``.
 
 In a few lines of code we are able to:
 

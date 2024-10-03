@@ -8,7 +8,8 @@ import typing as t
 
 from playwright.sync_api import Page
 
-from piccolo_admin.example import PASSWORD, USERNAME, OrderBy
+from piccolo_admin.example.app import OrderBy
+from piccolo_admin.example.tables import PASSWORD, USERNAME
 
 from .conftest import BASE_URL
 
@@ -334,3 +335,21 @@ class HomePage:
 
     def reset(self):
         self.page.goto(self.url)
+
+
+###############################################################################
+
+
+class FormPage:
+    def __init__(self, page: Page, form_slug: str):
+        self.page = page
+        self.url = f"{BASE_URL}/#/forms/{form_slug}"
+        self.submit_button = page.locator(
+            "button[data-uitest=submit_custom_form_button]"
+        )
+
+    def reset(self):
+        self.page.goto(self.url)
+
+    def submit_form(self):
+        self.submit_button.click()

@@ -1,4 +1,6 @@
+import csv
 import datetime
+import io
 import os
 import uuid
 from pathlib import Path
@@ -29,7 +31,7 @@ from piccolo_admin.endpoints import (
     create_admin,
     get_all_tables,
 )
-from piccolo_admin.example import APP, MEDIA_ROOT, Director, Movie
+from piccolo_admin.example.app import APP, MEDIA_ROOT, Director, Movie
 from piccolo_admin.translations.data import ENGLISH, FRENCH, TRANSLATIONS
 from piccolo_admin.version import __VERSION__
 
@@ -246,7 +248,7 @@ class TestAdminRouter(TestCase):
 class TestForms(TableTest):
     credentials = {"username": "Bob", "password": "bob123"}
 
-    tables = [BaseUser, SessionsBase, AuthenticatorSecret]
+    tables = [BaseUser, SessionsBase, AuthenticatorSecret, Movie, Director]
 
     def setUp(self):
         super().setUp()
@@ -281,14 +283,22 @@ class TestForms(TableTest):
             response.json(),
             [
                 {
-                    "name": "Business email form",
-                    "slug": "business-email-form",
-                    "description": "Send an email to a business associate.",
+                    "description": (
+                        "Download a list of movies for the director as a "
+                        "CSV file."
+                    ),
+                    "name": "Download director movies",
+                    "slug": "download-director-movies",
                 },
                 {
+                    "description": "Make a booking for a customer.",
                     "name": "Booking form",
                     "slug": "booking-form",
-                    "description": "Make a booking for a customer.",
+                },
+                {
+                    "description": "Download the schedule for the day.",
+                    "name": "Download schedule",
+                    "slug": "download-schedule",
                 },
             ],
         )
@@ -296,23 +306,38 @@ class TestForms(TableTest):
         #######################################################################
         # Now get the schema for a form
 
-        response = client.get("/api/forms/business-email-form/schema/")
+        response = client.get("/api/forms/booking-form/schema/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
             {
-                "title": "BusinessEmailModel",
-                "type": "object",
                 "properties": {
-                    "email": {"title": "Email", "type": "string"},
-                    "title": {
-                        "default": "Enquiry",
-                        "title": "Title",
+                    "email": {
+                        "format": "email",
+                        "title": "Email",
                         "type": "string",
                     },
-                    "content": {"title": "Content", "type": "string"},
+                    "movie": {
+                        "default": "Star Wars: Episode IV - A New Hope",
+                        "title": "Movie",
+                        "type": "string",
+                    },
+                    "name": {"title": "Name", "type": "string"},
+                    "notes": {
+                        "default": "N/A",
+                        "title": "Notes",
+                        "type": "string",
+                    },
+                    "starts_at": {
+                        "format": "date-time",
+                        "title": "Starts At",
+                        "type": "string",
+                    },
+                    "tickets": {"title": "Tickets", "type": "integer"},
                 },
-                "required": ["email", "content"],
+                "required": ["email", "name", "tickets", "starts_at"],
+                "title": "BookingModel",
+                "type": "object",
             },
         )
         response = client.get("/api/forms/email-form/schema/")
@@ -322,14 +347,15 @@ class TestForms(TableTest):
         #######################################################################
         # Now get the FormConfig for a single form
 
-        response = client.get("/api/forms/business-email-form/")
+        response = client.get("/api/forms/booking-form/")
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(
             response.json(),
             {
-                "name": "Business email form",
-                "slug": "business-email-form",
-                "description": "Send an email to a business associate.",
+                "name": "Booking form",
+                "slug": "booking-form",
+                "description": "Make a booking for a customer.",
             },
         )
         response = client.get("/api/forms/no-such-form/")
@@ -354,29 +380,10 @@ class TestForms(TableTest):
         # Post a form
 
         form_payload = {
-            "email": "director@director.com",
-            "title": "Hello director",
-            "content": "Hello from Piccolo Admin",
-        }
-
-        response = client.post(
-            "/api/forms/business-email-form/",
-            json=form_payload,
-            headers={"X-CSRFToken": csrftoken},
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.json(), {"custom_form_success": "Email sent"}
-        )
-
-        #######################################################################
-        # Make sure async endpoints also work.
-
-        form_payload = {
-            "email": "customer@test.com",
-            "name": "Bob Jones",
-            "notes": "1 ticket",
+            "email": "customer@example.com",
+            "name": "Alice Jones",
+            "tickets": 2,
+            "starts_at": datetime.datetime.now().isoformat(),
         }
 
         response = client.post(
@@ -389,6 +396,51 @@ class TestForms(TableTest):
         self.assertEqual(
             response.json(), {"custom_form_success": "Booking complete"}
         )
+
+    def test_image_response(self):
+        client = TestClient(APP)
+
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+        #######################################################################
+        # Post a form
+
+        form_payload = {
+            "director_name": "George Lucas",
+        }
+
+        response = client.post(
+            "/api/forms/download-director-movies/",
+            json=form_payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        headers = response.headers
+
+        self.assertEqual(
+            headers["content-disposition"],
+            'attachment; filename="director_movies.csv"',
+        )
+
+        self.assertEqual(
+            headers["content-type"],
+            "text/csv; charset=utf-8",
+        )
+
+        reader = csv.reader(io.StringIO(response.content.decode()))
+        rows = [i for i in reader]
+        self.assertListEqual(rows[0], ["name", "release_date"])
 
     def test_post_form_fail(self):
         client = TestClient(APP)
@@ -408,18 +460,31 @@ class TestForms(TableTest):
         # Post a form with errors
 
         form_payload = {
-            "email": "director",
-            "title": "Hello director",
-            "content": "Hello from Piccolo Admin",
+            "email": "customer",  # This is incorrect
+            "name": "Alice Jones",
+            "tickets": 2,
+            "starts_at": datetime.datetime.now().isoformat(),
         }
 
         response = client.post(
-            "/api/forms/business-email-form/",
+            "/api/forms/booking-form/",
             json=form_payload,
             headers={"X-CSRFToken": csrftoken},
         )
 
         self.assertEqual(response.status_code, 422)
+
+
+class TestSidebarLinks(TableTest):
+    credentials = {"username": "Bob", "password": "bob123"}
+
+    tables = [BaseUser, SessionsBase, AuthenticatorSecret]
+
+    def setUp(self):
+        super().setUp()
+        BaseUser.create_user_sync(
+            **self.credentials, active=True, admin=True, superuser=True
+        )
 
     def test_sidebar_links(self):
         client = TestClient(APP)

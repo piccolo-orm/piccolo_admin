@@ -41,7 +41,7 @@ admin_demo
 
 And then just launch `localhost:8000` in your browser.
 
-To see what happens behind the scenes, see `piccolo_admin/example.py`.
+To see what happens behind the scenes, see `piccolo_admin/example/app.py`.
 
 In a few lines of code we are able to:
 

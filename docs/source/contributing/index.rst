@@ -28,13 +28,13 @@ demo app.
     admin_demo
 
     # Or alternatively
-    python -m piccolo_admin.example
+    python -m piccolo_admin.example.app
 
     # You can also populate lots of test data
-    python -m piccolo_admin.example --inflate=10000
+    python -m piccolo_admin.example.app --inflate=10000
 
     # To find out all available options:
-    python -m piccolo_admin.example --help
+    python -m piccolo_admin.example.app --help
 
 -------------------------------------------------------------------------------
 

@@ -1,15 +1,12 @@
 import datetime
 import smtplib
 
-from fastapi import FastAPI
-from fastapi.routing import Mount
 from pydantic import BaseModel, EmailStr
 from starlette.requests import Request
 
-from piccolo_admin.endpoints import FormConfig, create_admin
+from piccolo_admin.endpoints import FormConfig
 
 
-# Pydantic model for the form
 class BookingModel(BaseModel):
     movie: str = "Star Wars: Episode IV - A New Hope"
     email: EmailStr
@@ -19,7 +16,6 @@ class BookingModel(BaseModel):
     notes: str = "N/A"
 
 
-# Endpoint for handling the form
 def booking_endpoint(request: Request, data: BookingModel) -> str:
     """
     An example form function which sends an email.
@@ -49,15 +45,3 @@ FORM = FormConfig(
     endpoint=booking_endpoint,
     description="Make a booking for a customer.",
 )
-
-
-app = FastAPI(
-    routes=[
-        Mount(
-            "/admin/",
-            create_admin(forms=[FORM]),
-        ),
-    ],
-)
-
-# For Starlette it is identical, just `app = Starlette(...)`

@@ -1,6 +1,6 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import Director
+from piccolo_admin.example.tables import Director
 
 from .pages import EditRowPage, LoginPage
 

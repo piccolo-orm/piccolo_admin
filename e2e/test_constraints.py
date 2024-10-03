@@ -1,6 +1,6 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import Constraints, ConstraintTarget
+from piccolo_admin.example.tables import Constraints, ConstraintTarget
 
 from .pages import EditRowPage, LoginPage
 

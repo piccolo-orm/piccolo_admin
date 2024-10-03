@@ -5,6 +5,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 from __future__ import annotations
 
 import inspect
+import io
 import itertools
 import json
 import logging
@@ -14,6 +15,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
 
+import typing_extensions
 from fastapi import FastAPI, File, Form, UploadFile
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.base import Column
@@ -51,7 +53,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.exceptions import HTTPException
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.staticfiles import StaticFiles
 
 from .translations.data import TRANSLATIONS
@@ -309,6 +311,16 @@ PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
 
 
 @dataclass
+class FileResponse:
+    contents: t.Union[io.StringIO, io.BytesIO]
+    file_name: str
+    media_type: str
+
+
+FormResponse: typing_extensions.TypeAlias = t.Union[str, FileResponse, None]
+
+
+@dataclass
 class FormConfig:
     """
     Used to specify forms, which are passed into ``create_admin``.
@@ -363,7 +375,7 @@ class FormConfig:
         pydantic_model: t.Type[PydanticModel],
         endpoint: t.Callable[
             [Request, PydanticModel],
-            t.Union[str, None, t.Coroutine],
+            t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
         ],
         description: t.Optional[str] = None,
     ):
@@ -954,10 +966,11 @@ class AdminRouter(FastAPI):
         Handles posting of custom forms.
         """
         form_config = self.form_config_map.get(form_slug)
-        data = await request.json()
 
         if form_config is None:
             raise HTTPException(status_code=404, detail="No such form found")
+
+        data = await request.json()
 
         try:
             model_instance = form_config.pydantic_model(**data)
@@ -980,6 +993,18 @@ class AdminRouter(FastAPI):
         except ValueError as exception:
             return JSONResponse(
                 {"custom_form_error": str(exception)}, status_code=422
+            )
+
+        if isinstance(response, FileResponse):
+            headers = {
+                "Content-Disposition": (
+                    f'attachment; filename="{response.file_name}"'
+                )
+            }
+            return Response(
+                response.contents.getvalue(),
+                headers=headers,
+                media_type=response.media_type,
             )
 
         message = (
