@@ -34,7 +34,9 @@
                 ref="form"
             >
                 <NewForm :schema="schema" />
-                <button>{{ $t("Submit") }}</button>
+                <button data-uitest="submit_custom_form_button">
+                    {{ $t("Submit") }}
+                </button>
             </form>
         </div>
     </div>

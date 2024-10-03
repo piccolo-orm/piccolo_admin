@@ -1,6 +1,6 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import Movie
+from piccolo_admin.example.tables import Movie
 
 from .pages import LoginPage, RowListingPage
 

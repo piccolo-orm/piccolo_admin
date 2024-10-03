@@ -2,7 +2,7 @@ import datetime
 
 from playwright.sync_api import Page
 
-from piccolo_admin.example import ArrayColumns
+from piccolo_admin.example.tables import ArrayColumns
 
 from .pages import AddRowPage, LoginPage
 

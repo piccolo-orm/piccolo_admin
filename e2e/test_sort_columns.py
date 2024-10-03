@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import OrderBy, SortedColumns
+from piccolo_admin.example.app import OrderBy
+from piccolo_admin.example.tables import SortedColumns
 
 from .conftest import BASE_URL
 from .pages import LoginPage, RowListingPage

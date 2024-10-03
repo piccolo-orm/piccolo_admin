@@ -1,6 +1,6 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import Choices
+from piccolo_admin.example.tables import Choices
 
 from .pages import AddRowPage, LoginPage
 

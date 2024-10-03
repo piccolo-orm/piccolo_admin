@@ -8,4 +8,4 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 set -x
 
-(cd $ROOT_DIR && python -m piccolo_admin.example) & (cd $ROOT_DIR/admin_ui && npm run dev)
+(cd $ROOT_DIR && python -m piccolo_admin.example.app) & (cd $ROOT_DIR/admin_ui && npm run dev)

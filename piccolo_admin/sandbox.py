@@ -6,12 +6,12 @@ online without risk of abuse.
 import targ
 import uvicorn
 
-from piccolo_admin.example import (
+from piccolo_admin.endpoints import create_admin
+from piccolo_admin.example.tables import (
     Director,
     Movie,
     Sessions,
     User,
-    create_admin,
     create_schema,
     populate_data,
     set_engine,

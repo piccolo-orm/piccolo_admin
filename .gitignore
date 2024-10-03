@@ -17,7 +17,7 @@ htmlcov/
 .env/
 .venv/
 docs/ebug
-piccolo_admin/example_media/*
-!piccolo_admin/example_media/.gitkeep
+piccolo_admin/example/example_media/*
+!piccolo_admin/example/example_media/.gitkeep
 piccolo_admin/.env
 videos

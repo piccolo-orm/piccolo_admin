@@ -1,6 +1,6 @@
 from playwright.sync_api import Page
 
-from piccolo_admin.example import NullableColumns
+from piccolo_admin.example.tables import NullableColumns
 
 from .pages import AddRowPage, LoginPage, RowListingPage
 
