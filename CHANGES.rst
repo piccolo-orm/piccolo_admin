@@ -1,6 +1,15 @@
 Changes
 =======
 
+1.8.0
+-----
+
+Piccolo Admin forms can now be used to download files, e.g. CSV and PDF files,
+which are really useful for reporting purposes. Many thanks to @sinisaos for
+the help on this.
+
+-------------------------------------------------------------------------------
+
 1.7.1
 -----
 
