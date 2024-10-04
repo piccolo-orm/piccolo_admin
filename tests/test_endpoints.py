@@ -283,22 +283,27 @@ class TestForms(TableTest):
             response.json(),
             [
                 {
-                    "description": (
-                        "Download a list of movies for the director as a "
-                        "CSV file."
-                    ),
+                    "name": "Calculator",
+                    "slug": "calculator",
+                    "description": "Adds two numbers together.",
+                },
+                {
                     "name": "Download director movies",
                     "slug": "download-director-movies",
+                    "description": (
+                        "Download a list of movies for the director as a CSV "
+                        "file."
+                    ),
                 },
                 {
-                    "description": "Make a booking for a customer.",
                     "name": "Booking form",
                     "slug": "booking-form",
+                    "description": "Make a booking for a customer.",
                 },
                 {
-                    "description": "Download the schedule for the day.",
                     "name": "Download schedule",
                     "slug": "download-schedule",
+                    "description": "Download the schedule for the day.",
                 },
             ],
         )

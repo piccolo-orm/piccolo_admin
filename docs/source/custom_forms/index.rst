@@ -31,7 +31,11 @@ string
 If a string is returned, it is shown to the user once the form has been
 submitted.
 
-Here's an example where we send an email, then return a string:
+Here's a really simple example:
+
+.. literalinclude:: ../../../piccolo_admin/example/forms/calculator.py
+
+Here's a more advanced example where we send an email, then return a string:
 
 .. literalinclude:: ../../../piccolo_admin/example/forms/email.py
 
