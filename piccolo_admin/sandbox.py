@@ -7,6 +7,7 @@ import targ
 import uvicorn
 
 from piccolo_admin.endpoints import create_admin
+from piccolo_admin.example.forms.calculator import FORM as CALCULATOR_FORM
 from piccolo_admin.example.forms.csv import FORM as CSV_FORM
 from piccolo_admin.example.forms.image import FORM as IMAGE_FORM
 from piccolo_admin.example.tables import (
@@ -24,7 +25,7 @@ APP = create_admin(
     auth_table=User,
     session_table=Sessions,
     read_only=True,
-    forms=[CSV_FORM, IMAGE_FORM],
+    forms=[CALCULATOR_FORM, CSV_FORM, IMAGE_FORM],
 )
 
 
