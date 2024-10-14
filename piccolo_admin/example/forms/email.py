@@ -44,4 +44,5 @@ FORM = FormConfig(
     pydantic_model=BookingModel,
     endpoint=booking_endpoint,
     description="Make a booking for a customer.",
+    form_group="Text forms",
 )

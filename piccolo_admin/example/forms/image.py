@@ -39,4 +39,5 @@ FORM = FormConfig(
     pydantic_model=DownloadScheduleModel,
     endpoint=download_schedule,
     description=("Download the schedule for the day."),
+    form_group="Download forms",
 )

@@ -99,6 +99,13 @@ class GroupedTableNamesResponseModel(BaseModel):
     ungrouped: t.List[str] = Field(default_factory=list)
 
 
+class GroupedFormNamesResponseModel(BaseModel):
+    grouped: t.Dict[str, t.List[t.Dict[str, t.Any]]] = Field(
+        default_factory=list
+    )
+    ungrouped: t.List[t.Dict[str, t.Any]] = Field(default_factory=list)
+
+
 @dataclass
 class TableConfig:
     """
@@ -340,6 +347,10 @@ class FormConfig:
     :param description:
         An optional description which is shown in the UI to explain to the user
         what the form is for.
+    :param form_group:
+        If specified, forms can be divided into groups in the form
+        menu. This is useful when you have many forms that you
+        can organize into groups for better visibility.
 
     Here's a full example:
 
@@ -364,7 +375,8 @@ class FormConfig:
         config = FormConfig(
             name="My Form",
             pydantic_model=MyModel,
-            endpoint=my_endpoint
+            endpoint=my_endpoint,
+            form_group="Text forms",
         )
 
     """
@@ -378,11 +390,13 @@ class FormConfig:
             t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
         ],
         description: t.Optional[str] = None,
+        form_group: t.Optional[str] = None,
     ):
         self.name = name
         self.pydantic_model = pydantic_model
         self.endpoint = endpoint
         self.description = description
+        self.form_group = form_group
         self.slug = self.name.replace(" ", "-").lower()
 
 
@@ -620,6 +634,14 @@ class AdminRouter(FastAPI):
             methods=["GET"],
             tags=["Forms"],
             response_model=t.List[FormConfigResponseModel],
+        )
+
+        private_app.add_api_route(
+            path="/forms/grouped/",
+            endpoint=self.get_form_list_grouped,  # type: ignore
+            methods=["GET"],
+            response_model=GroupedFormNamesResponseModel,
+            tags=["Forms"],
         )
 
         private_app.add_api_route(
@@ -936,6 +958,39 @@ class AdminRouter(FastAPI):
             )
             for form in self.forms
         ]
+
+    def get_form_list_grouped(self) -> GroupedFormNamesResponseModel:
+        """
+        Returns a list of custom forms registered with the admin,
+        grouped using `form_group`.
+        """
+        response = GroupedFormNamesResponseModel()
+        group_names = sorted(
+            {
+                v.form_group
+                for _, v in self.form_config_map.items()
+                if v.form_group
+            }
+        )
+        response.grouped = {i: [] for i in group_names}
+        for _, form_config in self.form_config_map.items():
+            form_group = form_config.form_group
+            if form_group is None:
+                response.ungrouped.append(
+                    {
+                        "name": form_config.name,
+                        "slug": form_config.slug,
+                    }
+                )
+            else:
+                response.grouped[form_group].append(
+                    {
+                        "name": form_config.name,
+                        "slug": form_config.slug,
+                    }
+                )
+
+        return response
 
     def get_single_form(self, form_slug: str) -> FormConfigResponseModel:
         """

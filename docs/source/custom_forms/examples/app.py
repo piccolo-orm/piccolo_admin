@@ -25,6 +25,7 @@ FORM = FormConfig(
     pydantic_model=CalculatorModel,
     endpoint=calculator,
     description=("Adds two numbers together."),
+    form_group="Text forms",
 )
 
 
