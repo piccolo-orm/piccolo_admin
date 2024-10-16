@@ -33,6 +33,7 @@ export default createStore({
         tableNames: [],
         tableGroups: {},
         formConfigs: [] as i.FormConfig[],
+        formGroups: {},
         user: undefined,
         loadingStatus: false,
         customLinks: {}
@@ -46,6 +47,9 @@ export default createStore({
         },
         updateFormConfigs(state, value) {
             state.formConfigs = value
+        },
+        updateFormGroups(state, value) {
+            state.formGroups = value
         },
         updateCurrentTablename(state, value) {
             state.currentTableName = value
@@ -104,6 +108,10 @@ export default createStore({
         async fetchFormConfigs(context) {
             const response = await axios.get(`${BASE_URL}forms/`)
             context.commit("updateFormConfigs", response.data)
+        },
+        async fetchFormGroups(context) {
+            const response = await axios.get(`${BASE_URL}forms/grouped/`)
+            context.commit("updateFormGroups", response.data)
         },
         async fetchFormConfig(context, formSlug: string) {
             const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)

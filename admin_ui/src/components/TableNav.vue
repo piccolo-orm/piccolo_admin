@@ -8,22 +8,11 @@
             />
 
             <template v-for="(tableNames, groupName) in tableGroups.grouped">
-                <li class="group">
-                    <a
-                        href="#"
-                        class="subtle"
-                        @click.prevent="toggleGroup(String(groupName))"
-                        title="Click to toggle children."
-                    >
-                        <font-awesome-icon icon="layer-group" />
-                        <span class="name">{{ groupName }}</span>
-                        <span
-                            class="ellipsis"
-                            v-if="hiddenGroups.indexOf(String(groupName)) != -1"
-                            >...</span
-                        >
-                    </a>
-                </li>
+                <SidebarGroup
+                    :collapsed="hiddenGroups.indexOf(String(groupName)) != -1"
+                    :name="String(groupName)"
+                    @toggled="toggleGroup(String(groupName))"
+                />
 
                 <template v-if="hiddenGroups.indexOf(String(groupName)) == -1">
                     <TableNavItem
@@ -39,10 +28,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
+import SidebarGroup from "./SidebarGroup.vue"
 import TableNavItem from "./TableNavItem.vue"
 
 export default defineComponent({
     components: {
+        SidebarGroup,
         TableNavItem
     },
     data() {
@@ -75,24 +66,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style scoped lang="less">
-li.group {
-    font-size: 0.7em;
-
-    a {
-        text-transform: uppercase;
-
-        span {
-            &.name {
-                padding-left: 0;
-            }
-
-            &.ellipsis {
-                flex-grow: 1;
-                text-align: right;
-            }
-        }
-    }
-}
-</style>

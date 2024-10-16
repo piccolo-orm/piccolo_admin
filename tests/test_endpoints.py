@@ -479,6 +479,60 @@ class TestForms(TableTest):
 
         self.assertEqual(response.status_code, 422)
 
+    def test_forms_grouped(self):
+        """
+        Make sure the grouped forms listing can be retrieved.
+        """
+        client = TestClient(APP)
+        # To get a CSRF cookie
+        response = client.get("/")
+        csrftoken = response.cookies["csrftoken"]
+        # Login
+        payload = dict(csrftoken=csrftoken, **self.credentials)
+        client.post(
+            "/public/login/",
+            json=payload,
+            headers={"X-CSRFToken": csrftoken},
+        )
+
+        response = client.get("/api/forms/grouped/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "grouped": {
+                    "Download forms": [
+                        {
+                            "description": "Download a list of movies for "
+                            "the director as a CSV file.",
+                            "name": "Download director movies",
+                            "slug": "download-director-movies",
+                        },
+                        {
+                            "description": "Download the schedule for the "
+                            "day.",
+                            "name": "Download schedule",
+                            "slug": "download-schedule",
+                        },
+                    ],
+                    "Text forms": [
+                        {
+                            "description": "Make a booking for a customer.",
+                            "name": "Booking form",
+                            "slug": "booking-form",
+                        }
+                    ],
+                },
+                "ungrouped": [
+                    {
+                        "description": "Adds two numbers together.",
+                        "name": "Calculator",
+                        "slug": "calculator",
+                    }
+                ],
+            },
+        )
+
 
 class TestSidebarLinks(TableTest):
     credentials = {"username": "Bob", "password": "bob123"}

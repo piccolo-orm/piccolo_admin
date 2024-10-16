@@ -49,4 +49,5 @@ FORM = FormConfig(
     pydantic_model=DownloadMoviesModel,
     endpoint=download_movies,
     description="Download a list of movies for the director as a CSV file.",
+    form_group="Download forms",
 )
