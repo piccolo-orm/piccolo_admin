@@ -503,19 +503,33 @@ class TestForms(TableTest):
                 "grouped": {
                     "Download forms": [
                         {
+                            "description": "Download a list of movies for "
+                            "the director as a CSV file.",
                             "name": "Download director movies",
                             "slug": "download-director-movies",
                         },
                         {
+                            "description": "Download the schedule for the "
+                            "day.",
                             "name": "Download schedule",
                             "slug": "download-schedule",
                         },
                     ],
                     "Text forms": [
-                        {"name": "Booking form", "slug": "booking-form"}
+                        {
+                            "description": "Make a booking for a customer.",
+                            "name": "Booking form",
+                            "slug": "booking-form",
+                        }
                     ],
                 },
-                "ungrouped": [{"name": "Calculator", "slug": "calculator"}],
+                "ungrouped": [
+                    {
+                        "description": "Adds two numbers together.",
+                        "name": "Calculator",
+                        "slug": "calculator",
+                    }
+                ],
             },
         )
 

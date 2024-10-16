@@ -94,16 +94,21 @@ class GenerateFileURLResponseModel(BaseModel):
     file_url: str = Field(description="A URL which the file is accessible on.")
 
 
+class GroupItem(BaseModel):
+    name: str
+    slug: str
+
+
 class GroupedTableNamesResponseModel(BaseModel):
     grouped: t.Dict[str, t.List[str]] = Field(default_factory=list)
     ungrouped: t.List[str] = Field(default_factory=list)
 
 
-class GroupedFormNamesResponseModel(BaseModel):
-    grouped: t.Dict[str, t.List[t.Dict[str, t.Any]]] = Field(
+class GroupedFormsResponseModel(BaseModel):
+    grouped: t.Dict[str, t.List[FormConfigResponseModel]] = Field(
         default_factory=list
     )
-    ungrouped: t.List[t.Dict[str, t.Any]] = Field(default_factory=list)
+    ungrouped: t.List[FormConfigResponseModel] = Field(default_factory=list)
 
 
 @dataclass
@@ -638,9 +643,9 @@ class AdminRouter(FastAPI):
 
         private_app.add_api_route(
             path="/forms/grouped/",
-            endpoint=self.get_form_list_grouped,  # type: ignore
+            endpoint=self.get_grouped_forms,  # type: ignore
             methods=["GET"],
-            response_model=GroupedFormNamesResponseModel,
+            response_model=GroupedFormsResponseModel,
             tags=["Forms"],
         )
 
@@ -959,12 +964,12 @@ class AdminRouter(FastAPI):
             for form in self.forms
         ]
 
-    def get_form_list_grouped(self) -> GroupedFormNamesResponseModel:
+    def get_grouped_forms(self) -> GroupedFormsResponseModel:
         """
-        Returns a list of custom forms registered with the admin,
-        grouped using `form_group`.
+        Returns a list of custom forms registered with the admin, grouped using
+        `form_group`.
         """
-        response = GroupedFormNamesResponseModel()
+        response = GroupedFormsResponseModel()
         group_names = sorted(
             {
                 v.form_group
@@ -975,20 +980,15 @@ class AdminRouter(FastAPI):
         response.grouped = {i: [] for i in group_names}
         for _, form_config in self.form_config_map.items():
             form_group = form_config.form_group
+            form_config_response = FormConfigResponseModel(
+                name=form_config.name,
+                slug=form_config.slug,
+                description=form_config.description,
+            )
             if form_group is None:
-                response.ungrouped.append(
-                    {
-                        "name": form_config.name,
-                        "slug": form_config.slug,
-                    }
-                )
+                response.ungrouped.append(form_config_response)
             else:
-                response.grouped[form_group].append(
-                    {
-                        "name": form_config.name,
-                        "slug": form_config.slug,
-                    }
-                )
+                response.grouped[form_group].append(form_config_response)
 
         return response
 
