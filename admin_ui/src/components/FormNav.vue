@@ -4,6 +4,7 @@
             <li v-for="form in formGroups.ungrouped" v-bind:key="form">
                 <router-link
                     :to="{ name: 'addForm', params: { formSlug: form.slug } }"
+                    :title="form.description"
                     class="subtle"
                     ><font-awesome-icon icon="level-up-alt" class="rotated90" />
                     <span>{{ form.name }}</span></router-link
@@ -11,22 +12,11 @@
             </li>
 
             <template v-for="(formNames, groupName) in formGroups.grouped">
-                <li class="group">
-                    <a
-                        href="#"
-                        class="subtle"
-                        @click.prevent="toggleGroup(String(groupName))"
-                        title="Click to toggle children."
-                    >
-                        <font-awesome-icon icon="layer-group" />
-                        <span class="name">{{ groupName }}</span>
-                        <span
-                            class="ellipsis"
-                            v-if="hiddenGroups.indexOf(String(groupName)) != -1"
-                            >...</span
-                        >
-                    </a>
-                </li>
+                <SidebarGroup
+                    :name="String(groupName)"
+                    :collapsed="hiddenGroups.indexOf(String(groupName)) != -1"
+                    @toggled="toggleGroup(String(groupName))"
+                />
 
                 <template v-if="hiddenGroups.indexOf(String(groupName)) == -1">
                     <li v-for="form in formNames" v-bind:key="form">
@@ -35,6 +25,7 @@
                                 name: 'addForm',
                                 params: { formSlug: form.slug }
                             }"
+                            :title="form.description"
                             class="subtle"
                             ><font-awesome-icon
                                 icon="level-up-alt"
@@ -51,8 +42,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
+import SidebarGroup from "./SidebarGroup.vue"
 
 export default defineComponent({
+    components: { SidebarGroup },
     data() {
         return {
             hiddenGroups: [] as string[]
