@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.9.0
+-----
+
+Forms can now be grouped in the sidebar. This is useful when you have lots of
+forms and want to keep things organised. Thanks to @sinisaos for this.
+
+-------------------------------------------------------------------------------
+
 1.8.2
 -----
 
