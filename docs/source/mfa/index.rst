@@ -49,8 +49,8 @@ To generate the encryption key in the above example:
 .. code-block:: pycon
 
     >>> from piccolo_api.encryption.providers import XChaCha20Provider
-    >>> XChaCha20Provider.generate_key()
-    b'\xb7(\xa5\xa6\xa4&\xeb\x8eI\xfe_Y\x16\x12\xf4\xf4\xa8|\xc6#\xd1\x02\xa2s\x03]\xea\x12\xb9\xf1\xa2\xb3'
+    >>> XChaCha20Provider.get_new_key()
+    b'\xcd6\xaf\xef\x83\xbf@\xda\x06q\x8c=p\xe8\xe8Q\xa2\x01\x1bW$\xf6\xa2AC61\x0erN\xa9\x1c'
 
 .. note::
     Piccolo Admin currently allows you to use a single ``MFAProvider``, but
