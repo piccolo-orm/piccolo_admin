@@ -680,7 +680,7 @@ class AdminRouter(FastAPI):
 
         private_app.add_route(
             path="/change-password/",
-            route=change_password(
+            route=change_password(  # type: ignore
                 login_url="./../../public/login/",
                 session_table=session_table,
                 read_only=read_only,
@@ -786,7 +786,7 @@ class AdminRouter(FastAPI):
 
         public_app.add_route(
             path="/logout/",
-            route=session_logout(session_table=session_table),
+            route=session_logout(session_table=session_table),  # type: ignore
             methods=["POST"],
         )
 
