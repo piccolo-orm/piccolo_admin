@@ -10,7 +10,7 @@
 
         <div v-show="successMessage">
             <h1>{{ $t("Form submitted") }}</h1>
-            <p>{{ successMessage }}</p>
+            <p id="success_message">{{ successMessage }}</p>
             <ul>
                 <li>
                     <a href="#" @click.prevent="resetForm">{{
@@ -182,5 +182,9 @@ export default defineComponent({
 <style scoped lang="less">
 h1 {
     text-transform: capitalize;
+}
+
+p#success_message {
+    white-space: pre-wrap;
 }
 </style>
