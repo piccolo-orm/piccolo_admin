@@ -1,4 +1,9 @@
-import { type Schema, type OrderByConfig, getType } from "@/interfaces"
+import {
+    type Schema,
+    type OrderByConfig,
+    getType,
+    isNullable
+} from "@/interfaces"
 import router from "./router"
 import moment from "moment"
 
@@ -140,6 +145,10 @@ export function convertFormValue(params: {
     if (value == "null") {
         value = null
     } else if (property.extra?.nullable && value == "") {
+        // TODO We can potentially remove this in the future - isNullable does
+        // what we need.
+        value = null
+    } else if (isNullable(property) && value == "") {
         value = null
     } else if (getType(property) == "array") {
         value = JSON.parse(String(value))
