@@ -51,5 +51,5 @@ FORM = FormConfig(
     pydantic_model=MegaFormModel,
     endpoint=handle_form,
     description="Used for testing all possible field types.",
-    form_group="Testing",
+    form_group="Test forms",
 )
