@@ -307,11 +307,9 @@ class TestForms(TableTest):
                     "description": "Download the schedule for the day.",
                 },
                 {
-                    "description": (
-                        "Used for testing all possible field types."
-                    ),
-                    "name": "Mega Form",
-                    "slug": "mega-form",
+                    "description": "Used for testing nullable fields.",
+                    "name": "Nullable fields",
+                    "slug": "nullable-fields",
                 },
             ],
         )
@@ -533,10 +531,10 @@ class TestForms(TableTest):
                     "Test forms": [
                         {
                             "description": (
-                                "Used for testing all possible field types."
+                                "Used for testing nullable fields."
                             ),
-                            "name": "Mega Form",
-                            "slug": "mega-form",
+                            "name": "Nullable fields",
+                            "slug": "nullable-fields",
                         }
                     ],
                 },
