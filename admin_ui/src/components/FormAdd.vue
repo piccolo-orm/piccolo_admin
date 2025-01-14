@@ -25,7 +25,7 @@
             </ul>
         </div>
 
-        <div v-show="!successMessage">
+        <div v-if="!successMessage">
             <FormErrors :errors="errors" v-if="errors.length > 0" />
 
             <form
@@ -93,8 +93,6 @@ export default defineComponent({
     },
     methods: {
         resetForm() {
-            const form = this.$refs.form as HTMLFormElement
-            form.reset()
             this.successMessage = null
             this.errors = []
         },
