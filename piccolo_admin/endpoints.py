@@ -100,13 +100,13 @@ class GroupItem(BaseModel):
 
 
 class GroupedTableNamesResponseModel(BaseModel):
-    grouped: t.Dict[str, t.List[str]] = Field(default_factory=list)
+    grouped: t.Dict[str, t.List[str]] = Field(default_factory=dict)
     ungrouped: t.List[str] = Field(default_factory=list)
 
 
 class GroupedFormsResponseModel(BaseModel):
     grouped: t.Dict[str, t.List[FormConfigResponseModel]] = Field(
-        default_factory=list
+        default_factory=dict
     )
     ungrouped: t.List[FormConfigResponseModel] = Field(default_factory=list)
 
