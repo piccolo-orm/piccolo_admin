@@ -11,10 +11,11 @@
                 v-bind:columnName="String(columnName)"
                 v-bind:type="getType(property)"
                 v-bind:value="property.default"
+                v-bind:isNullable="isNullable(property)"
                 v-bind:timeResolution="
                     schema?.extra?.time_resolution[columnName]
                 "
-                v-bind:format="property.format"
+                v-bind:format="getFormat(property)"
             />
         </div>
     </div>
@@ -23,7 +24,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import InputField from "./InputField.vue"
-import { type Schema, getType } from "@/interfaces"
+import { type Schema, getType, getFormat, isNullable } from "@/interfaces"
 
 export default defineComponent({
     props: {
@@ -37,7 +38,9 @@ export default defineComponent({
     },
     setup() {
         return {
-            getType
+            getFormat,
+            getType,
+            isNullable
         }
     }
 })

@@ -10,7 +10,7 @@
 
         <div v-show="successMessage">
             <h1>{{ $t("Form submitted") }}</h1>
-            <p>{{ successMessage }}</p>
+            <p id="success_message">{{ successMessage }}</p>
             <ul>
                 <li>
                     <a href="#" @click.prevent="resetForm">{{
@@ -25,7 +25,7 @@
             </ul>
         </div>
 
-        <div v-show="!successMessage">
+        <div v-if="!successMessage">
             <FormErrors :errors="errors" v-if="errors.length > 0" />
 
             <form
@@ -93,8 +93,6 @@ export default defineComponent({
     },
     methods: {
         resetForm() {
-            const form = this.$refs.form as HTMLFormElement
-            form.reset()
             this.successMessage = null
             this.errors = []
         },
@@ -184,5 +182,9 @@ export default defineComponent({
 <style scoped lang="less">
 h1 {
     text-transform: capitalize;
+}
+
+p#success_message {
+    white-space: pre-wrap;
 }
 </style>

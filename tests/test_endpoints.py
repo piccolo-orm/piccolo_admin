@@ -279,6 +279,7 @@ class TestForms(TableTest):
 
         response = client.get("/api/forms/")
         self.assertEqual(response.status_code, 200)
+
         self.assertEqual(
             response.json(),
             [
@@ -304,6 +305,11 @@ class TestForms(TableTest):
                     "name": "Download schedule",
                     "slug": "download-schedule",
                     "description": "Download the schedule for the day.",
+                },
+                {
+                    "description": "Used for testing nullable fields.",
+                    "name": "Nullable fields",
+                    "slug": "nullable-fields",
                 },
             ],
         )
@@ -520,6 +526,15 @@ class TestForms(TableTest):
                             "description": "Make a booking for a customer.",
                             "name": "Booking form",
                             "slug": "booking-form",
+                        }
+                    ],
+                    "Test forms": [
+                        {
+                            "description": (
+                                "Used for testing nullable fields."
+                            ),
+                            "name": "Nullable fields",
+                            "slug": "nullable-fields",
                         }
                     ],
                 },

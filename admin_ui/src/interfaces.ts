@@ -176,6 +176,11 @@ export const getType = (property: Property): string => {
     return (property.type || property.anyOf?.[0].type) as string
 }
 
+// Determines if the property is nullable based off the OpenAPI type.
+export const isNullable = (property: Property): boolean => {
+    return (property.anyOf ?? []).filter((i) => i.type == "null").length > 0
+}
+
 export const getFormat = (property: Property): string | undefined => {
     if (property.format) {
         return property.format
