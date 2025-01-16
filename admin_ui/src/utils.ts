@@ -140,17 +140,25 @@ export function convertFormValue(params: {
 }): any {
     let { key, value, schema } = params
 
+    if (value == "null") {
+        return null
+    }
+
     const property = schema.properties[key]
 
-    if (value == "null") {
-        value = null
-    } else if (property.extra?.nullable && value == "") {
-        // TODO We can potentially remove this in the future - isNullable does
-        // what we need.
-        value = null
-    } else if (isNullable(property) && value == "") {
-        value = null
-    } else if (getType(property) == "array") {
+    const nullable = property.extra?.nullable
+
+    if (nullable == true && value == "") {
+        return null
+    }
+
+    // For Piccolo custom forms, there is no `extra` attribute, instead we
+    // have to look at the OpenAPI schema:
+    if (nullable == undefined && isNullable(property) && value == "") {
+        return null
+    }
+
+    if (getType(property) == "array") {
         value = JSON.parse(String(value))
     }
 
