@@ -25,11 +25,14 @@ demo app.
 
 If you are developing on a local copy, you will first need to build
 distribution files that the backend relies on.
+
 ``cd`` into the ``admin_ui`` directory and run the following:
 
 .. code-block:: bash
 
     npm run build
+
+Then start the API:
 
 .. code-block:: bash
 
