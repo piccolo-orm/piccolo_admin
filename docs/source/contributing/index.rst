@@ -23,6 +23,14 @@ It will auto refresh the UI as you make changes to the source files.
 The UI needs an API to interact with - the easiest way to do this is to use the
 demo app.
 
+If you are developing on a local copy, you will first need to build
+distribution files that the backend relies on.
+``cd`` into the ``admin_ui`` directory and run the following:
+
+.. code-block:: bash
+
+    npm run build
+
 .. code-block:: bash
 
     admin_demo
