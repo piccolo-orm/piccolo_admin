@@ -4,6 +4,20 @@
             v-bind:key="property.title"
             v-for="(property, columnName) in schema.properties"
         >
+        <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']">
+            <label>{{ schema["$defs"].enum.title }}</label>
+            <InputField
+                v-bind:choices="enumToChoices(schema['$defs'].enum.enum)"
+                v-bind:isFilter="false"
+                v-bind:key="columnName"
+                v-bind:columnName="String(columnName)"
+                v-bind:type="schema['$defs'].enum.type"
+                v-bind:timeResolution="
+                    schema?.extra?.time_resolution[columnName]
+                "
+                v-bind:format="property.format"
+            />
+        </div>
             <label>{{ property.title }}</label>
             <InputField
                 v-bind:isFilter="false"
@@ -23,7 +37,16 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import InputField from "./InputField.vue"
-import { type Schema, getType } from "@/interfaces"
+import { Enum, Choices, type Schema, getType } from "@/interfaces"
+
+export function enumToChoices(data: Enum): Choices {
+    var choices: Choices = {}
+    for (let index = 0; index < data.enum.length; index++) {
+        const element = data.enum[index];
+        choices[element] = {display_name: element, value: element}
+    }
+    return choices
+}
 
 export default defineComponent({
     props: {

@@ -114,12 +114,23 @@ export interface SchemaExtra {
     time_resolution: { [key: string]: number }
 }
 
+export interface Enum {
+    title: string
+    type: string
+    enum: string[]
+}
+
+export interface SchemaEnum {
+    [key: string]: Enum
+}
+
 export interface Schema {
     extra: SchemaExtra
     properties: Properties
     required: string[]
     title: string
     type: string
+    $defs: SchemaEnum
 }
 
 export interface Properties {
@@ -145,6 +156,7 @@ export interface Property {
     anyOf?: AnyOf[]
     format?: string
     maxLength?: number
+    $ref: string | null
 }
 
 export interface ForeignKey {
