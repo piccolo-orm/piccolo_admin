@@ -33,7 +33,7 @@
                 v-on:submit.prevent="submitForm($event)"
                 ref="form"
             >
-                <NewForm :schema="schema" />
+                <NewForm :schema="schema" :etc="enumToChoices" />
                 <button data-uitest="submit_custom_form_button">
                     {{ $t("Submit") }}
                 </button>
@@ -47,7 +47,7 @@ import axios from "axios"
 import { defineComponent, type PropType } from "vue"
 
 import NewForm from "./NewForm.vue"
-import type { APIResponseMessage, FormConfig, Schema } from "../interfaces"
+import type { APIResponseMessage, Enum, Choices, FormConfig, Schema } from "../interfaces"
 import { convertFormValue, parseErrorResponse } from "@/utils"
 import FormErrors from "./FormErrors.vue"
 
@@ -92,6 +92,14 @@ export default defineComponent({
         }
     },
     methods: {
+        enumToChoices (data: Enum): Choices {
+            var choices: Choices = {}
+            for (let index = 0; index < data.enum.length; index++) {
+                const element = data.enum[index];
+                choices[element] = {display_name: element, value: element}
+            }
+            return choices
+        },
         resetForm() {
             const form = this.$refs.form as HTMLFormElement
             form.reset()

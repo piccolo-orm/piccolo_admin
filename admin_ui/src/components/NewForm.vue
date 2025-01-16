@@ -7,7 +7,7 @@
             <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']">
                 <label>{{ schema["$defs"].enum.title }}</label>
                 <InputField
-                    v-bind:choices="enumToChoices(schema['$defs'].enum.enum)"
+                    v-bind:choices="etc(schema['$defs'].enum.enum)"
                     v-bind:isFilter="false"
                     v-bind:key="columnName"
                     v-bind:columnName="String(columnName)"
@@ -39,22 +39,17 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import InputField from "./InputField.vue"
-import { Enum, Choices, type Schema, getType } from "@/interfaces"
+import { type Schema, getType } from "@/interfaces"
 
-export function enumToChoices(data: Enum): Choices {
-    var choices: Choices = {}
-    for (let index = 0; index < data.enum.length; index++) {
-        const element = data.enum[index];
-        choices[element] = {display_name: element, value: element}
-    }
-    return choices
-}
 
 export default defineComponent({
     props: {
         schema: {
             type: Object as PropType<Schema>,
             required: true
+        },
+        etc: {
+            type: Function,
         }
     },
     components: {
