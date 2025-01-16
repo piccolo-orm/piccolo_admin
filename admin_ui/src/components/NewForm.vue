@@ -4,20 +4,20 @@
             v-bind:key="property.title"
             v-for="(property, columnName) in schema.properties"
         >
-            <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']">
-                <label>{{ schema["$defs"].enum.title }}</label>
+            <!-- <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']?.split(/[//]+/).pop()"> -->
+                <label>{{ schema["$defs"][property['$ref']?.split(/[//]+/).pop()].title }}</label>
                 <InputField
-                    v-bind:choices="etc(schema['$defs'].enum.enum)"
+                    v-bind:choices="etc(schema['$defs'][property['$ref']?.split(/[//]+/).pop()])"
                     v-bind:isFilter="false"
                     v-bind:key="columnName"
                     v-bind:columnName="String(columnName)"
-                    v-bind:type="schema['$defs'].enum.type"
+                    v-bind:type="schema['$defs'][property['$ref']?.split(/[//]+/).pop()].type"
                     v-bind:timeResolution="
                         schema?.extra?.time_resolution[columnName]
                     "
                     v-bind:format="property.format"
                 />
-            </div>
+            <!-- </div>
             <div v-else>
                 <label>{{ property.title }}</label>
                 <InputField
@@ -31,7 +31,7 @@
                     "
                     v-bind:format="property.format"
                 />
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
