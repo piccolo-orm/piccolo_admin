@@ -4,32 +4,34 @@
             v-bind:key="property.title"
             v-for="(property, columnName) in schema.properties"
         >
-        <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']">
-            <label>{{ schema["$defs"].enum.title }}</label>
-            <InputField
-                v-bind:choices="enumToChoices(schema['$defs'].enum.enum)"
-                v-bind:isFilter="false"
-                v-bind:key="columnName"
-                v-bind:columnName="String(columnName)"
-                v-bind:type="schema['$defs'].enum.type"
-                v-bind:timeResolution="
-                    schema?.extra?.time_resolution[columnName]
-                "
-                v-bind:format="property.format"
-            />
-        </div>
-            <label>{{ property.title }}</label>
-            <InputField
-                v-bind:isFilter="false"
-                v-bind:key="columnName"
-                v-bind:columnName="String(columnName)"
-                v-bind:type="getType(property)"
-                v-bind:value="property.default"
-                v-bind:timeResolution="
-                    schema?.extra?.time_resolution[columnName]
-                "
-                v-bind:format="property.format"
-            />
+            <div v-if="Object.keys(property).includes('$ref')" v-bind:enum="property['$ref']">
+                <label>{{ schema["$defs"].enum.title }}</label>
+                <InputField
+                    v-bind:choices="enumToChoices(schema['$defs'].enum.enum)"
+                    v-bind:isFilter="false"
+                    v-bind:key="columnName"
+                    v-bind:columnName="String(columnName)"
+                    v-bind:type="schema['$defs'].enum.type"
+                    v-bind:timeResolution="
+                        schema?.extra?.time_resolution[columnName]
+                    "
+                    v-bind:format="property.format"
+                />
+            </div>
+            <div v-else>
+                <label>{{ property.title }}</label>
+                <InputField
+                    v-bind:isFilter="false"
+                    v-bind:key="columnName"
+                    v-bind:columnName="String(columnName)"
+                    v-bind:type="getType(property)"
+                    v-bind:value="property.default"
+                    v-bind:timeResolution="
+                        schema?.extra?.time_resolution[columnName]
+                    "
+                    v-bind:format="property.format"
+                />
+            </div>
         </div>
     </div>
 </template>
