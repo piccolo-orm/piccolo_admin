@@ -3,7 +3,9 @@ from playwright.sync_api import Page
 from piccolo_admin.example.forms.csv import FORM as CSV_FORM
 from piccolo_admin.example.forms.image import FORM as IMAGE_FORM
 from piccolo_admin.example.forms.selections import FORM as SELECTION_FORM
+from piccolo_admin.example.forms.nullable import FORM as NULLABLE_FORM
 
+from .conftest import BASE_URL
 from .pages import FormPage, LoginPage
 
 
@@ -59,11 +61,7 @@ def test_image_form(page: Page, dev_server):
 def test_form_enum_support(page: Page, dev_server):
     """
     Make sure custom forms support the usage of Enum's.
-    """
-    login_page = LoginPage(page=page)
-    login_page.reset()
-    login_page.login()
-
+    
     form_page = FormPage(
         page=page,
         form_slug=SELECTION_FORM.slug,
@@ -74,3 +72,25 @@ def test_form_enum_support(page: Page, dev_server):
     form_page.submit_form()
 
     assert f"You selected Options.ONE from the drop down." in page.content()
+
+def test_nullable_form(page: Page, dev_server):
+    """
+    Make sure a form with nullable fields can be submitted successfully.
+    """
+    login_page = LoginPage(page=page)
+    login_page.reset()
+    login_page.login()
+
+    form_page = FormPage(
+        page=page,
+        form_slug=NULLABLE_FORM.slug,
+    )
+    form_page.reset()
+
+    with page.expect_response(
+        lambda response: response.url
+        == f"{BASE_URL}/api/forms/nullable-fields/"
+        and response.request.method == "POST"
+        and response.status == 200
+    ):
+        form_page.submit_form()

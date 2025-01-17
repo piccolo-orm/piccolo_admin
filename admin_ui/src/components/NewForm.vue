@@ -4,7 +4,6 @@
             v-bind:key="property.title"
             v-for="(property, columnName) in schema.properties"
         >
-        {{ property }}
             <div 
                 v-if="Object.keys(property).includes('$ref')" 
             >
@@ -43,7 +42,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue"
 import InputField from "./InputField.vue"
-import { type Schema, getType } from "@/interfaces"
+import { type Schema, getType, getFormat, isNullable } from "@/interfaces"
 
 
 export default defineComponent({
@@ -61,7 +60,9 @@ export default defineComponent({
     },
     setup() {
         return {
-            getType
+            getFormat,
+            getType,
+            isNullable
         }
     }
 })

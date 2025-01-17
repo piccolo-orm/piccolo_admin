@@ -1,6 +1,18 @@
 Changes
 =======
 
+1.9.1
+-----
+
+Fixed some bugs with optional fields in custom forms (thanks to @Skelmis for
+reporting this).
+
+Improved the contribution docs (thanks to @Skelmis for this).
+
+Improved the MFA docs (thanks to @sinisaos for this).
+
+-------------------------------------------------------------------------------
+
 1.9.0
 -----
 
