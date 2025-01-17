@@ -2,6 +2,7 @@ from playwright.sync_api import Page
 
 from piccolo_admin.example.forms.csv import FORM as CSV_FORM
 from piccolo_admin.example.forms.image import FORM as IMAGE_FORM
+from piccolo_admin.example.forms.selections import FORM as SELECTION_FORM
 from piccolo_admin.example.forms.nullable import FORM as NULLABLE_FORM
 
 from .conftest import BASE_URL
@@ -57,6 +58,20 @@ def test_image_form(page: Page, dev_server):
     download = download_info.value
     assert download.suggested_filename == "movie_listings.jpg"
 
+def test_form_enum_support(page: Page, dev_server):
+    """
+    Make sure custom forms support the usage of Enum's.
+    
+    form_page = FormPage(
+        page=page,
+        form_slug=SELECTION_FORM.slug,
+    )
+    form_page.reset()
+
+    page.locator('input[name="option"]').select_option("One")
+    form_page.submit_form()
+
+    assert f"You selected Options.ONE from the drop down." in page.content()
 
 def test_nullable_form(page: Page, dev_server):
     """
