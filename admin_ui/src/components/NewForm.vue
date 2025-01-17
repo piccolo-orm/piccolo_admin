@@ -4,17 +4,21 @@
             v-bind:key="property.title"
             v-for="(property, columnName) in schema.properties"
         >
-            <div v-if="Object.keys(property).includes('$ref')" >
-                <label>{{ schema["$defs"][property['$ref']?.split(/[//]+/).pop()].title }}</label>
+        {{ property }}
+            <div 
+                v-if="Object.keys(property).includes('$ref')" 
+            >
+                <label>{{ schema["$defs"][Number(property['$ref']?.split(/[//]+/).pop())].title }}</label>
                 <InputField
-                    v-bind:choices="etc(schema['$defs'][property['$ref']?.split(/[//]+/).pop()])"
+                    v-bind:choices="etc(schema['$defs'][Number(property['$ref']?.split(/[//]+/).pop())])"
                     v-bind:isFilter="false"
                     v-bind:key="columnName"
                     v-bind:columnName="String(columnName)"
-                    v-bind:type="schema['$defs'][property['$ref']?.split(/[//]+/).pop()].type"
+                    v-bind:type="schema['$defs'][Number(property['$ref']?.split(/[//]+/).pop())].type"
                     v-bind:timeResolution="
                         schema?.extra?.time_resolution[columnName]
                     "
+                    v-bind:value="property.default"
                     v-bind:format="property.format"
                 />
             </div>

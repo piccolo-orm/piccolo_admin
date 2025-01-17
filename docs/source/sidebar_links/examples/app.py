@@ -14,7 +14,7 @@ app = FastAPI(
                 tables=[Director, Movie],
                 sidebar_links={
                     "Top Movies": "/admin/#/movie?__order=-box_office",
-                    "Google": "https://google.com"
+                    "Google": "https://google.com",
                 },
             ),
         ),
