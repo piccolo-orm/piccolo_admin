@@ -1,6 +1,7 @@
 from playwright.sync_api import Page
 
 from piccolo_admin.example.forms.csv import FORM as CSV_FORM
+from piccolo_admin.example.forms.enum import FORM as ENUM_FORM
 from piccolo_admin.example.forms.image import FORM as IMAGE_FORM
 from piccolo_admin.example.forms.nullable import FORM as NULLABLE_FORM
 
@@ -75,6 +76,31 @@ def test_nullable_form(page: Page, dev_server):
     with page.expect_response(
         lambda response: response.url
         == f"{BASE_URL}/api/forms/nullable-fields/"
+        and response.request.method == "POST"
+        and response.status == 200
+    ):
+        form_page.submit_form()
+
+
+def test_form_enum(page: Page, dev_server):
+    """
+    Make sure custom forms support the usage of Enum's.
+    """
+    login_page = LoginPage(page=page)
+    login_page.reset()
+    login_page.login()
+
+    form_page = FormPage(
+        page=page,
+        form_slug=ENUM_FORM.slug,
+    )
+    form_page.reset()
+    page.locator('input[name="username"]').fill("piccolo")
+    page.locator('input[name="email"]').fill("piccolo@example.com")
+    page.locator('select[name="permissions"]').select_option("admissions")
+
+    with page.expect_response(
+        lambda response: response.url == f"{BASE_URL}/api/forms/enum-form/"
         and response.request.method == "POST"
         and response.status == 200
     ):
