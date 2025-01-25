@@ -62,6 +62,7 @@ from .translations.models import (
     TranslationListItem,
     TranslationListResponse,
 )
+from .utils import convert_enum_to_choices
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
 
 logger = logging.getLogger(__name__)
@@ -395,6 +396,7 @@ class FormConfig:
             t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
         ],
         description: t.Optional[str] = None,
+        choices: t.Optional[t.Dict[str, t.Any]] = None,
         form_group: t.Optional[str] = None,
     ):
         self.name = name
@@ -403,6 +405,19 @@ class FormConfig:
         self.description = description
         self.form_group = form_group
         self.slug = self.name.replace(" ", "-").lower()
+        if choices is not None:
+            for field_name, field_value in choices.items():
+                # update model_fields, field annotation and
+                # rebuild the model for the changes to take effect
+                pydantic_model.model_fields[field_name] = Field(
+                    json_schema_extra={
+                        "extra": {
+                            "choices": convert_enum_to_choices(field_value)
+                        }
+                    },
+                )
+                pydantic_model.model_fields[field_name].annotation = str
+                pydantic_model.model_rebuild(force=True)
 
 
 class FormConfigResponseModel(BaseModel):
