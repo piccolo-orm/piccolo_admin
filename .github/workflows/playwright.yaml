@@ -33,7 +33,7 @@ jobs:
               run: python -m playwright install chromium --with-deps
             - name: Start Playwright tests
               run: ./scripts/run-e2e-test.sh
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                   name: playwright-artifacts
                   path: videos/
