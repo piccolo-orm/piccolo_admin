@@ -264,6 +264,7 @@ APP = create_admin(
             secret_table=AuthenticatorSecret,
         ),
     ],
+    page_size=30,
 )
 
 
