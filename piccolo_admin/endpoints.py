@@ -49,9 +49,9 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, Field, ValidationError
+from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.staticfiles import StaticFiles
@@ -411,7 +411,7 @@ class FormConfigResponseModel(BaseModel):
     description: t.Optional[str] = None
 
 
-def handle_auth_exception(request: Request, exc: Exception):
+def handle_auth_exception(request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
@@ -875,7 +875,7 @@ class AdminRouter(FastAPI):
                 detail="No such column found.",
             )
 
-        media_storage = media_columns.get(column)
+        media_storage = media_columns.get(column) # type: ignore
 
         if not media_storage:
             raise HTTPException(
