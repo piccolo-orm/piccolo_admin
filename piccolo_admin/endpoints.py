@@ -516,7 +516,7 @@ class AdminRouter(FastAPI):
 
         self._init_app()
 
-    def _init_fastapi_app(self, site_name, allowed_hosts, debug):
+    def _init_fastapi_app(self, site_name: str, allowed_hosts: t.Sequence[str], debug: bool):
         """Call the parent FastAPI constructor, which provisions the top-level ASGI app
         and ensures .mount etc. are safe to call from our code.
 
@@ -838,7 +838,6 @@ class AdminRouter(FastAPI):
                         auth_table=self._auth_table,
                     ),
                     provider=InMemoryLimitProvider(limit=20, timespan=300),
-                    # Note: this provider is hard-coded; we may consider using self._rate_limit_provider instead
                 ),
             )
 
