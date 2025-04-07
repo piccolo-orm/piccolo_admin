@@ -415,7 +415,7 @@ class FormConfigResponseModel(BaseModel):
 class SessionExpiryConfig:
     session_expiry: timedelta
     max_session_expiry: timedelta
-    increase_expiry: t.Optional[timedelta]
+    increase_expiry: t.Optional[timedelta] = timedelta(minutes=20)
 
 
 def handle_auth_exception(request, exc: Exception):
@@ -579,7 +579,7 @@ class AdminRouter(FastAPI):
         self.mount(path="/public", app=public_app)
         self.mount(path="/assets", app=assets_app)
 
-    def _init_public_app(self):
+    def _init_public_app(self) -> FastAPI:
         """Creates a sub-app for public endpoints."""
         public_app = FastAPI(
             redoc_url=None,
@@ -662,7 +662,7 @@ class AdminRouter(FastAPI):
         )
         api_app.add_middleware(auth_middleware)
 
-    def _init_api_app(self, superuser_tables=tuple()) -> FastAPI:
+    def _init_api_app(self, superuser_tables: t.Tuple[t.Type[Table]] = tuple()) -> FastAPI:
         """Provision the API app with all authenticated endpoints necessary for
         the admin UI.
         This is a FastAPI app, meaning it can have its own middleware and can
@@ -840,7 +840,7 @@ class AdminRouter(FastAPI):
                             ),
                         )
 
-    def _init_mfa_provider(self, api_app):
+    def _init_mfa_provider(self, api_app: FastAPI):
         """Add /mfa-setup/ endpoint to an app."""
         if len(self._mfa_providers) > 1:
             raise ValueError(
@@ -862,7 +862,7 @@ class AdminRouter(FastAPI):
                 ),
             )
 
-    def _init_index_template(self):
+    def _init_index_template(self) -> str:
         with open(os.path.join(ASSET_PATH, "index.html")) as f:
             return f.read()
 
@@ -885,7 +885,7 @@ class AdminRouter(FastAPI):
                 "to the same location."
             )
 
-    def _init_table_configs(self, tables) -> list[TableConfig]:
+    def _init_table_configs(self, tables: t.Sequence[t.Union[t.Type[Table], TableConfig]]) -> t.List[TableConfig]:
         """Validate and structure information about the database tables."""
         table_configs: t.List[TableConfig] = []
 
