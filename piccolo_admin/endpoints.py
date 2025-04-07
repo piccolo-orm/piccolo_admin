@@ -417,6 +417,7 @@ class SessionExpiryConfig:
     max_session_expiry: timedelta
     increase_expiry: t.Optional[timedelta]
 
+
 def handle_auth_exception(request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
@@ -504,7 +505,8 @@ class AdminRouter(FastAPI):
         self._auth_table = auth_table
         self._session_table = session_table
         self._rate_limit_provider: RateLimitProvider = (
-            rate_limit_provider or InMemoryLimitProvider(limit=20, timespan=300)
+            rate_limit_provider
+            or InMemoryLimitProvider(limit=20, timespan=300)
         )
         self._session_expiry_config = SessionExpiryConfig(
             session_expiry=session_expiry,
@@ -516,11 +518,13 @@ class AdminRouter(FastAPI):
 
         self._init_app()
 
-    def _init_fastapi_app(self, site_name: str, allowed_hosts: t.Sequence[str], debug: bool):
-        """Call the parent FastAPI constructor, which provisions the top-level ASGI app
-        and ensures .mount etc. are safe to call from our code.
+    def _init_fastapi_app(
+        self, site_name: str, allowed_hosts: t.Sequence[str], debug: bool
+    ):
+        """Call the parent FastAPI constructor, which provisions the top-level
+        ASGI app and ensures .mount etc. are safe to call from our code.
 
-        This implementation adds middleware for CSRF protection and some custom logging.
+        This adds middleware for CSRF protection and custom logging.
         """
         super().__init__(
             title=site_name,
@@ -540,9 +544,11 @@ class AdminRouter(FastAPI):
 
     def _init_app(self):
         """
-        Configure all the Piccolo admin endpoints and sub-apps. The high-level structure of the admin app consists of:
-         * /api - endpoints protected by auth, providing data for the admin UI and CRUD operations
-         * /public - endpoints for login/logout etc. that do not require auth and are used on the login page
+        Configure all the Piccolo admin endpoints and sub-apps.
+        The high-level structure of the admin app consists of:
+         * /api - endpoints protected by auth, used for the admin UI
+         * /public - endpoints for login/logout etc. that do not require auth
+                     and are used on the login page
          * /assets - static files for the admin UI
         """
         # App for authenticated endpoints:
@@ -611,8 +617,9 @@ class AdminRouter(FastAPI):
         return public_app
 
     def _init_public_auth_endpoints(self, public_app: FastAPI):
-        """The unauthenticated user is supposed to hit the /login/ endpoint to obtain credentials.
-        This method modifies a FastAPI app to add /login/ and /logout/ endpoints.
+        """The unauthenticated user is supposed to hit the /login/ endpoint to
+        obtain credentials.
+        This modifies a FastAPI app to add /login/ and /logout/ endpoints.
         """
         public_app.mount(
             path="/login/",
@@ -640,7 +647,8 @@ class AdminRouter(FastAPI):
 
     def _init_auth_middleware(self, api_app: FastAPI):
         """Add middleware to a FastAPI to provide auth on all endpoints.
-        This method produces an instance of starlette's AuthenticationMiddleware and adds it to the app.
+        This produces an instance of starlette's AuthenticationMiddleware and
+        adds it to the app.
         """
         auth_middleware = partial(
             AuthenticationMiddleware,
@@ -655,8 +663,10 @@ class AdminRouter(FastAPI):
         api_app.add_middleware(auth_middleware)
 
     def _init_api_app(self, superuser_tables=tuple()) -> FastAPI:
-        """Provision the API app with all authenticated endpoints necessary for the admin UI.
-        This is a FastAPI app, meaning it can have its own middleware and can be mounted on a parent app.
+        """Provision the API app with all authenticated endpoints necessary for
+        the admin UI.
+        This is a FastAPI app, meaning it can have its own middleware and can
+        be mounted on a parent app.
         """
         api_app = FastAPI(
             docs_url=None,
@@ -670,7 +680,9 @@ class AdminRouter(FastAPI):
             table_class = table_config.table_class
             visible_column_names = table_config.get_visible_column_names()
             visible_filter_names = table_config.get_visible_filter_names()
-            rich_text_columns_names = table_config.get_rich_text_columns_names()
+            rich_text_columns_names = (
+                table_config.get_rich_text_columns_names()
+            )
             media_columns_names = table_config.get_media_columns_names()
             link_column_name = table_config.get_link_column()._meta.name
             order_by = table_config.get_order_by()
@@ -770,7 +782,9 @@ class AdminRouter(FastAPI):
         return api_app
 
     def _init_api_auth_endpoints(self, api_app: FastAPI):
-        """Modify an app by adding endpoints for self-service for an authenticated user: /user/ and /change-password/"""
+        """Modify an app by adding endpoints for self-service for an
+        authenticated user: /user/ and /change-password/
+        """
         api_app.add_api_route(
             path="/user/",
             endpoint=self.get_user,  # type: ignore
@@ -790,7 +804,7 @@ class AdminRouter(FastAPI):
         )
 
     def _init_media_endpoints(self, api_app: FastAPI):
-        """Add /media/ endpoints required by some functionality of the admin UI."""
+        """Add /media/ endpoints required by some admin UI functionality."""
         api_app.add_api_route(
             path="/media/",
             endpoint=self.store_file,  # type: ignore
@@ -809,14 +823,19 @@ class AdminRouter(FastAPI):
 
         for table_config in self.table_configs:
             if table_config.media_columns:
-                for column, media_storage in table_config.media_columns.items():
+                for (
+                    column,
+                    media_storage,
+                ) in table_config.media_columns.items():
                     if isinstance(media_storage, LocalMediaStorage):
                         # We apply a restrictive CSP here to mitigate SVG
                         # files being used maliciously when viewed by admins
                         api_app.mount(
                             path=f"/media-files/{column._meta.table._meta.tablename}/{column._meta.name}/",  # noqa: E501
                             app=CSPMiddleware(
-                                StaticFiles(directory=media_storage.media_path),
+                                StaticFiles(
+                                    directory=media_storage.media_path
+                                ),
                                 config=CSPConfig(default_src="none"),
                             ),
                         )
@@ -824,7 +843,9 @@ class AdminRouter(FastAPI):
     def _init_mfa_provider(self, api_app):
         """Add /mfa-setup/ endpoint to an app."""
         if len(self._mfa_providers) > 1:
-            raise ValueError("Only a single mfa_provider is currently supported.")
+            raise ValueError(
+                "Only a single mfa_provider is currently supported."
+            )
 
         for mfa_provider in self._mfa_providers:
             api_app.mount(
@@ -865,7 +886,7 @@ class AdminRouter(FastAPI):
             )
 
     def _init_table_configs(self, tables) -> list[TableConfig]:
-        """Validate and structure information about the tables for the admin UI."""
+        """Validate and structure information about the database tables."""
         table_configs: t.List[TableConfig] = []
 
         for table in tables:
@@ -894,7 +915,6 @@ class AdminRouter(FastAPI):
             table_configs,
             key=lambda table_config: table_config.table_class._meta.tablename,
         )
-
 
     def _get_media_storage(
         self, table_name: str, column_name: str
@@ -928,7 +948,7 @@ class AdminRouter(FastAPI):
                 detail="No such column found.",
             )
 
-        media_storage = media_columns.get(column) # type: ignore
+        media_storage = media_columns.get(column)  # type: ignore
 
         if not media_storage:
             raise HTTPException(
@@ -937,7 +957,6 @@ class AdminRouter(FastAPI):
             )
 
         return media_storage
-
 
     async def get_root(self, request: Request) -> HTMLResponse:
         return HTMLResponse(self.template)
@@ -1202,7 +1221,6 @@ class AdminRouter(FastAPI):
                 status_code=404, detail="Translation not found"
             )
         return translation
-
 
 
 def get_all_tables(
