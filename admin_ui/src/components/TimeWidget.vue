@@ -49,7 +49,7 @@ const localValue = ref<string>("")
 
 // We dynamically work out the time format based on the time resolution.
 const timeFormat = computed(() => {
-    var format = "HH:mm"
+    let format = "HH:mm"
 
     if (timeResolution.value < 60) {
         format += ":ss"

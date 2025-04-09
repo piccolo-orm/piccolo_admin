@@ -88,7 +88,7 @@ export default defineComponent({
 
             await this.$store.dispatch("fetchUser")
 
-            let nextURL = this.$route.query.nextURL as string
+            const nextURL = this.$route.query.nextURL as string
 
             if (nextURL && !nextURL.startsWith("/login")) {
                 await this.$router.push({ path: nextURL })

@@ -92,14 +92,14 @@ export default defineComponent({
         }
     },
     mounted() {
-        let app = this
+        const app = this
         function onResize() {
             app.popupVisible = false
         }
         this.onResize = onResize
         window.addEventListener("resize", onResize)
     },
-    destroyed() {
+    unmounted() {
         if (this.onResize) {
             window.removeEventListener("resize", this.onResize)
         }

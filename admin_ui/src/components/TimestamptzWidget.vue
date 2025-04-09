@@ -62,7 +62,7 @@ const timezone = ref<string>(localStorage.getItem(TIMEZONE_KEY) ?? "UTC")
 
 // We dynamically work out the datetime format based on the time resolution.
 const datetimeFormat = computed(() => {
-    var format = "YYYY-MM-DDTHH:mm"
+    let format = "YYYY-MM-DDTHH:mm"
 
     if (timeResolution.value < 60) {
         format += ":ss"
