@@ -1,4 +1,4 @@
-import { createStore } from "vuex"
+import { createStore, Commit } from "vuex"
 import axios from "axios"
 
 import type * as i from "./interfaces"
@@ -9,6 +9,8 @@ import translationsModule from "./modules/translations"
 import { getOrderByString } from "./utils"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
+
+type Context = { commit: Commit }
 
 export default createStore({
     modules: {
@@ -105,19 +107,19 @@ export default createStore({
         }
     },
     actions: {
-        async fetchFormConfigs(context) {
+        async fetchFormConfigs(context: Context) {
             const response = await axios.get(`${BASE_URL}forms/`)
             context.commit("updateFormConfigs", response.data)
         },
-        async fetchFormGroups(context) {
+        async fetchFormGroups(context: Context) {
             const response = await axios.get(`${BASE_URL}forms/grouped/`)
             context.commit("updateFormGroups", response.data)
         },
-        async fetchFormConfig(context, formSlug: string) {
+        async fetchFormConfig(context: Context, formSlug: string) {
             const response = await axios.get(`${BASE_URL}forms/${formSlug}/`)
             return response
         },
-        async fetchFormSchema(context, formSlug: string) {
+        async fetchFormSchema(context: Context, formSlug: string) {
             const response = await axios.get(
                 `${BASE_URL}forms/${formSlug}/schema/`
             )
@@ -127,19 +129,19 @@ export default createStore({
 
         /*********************************************************************/
 
-        async fetchTableNames(context) {
+        async fetchTableNames(context: Context) {
             const response = await axios.get(`${BASE_URL}tables/`)
             context.commit("updateTableNames", response.data)
         },
-        async fetchTableGroups(context) {
+        async fetchTableGroups(context: Context) {
             const response = await axios.get(`${BASE_URL}tables/grouped/`)
             context.commit("updateTableGroups", response.data)
         },
-        async fetchCustomLinks(context) {
+        async fetchCustomLinks(context: Context) {
             const response = await axios.get(`${BASE_URL}links/`)
             context.commit("updateCustomLinks", response.data)
         },
-        async fetchCount(context) {
+        async fetchCount(context: Context) {
             const tableName = context.state.currentTableName
 
             // Remove order, as it doesn't make any sense for a count.
@@ -156,7 +158,7 @@ export default createStore({
             context.commit("updateRowCount", data.count)
             return data
         },
-        async fetchRows(context) {
+        async fetchRows(context: Context) {
             context.commit("updateLoadingStatus", true)
             const params: { [key: string]: any } = {
                 ...(context.state.filterParams || {})
@@ -199,13 +201,13 @@ export default createStore({
             }
             context.commit("updateLoadingStatus", false)
         },
-        async fetchTableReferences(context, tableName: string) {
+        async fetchTableReferences(context: Context, tableName: string) {
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/references/`
             )
             return response
         },
-        async fetchIds(context, config: i.FetchIdsConfig) {
+        async fetchIds(context: Context, config: i.FetchIdsConfig) {
             const params: { [key: string]: any } = {}
 
             if (config.search) {
@@ -228,20 +230,20 @@ export default createStore({
             )
             return response
         },
-        async getNew(context, tableName: string) {
+        async getNew(context: Context, tableName: string) {
             const response = await axios.get(
                 `${BASE_URL}tables/${tableName}/new/`
             )
             return response
         },
-        async fetchSingleRow(context, config: i.FetchSingleRowConfig) {
+        async fetchSingleRow(context: Context, config: i.FetchSingleRowConfig) {
             const response = await axios.get(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/?__readable=true`
             )
             context.commit("updateSelectedRow", response.data)
             return response
         },
-        async fetchSchema(context, tableName: string) {
+        async fetchSchema(context: Context, tableName: string) {
             const response = await axios.get<i.Schema>(
                 `${BASE_URL}tables/${tableName}/schema/`
             )
@@ -249,27 +251,27 @@ export default createStore({
 
             return response
         },
-        async createRow(context, config: i.CreateRow) {
+        async createRow(context: Context, config: i.CreateRow) {
             const response = await axios.post(
                 `${BASE_URL}tables/${config.tableName}/`,
                 config.data
             )
             return response
         },
-        async deleteRow(context, config: i.DeleteRow) {
+        async deleteRow(context: Context, config: i.DeleteRow) {
             const response = await axios.delete(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`
             )
             return response
         },
-        async updateRow(context, config: i.UpdateRow) {
+        async updateRow(context: Context, config: i.UpdateRow) {
             const response = await axios.patch(
                 `${BASE_URL}tables/${config.tableName}/${config.rowID}/`,
                 config.data
             )
             return response
         },
-        async fetchUser(context) {
+        async fetchUser(context: Context) {
             const response = await axios.get(`${BASE_URL}user/`)
             context.commit("updateUser", response.data)
         }
