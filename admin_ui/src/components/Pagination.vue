@@ -41,7 +41,7 @@ export default defineComponent({
             return this.$store.state.pageSize || 1
         },
         pageCount() {
-            let count = Math.ceil(this.rowCount / this.pageSize)
+            const count = Math.ceil(this.rowCount / this.pageSize)
             return count < 1 ? 1 : count
         },
         currentTableName() {

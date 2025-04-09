@@ -133,7 +133,7 @@ export default defineComponent({
                 clearTimeout(this.debounceTimer)
             }
 
-            let app = this
+            const app = this
 
             this.debounceTimer = window.setTimeout(async () => {
                 app.offset = 0

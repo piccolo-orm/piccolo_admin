@@ -565,14 +565,14 @@ export default defineComponent({
             return this.schema.extra.primary_key_name || "id"
         },
         linkColumnName(): string {
-            let schema: Schema = this.schema
+            const schema: Schema = this.schema
             return schema.extra.link_column_name
         },
         // We create an object for quickly mapping a choice value to it's
         // display value. It maps column name -> choice value -> display value.
         // For example {'genre': {1: 'Sci-Fi'}}
         choicesLookup() {
-            let schema = this.schema
+            const schema = this.schema
             const output: {
                 [key: string]: { [key: string | number]: string } | null
             } = {}
@@ -609,7 +609,7 @@ export default defineComponent({
             if (value === null) {
                 return null
             }
-            let string = String(value)
+            const string = String(value)
             if (string.length > 100) {
                 return string.substring(0, 80) + "..."
             }
@@ -664,7 +664,7 @@ export default defineComponent({
             }
         },
         showSuccess(contents: string) {
-            var message: APIResponseMessage = {
+            const message: APIResponseMessage = {
                 contents: contents,
                 type: "success"
             }
@@ -708,7 +708,7 @@ export default defineComponent({
                             )
                             const errorString = errors.join(", ")
 
-                            var message: APIResponseMessage = {
+                            const message: APIResponseMessage = {
                                 contents: `Unable to delete row ${this.selectedRows[i]} (${errorString})`,
                                 type: "error"
                             }

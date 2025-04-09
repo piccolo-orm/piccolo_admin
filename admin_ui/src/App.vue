@@ -57,7 +57,7 @@ export default defineComponent({
         document.title = this.siteName
     },
     async beforeCreate() {
-        let app = this
+        const app = this
 
         // Handle auth errors - redirect to login.
         axios.interceptors.response.use(
@@ -98,7 +98,7 @@ export default defineComponent({
             function (error) {
                 if (error.response && error.response.status == 405) {
                     console.log("Method not allowed")
-                    let message: i.APIResponseMessage = {
+                    const message: i.APIResponseMessage = {
                         contents:
                             "Method not supported - running in read only mode.",
                         type: "error"
@@ -132,7 +132,7 @@ export default defineComponent({
             function (error) {
                 if (error.response && error.response.status == 502) {
                     console.log("The server can't be reached.")
-                    let message: i.APIResponseMessage = {
+                    const message: i.APIResponseMessage = {
                         contents:
                             "The server can't be reached - please try later.",
                         type: "error"
