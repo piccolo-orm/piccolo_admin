@@ -30,7 +30,7 @@ distribution files that the backend relies on.
 
 .. code-block:: bash
 
-    npm run build
+    npm run build-only
 
 Then start the API:
 
