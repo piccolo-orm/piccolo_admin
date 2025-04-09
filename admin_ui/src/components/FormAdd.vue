@@ -109,7 +109,7 @@ export default defineComponent({
             const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
-                let value: any = i[1]
+                const value: any = i[1]
 
                 json[key] = convertFormValue({
                     key,
@@ -125,7 +125,7 @@ export default defineComponent({
                     { responseType: "blob" }
                 )
             } catch (error) {
-                var message: APIResponseMessage = {
+                const message: APIResponseMessage = {
                     contents: "The form has errors.",
                     type: "error"
                 }

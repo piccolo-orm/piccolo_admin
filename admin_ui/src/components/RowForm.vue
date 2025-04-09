@@ -135,7 +135,7 @@ export default defineComponent({
     },
     methods: {
         getValue(columnName: string) {
-            let value = this.row ? this.row[columnName] : undefined
+            const value = this.row ? this.row[columnName] : undefined
             return value
         },
         isRequired(columnName: string) {
