@@ -91,271 +91,314 @@
                             </p>
                             <template v-else>
                                 <table>
-                                    <tr>
-                                        <th>
-                                            <input
-                                                type="checkbox"
-                                                v-model="allSelected"
-                                                v-on:change="selectAllRows"
-                                            />
-                                        </th>
-                                        <th
-                                            v-bind:key="name"
-                                            v-for="name in visibleColumnNames"
-                                        >
-                                            {{
-                                                schema.properties[name]
-                                                    ? schema.properties[name]
-                                                          .title
-                                                    : name
-                                            }}
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input
+                                                    type="checkbox"
+                                                    v-model="allSelected"
+                                                    v-on:change="selectAllRows"
+                                                />
+                                            </th>
+                                            <th
+                                                v-bind:key="name"
+                                                v-for="name in visibleColumnNames"
+                                            >
+                                                {{
+                                                    schema.properties[name]
+                                                        ? schema.properties[
+                                                              name
+                                                          ].title
+                                                        : name
+                                                }}
 
-                                            <a
-                                                href="#"
-                                                @click.prevent="
-                                                    showSortModal = true
-                                                "
-                                                v-if="orderByMapping[name]"
-                                            >
-                                                <font-awesome-icon
-                                                    icon="caret-up"
-                                                    v-if="
-                                                        orderByMapping[name]
-                                                            .ascending
-                                                    "
-                                                />
-                                                <font-awesome-icon
-                                                    icon="caret-down"
-                                                    v-else
-                                                />
-                                            </a>
-                                        </th>
-                                        <th></th>
-                                    </tr>
-
-                                    <tr
-                                        v-bind:key="row[pkName]"
-                                        v-for="row in rows"
-                                    >
-                                        <td>
-                                            <input
-                                                :value="row[pkName]"
-                                                @click="selectRow"
-                                                type="checkbox"
-                                                v-model="selectedRows"
-                                            />
-                                        </td>
-                                        <td
-                                            v-bind:key="name"
-                                            v-for="name in visibleColumnNames"
-                                        >
-                                            <span v-if="row[name] === null">
-                                                <code>NULL</code>
-                                            </span>
-                                            <span
-                                                class="link"
-                                                v-else-if="
-                                                    name == linkColumnName
-                                                "
-                                            >
-                                                <router-link
-                                                    :to="{
-                                                        name: 'editRow',
-                                                        params: {
-                                                            tableName:
-                                                                tableName,
-                                                            rowID: row[pkName]
-                                                        }
-                                                    }"
-                                                    >{{
-                                                        row[name]
-                                                    }}</router-link
-                                                >
-                                            </span>
-                                            <span
-                                                v-else-if="choicesLookup[name]"
-                                            >
-                                                <template v-if="isArray(name)">
-                                                    {{
-                                                        abbreviate(
-                                                            row[name]
-                                                                .map(
-                                                                    (i: any) =>
-                                                                        choicesLookup[
-                                                                            name
-                                                                        ]![i] ??
-                                                                        i
-                                                                )
-                                                                .join(", ")
-                                                        )
-                                                    }}
-                                                </template>
-                                                <template v-else>{{
-                                                    choicesLookup[name]![
-                                                        row[name]
-                                                    ] ?? row[name]
-                                                }}</template>
-                                            </span>
-                                            <span
-                                                class="link"
-                                                v-else-if="
-                                                    isForeignKey(name) &&
-                                                    row[name] !== null
-                                                "
-                                            >
-                                                <router-link
-                                                    :to="{
-                                                        name: 'editRow',
-                                                        params: {
-                                                            tableName:
-                                                                getTableName(
-                                                                    name
-                                                                ),
-                                                            rowID: row[name]
-                                                        }
-                                                    }"
-                                                    >{{
-                                                        row[name + "_readable"]
-                                                    }}</router-link
-                                                >
-                                            </span>
-                                            <span
-                                                class="boolean"
-                                                v-else-if="isBoolean(name)"
-                                            >
-                                                <font-awesome-icon
-                                                    class="correct"
-                                                    icon="check"
-                                                    v-if="row[name] === true"
-                                                />
-                                                <font-awesome-icon
-                                                    class="incorrect"
-                                                    icon="times"
-                                                    v-else-if="
-                                                        row[name] === false
-                                                    "
-                                                />
-                                            </span>
-                                            <span v-else-if="isInterval(name)">
-                                                {{ humanReadable(row[name]) }}
-                                            </span>
-                                            <span v-else-if="isJSON(name)">
-                                                <pre>{{
-                                                    abbreviate(
-                                                        formatJSON(row[name])
-                                                    )
-                                                }}</pre>
-                                            </span>
-                                            <span
-                                                v-else-if="isMediaColumn(name)"
-                                            >
-                                                <template v-if="isArray(name)">
-                                                    <a
-                                                        style="display: block"
-                                                        href="#"
-                                                        v-for="item in row[
-                                                            name
-                                                        ]"
-                                                        :key="item"
-                                                        @click.prevent="
-                                                            showMedia(
-                                                                item,
-                                                                name
-                                                            )
-                                                        "
-                                                        >{{ abbreviate(item) }}
-                                                    </a>
-                                                </template>
-                                                <template v-else>
-                                                    <a
-                                                        href="#"
-                                                        @click.prevent="
-                                                            showMedia(
-                                                                row[name],
-                                                                name
-                                                            )
-                                                        "
-                                                        >{{
-                                                            abbreviate(
-                                                                row[name]
-                                                            )
-                                                        }}
-                                                    </a>
-                                                </template>
-                                            </span>
-                                            <span v-else>
-                                                {{ abbreviate(row[name]) }}
-                                            </span>
-                                        </td>
-
-                                        <td>
-                                            <span
-                                                style="
-                                                    position: relative;
-                                                    display: block;
-                                                    text-align: right;
-                                                "
-                                            >
                                                 <a
-                                                    class="subtle"
                                                     href="#"
-                                                    v-on:click.prevent="
-                                                        visibleDropdown =
-                                                            visibleDropdown
-                                                                ? undefined
-                                                                : row[pkName]
+                                                    @click.prevent="
+                                                        showSortModal = true
                                                     "
+                                                    v-if="orderByMapping[name]"
                                                 >
                                                     <font-awesome-icon
-                                                        icon="ellipsis-v"
+                                                        icon="caret-up"
+                                                        v-if="
+                                                            orderByMapping[name]
+                                                                .ascending
+                                                        "
+                                                    />
+                                                    <font-awesome-icon
+                                                        icon="caret-down"
+                                                        v-else
                                                     />
                                                 </a>
-                                                <DropDownMenu
-                                                    v-if="
-                                                        visibleDropdown ==
-                                                        row[pkName]
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr
+                                            v-bind:key="row[pkName]"
+                                            v-for="row in rows"
+                                        >
+                                            <td>
+                                                <input
+                                                    :value="row[pkName]"
+                                                    @click="selectRow"
+                                                    type="checkbox"
+                                                    v-model="selectedRows"
+                                                />
+                                            </td>
+                                            <td
+                                                v-bind:key="name"
+                                                v-for="name in visibleColumnNames"
+                                            >
+                                                <span v-if="row[name] === null">
+                                                    <code>NULL</code>
+                                                </span>
+                                                <span
+                                                    class="link"
+                                                    v-else-if="
+                                                        name == linkColumnName
                                                     "
                                                 >
-                                                    <li>
-                                                        <router-link
-                                                            :to="{
-                                                                name: 'editRow',
-                                                                params: {
-                                                                    tableName:
-                                                                        tableName,
-                                                                    rowID: row[
-                                                                        pkName
-                                                                    ]
-                                                                }
-                                                            }"
-                                                            class="subtle"
-                                                            title="Edit Row"
-                                                        >
-                                                            <font-awesome-icon
-                                                                icon="edit"
-                                                            />{{ $t("Edit") }}
-                                                        </router-link>
-                                                    </li>
-                                                    <li>
-                                                        <DeleteButton
-                                                            :includeTitle="true"
-                                                            class="subtle delete"
-                                                            v-on:triggered="
-                                                                deleteRow(
-                                                                    row[pkName]
+                                                    <router-link
+                                                        :to="{
+                                                            name: 'editRow',
+                                                            params: {
+                                                                tableName:
+                                                                    tableName,
+                                                                rowID: row[
+                                                                    pkName
+                                                                ]
+                                                            }
+                                                        }"
+                                                        >{{
+                                                            row[name]
+                                                        }}</router-link
+                                                    >
+                                                </span>
+                                                <span
+                                                    v-else-if="
+                                                        choicesLookup[name]
+                                                    "
+                                                >
+                                                    <template
+                                                        v-if="isArray(name)"
+                                                    >
+                                                        {{
+                                                            abbreviate(
+                                                                row[name]
+                                                                    .map(
+                                                                        (
+                                                                            i: any
+                                                                        ) =>
+                                                                            choicesLookup[
+                                                                                name
+                                                                            ]![
+                                                                                i
+                                                                            ] ??
+                                                                            i
+                                                                    )
+                                                                    .join(", ")
+                                                            )
+                                                        }}
+                                                    </template>
+                                                    <template v-else>{{
+                                                        choicesLookup[name]![
+                                                            row[name]
+                                                        ] ?? row[name]
+                                                    }}</template>
+                                                </span>
+                                                <span
+                                                    class="link"
+                                                    v-else-if="
+                                                        isForeignKey(name) &&
+                                                        row[name] !== null
+                                                    "
+                                                >
+                                                    <router-link
+                                                        :to="{
+                                                            name: 'editRow',
+                                                            params: {
+                                                                tableName:
+                                                                    getTableName(
+                                                                        name
+                                                                    ),
+                                                                rowID: row[name]
+                                                            }
+                                                        }"
+                                                        >{{
+                                                            row[
+                                                                name +
+                                                                    "_readable"
+                                                            ]
+                                                        }}</router-link
+                                                    >
+                                                </span>
+                                                <span
+                                                    class="boolean"
+                                                    v-else-if="isBoolean(name)"
+                                                >
+                                                    <font-awesome-icon
+                                                        class="correct"
+                                                        icon="check"
+                                                        v-if="
+                                                            row[name] === true
+                                                        "
+                                                    />
+                                                    <font-awesome-icon
+                                                        class="incorrect"
+                                                        icon="times"
+                                                        v-else-if="
+                                                            row[name] === false
+                                                        "
+                                                    />
+                                                </span>
+                                                <span
+                                                    v-else-if="isInterval(name)"
+                                                >
+                                                    {{
+                                                        humanReadable(row[name])
+                                                    }}
+                                                </span>
+                                                <span v-else-if="isJSON(name)">
+                                                    <pre>{{
+                                                        abbreviate(
+                                                            formatJSON(
+                                                                row[name]
+                                                            )
+                                                        )
+                                                    }}</pre>
+                                                </span>
+                                                <span
+                                                    v-else-if="
+                                                        isMediaColumn(name)
+                                                    "
+                                                >
+                                                    <template
+                                                        v-if="isArray(name)"
+                                                    >
+                                                        <a
+                                                            style="
+                                                                display: block;
+                                                            "
+                                                            href="#"
+                                                            v-for="item in row[
+                                                                name
+                                                            ]"
+                                                            :key="item"
+                                                            @click.prevent="
+                                                                showMedia(
+                                                                    item,
+                                                                    name
                                                                 )
                                                             "
+                                                            >{{
+                                                                abbreviate(item)
+                                                            }}
+                                                        </a>
+                                                    </template>
+                                                    <template v-else>
+                                                        <a
+                                                            href="#"
+                                                            @click.prevent="
+                                                                showMedia(
+                                                                    row[name],
+                                                                    name
+                                                                )
+                                                            "
+                                                            >{{
+                                                                abbreviate(
+                                                                    row[name]
+                                                                )
+                                                            }}
+                                                        </a>
+                                                    </template>
+                                                </span>
+                                                <span v-else>
+                                                    {{ abbreviate(row[name]) }}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span
+                                                    style="
+                                                        position: relative;
+                                                        display: block;
+                                                        text-align: right;
+                                                    "
+                                                >
+                                                    <a
+                                                        class="subtle"
+                                                        href="#"
+                                                        v-on:click.prevent="
+                                                            visibleDropdown =
+                                                                visibleDropdown
+                                                                    ? undefined
+                                                                    : row[
+                                                                          pkName
+                                                                      ]
+                                                        "
+                                                    >
+                                                        <font-awesome-icon
+                                                            icon="ellipsis-v"
                                                         />
-                                                    </li>
-                                                </DropDownMenu>
-                                            </span>
-                                        </td>
-                                    </tr>
+                                                    </a>
+                                                    <DropDownMenu
+                                                        v-if="
+                                                            visibleDropdown ==
+                                                            row[pkName]
+                                                        "
+                                                    >
+                                                        <li>
+                                                            <router-link
+                                                                :to="{
+                                                                    name: 'editRow',
+                                                                    params: {
+                                                                        tableName:
+                                                                            tableName,
+                                                                        rowID: row[
+                                                                            pkName
+                                                                        ]
+                                                                    }
+                                                                }"
+                                                                class="subtle"
+                                                                title="Edit Row"
+                                                            >
+                                                                <font-awesome-icon
+                                                                    icon="edit"
+                                                                />{{
+                                                                    $t("Edit")
+                                                                }}
+                                                            </router-link>
+                                                        </li>
+                                                        <li>
+                                                            <DeleteButton
+                                                                :includeTitle="
+                                                                    true
+                                                                "
+                                                                class="subtle delete"
+                                                                v-on:triggered="
+                                                                    deleteRow(
+                                                                        row[
+                                                                            pkName
+                                                                        ]
+                                                                    )
+                                                                "
+                                                            />
+                                                        </li>
+                                                    </DropDownMenu>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
 
                                 <p id="result_count">
                                     {{ $t("Showing") }} {{ rows.length }}
-                                    {{ $t("of") }} {{ rowCount }}
+                                    {{ $t("of") }}
+                                    {{ rowCount }}
                                     {{ $t("result(s)") }}
                                 </p>
 
