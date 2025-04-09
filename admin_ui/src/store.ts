@@ -10,7 +10,7 @@ import { getOrderByString } from "./utils"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
-type Context = { commit: Commit }
+type Context = { commit: Commit; state: { [key: string]: any } }
 
 export default createStore({
     modules: {
