@@ -1,4 +1,4 @@
-import { createStore, Commit } from "vuex"
+import { createStore, Commit, Dispatch } from "vuex"
 import axios from "axios"
 
 import type * as i from "./interfaces"
@@ -10,7 +10,11 @@ import { getOrderByString } from "./utils"
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URI
 
-type Context = { commit: Commit; state: { [key: string]: any } }
+type Context = {
+    commit: Commit
+    state: { [key: string]: any }
+    dispatch: Dispatch
+}
 
 export default createStore({
     modules: {
