@@ -1187,7 +1187,7 @@ def create_admin(
     session_expiry: timedelta = timedelta(hours=1),
     max_session_expiry: timedelta = timedelta(days=7),
     increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
-    page_size: int = 15,
+    page_size: t.Literal[5, 15, 30, 50, 100] = 15,
     read_only: bool = False,
     rate_limit_provider: t.Optional[RateLimitProvider] = None,
     production: bool = False,

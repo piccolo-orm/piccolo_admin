@@ -23,7 +23,7 @@ export default createStore({
         currentTableName: undefined,
         darkMode: false,
         filterParams: {} as { [key: string]: any },
-        pageSize: 15,
+        pageSize: 0,
         rowCount: 0,
         rows: [],
         schema: undefined as i.Schema | undefined,
@@ -154,6 +154,11 @@ export default createStore({
             )
             const data = response.data as i.RowCountAPIResponse
             context.commit("updateRowCount", data.count)
+
+            if (!context.state.pageSize) {
+                context.commit("updatePageSize", data.page_size)
+            }
+
             return data
         },
         async fetchRows(context) {
