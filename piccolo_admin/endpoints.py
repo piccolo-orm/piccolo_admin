@@ -11,6 +11,7 @@ import itertools
 import json
 import logging
 import os
+import sys
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
@@ -65,6 +66,12 @@ from .translations.models import (
 )
 from .utils import convert_enum_to_choices
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
+
+if sys.version_info < (3, 11):
+    ENUMTYPE = enum.EnumMeta
+else:
+    ENUMTYPE = enum.EnumType
+
 
 logger = logging.getLogger(__name__)
 
@@ -409,7 +416,7 @@ class FormConfig:
             field_name,
             field_value,
         ) in self.pydantic_model.model_fields.items():
-            if isinstance(field_value.annotation, enum.EnumType):
+            if isinstance(field_value.annotation, ENUMTYPE):
                 # update model_fields, field annotation and
                 # rebuild the model for the changes to take effect
                 pydantic_model.model_fields[field_name] = Field(
