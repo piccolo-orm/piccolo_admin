@@ -111,9 +111,9 @@ export default defineComponent({
         }
     },
     mounted() {
-        let orderByConfigs: OrderByConfig[] | null = this.$store.state.orderBy
+        const orderByConfigs: OrderByConfig[] | null = this.$store.state.orderBy
 
-        let localCopy: OrderByConfig[] = orderByConfigs
+        const localCopy: OrderByConfig[] = orderByConfigs
             ? orderByConfigs.map((i) => {
                   return { ...i }
               })

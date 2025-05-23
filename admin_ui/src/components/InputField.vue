@@ -368,7 +368,7 @@ export default defineComponent({
     },
     methods: {
         setTextareaHeight() {
-            let element = this.$refs.textarea as HTMLTextAreaElement
+            const element = this.$refs.textarea as HTMLTextAreaElement
             if (element) {
                 if (element.scrollHeight > element.clientHeight) {
                     const cursorPosition = element.selectionStart
@@ -402,7 +402,7 @@ export default defineComponent({
                 return
             }
 
-            let formData = new FormData()
+            const formData = new FormData()
             formData.append("table_name", this.currentTableName)
             formData.append("column_name", this.columnName)
             formData.append("file", file)
@@ -449,7 +449,7 @@ export default defineComponent({
                     }
                 }
 
-                let message: APIResponseMessage = {
+                const message: APIResponseMessage = {
                     contents: errorMessage,
                     type: "error"
                 }
@@ -466,7 +466,7 @@ export default defineComponent({
                 this.localValue = value
             }
 
-            let app = this
+            const app = this
 
             setTimeout(function () {
                 app.setTextareaHeight()

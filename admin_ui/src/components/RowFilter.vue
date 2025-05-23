@@ -41,7 +41,7 @@ export default defineComponent({
             this.$emit("closeSideBar", false)
         },
         showSuccess(contents: string) {
-            var message: APIResponseMessage = {
+            const message: APIResponseMessage = {
                 contents: contents,
                 type: "success"
             }
@@ -99,8 +99,8 @@ export default defineComponent({
         },
         async clearFilters() {
             console.log("Clearing ...")
-            let form: any = this.$refs.form
-            let _ = [...form.elements].forEach((element) => {
+            const form: any = this.$refs.form
+            const _ = [...form.elements].forEach((element) => {
                 if (element.type == "hidden") {
                     element.value = ""
                 }

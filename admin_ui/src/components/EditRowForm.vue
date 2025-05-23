@@ -109,7 +109,7 @@ export default defineComponent({
             const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
-                let value = i[1]
+                const value = i[1]
 
                 json[key] = convertFormValue({
                     key,
@@ -118,7 +118,7 @@ export default defineComponent({
                 })
             }
 
-            let config: UpdateRow = {
+            const config: UpdateRow = {
                 tableName: this.tableName,
                 rowID: this.rowID,
                 data: json
@@ -152,7 +152,7 @@ export default defineComponent({
         },
         async deleteRow() {
             if (window.confirm("Are you sure you want to delete this row?")) {
-                let config: DeleteRow = {
+                const config: DeleteRow = {
                     tableName: this.tableName,
                     rowID: this.rowID
                 }
@@ -167,7 +167,7 @@ export default defineComponent({
                         )
                     }
 
-                    var message: APIResponseMessage = {
+                    const message: APIResponseMessage = {
                         contents: "Unable to delete the row.",
                         type: "error"
                     }

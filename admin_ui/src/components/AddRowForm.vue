@@ -58,7 +58,7 @@ export default defineComponent({
             const json: { [key: string]: any } = {}
             for (const i of form.entries()) {
                 const key = i[0]
-                let value = i[1]
+                const value = i[1]
 
                 json[key] = convertFormValue({
                     key,
@@ -103,7 +103,7 @@ export default defineComponent({
         }
     },
     async mounted() {
-        let response = await this.$store.dispatch("getNew", this.tableName)
+        const response = await this.$store.dispatch("getNew", this.tableName)
         this.defaults = response.data
     }
 })

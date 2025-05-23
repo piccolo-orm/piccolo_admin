@@ -262,7 +262,7 @@ const fetchExportedRows = async () => {
                     .join(delimiter.value)
             )
         ].join("\n")
-        let csv = new Blob([data], {
+        const csv = new Blob([data], {
             type: "text/csv;charset=utf-8;"
         })
         const url: string = URL.createObjectURL(csv)

@@ -62,7 +62,7 @@ jobs:
                   pip install -r requirements/test-requirements.txt
                   cd admin_ui && npm install
             - name: Build front end assets
-              run: cd admin_ui && npm run build
+              run: cd admin_ui && npm run build-only
             - name: Test with pytest, SQLite
               run: ./scripts/run-tests.sh
             - name: Upload coverage
