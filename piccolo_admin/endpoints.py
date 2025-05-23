@@ -4,12 +4,14 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 
 from __future__ import annotations
 
+import enum
 import inspect
 import io
 import itertools
 import json
 import logging
 import os
+import sys
 import typing as t
 from dataclasses import dataclass
 from datetime import timedelta
@@ -62,7 +64,14 @@ from .translations.models import (
     TranslationListItem,
     TranslationListResponse,
 )
+from .utils import convert_enum_to_choices
 from .version import __VERSION__ as PICCOLO_ADMIN_VERSION
+
+if sys.version_info < (3, 11):
+    ENUMTYPE = enum.EnumMeta
+else:
+    ENUMTYPE = enum.EnumType
+
 
 logger = logging.getLogger(__name__)
 
@@ -403,6 +412,24 @@ class FormConfig:
         self.description = description
         self.form_group = form_group
         self.slug = self.name.replace(" ", "-").lower()
+        for (
+            field_name,
+            field_value,
+        ) in self.pydantic_model.model_fields.items():
+            if isinstance(field_value.annotation, ENUMTYPE):
+                # update model_fields, field annotation and
+                # rebuild the model for the changes to take effect
+                pydantic_model.model_fields[field_name] = Field(
+                    json_schema_extra={
+                        "extra": {
+                            "choices": convert_enum_to_choices(
+                                field_value.annotation
+                            )
+                        }
+                    },
+                )
+                pydantic_model.model_fields[field_name].annotation = str
+                pydantic_model.model_rebuild(force=True)
 
 
 class FormConfigResponseModel(BaseModel):
