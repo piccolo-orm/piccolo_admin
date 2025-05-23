@@ -4,6 +4,7 @@ Creates a basic wrapper around a Piccolo model, turning it into an ASGI app.
 
 from __future__ import annotations
 
+import enum
 import inspect
 import io
 import itertools
@@ -396,7 +397,6 @@ class FormConfig:
             t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
         ],
         description: t.Optional[str] = None,
-        choices: t.Optional[t.Dict[str, t.Any]] = None,
         form_group: t.Optional[str] = None,
     ):
         self.name = name
@@ -405,14 +405,19 @@ class FormConfig:
         self.description = description
         self.form_group = form_group
         self.slug = self.name.replace(" ", "-").lower()
-        if choices is not None:
-            for field_name, field_value in choices.items():
+        for (
+            field_name,
+            field_value,
+        ) in self.pydantic_model.model_fields.items():
+            if isinstance(field_value.annotation, enum.EnumType):
                 # update model_fields, field annotation and
                 # rebuild the model for the changes to take effect
                 pydantic_model.model_fields[field_name] = Field(
                     json_schema_extra={
                         "extra": {
-                            "choices": convert_enum_to_choices(field_value)
+                            "choices": convert_enum_to_choices(
+                                field_value.annotation
+                            )
                         }
                     },
                 )

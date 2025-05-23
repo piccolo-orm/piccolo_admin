@@ -18,9 +18,13 @@ class NewStaffModel(BaseModel):
     username: str
     email: EmailStr
     superuser: bool
+    permissions: Permission
 
 
 def new_staff_endpoint(request: Request, data: NewStaffModel) -> str:
+    # We need to do the enum type conversion ourselves like this:
+    # data.permissions = Permission(int(data.permissions)) # for int enum
+    # data.permissions = Permission(data.permissions)  # for str enum
     print(data)
     return "A new staff member has been successfully created."
 
@@ -30,6 +34,5 @@ FORM = FormConfig(
     pydantic_model=NewStaffModel,
     endpoint=new_staff_endpoint,
     description="Make a enum form.",
-    choices={"permissions": Permission},
     form_group="Text forms",
 )
