@@ -1098,7 +1098,7 @@ TURKISH = Translation(
 FARSI = Translation(
     language_name="FARSI",
     language_code="fa",
-    translations = {
+    translations={
         "About": "درباره",
         "Add Row": "افزودن ردیف",
         "Add": "افزودن",
@@ -1115,7 +1115,7 @@ FARSI = Translation(
         "Dark Mode": "حالت تاریک",
         "Days": "روز",
         "Delete": "حذف",
-        "Delimiter": "جداکننده", 
+        "Delimiter": "جداکننده",
         "Descending": "نزولی",
         "Download": "دانلود",
         "Download failed": "دانلود ناموفق بود",
@@ -1191,7 +1191,7 @@ TRANSLATIONS: t.List[Translation] = [
     TURKISH,
     UKRAINIAN,
     WELSH,
-    FARSI
+    FARSI,
 ]
 
 # We use some translations outside of the HTML templates (e.g. within
