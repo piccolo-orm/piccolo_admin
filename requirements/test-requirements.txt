@@ -1,8 +1,8 @@
-pytest==8.0.1
-pytest-cov==4.1.0
-flake8==7.0.0
+pytest==8.4.0
+pytest-cov==6.1.1
+flake8==7.2.0
 piccolo[postgres,sqlite]>=1.16.0
-playwright==1.41.2
-pytest-playwright==0.4.4
+playwright==1.52.0
+pytest-playwright==0.7.0
 httpx==0.28.1
 fastapi==0.115.6
