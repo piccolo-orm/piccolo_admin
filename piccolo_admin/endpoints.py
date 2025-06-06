@@ -832,7 +832,7 @@ class AdminRouter(FastAPI):
                 admin_only=True,
                 increase_expiry=increase_expiry,
             ),
-            on_error=handle_auth_exception,
+            on_error=handle_auth_exception,  # type: ignore
         )
 
         self.mount(path="/api", app=auth_middleware(private_app))
