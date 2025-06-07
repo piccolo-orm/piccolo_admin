@@ -17,8 +17,6 @@ https://www.convertcsv.com/csv-to-json.htm.
 
 """
 
-import typing as t
-
 from piccolo_admin.translations.models import Translation
 
 # For now there aren't any words which are different between dialects, so we
@@ -1177,7 +1175,7 @@ FARSI = Translation(
     },
 )
 
-TRANSLATIONS: t.List[Translation] = [
+TRANSLATIONS: list[Translation] = [
     ENGLISH,
     CROATIAN,
     FINNISH,
