@@ -1,8 +1,8 @@
 import datetime
-import typing as t
 from decimal import Decimal
+from typing import Any
 
-DIRECTORS: t.List[t.Dict[str, t.Any]] = [
+DIRECTORS: list[dict[str, Any]] = [
     {
         "id": 1,
         "name": "Peter Jackson",
@@ -34,7 +34,7 @@ DIRECTORS: t.List[t.Dict[str, t.Any]] = [
 ]
 
 
-MOVIES: t.List[t.Dict[str, t.Any]] = [
+MOVIES: list[dict[str, Any]] = [
     {
         "name": "Star Wars: Episode IV - A New Hope",
         "rating": 93.3,
@@ -331,7 +331,7 @@ MOVIES: t.List[t.Dict[str, t.Any]] = [
 ]
 
 
-STUDIOS: t.List[t.Dict[str, t.Any]] = [
+STUDIOS: list[dict[str, Any]] = [
     {
         "name": "Shepperton Studios",
         "facilities": {
@@ -349,7 +349,7 @@ STUDIOS: t.List[t.Dict[str, t.Any]] = [
 ]
 
 
-TICKETS: t.List[t.Dict[str, t.Any]] = [
+TICKETS: list[dict[str, Any]] = [
     {
         "booked_by": "star_wars_super_fan_1",
         "movie": 1,
@@ -371,7 +371,7 @@ TICKETS: t.List[t.Dict[str, t.Any]] = [
 ]
 
 
-SORTED_COLUMNS: t.List[t.Dict[str, t.Any]] = [
+SORTED_COLUMNS: list[dict[str, Any]] = [
     {
         "integer": 5,
         "letter": "a",
@@ -400,7 +400,7 @@ SORTED_COLUMNS: t.List[t.Dict[str, t.Any]] = [
 
 
 # Some random words used to generate fake movie names.
-MOVIE_WORDS: t.List[str] = [
+MOVIE_WORDS: list[str] = [
     "Adventure",
     "Alien",
     "Armageddon",
