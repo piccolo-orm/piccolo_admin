@@ -4,7 +4,6 @@ import enum
 import logging
 import os
 import random
-import typing as t
 
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns.column_types import (
@@ -292,7 +291,7 @@ class Choices(Table):
 ###############################################################################
 # Create the schema and populate data
 
-TABLE_CLASSES: t.Tuple[t.Type[Table], ...] = (
+TABLE_CLASSES: tuple[type[Table], ...] = (
     Director,
     Movie,
     Studio,

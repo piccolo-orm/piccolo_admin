@@ -32,7 +32,7 @@ Some of it's standout features:
 
 ## Local Demo
 
-To run a demo locally, using Python 3.8 or above:
+To run a demo locally, using Python 3.9 or above:
 
 ```bash
 pip install piccolo_admin

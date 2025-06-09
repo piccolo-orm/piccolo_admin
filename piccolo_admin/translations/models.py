@@ -1,5 +1,3 @@
-import typing as t
-
 from pydantic import BaseModel, Field
 
 
@@ -9,7 +7,7 @@ class TranslationListItem(BaseModel):
 
 
 class TranslationListResponse(BaseModel):
-    translations: t.List[TranslationListItem]
+    translations: list[TranslationListItem]
     default_language_code: str = Field(description="e.g. 'en'")
 
 
@@ -42,4 +40,4 @@ class Translation(BaseModel):
 
     language_name: str
     language_code: str
-    translations: t.Dict[str, str]
+    translations: dict[str, str]
