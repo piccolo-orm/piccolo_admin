@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import typing as t
+from typing import Any
 
 
-def convert_enum_to_choices(enum_data: t.Any) -> t.Dict[str, t.Any]:
+def convert_enum_to_choices(enum_data: Any) -> dict[str, Any]:
     choices = {}
     for item in enum_data:
         choices[item.name] = {
