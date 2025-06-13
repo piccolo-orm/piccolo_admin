@@ -10,10 +10,11 @@ import itertools
 import json
 import logging
 import os
-import typing as t
+from collections.abc import Callable, Coroutine, Sequence
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
+from typing import Any, Optional, TypeVar, Union
 
 import typing_extensions
 from fastapi import FastAPI, File, Form, UploadFile
@@ -100,15 +101,15 @@ class GroupItem(BaseModel):
 
 
 class GroupedTableNamesResponseModel(BaseModel):
-    grouped: t.Dict[str, t.List[str]] = Field(default_factory=dict)
-    ungrouped: t.List[str] = Field(default_factory=list)
+    grouped: dict[str, list[str]] = Field(default_factory=dict)
+    ungrouped: list[str] = Field(default_factory=list)
 
 
 class GroupedFormsResponseModel(BaseModel):
-    grouped: t.Dict[str, t.List[FormConfigResponseModel]] = Field(
+    grouped: dict[str, list[FormConfigResponseModel]] = Field(
         default_factory=dict
     )
-    ungrouped: t.List[FormConfigResponseModel] = Field(default_factory=list)
+    ungrouped: list[FormConfigResponseModel] = Field(default_factory=list)
 
 
 @dataclass
@@ -210,20 +211,20 @@ class TableConfig:
 
     """
 
-    table_class: t.Type[Table]
-    visible_columns: t.Optional[t.List[Column]] = None
-    exclude_visible_columns: t.Optional[t.List[Column]] = None
-    visible_filters: t.Optional[t.List[Column]] = None
-    exclude_visible_filters: t.Optional[t.List[Column]] = None
-    rich_text_columns: t.Optional[t.List[Column]] = None
-    hooks: t.Optional[t.List[Hook]] = None
-    media_storage: t.Optional[t.Sequence[MediaStorage]] = None
-    validators: t.Optional[Validators] = None
-    menu_group: t.Optional[str] = None
-    link_column: t.Optional[Column] = None
-    order_by: t.Optional[t.List[OrderBy]] = None
-    time_resolution: t.Optional[
-        t.Dict[t.Union[Timestamp, Timestamptz, Time], t.Union[float, int]]
+    table_class: type[Table]
+    visible_columns: Optional[list[Column]] = None
+    exclude_visible_columns: Optional[list[Column]] = None
+    visible_filters: Optional[list[Column]] = None
+    exclude_visible_filters: Optional[list[Column]] = None
+    rich_text_columns: Optional[list[Column]] = None
+    hooks: Optional[list[Hook]] = None
+    media_storage: Optional[Sequence[MediaStorage]] = None
+    validators: Optional[Validators] = None
+    menu_group: Optional[str] = None
+    link_column: Optional[Column] = None
+    order_by: Optional[list[OrderBy]] = None
+    time_resolution: Optional[
+        dict[Union[Timestamp, Timestamptz, Time], Union[float, int]]
     ] = None
 
     def __post_init__(self):
@@ -253,10 +254,10 @@ class TableConfig:
 
     def _get_columns(
         self,
-        include_columns: t.Optional[t.List[Column]],
-        exclude_columns: t.Optional[t.List[Column]],
-        all_columns: t.List[Column],
-    ) -> t.List[Column]:
+        include_columns: Optional[list[Column]],
+        exclude_columns: Optional[list[Column]],
+        all_columns: list[Column],
+    ) -> list[Column]:
         if include_columns and not exclude_columns:
             return include_columns
 
@@ -266,34 +267,34 @@ class TableConfig:
 
         return all_columns
 
-    def get_visible_columns(self) -> t.List[Column]:
+    def get_visible_columns(self) -> list[Column]:
         return self._get_columns(
             include_columns=self.visible_columns,
             exclude_columns=self.exclude_visible_columns,
             all_columns=self.table_class._meta.columns,
         )
 
-    def get_visible_column_names(self) -> t.Tuple[str, ...]:
+    def get_visible_column_names(self) -> tuple[str, ...]:
         return tuple(i._meta.name for i in self.get_visible_columns())
 
-    def get_visible_filters(self) -> t.List[Column]:
+    def get_visible_filters(self) -> list[Column]:
         return self._get_columns(
             include_columns=self.visible_filters,
             exclude_columns=self.exclude_visible_filters,
             all_columns=self.table_class._meta.columns,
         )
 
-    def get_visible_filter_names(self) -> t.Tuple[str, ...]:
+    def get_visible_filter_names(self) -> tuple[str, ...]:
         return tuple(i._meta.name for i in self.get_visible_filters())
 
-    def get_rich_text_columns_names(self) -> t.Tuple[str, ...]:
+    def get_rich_text_columns_names(self) -> tuple[str, ...]:
         return (
             tuple(i._meta.name for i in self.rich_text_columns)
             if self.rich_text_columns
             else ()
         )
 
-    def get_media_columns_names(self) -> t.Tuple[str, ...]:
+    def get_media_columns_names(self) -> tuple[str, ...]:
         return (
             tuple(i._meta.name for i in self.media_columns)
             if self.media_columns
@@ -303,12 +304,12 @@ class TableConfig:
     def get_link_column(self) -> Column:
         return self.link_column or self.table_class._meta.primary_key
 
-    def get_order_by(self) -> t.List[OrderBy]:
+    def get_order_by(self) -> list[OrderBy]:
         return self.order_by or [
             OrderBy(column=self.table_class._meta.primary_key, ascending=True)
         ]
 
-    def get_time_resolution(self) -> t.Dict[str, t.Union[int, float]]:
+    def get_time_resolution(self) -> dict[str, Union[int, float]]:
         return (
             {
                 column._meta.name: resolution
@@ -319,17 +320,17 @@ class TableConfig:
         )
 
 
-PydanticModel = t.TypeVar("PydanticModel", bound=BaseModel)
+PydanticModel = TypeVar("PydanticModel", bound=BaseModel)
 
 
 @dataclass
 class FileResponse:
-    contents: t.Union[io.StringIO, io.BytesIO]
+    contents: Union[io.StringIO, io.BytesIO]
     file_name: str
     media_type: str
 
 
-FormResponse: typing_extensions.TypeAlias = t.Union[str, FileResponse, None]
+FormResponse: typing_extensions.TypeAlias = Union[str, FileResponse, None]
 
 
 @dataclass
@@ -389,13 +390,13 @@ class FormConfig:
     def __init__(
         self,
         name: str,
-        pydantic_model: t.Type[PydanticModel],
-        endpoint: t.Callable[
+        pydantic_model: type[PydanticModel],
+        endpoint: Callable[
             [Request, PydanticModel],
-            t.Union[FormResponse, t.Coroutine[None, None, FormResponse]],
+            Union[FormResponse, Coroutine[None, None, FormResponse]],
         ],
-        description: t.Optional[str] = None,
-        form_group: t.Optional[str] = None,
+        description: Optional[str] = None,
+        form_group: Optional[str] = None,
     ):
         self.name = name
         self.pydantic_model = pydantic_model
@@ -408,17 +409,17 @@ class FormConfig:
 class FormConfigResponseModel(BaseModel):
     name: str
     slug: str
-    description: t.Optional[str] = None
+    description: Optional[str] = None
 
 
 @dataclass
 class SessionExpiryConfig:
     session_expiry: timedelta
     max_session_expiry: timedelta
-    increase_expiry: t.Optional[timedelta] = timedelta(minutes=20)
+    increase_expiry: Optional[timedelta] = timedelta(minutes=20)
 
 
-def handle_auth_exception(request, exc: Exception):
+def handle_auth_exception(request: Request, exc: Exception):
     return JSONResponse({"error": "Auth failed"}, status_code=401)
 
 
@@ -446,24 +447,24 @@ async def log_error(request: Request, exc: HTTPException):
 class AdminRouter(FastAPI):
     def __init__(
         self,
-        *tables: t.Union[t.Type[Table], TableConfig],
-        forms: t.List[FormConfig] = [],
-        auth_table: t.Type[BaseUser] = BaseUser,
-        session_table: t.Type[SessionsBase] = SessionsBase,
+        *tables: Union[type[Table], TableConfig],
+        forms: list[FormConfig] = [],
+        auth_table: type[BaseUser] = BaseUser,
+        session_table: type[SessionsBase] = SessionsBase,
         session_expiry: timedelta = timedelta(hours=1),
         max_session_expiry: timedelta = timedelta(days=7),
-        increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
+        increase_expiry: Optional[timedelta] = timedelta(minutes=20),
         page_size: int = 15,
         read_only: bool = False,
-        rate_limit_provider: t.Optional[RateLimitProvider] = None,
+        rate_limit_provider: Optional[RateLimitProvider] = None,
         production: bool = False,
         site_name: str = "Piccolo Admin",
         default_language_code: str = "auto",
-        translations: t.Optional[t.List[Translation]] = None,
-        allowed_hosts: t.Sequence[str] = [],
+        translations: Optional[list[Translation]] = None,
+        allowed_hosts: Sequence[str] = [],
         debug: bool = False,
-        sidebar_links: t.Dict[str, str] = {},
-        mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
+        sidebar_links: dict[str, str] = {},
+        mfa_providers: Optional[Sequence[MFAProvider]] = None,
     ) -> None:
         self._init_fastapi_app(site_name, allowed_hosts, debug)
 
@@ -489,7 +490,8 @@ class AdminRouter(FastAPI):
 
         #######################################################################
 
-        # Public attribute retained for backwards compatibility. To be deprecated
+        # Public attribute retained for backwards compatibility.
+        # To be deprecated
         self.auth_table = auth_table
         self.site_name = site_name
         self.forms = forms
@@ -513,13 +515,13 @@ class AdminRouter(FastAPI):
             max_session_expiry=max_session_expiry,
             increase_expiry=increase_expiry,
         )
-        self._mfa_providers: t.Sequence[MFAProvider] = mfa_providers or []
+        self._mfa_providers: Sequence[MFAProvider] = mfa_providers or []
         self._production = production
 
         self._init_app()
 
     def _init_fastapi_app(
-        self, site_name: str, allowed_hosts: t.Sequence[str], debug: bool
+        self, site_name: str, allowed_hosts: Sequence[str], debug: bool
     ):
         """Call the parent FastAPI constructor, which provisions the top-level
         ASGI app and ensures .mount etc. are safe to call from our code.
@@ -555,7 +557,7 @@ class AdminRouter(FastAPI):
         api_app = self._init_api_app(
             superuser_tables=(self._auth_table, self._session_table),
         )
-
+        #######################################################################
         # Add /user and /change-password endpoints
         self._init_api_auth_endpoints(api_app)
 
@@ -578,6 +580,8 @@ class AdminRouter(FastAPI):
         self.mount(path="/api", app=api_app)
         self.mount(path="/public", app=public_app)
         self.mount(path="/assets", app=assets_app)
+
+        #######################################################################
 
     def _init_public_app(self) -> FastAPI:
         """Creates a sub-app for public endpoints."""
@@ -630,7 +634,9 @@ class AdminRouter(FastAPI):
                     auth_table=self._auth_table,
                     session_table=self._session_table,
                     session_expiry=self._session_expiry_config.session_expiry,
-                    max_session_expiry=self._session_expiry_config.max_session_expiry,
+                    max_session_expiry=(
+                        self._session_expiry_config.max_session_expiry
+                    ),
                     redirect_to=None,
                     production=self._production,
                     mfa_providers=self._mfa_providers,
@@ -641,7 +647,9 @@ class AdminRouter(FastAPI):
 
         public_app.add_route(
             path="/logout/",
-            route=session_logout(session_table=self._session_table),  # type: ignore
+            route=session_logout(
+                session_table=self._session_table  # type: ignore
+            ),
             methods=["POST"],
         )
 
@@ -658,11 +666,11 @@ class AdminRouter(FastAPI):
                 admin_only=True,
                 increase_expiry=self._session_expiry_config.increase_expiry,
             ),
-            on_error=handle_auth_exception,
+            on_error=handle_auth_exception,  # type: ignore
         )
         api_app.add_middleware(auth_middleware)
 
-    def _init_api_app(self, superuser_tables: t.Tuple[t.Type[Table]] = tuple()) -> FastAPI:
+    def _init_api_app(self, superuser_tables: Any) -> FastAPI:
         """Provision the API app with all authenticated endpoints necessary for
         the admin UI.
         This is a FastAPI app, meaning it can have its own middleware and can
@@ -722,7 +730,7 @@ class AdminRouter(FastAPI):
             path="/tables/",
             endpoint=self.get_table_list,  # type: ignore
             methods=["GET"],
-            response_model=t.List[str],
+            response_model=list[str],
             tags=["Tables"],
         )
 
@@ -746,7 +754,7 @@ class AdminRouter(FastAPI):
             endpoint=self.get_forms,  # type: ignore
             methods=["GET"],
             tags=["Forms"],
-            response_model=t.List[FormConfigResponseModel],
+            response_model=list[FormConfigResponseModel],
         )
 
         api_app.add_api_route(
@@ -885,9 +893,11 @@ class AdminRouter(FastAPI):
                 "to the same location."
             )
 
-    def _init_table_configs(self, tables: t.Sequence[t.Union[t.Type[Table], TableConfig]]) -> t.List[TableConfig]:
+    def _init_table_configs(
+        self, tables: Sequence[Union[type[Table], TableConfig]]
+    ) -> list[TableConfig]:
         """Validate and structure information about the database tables."""
-        table_configs: t.List[TableConfig] = []
+        table_configs: list[TableConfig] = []
 
         for table in tables:
             if isinstance(table, TableConfig):
@@ -1029,7 +1039,7 @@ class AdminRouter(FastAPI):
     ###########################################################################
     # Custom forms
 
-    def get_forms(self) -> t.List[FormConfigResponseModel]:
+    def get_forms(self) -> list[FormConfigResponseModel]:
         """
         Returns a list of all forms registered with the admin.
         """
@@ -1082,7 +1092,7 @@ class AdminRouter(FastAPI):
                 description=form.description,
             )
 
-    def get_single_form_schema(self, form_slug: str) -> t.Dict[str, t.Any]:
+    def get_single_form_schema(self, form_slug: str) -> dict[str, Any]:
         form_config = self.form_config_map.get(form_slug)
 
         if form_config is None:
@@ -1090,9 +1100,7 @@ class AdminRouter(FastAPI):
         else:
             return form_config.pydantic_model.model_json_schema()
 
-    async def post_single_form(
-        self, request: Request, form_slug: str
-    ) -> t.Any:
+    async def post_single_form(self, request: Request, form_slug: str) -> Any:
         """
         Handles posting of custom forms.
         """
@@ -1153,7 +1161,7 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_sidebar_links(self) -> t.Dict[str, str]:
+    def get_sidebar_links(self) -> dict[str, str]:
         """
         Returns the custom links registered with the admin.
         """
@@ -1161,7 +1169,7 @@ class AdminRouter(FastAPI):
 
     ###########################################################################
 
-    def get_table_list(self) -> t.List[str]:
+    def get_table_list(self) -> list[str]:
         """
         Returns the list of table groups registered with the admin.
         """
@@ -1224,15 +1232,15 @@ class AdminRouter(FastAPI):
 
 
 def get_all_tables(
-    tables: t.Sequence[t.Type[Table]],
-) -> t.Sequence[t.Type[Table]]:
+    tables: Sequence[type[Table]],
+) -> Sequence[type[Table]]:
     """
     Fetch any related tables, and include them.
     """
-    output: t.List[t.Type[Table]] = []
+    output: list[type[Table]] = []
 
-    def get_references(table: t.Type[Table]):
-        references: t.List[t.Union[t.Type[Table], t.Any]] = [
+    def get_references(table: type[Table]):
+        references: list[Union[type[Table], Any]] = [
             i._foreign_key_meta.references
             for i in table._meta.foreign_key_columns
         ]
@@ -1256,25 +1264,25 @@ def get_all_tables(
 
 
 def create_admin(
-    tables: t.Sequence[t.Union[t.Type[Table], TableConfig]],
-    forms: t.List[FormConfig] = [],
-    auth_table: t.Optional[t.Type[BaseUser]] = None,
-    session_table: t.Optional[t.Type[SessionsBase]] = None,
+    tables: Sequence[Union[type[Table], TableConfig]],
+    forms: list[FormConfig] = [],
+    auth_table: Optional[type[BaseUser]] = None,
+    session_table: Optional[type[SessionsBase]] = None,
     session_expiry: timedelta = timedelta(hours=1),
     max_session_expiry: timedelta = timedelta(days=7),
-    increase_expiry: t.Optional[timedelta] = timedelta(minutes=20),
+    increase_expiry: Optional[timedelta] = timedelta(minutes=20),
     page_size: int = 15,
     read_only: bool = False,
-    rate_limit_provider: t.Optional[RateLimitProvider] = None,
+    rate_limit_provider: Optional[RateLimitProvider] = None,
     production: bool = False,
     site_name: str = "Piccolo Admin",
     default_language_code: str = "auto",
-    translations: t.Optional[t.List[Translation]] = None,
+    translations: Optional[list[Translation]] = None,
     auto_include_related: bool = True,
-    allowed_hosts: t.Sequence[str] = [],
+    allowed_hosts: Sequence[str] = [],
     debug: bool = False,
-    sidebar_links: t.Dict[str, str] = {},
-    mfa_providers: t.Optional[t.Sequence[MFAProvider]] = None,
+    sidebar_links: dict[str, str] = {},
+    mfa_providers: Optional[Sequence[MFAProvider]] = None,
 ):
     """
     :param tables:
@@ -1404,7 +1412,7 @@ def create_admin(
     session_table = session_table or SessionsBase
 
     if auto_include_related:
-        table_config_map: t.Dict[t.Type[Table], t.Optional[TableConfig]] = {}
+        table_config_map: dict[type[Table], Optional[TableConfig]] = {}
 
         for i in tables:
             if isinstance(i, TableConfig):
@@ -1414,8 +1422,8 @@ def create_admin(
 
         all_table_classes = get_all_tables(tuple(table_config_map.keys()))
 
-        all_table_classes_with_configs: t.List[
-            t.Union[t.Type[Table], TableConfig]
+        all_table_classes_with_configs: list[
+            Union[type[Table], TableConfig]
         ] = []
         for i in all_table_classes:
             table_config = table_config_map.get(i)

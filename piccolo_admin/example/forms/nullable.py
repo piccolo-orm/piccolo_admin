@@ -1,5 +1,5 @@
 import datetime
-import typing as t
+from typing import Optional
 
 from pydantic import BaseModel
 from starlette.requests import Request
@@ -13,33 +13,33 @@ class NullableFieldsModel(BaseModel):
     """
 
     boolean_field: bool = True
-    boolean_field_nullable: t.Optional[bool] = None
+    boolean_field_nullable: Optional[bool] = None
 
     float_field: float = 1.0
-    float_field_nullable: t.Optional[float] = None
+    float_field_nullable: Optional[float] = None
 
     integer_field: int = 1
-    integer_field_nullable: t.Optional[int] = None
+    integer_field_nullable: Optional[int] = None
 
     string_field: str = "Hello world"
-    string_nullable: t.Optional[str] = None
+    string_nullable: Optional[str] = None
 
-    list_field: t.List[str] = ["a", "b", "c"]
-    list_field_nullable: t.Optional[t.List[str]] = None
+    list_field: list[str] = ["a", "b", "c"]
+    list_field_nullable: Optional[list[str]] = None
 
     time_field: datetime.time = datetime.time(hour=12, minute=30)
-    time_field_nullable: t.Optional[datetime.time] = None
+    time_field_nullable: Optional[datetime.time] = None
 
     date_field: datetime.date = datetime.date(year=1999, month=12, day=31)
-    date_field_nullable: t.Optional[datetime.date] = None
+    date_field_nullable: Optional[datetime.date] = None
 
     datetime_field: datetime.datetime = datetime.datetime(
         year=1999, month=12, day=31, hour=12, minute=30
     )
-    datetime_field_nullable: t.Optional[datetime.datetime] = None
+    datetime_field_nullable: Optional[datetime.datetime] = None
 
     timedelta_field: datetime.timedelta = datetime.timedelta(hours=1)
-    timedelta_field_nullable: t.Optional[datetime.timedelta] = None
+    timedelta_field_nullable: Optional[datetime.timedelta] = None
 
 
 async def handle_form(request: Request, data: NullableFieldsModel) -> str:

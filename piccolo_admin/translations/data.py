@@ -17,8 +17,6 @@ https://www.convertcsv.com/csv-to-json.htm.
 
 """
 
-import typing as t
-
 from piccolo_admin.translations.models import Translation
 
 # For now there aren't any words which are different between dialects, so we
@@ -1095,7 +1093,89 @@ TURKISH = Translation(
     },
 )
 
-TRANSLATIONS: t.List[Translation] = [
+FARSI = Translation(
+    language_name="FARSI",
+    language_code="fa",
+    translations={
+        "About": "درباره",
+        "Add Row": "افزودن ردیف",
+        "Add": "افزودن",
+        "Apply": "اعمال",
+        "Ascending": "صعودی",
+        "Back to home page": "بازگشت به صفحه اصلی",
+        "Back": "بازگشت",
+        "Change Password": "تغییر رمز عبور",
+        "Clear filters": "پاک‌کردن فیلترها",
+        "Close": "بستن",
+        "Comma": "ویرگول",
+        "Create": "ایجاد",
+        "Current password": "رمز عبور فعلی",
+        "Dark Mode": "حالت تاریک",
+        "Days": "روز",
+        "Delete": "حذف",
+        "Delimiter": "جداکننده",
+        "Descending": "نزولی",
+        "Download": "دانلود",
+        "Download failed": "دانلود ناموفق بود",
+        "Download successful": "دانلود با موفقیت انجام شد",
+        "Edit": "ویرایش",
+        "Export CSV": "خروجی CSV",
+        "Filter": "فیلتر",
+        "For timestamps which are timezone aware, they will be displayed in this timezone by default.": "برای مهرهای زمانی دارای اطلاعات منطقه زمانی، به‌طور پیش‌فرض در این منطقه زمانی نمایش داده می‌شوند.",
+        "Form submitted": "فرم ارسال شد",
+        "Forms": "فرم‌ها",
+        "Go to page": "رفتن به صفحه",
+        "Hide Filters": "پنهان کردن فیلترها",
+        "Hide referencing tables": "پنهان کردن جدول‌های مرتبط",
+        "Home": "خانه",
+        "Hours": "ساعت",
+        "Light Mode": "حالت روشن",
+        "Links": "پیوندها",
+        "Loading": "در حال بارگذاری",
+        "Log Out": "خروج",
+        "Login": "ورود",
+        "MFA Code": "کد احراز هویت چندمرحله‌ای",
+        "MFA Setup": "تنظیم MFA",
+        "Minutes": "دقیقه",
+        "New password confirmation": "تأیید رمز عبور جدید",
+        "New password": "رمز عبور جدید",
+        "New value": "مقدار جدید",
+        "No results found": "نتیجه‌ای یافت نشد",
+        "Note: Large data sets may take a while.": "توجه: مجموعه داده‌های بزرگ ممکن است زمان‌بر باشند.",
+        "Note: They are converted to UTC when stored in the database.": "توجه: هنگام ذخیره در پایگاه داده، به زمان UTC تبدیل می‌شوند.",
+        "of": "از",
+        "page": "صفحه",
+        "Password": "رمز عبور",
+        "result(s)": "(ها)نتیجه",
+        "rows": "ردیف",
+        "Save": "ذخیره",
+        "Seconds": "ثانیه",
+        "Select a column to update": "ستونی را برای بروزرسانی انتخاب کنید",
+        "Select a Column": "یک ستون انتخاب کنید",
+        "Select a table in the sidebar to get started.": "برای شروع، یک جدول را از نوار کناری انتخاب کنید.",
+        "selected result(s) on": "نتیجه(های) انتخاب‌شده در",
+        "Semicolon": "نقطه‌ویرگول",
+        "Set Timezone": "تنظیم منطقه زمانی",
+        "Show Filters": "نمایش فیلترها",
+        "Show referencing tables": "نمایش جدول‌های مرتبط",
+        "Showing": "در حال نمایش",
+        "Sort by": "مرتب‌سازی بر اساس",
+        "Sort": "مرتب‌سازی",
+        "Submit": "ارسال",
+        "Tables": "جدول‌ها",
+        "Timezone": "منطقه زمانی",
+        "Thanks for using Piccolo Admin.": "از استفاده شما از Piccolo Admin سپاسگزاریم.",
+        "Update": "به‌روزرسانی",
+        "Use again": "استفاده مجدد",
+        "Username": "نام کاربری",
+        "Version": "نسخه",
+        "Weeks": "هفته",
+        "Welcome to": "خوش آمدید به",
+        "with a matching": "با تطبیق",
+    },
+)
+
+TRANSLATIONS: list[Translation] = [
     ENGLISH,
     CROATIAN,
     FINNISH,
@@ -1109,6 +1189,7 @@ TRANSLATIONS: t.List[Translation] = [
     TURKISH,
     UKRAINIAN,
     WELSH,
+    FARSI,
 ]
 
 # We use some translations outside of the HTML templates (e.g. within

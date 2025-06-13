@@ -4,8 +4,6 @@ By using pages we can make out test more scalable.
 https://playwright.dev/docs/pom
 """
 
-import typing as t
-
 from playwright.sync_api import Page
 
 from piccolo_admin.example.app import OrderBy
@@ -89,7 +87,7 @@ class SortModal:
         """
         return self.column_selects.count()
 
-    def populate_form(self, order_by_list: t.List[OrderBy]):
+    def populate_form(self, order_by_list: list[OrderBy]):
         """
         Make sure we have enough column select elements, and populate them.
         """

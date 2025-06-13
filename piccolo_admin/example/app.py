@@ -8,7 +8,7 @@ or `admin_demo`.
 import asyncio
 import logging
 import os
-import typing as t
+from typing import cast
 
 import targ
 from hypercorn.asyncio import serve
@@ -159,7 +159,7 @@ director_config = TableConfig(
         (
             S3MediaStorage(
                 column=Director.photo,
-                bucket_name=t.cast(str, BUCKET_NAME),
+                bucket_name=cast(str, BUCKET_NAME),
                 folder_name="director_photo",
                 connection_kwargs=S3_CONFIG,
             )

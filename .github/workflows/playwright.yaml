@@ -28,7 +28,7 @@ jobs:
                   pip install -r requirements/test-requirements.txt
                   cd admin_ui && npm install
             - name: Build front end assets
-              run: cd admin_ui && npm run build
+              run: cd admin_ui && npm run build-only
             - name: Ensure Chromium is installed
               run: python -m playwright install chromium --with-deps
             - name: Start Playwright tests

@@ -3,7 +3,6 @@
 
 import itertools
 import os
-import typing as t
 
 from setuptools import find_packages, setup
 
@@ -22,7 +21,7 @@ with open(os.path.join(DIRECTORY, "README.md")) as f:
 EXTRAS = ["faker", "s3"]
 
 
-def parse_requirement(req_path: str) -> t.List[str]:
+def parse_requirement(req_path: str) -> list[str]:
     """
     Parses a requirement file - returning a list of contents.
 
@@ -39,7 +38,7 @@ def parse_requirement(req_path: str) -> t.List[str]:
         return [i.strip() for i in contents.strip().split("\n")]
 
 
-def extras_require() -> t.Dict[str, t.List[str]]:
+def extras_require() -> dict[str, list[str]]:
     """
     Parse requirements in requirements/extras directory
     """
@@ -68,7 +67,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Daniel Townsend",
     author_email="dan@dantownsend.co.uk",
-    python_requires=">=3.8.0",
+    python_requires=">=3.9.0",
     url="https://github.com/piccolo-orm/piccolo_admin",
     packages=find_packages(exclude=("tests",)),
     install_requires=REQUIREMENTS,
@@ -82,11 +81,11 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Database :: Front-Ends",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",  # noqa: E501
