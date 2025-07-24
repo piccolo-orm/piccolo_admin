@@ -1273,7 +1273,7 @@ TRANSLATIONS: list[Translation] = [
     UKRAINIAN,
     WELSH,
     FARSI,
-    ITALIAN
+    ITALIAN,
 ]
 
 # We use some translations outside of the HTML templates (e.g. within
