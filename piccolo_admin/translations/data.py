@@ -1261,19 +1261,19 @@ ITALIAN = Translation(
 TRANSLATIONS: list[Translation] = [
     ENGLISH,
     CROATIAN,
+    FARSI,
     FINNISH,
     FRENCH,
     GERMAN,
+    ITALIAN,
     PORTUGUESE,
-    SIMPLIFIED_CHINESE,
-    TRADITIONAL_CHINESE,
-    SPANISH,
     RUSSIAN,
+    SIMPLIFIED_CHINESE,
+    SPANISH,
+    TRADITIONAL_CHINESE,
     TURKISH,
     UKRAINIAN,
     WELSH,
-    FARSI,
-    ITALIAN,
 ]
 
 # We use some translations outside of the HTML templates (e.g. within
