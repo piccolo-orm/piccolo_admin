@@ -12,6 +12,7 @@
                 v-bind:type="getType(property)"
                 v-bind:value="property.default"
                 v-bind:isNullable="isNullable(property)"
+                v-bind:choices="property.extra?.choices"
                 v-bind:timeResolution="
                     schema?.extra?.time_resolution[columnName]
                 "
