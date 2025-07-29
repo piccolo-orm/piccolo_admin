@@ -1,6 +1,19 @@
 Changes
 =======
 
+1.12.0
+------
+
+Added Italian translations - thanks to @Ott8v for this.
+
+Modernised the type hints across the codebase (e.g. replacing ``typing.List``
+with ``list``). Thanks to @sinisaos for this.
+
+Added official Python 3.13 support, and dropped Python 3.8 support (thanks to
+@sinisaos for this).
+
+-------------------------------------------------------------------------------
+
 1.11.0
 ------
 
