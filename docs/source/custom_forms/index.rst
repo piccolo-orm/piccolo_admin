@@ -39,6 +39,16 @@ Here's a more advanced example where we send an email, then return a string:
 
 .. literalinclude:: ../../../piccolo_admin/example/forms/email.py
 
+``Enum``
+--------
+
+Custom forms support ``Enum`` type. Here's a example:
+
+.. literalinclude:: ../../../piccolo_admin/example/forms/enum.py
+
+.. warning::
+    We need to do the ``Enum`` type conversion from the form data ourselves as a result of how this feature is implemented. If you don't do this conversion, then the field with be provided as a ``str`` instead of the ``Enum``.
+
 ``FileResponse``
 ----------------
 
