@@ -7,7 +7,7 @@ from piccolo_admin.endpoints import create_admin
 
 # The `allowed_hosts` argument is required when running under HTTPS. It's
 # used for additional CSRF defence.
-admin = create_admin([Director, Movie], allowed_hosts=["my_site.com"])
+admin = create_admin(tables=[Director, Movie], allowed_hosts=["my_site.com"])
 
 
 router = Router(

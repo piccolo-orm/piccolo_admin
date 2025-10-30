@@ -1201,7 +1201,8 @@ def create_admin(
 ):
     """
     :param tables:
-        Each of the tables will be added to the admin.
+        Each of the provided tables will be registered with the admin app and
+        editable/visible in the view. Tables must already exist (see Piccolo ORM).
     :param forms:
         For each :class:`FormConfig <piccolo_admin.endpoints.FormConfig>`
         specified, a form will automatically be rendered in the user interface,
