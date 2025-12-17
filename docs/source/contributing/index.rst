@@ -108,6 +108,20 @@ Add the following to your VSCode ``settings.json``:
 
 -------------------------------------------------------------------------------
 
+Contributing to the docs
+------------------------
+
+The docs are written using Sphinx. To get them running locally:
+
+* Make sure the main requirements are installed: ``pip install -r requirements/requirements.txt``
+* Install the documentation requirements: ``pip install -r requirements/doc-requirements.txt``
+* ``cd docs``
+* Do an initial build of the docs: ``make html``
+* Serve the docs: ``python serve_docs.py``
+* The docs will auto rebuild as you make changes.
+
+-------------------------------------------------------------------------------
+
 Storybook
 ---------
 
