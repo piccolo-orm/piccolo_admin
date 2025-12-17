@@ -442,7 +442,7 @@ def populate_data(inflate: int = 0, engine: str = "sqlite"):
                         oscar_nominations=oscar_nominations,
                         won_oscar=won_oscar,
                         description=fake.sentence(30),
-                        release_date=fake.date(),
+                        release_date=fake.date_object(),
                         box_office=decimal.Decimal(
                             str(random.randint(10, 1500) / 10)
                         ),
