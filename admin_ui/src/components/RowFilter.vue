@@ -19,17 +19,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from "vue"
+import { defineComponent } from "vue"
 import FilterForm from "./FilterForm.vue"
 import { type APIResponseMessage, getFormat, getType } from "../interfaces"
 import { secondsToISO8601Duration, syncQueryParams } from "../utils"
 
 export default defineComponent({
     props: {
-        showFilterSidebar: Boolean,
-        tableName: {
-            type: String as PropType<string>
-        }
+        showFilterSidebar: Boolean
     },
     components: {
         FilterForm
