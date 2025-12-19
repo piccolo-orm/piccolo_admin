@@ -87,6 +87,14 @@ export default defineComponent({
                 }
             }
 
+            // adding query params to url
+            this.$router.replace({
+                path: this.$router.path,
+                query: {
+                    ...json
+                }
+            })
+
             this.$store.commit("updateFilterParams", json)
             this.$store.commit("updateCurrentPageNumber", 1)
 
@@ -107,6 +115,12 @@ export default defineComponent({
             })
 
             form.reset()
+
+            // cleaning query params from url
+            this.$router.replace({
+                path: this.$router.path,
+                query: {}
+            })
 
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
