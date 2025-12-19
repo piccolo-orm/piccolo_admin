@@ -4,7 +4,7 @@
             <!-- Previous pages -->
             <li v-for="n in prevPages" :key="n">
                 <a class="subtle" href="#" v-on:click.prevent="changePage(n)">
-                    {{ n }}
+                    <font-awesome-icon icon="angle-left" />
                 </a>
             </li>
 
@@ -18,12 +18,12 @@
                     v-on:keyup.enter="goToPage"
                 />
             </li>
-            <span class="count">of {{ pageCount }}</span>
+            <li class="count">of {{ pageCount }}</li>
 
             <!-- Next pages -->
             <li v-for="n in nextPages" :key="n">
                 <a href="#" class="subtle" v-on:click.prevent="changePage(n)">
-                    {{ n }}
+                    <font-awesome-icon icon="angle-right" />
                 </a>
             </li>
         </ul>
@@ -58,14 +58,14 @@ export default defineComponent({
         },
 
         prevPages(): number[] {
-            const start = Math.max(1, this.currentPageNumber - 2)
+            const start = Math.max(1, this.currentPageNumber - 1)
             const end = this.currentPageNumber - 1
             return this.range(start, end)
         },
 
         nextPages(): number[] {
             const start = this.currentPageNumber + 1
-            const end = Math.min(this.pageCount, this.currentPageNumber + 2)
+            const end = Math.min(this.pageCount, this.currentPageNumber + 1)
             return this.range(start, end)
         }
     },
@@ -97,8 +97,8 @@ export default defineComponent({
         }
     },
     watch: {
-        currentPageNumber(val) {
-            this.pageInput = val
+        currentPageNumber(value: number) {
+            this.pageInput = value
         }
     },
     mounted() {
@@ -113,7 +113,7 @@ export default defineComponent({
 div#pagination {
     ul.pages {
         list-style: none;
-        margin: 0.5rem 0;
+        margin: 0.3rem 0;
         padding: 0;
 
         li {
@@ -143,6 +143,16 @@ div#pagination {
     }
     span.count {
         padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    div#pagination {
+        ul.pages {
+            li {
+                font-size: 0.6rem;
+            }
+        }
     }
 }
 </style>
