@@ -19,14 +19,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, type PropType } from "vue"
 import FilterForm from "./FilterForm.vue"
 import { type APIResponseMessage, getFormat, getType } from "../interfaces"
-import { secondsToISO8601Duration } from "../utils"
+import { secondsToISO8601Duration, syncQueryParams } from "../utils"
 
 export default defineComponent({
     props: {
-        showFilterSidebar: Boolean
+        showFilterSidebar: Boolean,
+        tableName: {
+            type: String as PropType<string>
+        }
     },
     components: {
         FilterForm
@@ -87,12 +90,9 @@ export default defineComponent({
                 }
             }
 
-            // adding query params to url
-            this.$router.replace({
-                path: this.$router.path,
-                query: {
-                    ...json
-                }
+            // adding filter params to url
+            syncQueryParams(this.$router.path, {
+                ...json
             })
 
             this.$store.commit("updateFilterParams", json)
@@ -116,11 +116,8 @@ export default defineComponent({
 
             form.reset()
 
-            // cleaning query params from url
-            this.$router.replace({
-                path: this.$router.path,
-                query: {}
-            })
+            // cleaning filter params from url
+            syncQueryParams(this.$router.path, {})
 
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
