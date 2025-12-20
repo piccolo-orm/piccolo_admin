@@ -395,6 +395,13 @@
                                     </tbody>
                                 </table>
 
+                                <p id="result_count">
+                                    {{ $t("Showing") }} {{ rows.length }}
+                                    {{ $t("of") }}
+                                    {{ rowCount }}
+                                    {{ $t("result(s)") }}
+                                </p>
+
                                 <div class="pagination_wrapper">
                                     <Pagination :tableName="tableName" />
                                     <ChangePageSize />
@@ -544,6 +551,9 @@ export default defineComponent({
             }
 
             return Object.fromEntries(orderBy.map((i) => [i.column, i]))
+        },
+        rowCount() {
+            return this.$store.state.rowCount
         },
         currentPageNumber() {
             return this.$store.state.currentPageNumber

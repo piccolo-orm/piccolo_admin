@@ -16,6 +16,7 @@
                     :max="pageCount"
                     v-model.number="pageInput"
                     v-on:keyup.enter="goToPage"
+                    v-on:change="goToPage"
                 />
             </li>
             <li class="count">of {{ pageCount }}</li>
@@ -143,6 +144,9 @@ div#pagination {
     }
     span.count {
         padding-right: 0.5rem;
+    }
+    input {
+        text-align: center;
     }
 }
 
