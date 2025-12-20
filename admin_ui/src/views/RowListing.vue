@@ -815,6 +815,7 @@ div.wrapper {
             cursor: pointer;
             display: flex;
             flex-direction: row;
+            column-gap: 0.5rem;
 
             @media (max-width: @mobile_width) {
                 width: 100%;
@@ -827,11 +828,17 @@ div.wrapper {
                 text-decoration: none;
                 margin-left: 0.25rem;
                 box-sizing: border-box;
-                padding: 0.2rem 0.5rem;
+                padding: 0.5rem 0.8rem;
                 text-align: center;
+                border-radius: 0.5rem;
+                font-size: 0.8rem;
 
                 &:hover {
-                    color: white;
+                    transform: scale(1.1);
+                }
+
+                &:active {
+                    outline: 0.2rem solid lightblue;
                 }
 
                 @media (max-width: @mobile_width) {
