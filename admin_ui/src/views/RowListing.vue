@@ -858,6 +858,7 @@ div.wrapper {
     div.left_column,
     div.right_column {
         overflow: auto;
+        height: calc(100vh - 5rem);
         padding: 0.5rem;
     }
 
