@@ -866,6 +866,7 @@ div.wrapper {
 
         div.table_wrapper {
             position: relative;
+            overflow: auto;
 
             p#loading_indicator {
                 position: absolute;
