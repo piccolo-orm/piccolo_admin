@@ -221,6 +221,7 @@ textarea {
 
 button {
     width: 100%;
+    border-radius: 0.5rem;
 }
 
 textarea {
@@ -270,11 +271,17 @@ a {
         background-color: @dark_blue;
         color: white;
         font-size: 0.7em;
-        padding: 0.3rem 0.5rem;
+        padding: 0.5rem 0.8rem;
         text-transform: uppercase;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
 
         &:hover {
-            color: white;
+            transform: scale(1.1);
+        }
+
+        &:active {
+            outline: 0.2rem solid lightblue;
         }
     }
 }

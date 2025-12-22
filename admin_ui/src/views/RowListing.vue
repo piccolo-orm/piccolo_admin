@@ -830,7 +830,6 @@ div.wrapper {
                 box-sizing: border-box;
                 padding: 0.5rem 0.8rem;
                 text-align: center;
-                border-radius: 0.5rem;
                 font-size: 0.8rem;
 
                 &:hover {
