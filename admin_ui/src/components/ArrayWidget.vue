@@ -150,7 +150,7 @@ export default defineComponent({
             this.internalArray = newValue ? [...newValue] : []
         }
     },
-    mounted() {
+    created() {
         this.internalArray = [...this.array]
     }
 })
