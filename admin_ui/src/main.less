@@ -64,7 +64,15 @@ button {
     a {
         color: @dark_blue;
 
-        &:hover {
+        &.button:hover {
+            background-color: lighten(@dark_blue, 10%);
+        }
+
+        &.button:active {
+            outline: 0.2rem solid lightblue;
+        }
+
+        &:not(.button):hover {
             color: lighten(@dark_blue, 10%);
         }
 
@@ -120,8 +128,12 @@ button {
     a {
         color: @light_blue;
 
-        &:hover {
+        &:not(.button):hover {
             color: lighten(@light_blue, 10%);
+        }
+
+        &.button:hover {
+            background-color: lighten(@light_blue, 10%);
         }
 
         &.subtle {
@@ -255,6 +267,10 @@ button {
         transition: background-color 0.5s;
     }
 
+    &:active {
+        outline: 0.2rem solid lightblue;
+    }
+
     &:disabled {
         opacity: 0.8;
     }
@@ -276,8 +292,13 @@ a {
         border-radius: 0.5rem;
         font-size: 0.8rem;
 
-        &:hover {
-            transform: scale(1.1);
+
+        &.button:hover {
+            background-color: lighten(@dark_blue, 10%);
+        }
+
+        &.button:active {
+            outline: 0.2rem solid lightblue;
         }
 
         &:active {

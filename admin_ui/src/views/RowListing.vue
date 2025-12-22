@@ -832,14 +832,6 @@ div.wrapper {
                 text-align: center;
                 font-size: 0.8rem;
 
-                &:hover {
-                    transform: scale(1.1);
-                }
-
-                &:active {
-                    outline: 0.2rem solid lightblue;
-                }
-
                 @media (max-width: @mobile_width) {
                     flex-grow: 1;
 
