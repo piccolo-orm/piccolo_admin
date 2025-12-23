@@ -20,6 +20,7 @@
             v-show="showModal"
             :isFilter="isFilter"
             :tableName="tableName"
+            :initialReferenceID="hiddenSelectedValue"
             @close="showModal = false"
             @update="handleUpdate($event)"
         />
@@ -84,9 +85,15 @@ export default defineComponent({
             this.hiddenSelectedValue = newValue
         }
     },
-    async mounted() {
-        this.selectedValue = this.readable
-        this.hiddenSelectedValue = this.rowID
+    mounted() {
+        if (this.isFilter) {
+            const queryValue = this.$route.query[this.fieldName]
+            if (queryValue) {
+                // only need FK query value (e.g director=1),
+                // modal will emit readable automatically
+                this.hiddenSelectedValue = queryValue
+            }
+        }
     }
 })
 </script>

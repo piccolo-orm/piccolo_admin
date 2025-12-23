@@ -63,6 +63,9 @@ export default defineComponent({
         isNullable: {
             type: Boolean as PropType<boolean>,
             default: true
+        },
+        initialReferenceID: {
+            type: undefined as unknown as PropType<RowID | undefined>
         }
     },
     data() {
@@ -118,6 +121,21 @@ export default defineComponent({
         },
         selectResult(id: RowID | null, readable: string) {
             this.$emit("update", { id, readable })
+        },
+        async emitInitialReferenceID() {
+            if (!this.initialReferenceID) return
+
+            // Look for readable value in fetched IDs
+            const match = this.ids.find(
+                ([id]) => id === this.initialReferenceID
+            )
+
+            if (match) {
+                this.$emit("update", {
+                    id: match[0],
+                    readable: match[1]
+                })
+            }
         }
     },
     watch: {
@@ -125,6 +143,7 @@ export default defineComponent({
             this.offset = 0
             if (value) {
                 this.ids = await this.fetchData()
+                await this.emitInitialReferenceID()
             }
         },
         async searchTerm() {
@@ -144,6 +163,7 @@ export default defineComponent({
     async mounted() {
         if (this.tableName) {
             this.ids = await this.fetchData()
+            await this.emitInitialReferenceID()
         }
     }
 })
