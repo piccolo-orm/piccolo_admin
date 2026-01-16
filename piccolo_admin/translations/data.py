@@ -103,7 +103,6 @@ ENGLISH = Translation(
     },
 )
 
-
 WELSH = Translation(
     language_name="Welsh",
     language_code="cy",
@@ -268,7 +267,6 @@ CROATIAN = Translation(
     },
 )
 
-
 PORTUGUESE = Translation(
     language_name="Portuguese",
     language_code="pt",
@@ -350,7 +348,6 @@ PORTUGUESE = Translation(
         "with a matching": "com uma correspondência",
     },
 )
-
 
 GERMAN = Translation(
     language_name="German",
@@ -434,7 +431,6 @@ GERMAN = Translation(
     },
 )
 
-
 FRENCH = Translation(
     language_name="French",
     language_code="fr",
@@ -516,7 +512,6 @@ FRENCH = Translation(
         "with a matching": "avec une correspondance",
     },
 )
-
 
 SPANISH = Translation(
     language_name="Spanish",
@@ -928,7 +923,6 @@ SIMPLIFIED_CHINESE = Translation(
     },
 )
 
-
 TRADITIONAL_CHINESE = Translation(
     language_name="Traditional Chinese",
     language_code="zh-TW",
@@ -1175,7 +1169,6 @@ FARSI = Translation(
     },
 )
 
-
 ITALIAN = Translation(
     language_name="Italian",
     language_code="it",
@@ -1258,6 +1251,178 @@ ITALIAN = Translation(
     },
 )
 
+HUNGARIAN = Translation(
+    language_name="Hungarian",
+    language_code="hu",
+    translations={
+        "About": "Névjegy",
+        "Add Row": "Sor hozzáadása",
+        "Add": "Hozzáadás",
+        "Apply": "Alkalmaz",
+        "Ascending": "Növekvő",
+        "Back to home page": "Vissza a főoldalra",
+        "Back": "Vissza",
+        "Change Password": "Jelszó módosítása",
+        "Clear filters": "Szűrők törlése",
+        "Close": "Bezárás",
+        "Comma": "Vessző",
+        "Create": "Létrehozás",
+        "Current password": "Jelenlegi jelszó",
+        "Dark Mode": "Sötét mód",
+        "Days": "Napok",
+        "Delete": "Törlés",
+        "Delimiter": "Elválasztó",
+        "Descending": "Csökkenő",
+        "Download": "Letöltés",
+        "Download failed": "Letöltés sikertelen",
+        "Download successful": "Letöltés sikeres",
+        "Edit": "Szerkesztés",
+        "Export CSV": "CSV exportálása",
+        "Filter": "Szűrés",
+        "For timestamps which are timezone aware, they will be displayed in this timezone by default.":
+            "Az időzóna-érzékeny időbélyegek alapértelmezés szerint ebben az időzónában jelennek meg.",
+        "Form submitted": "Űrlap elküldve",
+        "Forms": "Űrlapok",
+        "Go to page": "Ugrás az oldalra",
+        "Hide Filters": "Szűrők elrejtése",
+        "Hide referencing tables": "Hivatkozó táblák elrejtése",
+        "Home": "Főoldal",
+        "Hours": "Órák",
+        "Light Mode": "Világos mód",
+        "Links": "Hivatkozások",
+        "Loading": "Betöltés",
+        "Log Out": "Kijelentkezés",
+        "Login": "Bejelentkezés",
+        "MFA Code": "MFA kód",
+        "MFA Setup": "MFA beállítása",
+        "Minutes": "Percek",
+        "New password confirmation": "Új jelszó megerősítése",
+        "New password": "Új jelszó",
+        "New value": "Új érték",
+        "No results found": "Nincs találat",
+        "Note: Large data sets may take a while.":
+            "Megjegyzés: Nagy adathalmazok feldolgozása eltarthat egy ideig.",
+        "Note: They are converted to UTC when stored in the database.":
+            "Megjegyzés: Az adatbázisban UTC időzónára vannak konvertálva.",
+        "of": "/",
+        "page": "oldal",
+        "Password": "Jelszó",
+        "result(s)": "találat",
+        "rows": "sor",
+        "Save": "Mentés",
+        "Seconds": "Másodpercek",
+        "Select a column to update": "Válasszon egy frissítendő oszlopot",
+        "Select a Column": "Oszlop kiválasztása",
+        "Select a table in the sidebar to get started.":
+            "A kezdéshez válasszon egy táblát az oldalsávban.",
+        "selected result(s) on": "kiválasztott találat itt:",
+        "Semicolon": "Pontosvessző",
+        "Set Timezone": "Időzóna beállítása",
+        "Show Filters": "Szűrők megjelenítése",
+        "Show referencing tables": "Hivatkozó táblák megjelenítése",
+        "Showing": "Megjelenítve",
+        "Sort by": "Rendezés szerint",
+        "Sort": "Rendezés",
+        "Submit": "Küldés",
+        "Tables": "Táblák",
+        "Timezone": "Időzóna",
+        "Thanks for using Piccolo Admin.": "Köszönjük, hogy a Piccolo Admin felületet használja.",
+        "Update": "Frissítés",
+        "Use again": "Újra használ",
+        "Username": "Felhasználónév",
+        "Version": "Verzió",
+        "Weeks": "Hetek",
+        "Welcome to": "Üdvözöljük itt:",
+        "with a matching": "egyező értékkel",
+    }
+)
+
+SLOVAK = Translation(
+    language_name="Slovak",
+    language_code="sk",
+    translations={
+        "About": "O produkte",
+        "Add Row": "Pridať riadok",
+        "Add": "Pridať",
+        "Apply": "Použiť",
+        "Ascending": "Vzostupne",
+        "Back to home page": "Späť na hlavnú stránku",
+        "Back": "Späť",
+        "Change Password": "Zmeniť heslo",
+        "Clear filters": "Vymazať filtre",
+        "Close": "Zavrieť",
+        "Comma": "Čiarka",
+        "Create": "Vytvoriť",
+        "Current password": "Aktuálne heslo",
+        "Dark Mode": "Tmavý režim",
+        "Days": "Dni",
+        "Delete": "Odstrániť",
+        "Delimiter": "Oddeľovač",
+        "Descending": "Zostupne",
+        "Download": "Stiahnuť",
+        "Download failed": "Sťahovanie zlyhalo",
+        "Download successful": "Sťahovanie úspešné",
+        "Edit": "Upraviť",
+        "Export CSV": "Exportovať CSV",
+        "Filter": "Filter",
+        "For timestamps which are timezone aware, they will be displayed in this timezone by default.":
+            "Časové značky s informáciou o časovom pásme sa predvolene zobrazujú v tomto časovom pásme.",
+        "Form submitted": "Formulár odoslaný",
+        "Forms": "Formuláre",
+        "Go to page": "Prejsť na stránku",
+        "Hide Filters": "Skryť filtre",
+        "Hide referencing tables": "Skryť odkazujúce tabuľky",
+        "Home": "Domov",
+        "Hours": "Hodiny",
+        "Light Mode": "Svetlý režim",
+        "Links": "Odkazy",
+        "Loading": "Načítava sa",
+        "Log Out": "Odhlásiť sa",
+        "Login": "Prihlásiť sa",
+        "MFA Code": "MFA kód",
+        "MFA Setup": "Nastavenie MFA",
+        "Minutes": "Minúty",
+        "New password confirmation": "Potvrdenie nového hesla",
+        "New password": "Nové heslo",
+        "New value": "Nová hodnota",
+        "No results found": "Neboli nájdené žiadne výsledky",
+        "Note: Large data sets may take a while.":
+            "Poznámka: Spracovanie veľkých dátových súborov môže chvíľu trvať.",
+        "Note: They are converted to UTC when stored in the database.":
+            "Poznámka: Pri ukladaní do databázy sa konvertujú na UTC.",
+        "of": "z",
+        "page": "strana",
+        "Password": "Heslo",
+        "result(s)": "výsledok(y)",
+        "rows": "riadky",
+        "Save": "Uložiť",
+        "Seconds": "Sekundy",
+        "Select a column to update": "Vyberte stĺpec na aktualizáciu",
+        "Select a Column": "Vybrať stĺpec",
+        "Select a table in the sidebar to get started.":
+            "Ak chcete začať, vyberte tabuľku na bočnom paneli.",
+        "selected result(s) on": "vybrané výsledky na",
+        "Semicolon": "Bodkočiarka",
+        "Set Timezone": "Nastaviť časové pásmo",
+        "Show Filters": "Zobraziť filtre",
+        "Show referencing tables": "Zobraziť odkazujúce tabuľky",
+        "Showing": "Zobrazené",
+        "Sort by": "Zoradiť podľa",
+        "Sort": "Zoradiť",
+        "Submit": "Odoslať",
+        "Tables": "Tabuľky",
+        "Timezone": "Časové pásmo",
+        "Thanks for using Piccolo Admin.": "Ďakujeme, že používate Piccolo Admin.",
+        "Update": "Aktualizovať",
+        "Use again": "Použiť znova",
+        "Username": "Používateľské meno",
+        "Version": "Verzia",
+        "Weeks": "Týždne",
+        "Welcome to": "Vitajte v",
+        "with a matching": "so zhodou",
+    }
+)
+
 TRANSLATIONS: list[Translation] = [
     ENGLISH,
     CROATIAN,
@@ -1265,10 +1430,12 @@ TRANSLATIONS: list[Translation] = [
     FINNISH,
     FRENCH,
     GERMAN,
+    HUNGARIAN,
     ITALIAN,
     PORTUGUESE,
     RUSSIAN,
     SIMPLIFIED_CHINESE,
+    SLOVAK,
     SPANISH,
     TRADITIONAL_CHINESE,
     TURKISH,
