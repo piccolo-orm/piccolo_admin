@@ -64,7 +64,15 @@ button {
     a {
         color: @dark_blue;
 
-        &:hover {
+        &.button:hover {
+            background-color: lighten(@dark_blue, 10%);
+        }
+
+        &.button:active {
+            outline: 0.2rem solid lightblue;
+        }
+
+        &:not(.button):hover {
             color: lighten(@dark_blue, 10%);
         }
 
@@ -120,8 +128,12 @@ button {
     a {
         color: @light_blue;
 
-        &:hover {
+        &:not(.button):hover {
             color: lighten(@light_blue, 10%);
+        }
+
+        &.button:hover {
+            background-color: lighten(@light_blue, 10%);
         }
 
         &.subtle {
@@ -221,6 +233,7 @@ textarea {
 
 button {
     width: 100%;
+    border-radius: 0.5rem;
 }
 
 textarea {
@@ -254,6 +267,10 @@ button {
         transition: background-color 0.5s;
     }
 
+    &:active {
+        outline: 0.2rem solid lightblue;
+    }
+
     &:disabled {
         opacity: 0.8;
     }
@@ -270,11 +287,18 @@ a {
         background-color: @dark_blue;
         color: white;
         font-size: 0.7em;
-        padding: 0.3rem 0.5rem;
+        padding: 0.5rem 0.8rem;
         text-transform: uppercase;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
 
-        &:hover {
-            color: white;
+
+        &.button:hover {
+            background-color: lighten(@dark_blue, 10%);
+        }
+
+        &:active {
+            outline: 0.2rem solid lightblue;
         }
     }
 }

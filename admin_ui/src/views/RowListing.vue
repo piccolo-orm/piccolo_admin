@@ -815,6 +815,7 @@ div.wrapper {
             cursor: pointer;
             display: flex;
             flex-direction: row;
+            column-gap: 0.5rem;
 
             @media (max-width: @mobile_width) {
                 width: 100%;
@@ -827,12 +828,9 @@ div.wrapper {
                 text-decoration: none;
                 margin-left: 0.25rem;
                 box-sizing: border-box;
-                padding: 0.2rem 0.5rem;
+                padding: 0.5rem 0.8rem;
                 text-align: center;
-
-                &:hover {
-                    color: white;
-                }
+                font-size: 0.8rem;
 
                 @media (max-width: @mobile_width) {
                     flex-grow: 1;
@@ -858,6 +856,7 @@ div.wrapper {
     div.left_column,
     div.right_column {
         overflow: auto;
+        height: calc(100vh - 5rem);
         padding: 0.5rem;
     }
 
@@ -867,6 +866,7 @@ div.wrapper {
 
         div.table_wrapper {
             position: relative;
+            overflow: auto;
 
             p#loading_indicator {
                 position: absolute;
