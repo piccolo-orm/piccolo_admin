@@ -1264,11 +1264,9 @@ HUNGARIAN = Translation(
         "Edit": "Szerkesztés",
         "Export CSV": "CSV exportálása",
         "Filter": "Szűrés",
-        "For timestamps which are timezone aware, they will be displayed in this timezone by default.":
-            "Az időzóna-érzékeny időbélyegek alapértelmezés szerint ebben az időzónában jelennek meg.",
+        "For timestamps which are timezone aware, they will be displayed in this timezone by default.": "Az időzóna-érzékeny időbélyegek alapértelmezés szerint ebben az időzónában jelennek meg.",
         "Form submitted": "Űrlap elküldve",
         "Forms": "Űrlapok",
-        "Go to page": "Ugrás az oldalra",
         "Hide Filters": "Szűrők elrejtése",
         "Hide referencing tables": "Hivatkozó táblák elrejtése",
         "Home": "Főoldal",
@@ -1285,10 +1283,8 @@ HUNGARIAN = Translation(
         "New password": "Új jelszó",
         "New value": "Új érték",
         "No results found": "Nincs találat",
-        "Note: Large data sets may take a while.":
-            "Megjegyzés: Nagy adathalmazok feldolgozása eltarthat egy ideig.",
-        "Note: They are converted to UTC when stored in the database.":
-            "Megjegyzés: Az adatbázisban UTC időzónára vannak konvertálva.",
+        "Note: Large data sets may take a while.": "Megjegyzés: Nagy adathalmazok feldolgozása eltarthat egy ideig.",
+        "Note: They are converted to UTC when stored in the database.": "Megjegyzés: Az adatbázisban UTC időzónára vannak konvertálva.",
         "of": "/",
         "page": "oldal",
         "Password": "Jelszó",
@@ -1298,8 +1294,7 @@ HUNGARIAN = Translation(
         "Seconds": "Másodpercek",
         "Select a column to update": "Válasszon egy frissítendő oszlopot",
         "Select a Column": "Oszlop kiválasztása",
-        "Select a table in the sidebar to get started.":
-            "A kezdéshez válasszon egy táblát az oldalsávban.",
+        "Select a table in the sidebar to get started.": "A kezdéshez válasszon egy táblát az oldalsávban.",
         "selected result(s) on": "kiválasztott találat itt:",
         "Semicolon": "Pontosvessző",
         "Set Timezone": "Időzóna beállítása",
@@ -1319,7 +1314,7 @@ HUNGARIAN = Translation(
         "Weeks": "Hetek",
         "Welcome to": "Üdvözöljük itt:",
         "with a matching": "egyező értékkel",
-    }
+    },
 )
 
 SLOVAK = Translation(
@@ -1350,11 +1345,9 @@ SLOVAK = Translation(
         "Edit": "Upraviť",
         "Export CSV": "Exportovať CSV",
         "Filter": "Filter",
-        "For timestamps which are timezone aware, they will be displayed in this timezone by default.":
-            "Časové značky s informáciou o časovom pásme sa predvolene zobrazujú v tomto časovom pásme.",
+        "For timestamps which are timezone aware, they will be displayed in this timezone by default.": "Časové značky s informáciou o časovom pásme sa predvolene zobrazujú v tomto časovom pásme.",
         "Form submitted": "Formulár odoslaný",
         "Forms": "Formuláre",
-        "Go to page": "Prejsť na stránku",
         "Hide Filters": "Skryť filtre",
         "Hide referencing tables": "Skryť odkazujúce tabuľky",
         "Home": "Domov",
@@ -1371,10 +1364,8 @@ SLOVAK = Translation(
         "New password": "Nové heslo",
         "New value": "Nová hodnota",
         "No results found": "Neboli nájdené žiadne výsledky",
-        "Note: Large data sets may take a while.":
-            "Poznámka: Spracovanie veľkých dátových súborov môže chvíľu trvať.",
-        "Note: They are converted to UTC when stored in the database.":
-            "Poznámka: Pri ukladaní do databázy sa konvertujú na UTC.",
+        "Note: Large data sets may take a while.": "Poznámka: Spracovanie veľkých dátových súborov môže chvíľu trvať.",
+        "Note: They are converted to UTC when stored in the database.": "Poznámka: Pri ukladaní do databázy sa konvertujú na UTC.",
         "of": "z",
         "page": "strana",
         "Password": "Heslo",
@@ -1384,8 +1375,7 @@ SLOVAK = Translation(
         "Seconds": "Sekundy",
         "Select a column to update": "Vyberte stĺpec na aktualizáciu",
         "Select a Column": "Vybrať stĺpec",
-        "Select a table in the sidebar to get started.":
-            "Ak chcete začať, vyberte tabuľku na bočnom paneli.",
+        "Select a table in the sidebar to get started.": "Ak chcete začať, vyberte tabuľku na bočnom paneli.",
         "selected result(s) on": "vybrané výsledky na",
         "Semicolon": "Bodkočiarka",
         "Set Timezone": "Nastaviť časové pásmo",
@@ -1405,7 +1395,7 @@ SLOVAK = Translation(
         "Weeks": "Týždne",
         "Welcome to": "Vitajte v",
         "with a matching": "so zhodou",
-    }
+    },
 )
 
 TRANSLATIONS: list[Translation] = [
