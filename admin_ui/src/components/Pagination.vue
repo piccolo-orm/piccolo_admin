@@ -1,23 +1,33 @@
 <template>
     <div id="pagination">
-        <ul class="pages" v-if="pageCount < 20">
-            <li :key="n" v-for="n in pageCount">
-                <a
-                    class="subtle"
-                    href="#"
-                    v-bind:class="{ active: n === currentPageNumber }"
-                    v-on:click.prevent="changePage(n)"
-                    >{{ n }}</a
-                >
+        <ul class="pages">
+            <!-- Previous pages -->
+            <li v-for="n in prevPages" :key="n">
+                <a class="subtle" href="#" v-on:click.prevent="changePage(n)">
+                    <font-awesome-icon icon="angle-left" />
+                </a>
+            </li>
+
+            <!-- Current page input -->
+            <li class="current">
+                <input
+                    type="number"
+                    :min="1"
+                    :max="pageCount"
+                    v-model.number="pageInput"
+                    v-on:keyup.enter="goToPage"
+                    v-on:change="goToPage"
+                />
+            </li>
+            <li class="count">of {{ pageCount }}</li>
+
+            <!-- Next pages -->
+            <li v-for="n in nextPages" :key="n">
+                <a href="#" class="subtle" v-on:click.prevent="changePage(n)">
+                    <font-awesome-icon icon="angle-right" />
+                </a>
             </li>
         </ul>
-
-        <div class="page_select" v-else>
-            <label>{{ $t("Go to page") }}</label>
-            <select v-model="pageDropdownValue">
-                <option :key="n" v-for="n in pageCount">{{ n }}</option>
-            </select>
-        </div>
     </div>
 </template>
 
@@ -30,7 +40,7 @@ export default defineComponent({
     },
     data() {
         return {
-            pageDropdownValue: 0
+            pageInput: 1
         }
     },
     computed: {
@@ -44,32 +54,56 @@ export default defineComponent({
             const count = Math.ceil(this.rowCount / this.pageSize)
             return count < 1 ? 1 : count
         },
-        currentTableName() {
-            return this.$store.state.currentTableName
-        },
-        filterParams() {
-            return this.$store.state.filterParams
-        },
         currentPageNumber() {
-            return this.$store.state.currentPageNumber
+            return this.$store.state.currentPageNumber || 1
+        },
+
+        prevPages(): number[] {
+            const start = Math.max(1, this.currentPageNumber - 1)
+            const end = this.currentPageNumber - 1
+            return this.range(start, end)
+        },
+
+        nextPages(): number[] {
+            const start = this.currentPageNumber + 1
+            const end = Math.min(this.pageCount, this.currentPageNumber + 1)
+            return this.range(start, end)
         }
     },
     methods: {
-        async changePage(pageNumber: number) {
-            if (this.currentPageNumber != pageNumber) {
-                console.log("Navigating to " + pageNumber)
-                this.$store.commit("updateCurrentPageNumber", pageNumber)
-                await this.$store.dispatch("fetchRows")
-            }
+        range(start: number, end: number): number[] {
+            if (start > end) return []
+            // return rows for correct page
+            return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+        },
+
+        async changePage(page: number) {
+            // return first or last page
+            if (page < 1 || page > this.pageCount) return
+            // return current page
+            if (page === this.currentPageNumber) return
+
+            this.$store.commit("updateCurrentPageNumber", page)
+            await this.$store.dispatch("fetchRows")
+        },
+
+        async goToPage() {
+            let page = this.pageInput
+
+            if (!page || page < 1) page = 1
+            if (page > this.pageCount) page = this.pageCount
+
+            this.pageInput = page
+            await this.changePage(page)
         }
     },
     watch: {
-        pageDropdownValue(value) {
-            this.changePage(value)
+        currentPageNumber(value: number) {
+            this.pageInput = value
         }
     },
     mounted() {
-        this.pageDropdownValue = this.currentPageNumber
+        this.pageInput = this.currentPageNumber
     }
 })
 </script>
@@ -80,11 +114,10 @@ export default defineComponent({
 div#pagination {
     ul.pages {
         list-style: none;
-        margin: 0.5rem 0;
+        margin: 0.3rem 0;
         padding: 0;
 
         li {
-            border: 1px solid rgba(255, 255, 255, 0.2);
             display: inline-block;
             font-size: 0.8rem;
             margin-bottom: 0.5rem;
@@ -109,21 +142,20 @@ div#pagination {
             }
         }
     }
+    span.count {
+        padding-right: 0.5rem;
+    }
+    input {
+        text-align: center;
+    }
+}
 
-    div.page_select {
-        select,
-        label {
-            display: inline-block;
-        }
-
-        label {
-            font-size: 0.9rem;
-            margin-right: 1rem;
-        }
-
-        select {
-            width: auto;
-            padding-right: 1.5rem;
+@media (max-width: 480px) {
+    div#pagination {
+        ul.pages {
+            li {
+                font-size: 0.6rem;
+            }
         }
     }
 }
