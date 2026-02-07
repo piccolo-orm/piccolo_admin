@@ -22,7 +22,7 @@
 import { defineComponent } from "vue"
 import FilterForm from "./FilterForm.vue"
 import { type APIResponseMessage, getFormat, getType } from "../interfaces"
-import { secondsToISO8601Duration } from "../utils"
+import { secondsToISO8601Duration, syncQueryParams } from "../utils"
 
 export default defineComponent({
     props: {
@@ -87,6 +87,11 @@ export default defineComponent({
                 }
             }
 
+            // adding filter params to url
+            syncQueryParams(this.$router.path, {
+                ...json
+            })
+
             this.$store.commit("updateFilterParams", json)
             this.$store.commit("updateCurrentPageNumber", 1)
 
@@ -107,6 +112,9 @@ export default defineComponent({
             })
 
             form.reset()
+
+            // cleaning filter params from url
+            syncQueryParams(this.$router.path, {})
 
             this.$store.commit("updateFilterParams", {})
             this.$store.commit("updateCurrentPageNumber", 1)
