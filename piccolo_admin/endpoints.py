@@ -51,6 +51,7 @@ from piccolo_api.session_auth.endpoints import session_login, session_logout
 from piccolo_api.session_auth.middleware import SessionsAuthBackend
 from piccolo_api.session_auth.tables import SessionsBase
 from pydantic import BaseModel, Field, ValidationError
+from pydantic_core import PydanticUndefined
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.exceptions import HTTPException
@@ -410,21 +411,58 @@ class FormConfig:
             field_name,
             field_value,
         ) in self.pydantic_model.model_fields.items():
-            if inspect.isclass(field_value.annotation) and issubclass(
-                field_value.annotation, enum.Enum
+            # Extract the actual type, handling Optional/Union
+            field_type = field_value.annotation
+            is_optional = False
+            
+            # Check if it's Optional (Union with None)
+            if hasattr(field_type, '__origin__') and field_type.__origin__ is Union:
+                # Get all args from Union, filter out NoneType
+                type_args = [arg for arg in field_type.__args__ if arg is not type(None)]
+                if len(type_args) == 1:
+                    field_type = type_args[0]
+                    is_optional = True
+            
+            if inspect.isclass(field_type) and issubclass(
+                field_type, enum.Enum
             ):
-                # update model fields, field annotation and
+                # Get the default value if it exists
+                default_value = None
+                if field_value.default is not None and field_value.default is not PydanticUndefined:
+                    # If default is an Enum instance, get its value
+                    if isinstance(field_value.default, enum.Enum):
+                        default_value = field_value.default.value
+                    else:
+                        default_value = field_value.default
+
+                # Update model fields, field annotation and
                 # rebuild the model for the changes to take effect
+                json_schema_extra_dict = {
+                    "extra": {
+                        "choices": convert_enum_to_choices(field_type)
+                    }
+                }
+                
+                # Add default value if it exists
+                if default_value is not None:
+                    json_schema_extra_dict["extra"]["default"] = default_value
+
                 pydantic_model.model_fields[field_name] = Field(
-                    json_schema_extra={
-                        "extra": {
-                            "choices": convert_enum_to_choices(
-                                field_value.annotation
-                            )
-                        }
-                    },
+                    default=default_value,
+                    description=field_value.description,
+                    title=field_value.title,
+                    json_schema_extra=json_schema_extra_dict,
                 )
-                pydantic_model.model_fields[field_name].annotation = str
+                
+                # Detect the enum value type (int, str, etc.)
+                enum_value_type = type(next(iter(field_type)).value)
+                
+                # Set annotation to Optional[type] or type depending on original
+                if is_optional:
+                    pydantic_model.model_fields[field_name].annotation = Optional[enum_value_type]
+                else:
+                    pydantic_model.model_fields[field_name].annotation = enum_value_type
+                    
                 pydantic_model.model_rebuild(force=True)
 
 

@@ -1,4 +1,5 @@
 import enum
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 from starlette.requests import Request
@@ -13,12 +14,18 @@ class Permission(str, enum.Enum):
     notices = "notices"
     uploads = "uploads"
 
+class LogLevel(int, enum.Enum):
+    error = 2
+    warn = 3
+    info = 4
+    debug = 5
 
 class NewStaffModel(BaseModel):
     username: str
     email: EmailStr
     superuser: bool
-    permissions: Permission
+    permissions: Permission="gallery"
+    log_level: Optional[LogLevel]
 
 
 def new_staff_endpoint(request: Request, data: NewStaffModel) -> str:
