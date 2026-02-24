@@ -15,7 +15,7 @@ from collections.abc import Callable, Coroutine, Sequence
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import partial
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union, cast
 
 import typing_extensions
 from fastapi import FastAPI, File, Form, UploadFile
@@ -414,21 +414,30 @@ class FormConfig:
             # Extract the actual type, handling Optional/Union
             field_type = field_value.annotation
             is_optional = False
-            
+            assert field_type
+
             # Check if it's Optional (Union with None)
-            if hasattr(field_type, '__origin__') and field_type.__origin__ is Union:
+            if (
+                hasattr(field_type, "__origin__")
+                and field_type.__origin__ is Union
+            ):
                 # Get all args from Union, filter out NoneType
-                type_args = [arg for arg in field_type.__args__ if arg is not type(None)]
+                type_args = [
+                    arg for arg in field_type.__args__ if arg is not type(None)
+                ]
                 if len(type_args) == 1:
                     field_type = type_args[0]
                     is_optional = True
-            
+
             if inspect.isclass(field_type) and issubclass(
                 field_type, enum.Enum
             ):
                 # Get the default value if it exists
                 default_value = None
-                if field_value.default is not None and field_value.default is not PydanticUndefined:
+                if (
+                    field_value.default is not None
+                    and field_value.default is not PydanticUndefined
+                ):
                     # If default is an Enum instance, get its value
                     if isinstance(field_value.default, enum.Enum):
                         default_value = field_value.default.value
@@ -437,32 +446,35 @@ class FormConfig:
 
                 # Update model fields, field annotation and
                 # rebuild the model for the changes to take effect
-                json_schema_extra_dict = {
-                    "extra": {
-                        "choices": convert_enum_to_choices(field_type)
-                    }
+                json_schema_extra_dict: dict[str, Any] = {
+                    "extra": {"choices": convert_enum_to_choices(field_type)}
                 }
-                
+
                 # Add default value if it exists
                 if default_value is not None:
                     json_schema_extra_dict["extra"]["default"] = default_value
 
-                pydantic_model.model_fields[field_name] = Field(
+                pydantic_model.model_fields[field_name] = Field(  # type:ignore
                     default=default_value,
                     description=field_value.description,
                     title=field_value.title,
                     json_schema_extra=json_schema_extra_dict,
                 )
-                
+
                 # Detect the enum value type (int, str, etc.)
-                enum_value_type = type(next(iter(field_type)).value)
-                
-                # Set annotation to Optional[type] or type depending on original
-                if is_optional:
-                    pydantic_model.model_fields[field_name].annotation = Optional[enum_value_type]
-                else:
-                    pydantic_model.model_fields[field_name].annotation = enum_value_type
-                    
+                enum_member = next(iter(field_type))
+                enum_value_type = type(enum_member.value)
+
+                # Set annotation to Optional[type] or type depending
+                # on original
+                new_annotation = (
+                    enum_value_type | None if is_optional else enum_value_type
+                )
+
+                pydantic_model.model_fields[field_name].annotation = cast(
+                    Any, new_annotation
+                )
+
                 pydantic_model.model_rebuild(force=True)
 
 
