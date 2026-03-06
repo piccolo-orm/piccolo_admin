@@ -403,7 +403,7 @@
                                 </p>
 
                                 <div class="pagination_wrapper">
-                                    <Pagination :tableName="tableName" />
+                                    <Pagination />
                                     <ChangePageSize />
                                 </div>
                             </template>

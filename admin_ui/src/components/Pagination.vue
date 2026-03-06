@@ -1,29 +1,44 @@
 <template>
     <div id="pagination">
         <ul class="pages">
-            <!-- Previous pages -->
-            <li v-for="n in prevPages" :key="n">
-                <a class="subtle" href="#" v-on:click.prevent="changePage(n)">
+            <li>
+                <a
+                    class="subtle"
+                    href="#"
+                    v-on:click.prevent="changePage(currentPageNumber - 1)"
+                    :class="{ disabled: currentPageNumber == 1 }"
+                >
                     <font-awesome-icon icon="angle-left" />
                 </a>
             </li>
 
-            <!-- Current page input -->
             <li class="current">
                 <input
                     type="number"
                     :min="1"
                     :max="pageCount"
                     v-model.number="pageInput"
-                    v-on:keyup.enter="goToPage"
-                    v-on:change="goToPage"
+                    v-on:keyup.enter="
+                        changePage(
+                            Number(($event.target as HTMLInputElement).value)
+                        )
+                    "
+                    v-on:change="
+                        changePage(
+                            Number(($event.target as HTMLInputElement).value)
+                        )
+                    "
                 />
             </li>
             <li class="count">of {{ pageCount }}</li>
 
-            <!-- Next pages -->
-            <li v-for="n in nextPages" :key="n">
-                <a href="#" class="subtle" v-on:click.prevent="changePage(n)">
+            <li>
+                <a
+                    href="#"
+                    class="subtle"
+                    v-on:click.prevent="changePage(currentPageNumber + 1)"
+                    :class="{ disabled: currentPageNumber == pageCount }"
+                >
                     <font-awesome-icon icon="angle-right" />
                 </a>
             </li>
@@ -35,9 +50,6 @@
 import { defineComponent } from "vue"
 
 export default defineComponent({
-    props: {
-        tableName: String
-    },
     data() {
         return {
             pageInput: 1
@@ -55,46 +67,27 @@ export default defineComponent({
             return count < 1 ? 1 : count
         },
         currentPageNumber() {
-            return this.$store.state.currentPageNumber || 1
-        },
-
-        prevPages(): number[] {
-            const start = Math.max(1, this.currentPageNumber - 1)
-            const end = this.currentPageNumber - 1
-            return this.range(start, end)
-        },
-
-        nextPages(): number[] {
-            const start = this.currentPageNumber + 1
-            const end = Math.min(this.pageCount, this.currentPageNumber + 1)
-            return this.range(start, end)
+            return this.$store.state.currentPageNumber
         }
     },
     methods: {
-        range(start: number, end: number): number[] {
-            if (start > end) return []
-            // return rows for correct page
-            return Array.from({ length: end - start + 1 }, (_, i) => start + i)
-        },
-
         async changePage(page: number) {
-            // return first or last page
-            if (page < 1 || page > this.pageCount) return
-            // return current page
-            if (page === this.currentPageNumber) return
+            if (page < 1) {
+                this.pageInput = 1
+                return
+            }
+
+            if (page > this.pageCount) {
+                this.pageInput = this.pageCount
+                return
+            }
+
+            if (page === this.currentPageNumber) {
+                return
+            }
 
             this.$store.commit("updateCurrentPageNumber", page)
             await this.$store.dispatch("fetchRows")
-        },
-
-        async goToPage() {
-            let page = this.pageInput
-
-            if (!page || page < 1) page = 1
-            if (page > this.pageCount) page = this.pageCount
-
-            this.pageInput = page
-            await this.changePage(page)
         }
     },
     watch: {
@@ -136,8 +129,13 @@ div#pagination {
                     background-color: @activeColor;
                 }
 
-                &.active {
-                    background-color: @activeColor;
+                &.disabled {
+                    color: grey;
+                    cursor: initial;
+
+                    &:hover {
+                        background: none;
+                    }
                 }
             }
         }
@@ -147,16 +145,6 @@ div#pagination {
     }
     input {
         text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    div#pagination {
-        ul.pages {
-            li {
-                font-size: 0.6rem;
-            }
-        }
     }
 }
 </style>
