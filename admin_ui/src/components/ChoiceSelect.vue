@@ -56,12 +56,16 @@ export default defineComponent({
     },
     data() {
         return {
-            localValue: "" as string | undefined
+            localValue: undefined as string | number | undefined
         }
     },
     emits: ["updated"],
     mounted() {
-        this.localValue = this.isFilter ? "all" : this.value
+        if (this.isFilter) {
+            this.localValue = "all"
+        } else if (this.value !== undefined) {
+            this.localValue = this.value
+        }
     },
     watch: {
         value(newValue) {
