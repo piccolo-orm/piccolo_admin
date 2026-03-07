@@ -1,23 +1,48 @@
 <template>
     <div id="pagination">
-        <ul class="pages" v-if="pageCount < 20">
-            <li :key="n" v-for="n in pageCount">
+        <ul class="pages">
+            <li>
                 <a
                     class="subtle"
                     href="#"
-                    v-bind:class="{ active: n === currentPageNumber }"
-                    v-on:click.prevent="changePage(n)"
-                    >{{ n }}</a
+                    v-on:click.prevent="changePage(currentPageNumber - 1)"
+                    :class="{ disabled: currentPageNumber == 1 }"
                 >
+                    <font-awesome-icon icon="angle-left" />
+                </a>
+            </li>
+
+            <li class="current">
+                <input
+                    type="number"
+                    :min="1"
+                    :max="pageCount"
+                    v-model.number="pageInput"
+                    v-on:keyup.enter="
+                        changePage(
+                            Number(($event.target as HTMLInputElement).value)
+                        )
+                    "
+                    v-on:change="
+                        changePage(
+                            Number(($event.target as HTMLInputElement).value)
+                        )
+                    "
+                />
+            </li>
+            <li class="count">of {{ pageCount }}</li>
+
+            <li>
+                <a
+                    href="#"
+                    class="subtle"
+                    v-on:click.prevent="changePage(currentPageNumber + 1)"
+                    :class="{ disabled: currentPageNumber == pageCount }"
+                >
+                    <font-awesome-icon icon="angle-right" />
+                </a>
             </li>
         </ul>
-
-        <div class="page_select" v-else>
-            <label>{{ $t("Go to page") }}</label>
-            <select v-model="pageDropdownValue">
-                <option :key="n" v-for="n in pageCount">{{ n }}</option>
-            </select>
-        </div>
     </div>
 </template>
 
@@ -25,12 +50,9 @@
 import { defineComponent } from "vue"
 
 export default defineComponent({
-    props: {
-        tableName: String
-    },
     data() {
         return {
-            pageDropdownValue: 0
+            pageInput: 1
         }
     },
     computed: {
@@ -44,32 +66,37 @@ export default defineComponent({
             const count = Math.ceil(this.rowCount / this.pageSize)
             return count < 1 ? 1 : count
         },
-        currentTableName() {
-            return this.$store.state.currentTableName
-        },
-        filterParams() {
-            return this.$store.state.filterParams
-        },
         currentPageNumber() {
             return this.$store.state.currentPageNumber
         }
     },
     methods: {
-        async changePage(pageNumber: number) {
-            if (this.currentPageNumber != pageNumber) {
-                console.log("Navigating to " + pageNumber)
-                this.$store.commit("updateCurrentPageNumber", pageNumber)
-                await this.$store.dispatch("fetchRows")
+        async changePage(page: number) {
+            if (page < 1) {
+                this.pageInput = 1
+                return
             }
+
+            if (page > this.pageCount) {
+                this.pageInput = this.pageCount
+                return
+            }
+
+            if (page === this.currentPageNumber) {
+                return
+            }
+
+            this.$store.commit("updateCurrentPageNumber", page)
+            await this.$store.dispatch("fetchRows")
         }
     },
     watch: {
-        pageDropdownValue(value) {
-            this.changePage(value)
+        currentPageNumber(value: number) {
+            this.pageInput = value
         }
     },
     mounted() {
-        this.pageDropdownValue = this.currentPageNumber
+        this.pageInput = this.currentPageNumber
     }
 })
 </script>
@@ -80,11 +107,10 @@ export default defineComponent({
 div#pagination {
     ul.pages {
         list-style: none;
-        margin: 0.5rem 0;
+        margin: 0.3rem 0;
         padding: 0;
 
         li {
-            border: 1px solid rgba(255, 255, 255, 0.2);
             display: inline-block;
             font-size: 0.8rem;
             margin-bottom: 0.5rem;
@@ -103,28 +129,22 @@ div#pagination {
                     background-color: @activeColor;
                 }
 
-                &.active {
-                    background-color: @activeColor;
+                &.disabled {
+                    color: grey;
+                    cursor: initial;
+
+                    &:hover {
+                        background: none;
+                    }
                 }
             }
         }
     }
-
-    div.page_select {
-        select,
-        label {
-            display: inline-block;
-        }
-
-        label {
-            font-size: 0.9rem;
-            margin-right: 1rem;
-        }
-
-        select {
-            width: auto;
-            padding-right: 1.5rem;
-        }
+    span.count {
+        padding-right: 0.5rem;
+    }
+    input {
+        text-align: center;
     }
 }
 </style>

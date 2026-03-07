@@ -1,6 +1,23 @@
 Changes
 =======
 
+1.13.0
+------
+
+Added official Python 3.14 support (thanks to @sinisaos for this).
+
+Improved the contribution docs (thanks to @sinisaos for this).
+
+Added Hungarian and Slovak translations (thanks to @kispuding for this).
+
+Improved pagination - it didn't perform well on tables with millions of rows
+(thanks to @sinisaos for this and @Skelmis and @abhishek-compro for raising
+this issue).
+
+Bumped JS dependencies.
+
+-------------------------------------------------------------------------------
+
 1.12.0
 ------
 
