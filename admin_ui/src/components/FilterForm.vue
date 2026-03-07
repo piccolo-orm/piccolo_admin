@@ -47,11 +47,18 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType, toRef } from "vue"
+import { type PropType, toRef, computed } from "vue"
+import { useStore } from "vuex"
 
 import InputField from "./InputField.vue"
 import KeySearch from "./KeySearch.vue"
 import { type Schema, getFormat, getType } from "@/interfaces"
+
+/*****************************************************************************/
+
+const store = useStore()
+
+const filterParams = computed(() => store.state.filterParams)
 
 /*****************************************************************************/
 
@@ -67,10 +74,17 @@ const schema = toRef(props, "schema")
 /*****************************************************************************/
 
 const getValue = (columnName: string) => {
-    if (getType(schema.value.properties[columnName]) == "boolean") {
-        return "all"
-    } else {
-        return null
+    const value = filterParams.value[columnName]
+
+    // if there is value in query params
+    if (value !== undefined) {
+        return value
     }
+
+    if (getType(schema.value.properties[columnName]) === "boolean") {
+        return "all"
+    }
+
+    return null
 }
 </script>

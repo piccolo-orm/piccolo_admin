@@ -1,10 +1,9 @@
 <template>
-    <select :name="columnName + '__operator'">
+    <select :name="columnName + '__operator'" v-model="selectedOperator">
         <option
-            :key="operator.label"
-            :selected="operator.value == 'e'"
-            :value="operator.value"
             v-for="operator in operators"
+            :key="operator.value"
+            :value="operator.value"
         >
             {{ operator.label }}
         </option>
@@ -23,6 +22,7 @@ export default defineComponent({
     },
     data() {
         return {
+            selectedOperator: "e", // default
             operators: [
                 {
                     label: "Equals",
@@ -49,6 +49,22 @@ export default defineComponent({
                     value: "gt"
                 }
             ]
+        }
+    },
+    mounted() {
+        // read query params from url
+        const queryValue = this.$route.query[
+            this.columnName + "__operator"
+        ] as string
+
+        // use operator if present in query params otherwise keep default
+        if (
+            queryValue &&
+            this.operators.some(
+                (operator: any) => operator.value === queryValue
+            )
+        ) {
+            this.selectedOperator = queryValue
         }
     }
 })

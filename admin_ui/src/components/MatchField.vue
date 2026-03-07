@@ -1,27 +1,39 @@
 <template>
-    <select :name="columnName + '__match'">
-        <option
-            :key="match"
-            :selected="match == 'contains'"
-            :value="match"
-            v-for="match in matches"
-        >
+    <select :name="columnName + '__match'" v-model="selectedMatch">
+        <option :key="match" :value="match" v-for="match in matches">
             {{ match }}
         </option>
     </select>
 </template>
 
-<script setup lang="ts">
-import type { PropType } from "vue"
+<script lang="ts">
+import { defineComponent, type PropType } from "vue"
 
-defineProps({
-    columnName: {
-        type: String as PropType<string>,
-        required: true
+export default defineComponent({
+    props: {
+        columnName: {
+            type: String as PropType<string>,
+            required: true
+        }
+    },
+    data() {
+        return {
+            selectedMatch: "contains", // default
+            matches: ["contains", "exact", "starts", "ends"]
+        }
+    },
+    mounted() {
+        // read query params from url
+        const queryValue = this.$route.query[
+            this.columnName + "__match"
+        ] as string
+
+        // use match if present in query params, otherwise keep default
+        if (queryValue && this.matches.includes(queryValue)) {
+            this.selectedMatch = queryValue
+        }
     }
 })
-
-const matches: string[] = ["contains", "exact", "starts", "ends"]
 </script>
 
 <style>
