@@ -88,7 +88,7 @@ export default defineComponent({
 div.sidebar {
     background-color: rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    height: 100%;
+    height: calc(100vh - 5rem);
 
     p {
         padding: 0.5rem;
