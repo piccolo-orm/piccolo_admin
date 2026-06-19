@@ -1,6 +1,14 @@
 Changes
 =======
 
+1.14.0
+------
+
+Bumped the ``piccolo_api`` dependency, which has improvements for
+the ``SessionsBase`` table when mounted within Piccolo Admin.
+
+-------------------------------------------------------------------------------
+
 1.13.0
 ------
 
