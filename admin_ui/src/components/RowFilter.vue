@@ -131,6 +131,16 @@ div.filter_wrapper {
         position: absolute;
         top: 0.5rem;
         right: 0.5rem;
+        background-color: rgb(147, 41, 41);
+        font-weight: bolder;
+
+        &:hover {
+            background-color: lighten(rgb(147, 41, 41), 10%);
+        }
+
+        &:active {
+            outline: 0.2rem solid rgb(207, 118, 118);
+        }
     }
 }
 </style>
